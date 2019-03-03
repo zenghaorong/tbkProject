@@ -68,6 +68,19 @@ public class Cms_video extends BaseModel implements Serializable {
     @ColDefine(type = ColType.INT, width = 6)
     private Integer sort;
 
+    @Column
+    @Comment("购买价格")
+    @ColDefine(type = ColType.INT, width = 6)
+    private Double price;
+
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
+    }
 
     public String getId() {
         return id;

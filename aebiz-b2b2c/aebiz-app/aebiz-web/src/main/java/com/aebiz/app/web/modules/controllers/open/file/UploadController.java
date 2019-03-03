@@ -3,6 +3,7 @@ package com.aebiz.app.web.modules.controllers.open.file;
 import com.aebiz.app.shop.modules.models.Shop_image;
 import com.aebiz.app.shop.modules.services.ShopImageService;
 import com.aebiz.app.web.commons.base.Globals;
+import com.aebiz.app.web.commons.utils.FtpTool;
 import com.aebiz.baseframework.base.Result;
 import com.aebiz.baseframework.view.annotation.SJson;
 import com.aebiz.commons.fastdfs.NameValuePair;
@@ -26,6 +27,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.awt.*;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
 
@@ -111,7 +114,20 @@ public class UploadController {
                             uploadSlaveFile(client, fileId, "_wap_album", a.getAbsolutePath());
                         }
                         return Result.success("globals.upload.success", config.get("fdfs.domain", "") + "/" + fileId);
-                    } else {
+                    } else if("ftp".equalsIgnoreCase(uploadMode)){
+                        String fileName = tf.getOriginalFilename();
+//                        String fileExtName = fileName.substring(fileName.lastIndexOf(".") + 1);
+                        String ftpHost = config.get("ftp.Host");
+                        String ftpUserName = config.get("ftp.UserName");
+                        String ftpPassword = config.get("ftp.Password");
+                        int ftpPort = Integer.getInteger(config.get("ftp.Port","22"));
+                        String ftpPath = config.get("ftp.Path");
+                        InputStream in=  tf.getInputStream();
+                        boolean test = FtpTool.uploadFile(ftpHost, ftpUserName, ftpPassword, ftpPort, ftpPath, fileName,in);
+                        if(test){
+                            log.info(".....上传成功....:"+fileName);
+                        }
+                    }else {
                         String p = Globals.APP_ROOT;
                         String f = Globals.APP_UPLOAD_PATH + "/image/" + DateUtil.format(new Date(), "yyyyMMdd") + "/" + R.UU32() + tf.getOriginalFilename().substring(tf.getOriginalFilename().lastIndexOf("."));
                         tf.transferTo(Files.createFileIfNoExists(p + f));

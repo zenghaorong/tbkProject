@@ -129,6 +129,7 @@ layout("/layouts/store.html"){
                                 '<li class="divider"></li>' +
                                 '<li><a href="javascript:;" onclick="enable(\'' + row.id + '\')">${msg['cms.article.column.release']}</a></li>' +
                                 '<li><a href="javascript:;" onclick="disable(\'' + row.id + '\')">${msg['cms.article.column.cancelrelease']}</a></li>' +
+                                '<li><a href="javascript:;" onclick="lookReview(\'' + row.id + '\')">查看评论</a></li>' +
                                 '</ul></div>';
                     },
                     "targets": 4
@@ -256,6 +257,15 @@ layout("/layouts/store.html"){
             }
         }, "json");
     }
+
+    /**
+     * 查看当前文章下的评论
+     */
+    function lookReview(id){
+        window.location.href='${base}/store/cms/review?cmsId='+id;
+    }
+
+
     $(document).ready(function () {
         initTreeView();
         initDatatable();

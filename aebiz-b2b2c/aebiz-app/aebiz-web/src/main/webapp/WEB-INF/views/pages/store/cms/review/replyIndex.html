@@ -12,21 +12,21 @@ layout("/layouts/store.html"){
         <div class="table-responsive no-border">
             <table class="table table-bordered table-striped mg-t datatable">
                 <thead>
-                    <tr>
-                            <th>商城ID</th>
-                            <th>内容类型 1黏土教程 2视频专区</th>
-                            <th>内容ID</th>
-                            <th>回复父级编号</th>
-                            <th>类型 1评论 2回复</th>
-                            <th>评论回复内容</th>
-                            <th>评论点赞数</th>
-                            <th>评论人名称</th>
-                            <th>评论人编号</th>
-                            <th>回复父级发布人名称</th>
-                            <th>回复父级发布人编号</th>
-                            <th>是否为官方 1是 2不是</th>
-                            <th>操作</th>
-                    </tr>
+                <tr>
+                    <th>商城ID</th>
+                    <th>内容类型 1黏土教程 2视频专区</th>
+                    <th>内容ID</th>
+                    <th>回复父级编号</th>
+                    <th>类型 1评论 2回复</th>
+                    <th>评论回复内容</th>
+                    <th>评论点赞数</th>
+                    <th>评论人名称</th>
+                    <th>评论人编号</th>
+                    <th>回复父级发布人名称</th>
+                    <th>回复父级发布人编号</th>
+                    <th>是否为官方 1是 2不是</th>
+                    <th>操作</th>
+                </tr>
                 </thead>
             </table>
         </div>
@@ -83,34 +83,34 @@ layout("/layouts/store.html"){
                 "url": "${base}/store/cms/review/data",
                 "type": "post",
                 "data": function (d) {
-                      d.cmsId = "${cmsId!}"
+                    d.cmsId = "${cmsId!}"
                 }
             },
             "order": [[0, "desc"]],
             "columns": [
-                    {"data": "storeId", "bSortable": true},
-                    {"data": "cmsType", "bSortable": true},
-                    {"data": "cmsId", "bSortable": true},
-                    {"data": "reviewId", "bSortable": true},
-                    {"data": "type", "bSortable": true},
-                    {"data": "content", "bSortable": true},
-                    {"data": "loveNum", "bSortable": true},
-                    {"data": "reviewOpName", "bSortable": true},
-                    {"data": "reviewOpId", "bSortable": true},
-                    {"data": "reviewFatherName", "bSortable": true},
-                    {"data": "reviewFatherId", "bSortable": true},
-                    {"data": "isStore", "bSortable": true},
+                {"data": "storeId", "bSortable": true},
+                {"data": "cmsType", "bSortable": true},
+                {"data": "cmsId", "bSortable": true},
+                {"data": "reviewId", "bSortable": true},
+                {"data": "type", "bSortable": true},
+                {"data": "content", "bSortable": true},
+                {"data": "loveNum", "bSortable": true},
+                {"data": "reviewOpName", "bSortable": true},
+                {"data": "reviewOpId", "bSortable": true},
+                {"data": "reviewFatherName", "bSortable": true},
+                {"data": "reviewFatherId", "bSortable": true},
+                {"data": "isStore", "bSortable": true},
             ],
             "columnDefs": [
                 {
                     "render": function (data, type, row) {
                         return '<div class="btn-group"><button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">' +
-                                ' <i class="ti-settings"></i> <span class="ti-angle-down"></span></button><ul class="dropdown-menu" role="menu">' +
-                                '<li><a href="${base}/store/cms/review/detail/' + row.id + '" data-toggle="modal" data-target="#dialogDetail">查看</a></li>' +
-                                '<li><a href="${base}/store/cms/review/edit/' + row.id + '" data-pjax>修改</a></li>' +
-                                '<li class="divider"></li>' +
-                                '<li><a href="javascript:;" onclick="del(\'' + row.id + '\')">删除</a></li>' +
-                                '</ul></div>';
+                            ' <i class="ti-settings"></i> <span class="ti-angle-down"></span></button><ul class="dropdown-menu" role="menu">' +
+                            '<li><a href="${base}/store/cms/review/detail/' + row.id + '" data-toggle="modal" data-target="#dialogDetail">查看</a></li>' +
+                            '<li><a href="${base}/store/cms/review/edit/' + row.id + '" data-pjax>修改</a></li>' +
+                            '<li class="divider"></li>' +
+                            '<li><a href="javascript:;" onclick="del(\'' + row.id + '\')">删除</a></li>' +
+                            '</ul></div>';
                     },
                     "targets": 12
                 }

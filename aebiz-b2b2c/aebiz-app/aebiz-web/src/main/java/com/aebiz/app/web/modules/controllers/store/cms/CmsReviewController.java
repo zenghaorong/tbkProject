@@ -1,5 +1,6 @@
 package com.aebiz.app.web.modules.controllers.store.cms;
 
+import com.aebiz.app.store.modules.models.Store_user;
 import com.aebiz.app.web.commons.log.annotation.SLog;
 import com.aebiz.baseframework.base.Result;
 import com.aebiz.baseframework.page.datatable.DataTable;
@@ -7,6 +8,7 @@ import com.aebiz.commons.utils.StringUtil;
 import com.aebiz.app.cms.modules.models.Cms_review;
 import com.aebiz.app.cms.modules.services.CmsReviewService;
 import com.aebiz.baseframework.view.annotation.SJson;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
@@ -29,15 +31,24 @@ public class CmsReviewController {
 
     @RequestMapping("")
     @RequiresPermissions("store.cms.review")
-	public String index() {
+	public String index(String cmsId, HttpServletRequest req) {
+        req.setAttribute("cmsId",cmsId);
 		return "pages/store/cms/review/index";
 	}
 
 	@RequestMapping("/data")
     @SJson("full")
     @RequiresPermissions("store.cms.review")
-    public Object data(DataTable dataTable) {
+    public Object data(DataTable dataTable,String cmsId,String reviewId) {
 		Cnd cnd = Cnd.NEW();
+        Store_user user = (Store_user) SecurityUtils.getSubject().getPrincipal();
+        cnd.and("storeId", "=", user.getStoreId());
+        if(!Strings.isBlank(cmsId)){
+            cnd.and("cmsId", "=",cmsId);
+        }
+        if(!Strings.isBlank(reviewId)){//根据评论编号查询回复列表
+            cnd.and("reviewId", "=",reviewId);
+        }
     	return cmsReviewService.data(dataTable.getLength(), dataTable.getStart(), dataTable.getDraw(), dataTable.getOrders(), dataTable.getColumns(), cnd, null);
     }
 
@@ -110,6 +121,19 @@ public class CmsReviewController {
             req.setAttribute("obj", null);
         }
         return "pages/store/cms/review/detail";
+    }
+
+    /**
+     * 进入回复列表页面
+     * @param reviewId
+     * @param req
+     * @return
+     */
+    @RequestMapping("/reply")
+    @RequiresPermissions("store.cms.review")
+    public String reply(@PathVariable String reviewId, HttpServletRequest req) {
+        req.setAttribute("reviewId", reviewId);
+        return "pages/store/cms/review/replyIndex";
     }
 
 }

@@ -9,6 +9,7 @@ import com.aebiz.baseframework.base.Result;
 import com.aebiz.baseframework.page.datatable.DataTableColumn;
 import com.aebiz.baseframework.page.datatable.DataTableOrder;
 import com.aebiz.baseframework.view.annotation.SJson;
+import com.aebiz.commons.utils.StringUtil;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
@@ -91,6 +92,11 @@ public class StoreCmsVideoController {
 	@RequiresPermissions("store.cms.video")
 	public Object editDo(Cms_video cms_video) {
 		try {
+			if(cms_video.getDelFlag() == null){
+				cms_video.setDelFlag(true);
+			}
+			cms_video.setOpBy(StringUtil.getUid());
+			cms_video.setOpAt((int) (System.currentTimeMillis() / 1000));
 			cmsVideoService.update(cms_video);
 			return Result.success("globals.result.success");
 		} catch (Exception e) {

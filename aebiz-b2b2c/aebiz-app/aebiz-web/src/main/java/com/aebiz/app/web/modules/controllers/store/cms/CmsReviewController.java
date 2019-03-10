@@ -39,15 +39,25 @@ public class CmsReviewController {
 	@RequestMapping("/data")
     @SJson("full")
     @RequiresPermissions("store.cms.review")
-    public Object data(DataTable dataTable,String cmsId,String reviewId) {
+    public Object data(DataTable dataTable,String cmsId,String reviewId,String type,String cmsType,String content) {
 		Cnd cnd = Cnd.NEW();
         Store_user user = (Store_user) SecurityUtils.getSubject().getPrincipal();
         cnd.and("storeId", "=", user.getStoreId());
+        cnd.and("delFlag", "=", 0);
         if(!Strings.isBlank(cmsId)){
             cnd.and("cmsId", "=",cmsId);
         }
         if(!Strings.isBlank(reviewId)){//根据评论编号查询回复列表
             cnd.and("reviewId", "=",reviewId);
+        }
+        if(!Strings.isBlank(type)){//1评论  2回复
+            cnd.and("type", "=",type);
+        }
+        if(!Strings.isBlank(cmsType)){
+            cnd.and("cmsType", "=",cmsType);
+        }
+        if(!Strings.isBlank(content)){
+            cnd.and("content", "like","%"+content+"%");
         }
     	return cmsReviewService.data(dataTable.getLength(), dataTable.getStart(), dataTable.getDraw(), dataTable.getOrders(), dataTable.getColumns(), cnd, null);
     }
@@ -103,7 +113,11 @@ public class CmsReviewController {
 				cmsReviewService.delete(ids);
     			req.setAttribute("id", org.apache.shiro.util.StringUtils.toString(ids));
 			}else{
-				cmsReviewService.delete(id);
+//				cmsReviewService.delete(id);
+                Cms_review cms_review = new Cms_review();
+                cms_review.setDelFlag(true);
+                cms_review.setId(id);
+                cmsReviewService.updateIgnoreNull(cms_review);
     			req.setAttribute("id", id);
 			}
             return Result.success("globals.result.success");
@@ -130,8 +144,7 @@ public class CmsReviewController {
      * @return
      */
     @RequestMapping("/reply")
-    @RequiresPermissions("store.cms.review")
-    public String reply(@PathVariable String reviewId, HttpServletRequest req) {
+    public String reply(String reviewId, HttpServletRequest req) {
         req.setAttribute("reviewId", reviewId);
         return "pages/store/cms/review/replyIndex";
     }

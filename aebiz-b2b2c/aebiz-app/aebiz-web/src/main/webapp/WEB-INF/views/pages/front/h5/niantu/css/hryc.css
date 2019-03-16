@@ -25,3 +25,11 @@
 .seach-1{
 	background: white;
 }
+.noborder{
+	border: 0;
+}
+
+.mui-grid-view.mui-grid-9 .mui-table-view-my{
+	margin-left: 10px;
+	vertical-align: top;
+}

@@ -64,7 +64,6 @@
         $('#emailForm').ajaxForm({
             dataType: 'json',
             beforeSubmit: function (arr, form, options) {
-                debugger;
                 if($("#optionsRadios1").attr("checked") == "checked" ){
                     $("#smtpUrl").val("");
                     $("#smtpPort").val("");

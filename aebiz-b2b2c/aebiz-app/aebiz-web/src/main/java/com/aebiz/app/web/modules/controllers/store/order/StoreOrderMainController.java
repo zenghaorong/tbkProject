@@ -121,7 +121,7 @@ public class StoreOrderMainController {
     @Autowired
     private AccountInfoService accountInfoService;
 
-    @RequestMapping("/index")
+    @RequestMapping("")
     @RequiresPermissions("store.order.manager.list")
     public String index(HttpServletRequest req) {
         NutMap map = new NutMap();

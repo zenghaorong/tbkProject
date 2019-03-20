@@ -137,7 +137,7 @@ layout("/layouts/store.html"){
                                         </select>
                                     </div>
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group" hidden>
                                     <label for="brandId" class="col-sm-2 control-label">${msg['goods.main.column.brandId']}</label>
                                     <div class="col-sm-8">
                                         <select id="brandId" name="brandId" class="form-control" >
@@ -159,13 +159,13 @@ layout("/layouts/store.html"){
                                         <input type="text" class="form-control" id="title" name="title"  value="${obj.title!}" data-parsley-maxlength="150" placeholder="${msg['goods.main.column.title']}" >
                                     </div>
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group" hidden>
                                     <label for="keywords" class="col-sm-2 control-label">${msg['goods.main.column.keywords']}</label>
                                     <div class="col-sm-8">
                                         <input type="text" id="keywords" class="form-control" name="keywords" value="${obj.keywords!}" data-parsley-maxlength="150" >
                                     </div>
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group" hidden>
                                     <label class="col-sm-2 control-label">${msg['goods.main.column.tags']}</label>
                                     <div class="col-sm-8" align="left">
                                         <!--# for (o in tagList) { #-->
@@ -261,7 +261,7 @@ layout("/layouts/store.html"){
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="form-group">
+                                    <div class="form-group" hidden>
                                         <label for="sku" class="col-sm-2 control-label">${msg["goods.product.column.sku"]}</label>
                                         <div class="col-sm-8">
                                             <input type="hidden" name="productId" value="${productsList[0].id}">
@@ -284,7 +284,7 @@ layout("/layouts/store.html"){
                                             </div>
                                         </div>
                                         <label for="marketPrice" class="col-sm-1 control-label">${msg["goods.product.column.marketPrice"]}</label>
-                                        <div class="col-sm-2">
+                                        <div class="col-sm-2" hidden>
                                             <div class="input-group">
                                                 <span class="input-group-addon">${msg["goods.main.unit.money"]}</span>
                                                 <input type="text" class="form-control input-sm" name="marketPrice" id="marketPrice" value="${@money.fenToYuan(productsList[0].marketPrice)}" placeholder="${msg['goods.main.placeholder.priceunit']}">
@@ -296,16 +296,16 @@ layout("/layouts/store.html"){
                                         <div class="col-sm-2">
                                             <input type="text" id="stock" value="${productsList[0].stock!}" class="form-control" name="stock" data-parsley-type="integer" data-parsley-min="0" data-parsley-required="true" placeholder="${msg['goods.product.column.stock']}">
                                         </div>
-                                        <label for="buyMin" class="col-sm-1 control-label">${msg["goods.product.column.buyMin"]}</label>
-                                        <div class="col-sm-2">
-                                            <input type="text" id="buyMin" class="form-control" value="${productsList[0].buyMin!}" name="buyMin" data-parsley-type="integer" data-parsley-min="0" placeholder="${msg['goods.main.placeholder.defult']}1">
-                                        </div>
-                                        <label for="buyMax" class="col-sm-1 control-label">${msg["goods.product.column.buyMax"]}</label>
-                                        <div class="col-sm-2">
-                                            <input type="text" id="buyMax" class="form-control" value="${productsList[0].buyMax!}" name="buyMax" data-parsley-type="integer" data-parsley-min="0" placeholder="${msg['goods.main.placeholder.defult']}100">
-                                        </div>
+                                        <!--<label for="buyMin" class="col-sm-1 control-label">${msg["goods.product.column.buyMin"]}</label>-->
+                                        <!--<div class="col-sm-2">-->
+                                            <!--<input type="text" id="buyMin" class="form-control" value="${productsList[0].buyMin!}" name="buyMin" data-parsley-type="integer" data-parsley-min="0" placeholder="${msg['goods.main.placeholder.defult']}1">-->
+                                        <!--</div>-->
+                                        <!--<label for="buyMax" class="col-sm-1 control-label">${msg["goods.product.column.buyMax"]}</label>-->
+                                        <!--<div class="col-sm-2">-->
+                                            <!--<input type="text" id="buyMax" class="form-control" value="${productsList[0].buyMax!}" name="buyMax" data-parsley-type="integer" data-parsley-min="0" placeholder="${msg['goods.main.placeholder.defult']}100">-->
+                                        <!--</div>-->
                                     </div>
-                                    <div class="form-group">
+                                    <div class="form-group" hidden>
                                         <label class="col-sm-2 control-label">${msg['goods.product.column.partitionBy']}</label>
                                         <div class="col-sm-8" align="left">
                                             <label class="checkbox-inline line-height-sm"><input type="checkbox" name="partitionBy" value="0" ${productsList[0].partitionBy == 0 ? 'checked'} >${msg["goods.main.select.option.unlimited"]}</label>
@@ -350,7 +350,7 @@ layout("/layouts/store.html"){
                                         </div>
                                     </div>
 
-                                    <div class="form-group">
+                                    <div class="form-group" hidden>
                                         <label class="col-sm-2 control-label">${msg['goods.product.column.saleToMemberType']}</label>
                                         <div class="col-sm-8" align="left">
                                             <label class="checkbox-inline" ><input type="checkbox" name="saleToMemberType" value="0" ${productsList[0].saleToMemberType == 0 ? 'checked'}/>${msg["goods.main.select.option.unlimited"]}</label>
@@ -359,7 +359,7 @@ layout("/layouts/store.html"){
                                             <!--#}#-->
                                         </div>
                                     </div>
-                                    <div class="form-group">
+                                    <div class="form-group" hidden>
                                         <label class="col-sm-2 control-label">${msg["goods.product.column.deliveryTime"]}</label>
                                         <div class="col-sm-8" align="left">
                                             <label class="radio-inline" >
@@ -370,7 +370,7 @@ layout("/layouts/store.html"){
                                             </label>
                                         </div>
                                     </div>
-                                    <div class="form-group">
+                                    <div class="form-group" hidden>
                                         <label class="col-sm-2 control-label">${msg["goods.product.column.orderVerify"]}</label>
                                         <div class="col-sm-1 switcha">
                                             <div class="mr15">
@@ -390,7 +390,7 @@ layout("/layouts/store.html"){
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="form-group" id="div_spec" style="display: none">
+                                    <div class="form-group" id="div_spec" style="display: none" hidden>
                                         <label class="col-sm-2 control-label">${msg["goods.product.column.spec"]}</label>
                                         <div class="col-sm-8">
                                             <button id="specBtn" class="btn btn-primary" style="float: left;" type="button">${msg["goods.product.btn.setspec"]}</button>
@@ -399,7 +399,7 @@ layout("/layouts/store.html"){
                                 </div>
                                 <!-- product end -->
 
-                                <div class="form-group">
+                                <div class="form-group" hidden>
                                     <label class="col-sm-2 control-label">${msg['goods.main.column.recommend']}</label>
                                     <div class="col-sm-1 switcha">
                                         <div class="mr15">
@@ -420,14 +420,14 @@ layout("/layouts/store.html"){
                                         </div>
                                     </div>
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group" hidden>
                                     <label class="col-sm-2 control-label">${msg['goods.main.column.stockOffType']}</label>
                                     <div class="col-sm-8" align="left">
                                         <label class="radio-inline" ><input type="radio" id="stockOffType0" name="stockOffType" value="0" <!--#if(obj.stockOffType == 0){#-->checked<!--#}#--> />${msg['goods.enum.stockofftype.pay']}</label>
                                         <label class="radio-inline" ><input type="radio" id="stockOffType1" name="stockOffType" value="1" <!--#if(obj.stockOffType == 1){#-->checked<!--#}#--> />${msg['goods.enum.stockofftype.order']}</label>
                                     </div>
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group" hidden>
                                     <label class="col-sm-2 control-label">${msg["goods.main.column.saleTimeBy"]}</label>
                                     <div class="col-sm-8 form-inline line-height-sm" align="left">
                                         <label class="radio-inline line-height-sm" ><input type="radio" name="saleTimeBy" value="0" ${obj.saleTimeBy == 0 ? 'checked'} />${msg['goods.main.select.saleTimeBy.option.now']}</label>
@@ -442,7 +442,7 @@ layout("/layouts/store.html"){
                                         <input type="hidden" id="saleAt" name="tmp_saleAt" value="${@date.getDate(obj.saleAt)}" />
                                     </div>
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group" hidden>
                                     <label class="col-sm-2 control-label">${msg["goods.main.column.offsaleTime"]}</label>
                                     <div class="col-sm-8 form-inline line-height-sm" align="left">
                                         <label class="radio-inline line-height-sm" ><input type="radio" name="autoOff" value="0" ${!obj.autoOff ? 'checked'} />${msg["goods.main.select.option.unlimited"]}</label>
@@ -462,7 +462,7 @@ layout("/layouts/store.html"){
 
                     <div class="tab-pane fade" id="goods_info">
 
-                        <div class="form-group">
+                        <div class="form-group" hidden>
                             <label for="saleClientPC" class="col-sm-2 control-label">${msg['goods.main.column.saleClientPC']}</label>
                             <div class="col-sm-8 switcha">
                                 <div class="mr15">
@@ -470,7 +470,7 @@ layout("/layouts/store.html"){
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group" hidden>
                             <label class="col-sm-2 control-label">${msg["goods.main.info.pc.album"]}</label>
                             <div class="col-sm-8">
                                 <div id="queue_album_pc"></div>
@@ -496,14 +496,14 @@ layout("/layouts/store.html"){
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group" hidden>
                             <label for="pcNote" class="col-sm-2 control-label">${msg["goods.main.info.pc.note"]}</label>
                             <div class="col-sm-8">
                                 <textarea id="pcNote" name="pcNote" style="width:100%;height:200px;">${obj.pcNote!}</textarea>
                             </div>
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group" hidden>
                             <label for="saleClientWAP" class="col-sm-2 control-label">${msg['goods.main.column.saleClientWAP']}</label>
                             <div class="col-sm-8 switcha">
                                 <div class="mr15">
@@ -544,7 +544,7 @@ layout("/layouts/store.html"){
                             </div>
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group" hidden>
                             <label for="saleClientTV" class="col-sm-2 control-label">${msg['goods.main.column.saleClientTV']}</label>
                             <div class="col-sm-8 switcha">
                                 <div class="mr15">
@@ -552,7 +552,7 @@ layout("/layouts/store.html"){
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group" hidden>
                             <label class="col-sm-2 control-label">${msg["goods.main.info.tv.album"]}</label>
                             <div class="col-sm-8">
                                 <div id="queue_album_tv"></div>
@@ -578,7 +578,7 @@ layout("/layouts/store.html"){
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group" hidden>
                             <label for="tvNote" class="col-sm-2 control-label">${msg["goods.main.info.tv.note"]}</label>
                             <div class="col-sm-8">
                                 <textarea id="tvNote" name="tvNote" style="width:100%;height:200px;">${obj.tvNote!}</textarea>
@@ -1081,7 +1081,6 @@ layout("/layouts/store.html"){
                 var $dialog = $("#dialogSpecSelectArea");
                 var partitionBy = $("[name='partitionBy']:checked", $dialog).val();
                 var areas = {partitionBy: partitionBy};
-                debugger
                 if (partitionBy == '0') {//不限
                     areas.values = [];
                     $set.siblings(".js-product-area-values").val(JSON.stringify(areas));//.replace(/\"/g,"&quot;")

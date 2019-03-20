@@ -1081,7 +1081,6 @@ layout("/layouts/platform.html"){
                 var $dialog = $("#dialogSpecSelectArea");
                 var partitionBy = $("[name='partitionBy']:checked", $dialog).val();
                 var areas = {partitionBy: partitionBy};
-                debugger
                 if (partitionBy == '0') {//不限
                     areas.values = [];
                     $set.siblings(".js-product-area-values").val(JSON.stringify(areas));//.replace(/\"/g,"&quot;")

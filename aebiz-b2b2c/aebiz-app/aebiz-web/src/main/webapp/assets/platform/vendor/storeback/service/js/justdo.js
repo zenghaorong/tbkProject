@@ -1389,7 +1389,6 @@
 			IM._msgId = msgId;
 
 			var msg = $(document.getElementById(msgId));
-			debugger;
 
 			var videoUrl = msg.find('img').attr("videourl");
 			var str = '';

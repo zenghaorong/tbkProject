@@ -481,7 +481,6 @@ Comps.Qrcode.prototype.GetQueryString = function(name) {
 
 
 Comps.Qrcode.prototype.init = function() {
-    debugger;
     var that =this;
 
     var url="";
@@ -509,7 +508,6 @@ Comps.Qrcode.prototype.init = function() {
 
     }
     if (this.needAsyncInit) {
-        debugger;
         var img=that.imgSrc;
         $.ajax({
             type : "GET",
@@ -534,7 +532,6 @@ Comps.Qrcode.prototype.init = function() {
                     text:utf16to8(url),
                     src:that.imgSrc
                 })
-                debugger;
                 if(that.defineWidth=="" || that.defineWidth==0){
 
                     $("#"+that.compId+"_qrcode_img").find("canvas").attr("width",100);
@@ -1121,7 +1118,6 @@ Comps.CategoryComp.prototype.ajaxLoadData = function () {
     })
 }
 Comps.CategoryComp.prototype.render = function (data) {
-    debugger;
     var compId = this.config.compId;
     var showType = this.config.showType;
     var firstLevelNum = this.config.firstLevelNum;
@@ -1134,7 +1130,6 @@ Comps.CategoryComp.prototype.render = function (data) {
    if(data=="无数据"){
        liEle.remove();
    }else{
-       debugger;
        console.log(data);
        var length = data.length;
        if (length > firstLevelNum) {
@@ -1226,7 +1221,6 @@ Comps.CategoryComp.prototype._renderRitghtCat = function (newEle, m) {
 /************************************** slideProduct START**************************************/
 
 Comps.SlideProducts = function(option){
-    debugger;
     this.compId = option.compId;
     this.needAsyncInit = option.needAsyncInit;
     this.productUuids = option.productUuids;

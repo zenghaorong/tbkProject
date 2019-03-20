@@ -108,10 +108,8 @@ $(document).on("click",".cancelOrder",function(){
         btn: ['确定取消', '暂时不取消'],
         yes: function(index, layero){
             $.post("/member/order/update",{"id":orderId, "dictId":$("#dictId").val()},function (result) {
-                debugger;
                 layer.close(index);
                 if(result.code == 0){
-                    debugger;
                     query(status);
                 }
             })

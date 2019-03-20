@@ -1059,7 +1059,6 @@ layout("/layouts/platform.html"){
         $("#dialogSelectClass").modal("hide");
         $("#brandId").children().remove();
         $.get("${base!}/platform/self/goods/publish/class/" + id, function (ret) {
-            debugger;
             if(ret.code==0){
                 var type =  ret.data.goodsType;
                 $("input[name=typeId]:hidden").val("");

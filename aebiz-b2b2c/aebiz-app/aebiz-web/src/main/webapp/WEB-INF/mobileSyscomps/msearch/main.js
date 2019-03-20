@@ -300,7 +300,6 @@ Comps.msearch.prototype.searchModel = function () {
             _self.toUrl()
         }else{ //店铺
             //当前为店铺搜索
-            debugger;
             var storeList =  searchStore(searchKey);
             $('#storelist').html("");
             if(typeof storeList != "undefined" && storeList != null && storeList !="" && storeList.length>0){
@@ -397,7 +396,6 @@ Comps.msearch.prototype.initRender = function(searchType,searchKeyWord){
         $('.searchKey').val(searchKeyWord)
         var searchKey = searchKeyWord;
         var storeList =  searchStore(searchKey);
-        debugger;
         if(typeof storeList != "undefined" && storeList != null && storeList !="" && storeList.length>0){
             var storeListStr = '';
             for(var s=0;s<storeList.length;s++){

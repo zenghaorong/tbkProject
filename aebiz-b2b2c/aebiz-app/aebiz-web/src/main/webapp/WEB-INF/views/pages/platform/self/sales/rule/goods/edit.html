@@ -1214,7 +1214,6 @@ layout("/layouts/platform.html"){
                 };
             };break;
             case 'tpl_sale_goods_cnd_typeandbrand': {
-                debugger
                 var $cnds = $(".js-cnd", $cnd_group);
                 conditions = {
                     type: $cnds.attr("data-cnds-type"),
@@ -1379,7 +1378,6 @@ layout("/layouts/platform.html"){
     //初始化优惠条件
     function initConditions(cnd_template, conditions) {
         //优惠条件
-        debugger
         var $chk = $("[value='"+cnd_template+"']:radio").prop("checked", true);
         var $ruleGroup = $chk.parents(".js-rule-group:first");
         switch (cnd_template) {
@@ -1401,7 +1399,6 @@ layout("/layouts/platform.html"){
                     }
                     $actCndGroup = $(".js-cnd-sel-group .js-group-head:last", $ruleGroup);
                     actCnd = conditions.conditions[1];
-                    debugger
                     if (actCnd) {
                         $("select[name='cnd_op']>option[value='"+actCnd.op+"']", $actCndGroup).prop("selected", true);
                         $("[name='cnd_value']", $actCndGroup).val(actCnd.value);

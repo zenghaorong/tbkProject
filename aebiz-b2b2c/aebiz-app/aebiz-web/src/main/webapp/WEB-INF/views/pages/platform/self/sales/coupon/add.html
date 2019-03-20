@@ -968,7 +968,6 @@ layout("/layouts/platform.html"){
 
         //选择条件
         $(document).on("click", ".js-cnd-sel-cnd", function () {
-            debugger;
             var tpl_id = "";
             var data = {//模板数据
                 showDel:true,
@@ -1191,7 +1190,6 @@ layout("/layouts/platform.html"){
     }
 
     function fillForm() {
-        debugger;
         //规则名称
         $("[name='salesRuleOrder.name']:hidden").val("优惠券规则-"+$("[name='name']").val());
 

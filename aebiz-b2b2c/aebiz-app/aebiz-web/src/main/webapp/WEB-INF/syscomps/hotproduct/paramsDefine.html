@@ -525,7 +525,6 @@
             async: false,
             success: function(data) {
                 data=eval("("+data+")");
-                debugger;
                 var uuids = $("input[name='param_inProductUuids']").val();
                 ;
 
@@ -539,7 +538,6 @@
 
                 $.each(data.list,
                     function(index, colum) {
-                        debugger;
                         var oneHtml = $("#productModelHtml").children().clone();
 
                         oneHtml.attr("id", colum.uuid);

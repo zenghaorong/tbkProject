@@ -465,7 +465,6 @@
             <!--#}#-->
             bindLeft();
             $('#topnav a[data-pjax]').on('click', function () {
-                debugger;
                 $.get("${base!}/platform/home/left?url=" + $(this).attr("href"), function (data) {
                     $("#leftnav").html(data);
                     bindLeft();

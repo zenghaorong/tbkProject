@@ -2,12 +2,10 @@
  * Created by wenyu on 2017/6/2.
  */
 Comps.mbottombar = function(options){
-    debugger;
     this.options  = options.mapProps;
 }
 
 Comps.mbottombar.prototype.init = function(){
-    debugger;
     var _self = this;
     $.each($('.mui-bar-tab a'),function(index){
         $(this).attr('data-href',_self.options['icon'+(index+1)+'url']);

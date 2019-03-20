@@ -222,7 +222,6 @@ layout("/layouts/platform.html"){
     }
     function enable(id) {
             $.post("${base}/platform/shop/adv/position/enable/" + id, {}, function (data) {
-                debugger;
                 console.log(data);
             if (data.code == 0) {
                 $("#disable_"+id).attr("class", "fa fa-circle text-success ml5");

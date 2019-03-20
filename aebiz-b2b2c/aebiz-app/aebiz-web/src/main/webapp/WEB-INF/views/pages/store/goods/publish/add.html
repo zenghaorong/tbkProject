@@ -98,7 +98,7 @@ layout("/layouts/store.html"){
                                         </select>
                                     </div>
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group" hidden>
                                     <label class="col-sm-2 control-label">${msg['goods.main.column.brandId']}</label>
                                     <div class="col-sm-8">
                                         <select id="brandId" name="brandId" class="form-control" >
@@ -119,14 +119,14 @@ layout("/layouts/store.html"){
                                     </div>
                                 </div>
 
-                                <div class="form-group">
+                                <div class="form-group" hidden>
                                     <label for="keywords" class="col-sm-2 control-label">${msg["goods.main.column.keywords"]}</label>
                                     <div class="col-sm-8">
                                         <input type="text" id="keywords" class="form-control" name="keywords" data-parsley-maxlength="150" placeholder="${msg['goods.main.column.title']}">
                                     </div>
                                 </div>
 
-                                <div class="form-group">
+                                <div class="form-group" hidden>
                                     <label class="col-sm-2 control-label">${msg['goods.main.column.tags']}</label>
                                     <div class="col-sm-8" align="left">
                                         <!--# for (o in tagList) { #-->
@@ -205,7 +205,7 @@ layout("/layouts/store.html"){
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="form-group">
+                                    <div class="form-group" hidden>
                                         <label for="sku" class="col-sm-2 control-label">${msg["goods.product.column.sku"]}</label>
                                         <div class="col-sm-8">
                                             <input type="text" id="sku" value="" class="form-control input-sm" name="sku" data-parsley-type="alphanum" placeholder="${msg['goods.main.placeholder.sku']}" >
@@ -226,29 +226,29 @@ layout("/layouts/store.html"){
                                                 <input type="text" id="salePrice" class="form-control input-sm" name="salePrice" data-parsley-price="true" data-parsley-required="true" placeholder="${msg["goods.product.column.salePrice"]}">
                                             </div>
                                         </div>
-                                        <label for="marketPrice" class="col-sm-1 control-label">${msg["goods.product.column.marketPrice"]}</label>
-                                        <div class="col-sm-2">
-                                            <div class="input-group">
-                                                <span class="input-group-addon">${msg["goods.main.unit.money"]}</span>
-                                                <input type="text" id="marketPrice" class="form-control input-sm" name="marketPrice" data-parsley-price="true" placeholder="${msg["goods.product.column.marketPrice"]}">
-                                            </div>
-                                        </div>
+                                        <!--<label for="marketPrice" class="col-sm-1 control-label">${msg["goods.product.column.marketPrice"]}</label>-->
+                                        <!--<div class="col-sm-2">-->
+                                            <!--<div class="input-group">-->
+                                                <!--<span class="input-group-addon">${msg["goods.main.unit.money"]}</span>-->
+                                                <!--<input type="text" id="marketPrice" class="form-control input-sm" name="marketPrice" data-parsley-price="true" placeholder="${msg["goods.product.column.marketPrice"]}">-->
+                                            <!--</div>-->
+                                        <!--</div>-->
                                     </div>
                                     <div class="form-group">
                                         <label for="stock" class="col-sm-2 control-label"><span style="color: red">*</span>${msg["goods.product.column.stock"]}</label>
                                         <div class="col-sm-2">
                                             <input type="text" id="stock" class="form-control input-sm" name="stock" value="0" data-parsley-type="integer" data-parsley-min="0" data-parsley-required="true" placeholder="${msg['goods.main.placeholder.defult']}0">
                                         </div>
-                                        <label for="buyMin" class="col-sm-1 control-label">${msg["goods.product.column.buyMin"]}</label>
-                                        <div class="col-sm-2">
-                                            <input type="text" id="buyMin" class="form-control input-sm" value="1" name="buyMin" data-parsley-type="integer" data-parsley-min="0" placeholder="${msg['goods.main.placeholder.defult']}1">
-                                        </div>
-                                        <label for="buyMax" class="col-sm-1 control-label">${msg["goods.product.column.buyMax"]}</label>
-                                        <div class="col-sm-2">
-                                            <input type="text" id="buyMax" class="form-control input-sm" value="100"  name="buyMax" data-parsley-type="integer" data-parsley-min="0" placeholder="${msg['goods.main.placeholder.defult']}100">
-                                        </div>
+                                        <!--<label for="buyMin" class="col-sm-1 control-label">${msg["goods.product.column.buyMin"]}</label>-->
+                                        <!--<div class="col-sm-2">-->
+                                            <!--<input type="text" id="buyMin" class="form-control input-sm" value="1" name="buyMin" data-parsley-type="integer" data-parsley-min="0" placeholder="${msg['goods.main.placeholder.defult']}1">-->
+                                        <!--</div>-->
+                                        <!--<label for="buyMax" class="col-sm-1 control-label">${msg["goods.product.column.buyMax"]}</label>-->
+                                        <!--<div class="col-sm-2">-->
+                                            <!--<input type="text" id="buyMax" class="form-control input-sm" value="100"  name="buyMax" data-parsley-type="integer" data-parsley-min="0" placeholder="${msg['goods.main.placeholder.defult']}100">-->
+                                        <!--</div>-->
                                     </div>
-                                    <div class="form-group">
+                                    <div class="form-group" hidden>
                                         <label class="col-sm-2 control-label">${msg['goods.product.column.partitionBy']}</label>
                                         <div class="col-sm-8" align="left">
                                             <label class="checkbox-inline line-height-sm"><input type="checkbox" name="partitionBy" value="0" checked>${msg["goods.main.select.option.unlimited"]}</label>
@@ -267,7 +267,7 @@ layout("/layouts/store.html"){
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="form-group">
+                                    <div class="form-group" hidden>
                                         <label class="col-sm-2 control-label">${msg['goods.product.column.saleToMemberType']}</label>
                                         <div class="col-sm-8" align="left">
                                             <label class="checkbox-inline" ><input type="checkbox" name="saleToMemberType" value="0" checked/>${msg["goods.main.select.option.unlimited"]}</label>
@@ -276,7 +276,7 @@ layout("/layouts/store.html"){
                                             <!--#}#-->
                                         </div>
                                     </div>
-                                    <div class="form-group">
+                                    <div class="form-group" hidden>
                                         <label class="col-sm-2 control-label">${msg["goods.product.column.deliveryTime"]}</label>
                                         <div class="col-sm-8" align="left">
                                             <label class="radio-inline">
@@ -287,7 +287,7 @@ layout("/layouts/store.html"){
                                             </label>
                                         </div>
                                     </div>
-                                    <div class="form-group">
+                                    <div class="form-group" hidden>
                                         <label class="col-sm-2 control-label">${msg["goods.product.column.orderVerify"]}</label>
                                         <div class="col-sm-1 switcha">
                                             <div class="mr15">
@@ -310,7 +310,7 @@ layout("/layouts/store.html"){
                                 </div>
                                 <!-- product end -->
 
-                                <div class="form-group">
+                                <div class="form-group" hidden>
                                     <label class="col-sm-2 control-label">${msg['goods.main.column.recommend']}</label>
                                     <div class="col-sm-1 switcha">
                                         <div class="mr15">
@@ -331,14 +331,14 @@ layout("/layouts/store.html"){
                                         </div>
                                     </div>
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group" hidden>
                                     <label class="col-sm-2 control-label">${msg['goods.main.column.stockOffType']}</label>
                                     <div class="col-sm-8" align="left">
                                         <label class="radio-inline" ><input type="radio" id="stockOffType0" name="stockOffType" value="0" checked />${msg['goods.enum.stockofftype.pay']}</label>
                                         <label class="radio-inline" ><input type="radio" id="stockOffType1" name="stockOffType" value="1" />${msg['goods.enum.stockofftype.order']}</label>
                                     </div>
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group" hidden>
                                     <label class="col-sm-2 control-label">${msg["goods.main.column.saleTimeBy"]}</label>
                                     <div class="col-sm-8 form-inline line-height-sm" align="left">
                                         <label class="radio-inline line-height-sm" ><input type="radio" name="saleTimeBy" value="0" checked />${msg['goods.main.select.saleTimeBy.option.now']}</label>
@@ -353,7 +353,7 @@ layout("/layouts/store.html"){
                                         <input type="hidden" id="saleAt" name="tmp_saleAt" value="${@date.getDateTime()}" />
                                     </div>
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group" hidden>
                                     <label class="col-sm-2 control-label">${msg["goods.main.column.offsaleTime"]}</label>
                                     <div class="col-sm-8 form-inline line-height-sm" align="left">
                                         <label class="radio-inline line-height-sm" ><input type="radio" name="autoOff" value="0" checked />${msg["goods.main.select.option.unlimited"]}</label>
@@ -372,7 +372,7 @@ layout("/layouts/store.html"){
 
                     <!--#/* 商品描述 */#-->
                     <div class="tab-pane fade" id="goods_info">
-                        <div class="form-group">
+                        <div class="form-group" hidden>
                             <label class="col-sm-2 control-label">${msg['goods.main.column.saleClientPC']}</label>
                             <div class="col-sm-8 switcha">
                                 <div class="mr15">
@@ -380,7 +380,7 @@ layout("/layouts/store.html"){
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group" hidden>
                             <label class="col-sm-2 control-label">${msg["goods.main.info.pc.album"]}</label>
                             <div class="col-sm-8">
                                 <div id="queue_album_pc"></div>
@@ -390,14 +390,14 @@ layout("/layouts/store.html"){
                                 <div id="div_img_album_pc" class="div-img-album"></div>
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group" hidden>
                             <label for="pcNote" class="col-sm-2 control-label">${msg["goods.main.info.pc.note"]}</label>
                             <div class="col-sm-8">
                                 <textarea id="pcNote" name="pcNote" style="width:100%;height:200px;"></textarea>
                             </div>
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group" hidden>
                             <label for="saleClientWAP" class="col-sm-2 control-label">${msg['goods.main.column.saleClientWAP']}</label>
                             <div class="col-sm-8 switcha">
                                 <div class="mr15">
@@ -422,7 +422,7 @@ layout("/layouts/store.html"){
                             </div>
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group" hidden>
                             <label for="saleClientTV" class="col-sm-2 control-label">${msg['goods.main.column.saleClientTV']}</label>
                             <div class="col-sm-8 switcha">
                                 <div class="mr15">
@@ -430,7 +430,7 @@ layout("/layouts/store.html"){
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group" hidden>
                             <label class="col-sm-2 control-label">${msg["goods.main.info.tv.album"]}</label>
                             <div class="col-sm-8">
                                 <div id="queue_album_tv"></div>
@@ -440,7 +440,7 @@ layout("/layouts/store.html"){
                                 <div id="div_img_album_tv" class="div-img-album"></div>
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group" hidden>
                             <label for="tvNote" class="col-sm-2 control-label">${msg["goods.main.info.tv.note"]}</label>
                             <div class="col-sm-8">
                                 <textarea id="tvNote" name="tvNote" style="width:100%;height:200px;"></textarea>
@@ -889,7 +889,6 @@ layout("/layouts/store.html"){
             core: {
                 data: function (node, callback) {
                     $.get("${base}/store/goods/list/class/tree", function (ret) {
-                        debugger;
                         var classes = [];
                         if (ret) {
                             for (var i = 0; i < ret.length; i++) {
@@ -909,7 +908,6 @@ layout("/layouts/store.html"){
                 multiple: false
             }
         }).on("dblclick.jstree", function (event) {
-            debugger;
             var tree = $(this).jstree();
             var node = tree.get_selected(true);
             if (node.length && tree.is_leaf(node)) {
@@ -1063,7 +1061,6 @@ layout("/layouts/store.html"){
         $("#dialogSelectClass").modal("hide");
         $("#brandId").children().remove();
         $.get("${base!}/store/goods/publish/class/" + id, function (ret) {
-            debugger;
             if(ret.code==0){
                 var type =  ret.data.goodsType;
                 $("input[name=typeId]:hidden").val("");
@@ -1539,18 +1536,18 @@ layout("/layouts/store.html"){
         }
 
         //验证：相应终端相册图必填
-        if ($("#saleClientPC").is(":checked") && $.trim($("#div_img_album_pc").html()) === "") {
-            Toast.error("${msg['goods.main.tip.pcalbumrequired']}");
-            return false;
-        }
+        // if ($("#saleClientPC").is(":checked") && $.trim($("#div_img_album_pc").html()) === "") {
+        //     Toast.error("${msg['goods.main.tip.pcalbumrequired']}");
+        //     return false;
+        // }
         if ($("#saleClientWAP").is(":checked") && $.trim($("#div_img_album_wap").html()) === "") {
             Toast.error("${msg['goods.main.tip.wapalbumrequired']}");
             return false;
         }
-        if ($("#saleClientTV").is(":checked") && $.trim($("#div_img_album_tv").html()) === "") {
-            Toast.error("${msg['goods.main.tip.tvalbumrequired']}");
-            return false;
-        }
+        // if ($("#saleClientTV").is(":checked") && $.trim($("#div_img_album_tv").html()) === "") {
+        //     Toast.error("${msg['goods.main.tip.tvalbumrequired']}");
+        //     return false;
+        // }
         return true;
     }
     

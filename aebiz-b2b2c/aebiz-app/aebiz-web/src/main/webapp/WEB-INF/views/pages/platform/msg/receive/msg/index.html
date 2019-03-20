@@ -215,7 +215,6 @@ layout("/layouts/platform.html"){
         }
     }
     function changemsgtype(type){
-        debugger;
         var url ="${base}/platform/msg/receive/msg/data?msgType="+$("#menuMsgType").val()+"&type="+type;
         datatable.ajax.url(url).load();
     }

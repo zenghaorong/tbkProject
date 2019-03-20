@@ -140,7 +140,7 @@ public class StoreGoodsListController {
             fieldMap.put("hasSpec", hasSpec);
         }
         fieldMap.put("storeId", StringUtil.getStoreId());
-        return goodsService.data(dataTable.getLength(), dataTable.getStart(), dataTable.getDraw(), dataTable.getOrders(), dataTable.getColumns(), "^(tagList|goodsClass|goodsType|goodsBrand)$", goods, fieldMap);
+        return goodsService.data(dataTable.getLength(), dataTable.getStart(), dataTable.getDraw(), dataTable.getOrders(), dataTable.getColumns(), "^(tagList|goodsClass|goodsType|goodsBrand|productList)$", goods, fieldMap);
     }
 
     /**

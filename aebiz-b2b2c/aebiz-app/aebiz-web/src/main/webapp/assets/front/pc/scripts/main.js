@@ -41,7 +41,6 @@ function FloatMul(arg1,arg2)
 }
 
 $(document).on("click","#y_loadlogin_id",function () {
-    debugger;
     var loginName = $("#yenew_loginName").val();
     if(loginName == null || loginName == ""){
         $("#error_msg").html("请输入用户名/手机");
@@ -94,7 +93,6 @@ $(document).on("click","#y_loadlogin_id",function () {
         dataType: "json",
         success: function(data){
             if(data.code == "0"){
-                debugger;
                 $("#modal-login-form").modal('hide');//关闭模态框
                 var info=localStorage.getItem("href");
                 localStorage.removeItem("href");

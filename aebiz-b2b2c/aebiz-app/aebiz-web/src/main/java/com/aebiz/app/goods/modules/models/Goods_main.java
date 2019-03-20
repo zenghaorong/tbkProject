@@ -206,6 +206,9 @@ public class Goods_main extends BaseModel implements Serializable {
     @One(target = Goods_brand.class, field = "brandId")
     private Goods_brand goodsBrand;
 
+    @One(target = Goods_product.class, field = "id")
+    private Goods_product goods_product;
+
     @Many(field = "goodsId")
     private List<Goods_image> imageList;
 
@@ -542,5 +545,13 @@ public class Goods_main extends BaseModel implements Serializable {
 
     public void setStoreGoodsClassList(List<Store_goodsclass> storeGoodsClassList) {
         this.storeGoodsClassList = storeGoodsClassList;
+    }
+
+    public Goods_product getGoods_product() {
+        return goods_product;
+    }
+
+    public void setGoods_product(Goods_product goods_product) {
+        this.goods_product = goods_product;
     }
 }

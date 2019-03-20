@@ -55,7 +55,6 @@ Comps.retrievePwdTwo.prototype.retrieveTwo = function (defineUrl) {
                 type:'POST',
                 dataType:'JSON',
                 success:function(data){
-                    debugger;
                     console.log(data);
                     if(data.return_code != "0"){
                         mui.alert(data.message,'提示');

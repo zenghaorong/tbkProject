@@ -103,7 +103,6 @@ layout("/layouts/platform.html"){
         });
     }
     function del(id) {
-        debugger;
         var dialog = $("#dialogDelete");
         dialog.modal("show");
         dialog.find("#okDel").unbind("click");
@@ -122,7 +121,6 @@ layout("/layouts/platform.html"){
         });
     }
     function delCheck() {
-        debugger;
         var chks = datatable.rows('.selected').data();
         if (chks.length > 0) {
             var ids = [];

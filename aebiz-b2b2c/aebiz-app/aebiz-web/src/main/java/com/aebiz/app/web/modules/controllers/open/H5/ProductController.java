@@ -5,20 +5,23 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
  * @Auther: zenghaorong
- * @Date: 2019/3/23  20:54
+ * @Date: 2019/3/23  21:39
  * @Description:
  */
 @Controller
-@RequestMapping("/open/h5/cms")
-public class CmsVideoController {
+@RequestMapping("/open/h5/product")
+public class ProductController {
 
     /**
-     * 进入视频列表页
+     * 进入商品列表页  或 进入宝妈专区
      */
-    @RequestMapping("/video.html")
+    @RequestMapping("/list.html")
     public String index() {
-        return "pages/front/h5/niantu/videoList";
+        return "pages/front/h5/niantu/productList";
     }
+
+
+
 
 
 

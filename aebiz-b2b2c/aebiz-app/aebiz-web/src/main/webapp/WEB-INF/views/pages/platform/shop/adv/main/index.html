@@ -35,12 +35,12 @@ layout("/layouts/platform.html"){
                 <thead>
                     <tr>
                         <th>${msg['shop.adv.main.column.title']}</th>
-                        <th hidden="hidden">${msg['shop.adv.main.column.imgurl']}</th>
+                        <th>${msg['shop.adv.main.column.imgurl']}</th>
                         <th>${msg['shop.adv.main.column.url']}</th>
                         <th>${msg['shop.adv.main.column.startAt']}</th>
                         <th>${msg['shop.adv.main.column.endAt']}</th>
                         <th>${msg['shop.adv.main.column.location']}</th>
-                        <th>${msg['shop.adv.main.column.positionId']}</th>
+                        <!--<th>${msg['shop.adv.main.column.positionId']}</th>-->
                         <th>${msg['globals.table.column.operation']}</th>
                     </tr>
                 </thead>
@@ -105,6 +105,7 @@ layout("/layouts/platform.html"){
             "order": [[0, "desc"]],
             "columns": [
                     {"data": "title", "bSortable": true},
+                    {"data": "imgurl", "bSortable": true},
                     {"data": "url", "bSortable": true},
                     {"data": "startAt", "bSortable": true},
                     {"data": "endAt", "bSortable": true},
@@ -114,12 +115,18 @@ layout("/layouts/platform.html"){
             "columnDefs": [
                 {
                     "render": function (data, type, row) {
+                        return '<img src="'+data+'" style="width: 100px;" />';
+                    },
+                    "targets": 1
+                },
+                {
+                    "render": function (data, type, row) {
                         if (data) {
                             return moment(parseInt(data*1000)).format("YYYY-MM-DD HH:mm:ss");
                         }
                         return '';
                     },
-                    "targets": 2
+                    "targets": 4
                 },
                 {
                     "render": function (data, type, row) {
@@ -127,7 +134,7 @@ layout("/layouts/platform.html"){
                         return  '<a class="location" href="#"  id="location'+row.id+'" data-url="${base}/platform/shop/adv/main/location" data-type="text" data-pk="'+row.id+'" data-title="${msg["shop.logistics.column.sortfiled"]}" class="editable editable-click" data-original-title="" title="" style="background-color: rgba(0, 0, 0, 0);">'+data+'</a>';
 
                     },
-                    "targets": 4
+                    "targets": 2
                 },
                 {
                     "render": function (data, type, row) {

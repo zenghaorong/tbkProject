@@ -21,7 +21,7 @@
                 <input type="search" class="mui-input-clear" style="background: white;" placeholder="请输入品牌和名称">
 		    </div>
 		</header>
-	
+	<div id="vue">
 		<!--底部导航栏-->
 		<nav class="mui-bar mui-bar-tab" style="background: white;">
 			<a class="mui-tab-item mui-active" href="#tabbar">
@@ -40,25 +40,14 @@
 				<!-- 额外增加的一个节点(循环轮播：第一个节点是最后一张轮播) -->
 				<div class="mui-slider-item mui-slider-item-duplicate">
 					<a href="#">
-						<img src="../images/yuantiao.jpg">
-					</a>
-				</div>
-				<!-- 第一张 -->
-				<div class="mui-slider-item">
-					<a href="#">
 						<img src="${base!}/assets/front/h5/img/shuijiao.jpg">
 					</a>
 				</div>
+
 				<!-- 第二张 -->
-				<div class="mui-slider-item">
+				<div class="mui-slider-item" v-for="item in bannerList" :key="item.id">
 					<a href="#">
-						<img src="${base!}/assets/front/h5/img/muwu.jpg">
-					</a>
-				</div>
-				<!-- 第三张 -->
-				<div class="mui-slider-item">
-					<a href="#">
-						<img src="${base!}/assets/front/h5/img/cbd.jpg">
+						<img :src="item.imgurl">
 					</a>
 				</div>
 		
@@ -118,17 +107,63 @@
 		            
 		        </ul> 
 		</div>
+	</div>
 		
 		<script type="text/javascript" src="${base!}/assets/front/h5/js/mui.js" ></script>
+		<script type="text/javascript" src="${base!}/assets/front/h5/js/vue.js" ></script>
+		<script type="text/javascript" src="${base!}/assets/front/h5/js/jquery-2.0.0.min.js" ></script>
 		<script type="application/javascript">
 			mui.init({
 				swipeBack:true //启用右滑关闭功能
 			});
-			var slider = mui("#slider");
-		    slider.slider({
-				interval: 5000
-			});
-	
+
+
+            var vue = new Vue({
+                el: '#vue',
+                data: {
+                    bannerList: [],
+                },
+                created:function () {   //实例初始化创建完成执行
+
+                    this.getBanner()     //调用自身方法
+
+                },
+                methods:{              //定义封装方法
+                    //获取列表
+                    getBanner:function () {
+                        var self = this;
+                        $.ajax({
+                            type:"POST",
+                            url:"${base!}/open/h5/niantu/getAdv.html",
+                            dataType:"JSON",
+							data:{
+
+							},
+                            success:function(data){
+                                if (data.code == 0) {
+                                   var d = data.data;
+                                    self.bannerList = d;
+                                    var slider = mui("#slider");
+                                    slider.slider({
+                                        interval: 5000
+                                    });
+                                } else {
+
+                                }
+                            }
+                        });
+
+                    }
+                },
+                watch:{     //监听器
+                    // carModel:function () {
+                    //     this.getProvince();
+                    // }
+                }
+
+            })
+
+
 		</script>
 	</body>
 </html>

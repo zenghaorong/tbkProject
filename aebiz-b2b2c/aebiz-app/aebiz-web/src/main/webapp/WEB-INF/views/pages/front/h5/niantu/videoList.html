@@ -51,15 +51,15 @@
     </a>
 
 </nav>
-<div class="mui-content" style="background: white;">
+<div class="mui-content" style="background: white;" id="vue">
     <ul class="mui-table-view">
-        <li class="mui-table-view-cell mui-media">
+        <li class="mui-table-view-cell mui-media" v-for="item in videoList" :key="item.id">
             <a href="javascript:;">
-                <img class="mui-media-object mui-pull-left" src="${base!}/assets/front/h5/img/xianren.png">
+                <img class="mui-media-object mui-pull-left" :src="item.imageUrl">
                 <div class="mui-media-body" style="white-space:normal;">
-                    粘土视频是原创类高清视频,于2018-04-21上映
+                    {{item.videoTitle}}
                     <p class='mui-ellipsis'>
-                        <span class="jiage-text">￥26.5</span>
+                        <span class="jiage-text">￥{{item.price}}</span>
                         <span>月销106比</span>
                         <img class="pon right1" src="${base!}/assets/front/h5/img/购物车.png" width="25px"/>
                     </p>
@@ -69,10 +69,54 @@
     </ul>
 </div>
 <script type="text/javascript" src="${base!}/assets/front/h5/js/mui.js" ></script>
+<script type="text/javascript" src="${base!}/assets/front/h5/js/vue.js" ></script>
+<script type="text/javascript" src="${base!}/assets/front/h5/js/jquery-2.0.0.min.js" ></script>
 <script type="application/javascript">
     mui.init({
         swipeBack:true //启用右滑关闭功能
     });
+
+    var vue = new Vue({
+        el: '#vue',
+        data: {
+            videoList: [],
+        },
+        created:function () {   //实例初始化创建完成执行
+
+            this.getvideoList()     //调用自身方法
+
+        },
+        methods:{              //定义封装方法
+            //获取列表
+            getvideoList:function () {
+                var self = this;
+                $.ajax({
+                    type:"POST",
+                    url:"${base!}/open/h5/cms/videoList.html",
+                    dataType:"JSON",
+                    data:{
+
+                    },
+                    success:function(data){
+                        if (data.code == 0) {
+                            var d = data.data;
+                            self.videoList = d;
+                        } else {
+
+                        }
+                    }
+                });
+
+            }
+        },
+        watch:{     //监听器
+            // carModel:function () {
+            //     this.getProvince();
+            // }
+        }
+
+    })
+
 </script>
 </body>
 </html>

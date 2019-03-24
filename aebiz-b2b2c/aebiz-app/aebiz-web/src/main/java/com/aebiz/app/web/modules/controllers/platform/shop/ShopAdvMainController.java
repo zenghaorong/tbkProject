@@ -59,14 +59,14 @@ public class ShopAdvMainController {
 		NutMap re = shopAdvMainService.data(dataTable.getLength(), dataTable.getStart(),
                 dataTable.getDraw(), dataTable.getOrders(), dataTable.getColumns(), cnd, null);
         List<Shop_adv_main> mains = (List<Shop_adv_main>)re.get("data");
-        if(mains !=null && mains.size()>0){
-            for(int i=0;i<mains.size();i++){
-                Shop_adv_main main = mains.get(i);
-                String name = shopAdvPositionService.fetch(main.getPositionId()).getName();
-                main.setPositionId(name);
-                mains.set(i,main);
-            }
-        }
+//        if(mains !=null && mains.size()>0){
+//            for(int i=0;i<mains.size();i++){
+//                Shop_adv_main main = mains.get(i);
+//                String name = shopAdvPositionService.fetch(main.getPositionId()).getName();
+//                main.setPositionId(name);
+//                mains.set(i,main);
+//            }
+//        }
         re.put("data",mains);
     	return re;
     }

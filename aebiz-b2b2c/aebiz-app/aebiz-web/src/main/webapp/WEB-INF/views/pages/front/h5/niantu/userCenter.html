@@ -8,8 +8,8 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
 
     <!--标准mui.css-->
-    <link rel="stylesheet" href="css/mui.min.css" />
-    <link rel="stylesheet" href="css/hryc.css" />
+    <link rel="stylesheet" href="${base!}/assets/front/h5/css/mui.min.css" />
+    <link rel="stylesheet" href="${base!}/assets/front/h5/css/hryc.css" />
     <!--App自定义的css-->
     <!--<link rel="stylesheet" type="text/css" href="../css/app.css"/>-->
     <style>
@@ -30,7 +30,7 @@
 
 <!--底部导航栏-->
 <nav class="mui-bar mui-bar-tab" style="background: white;">
-    <a class="mui-tab-item " href="#tabbar">
+    <a class="mui-tab-item" onclick="window.location.href='${base!}/open/h5/niantu/index.html'" >
         <span class="mui-icon mui-icon-home"></span>
         <span class="mui-tab-label">首页</span>
     </a>
@@ -45,7 +45,7 @@
         <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3" style="padding: 0;border:0;">
         <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3" style="padding: 0;border:0;">
             <a href="productList.html">
-                <img src="img/tu1.png" width="80px;"/>
+                <img src="${base!}/assets/front/h5/img/tu1.png" width="80px;"/>
                 <div class="mui-media-body" style="color: white;">我逝去的青春</div>
             </a>
         </li>
@@ -57,31 +57,31 @@
     <ul class="mui-table-view mui-grid-view mui-grid-9 noborder" style="background: white;">
         <li class="mui-table-view-cell mui-media mui-col-xs-2 mui-col-sm-3" style="padding: 0;margin-left:10px;border: 0; ">
             <a href="productList.html">
-                <img src="img/c1.png" width="62px;"/>
+                <img src="${base!}/assets/front/h5/img/c1.png" width="62px;"/>
                 <div class="mui-media-body">待付款</div>
             </a>
         </li>
         <li class="mui-table-view-cell mui-media mui-col-xs-2 mui-col-sm-3" style="padding: 0;margin-left:10px;border: 0; ">
             <a href="#">
-                <img src="img/c2.png" width="62px;"/>
+                <img src="${base!}/assets/front/h5/img/c2.png" width="62px;"/>
                 <div class="mui-media-body">待发货</div>
             </a>
         </li>
         <li class="mui-table-view-cell mui-media mui-col-xs-2 mui-col-sm-3" style="padding: 0;margin-left:10px;border: 0; ">
             <a href="#">
-                <img src="img/c3.png" width="62px;"/>
+                <img src="${base!}/assets/front/h5/img/c3.png" width="62px;"/>
                 <div class="mui-media-body">待收货</div>
             </a>
         </li>
         <li class="mui-table-view-cell mui-media mui-col-xs-2 mui-col-sm-3" style="padding: 0;margin-left:10px;border: 0; ">
             <a href="#">
-                <img src="img/c4.png" width="62px;"/>
+                <img src="${base!}/assets/front/h5/img/c4.png" width="62px;"/>
                 <div class="mui-media-body">待评价</div>
             </a>
         </li>
         <li class="mui-table-view-cell mui-media mui-col-xs-2 mui-col-sm-3" style="padding: 0;margin-left:10px;border: 0; ">
             <a href="#">
-                <img src="img/c5.png" width="62px;"/>
+                <img src="${base!}/assets/front/h5/img/c5.png" width="62px;"/>
                 <div class="mui-media-body">退款售后</div>
             </a>
         </li>
@@ -104,7 +104,7 @@
     </li>
 </ul>
 
-<script type="text/javascript" src="js/mui.js" ></script>
+<script type="text/javascript" src="${base!}/assets/front/h5/js/mui.js" ></script>
 <script type="application/javascript">
     mui.init({
         swipeBack:true //启用右滑关闭功能

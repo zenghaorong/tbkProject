@@ -6,6 +6,7 @@ import com.aebiz.app.shop.modules.services.ShopAdvMainService;
 import com.aebiz.baseframework.base.Result;
 import com.aebiz.baseframework.view.annotation.SJson;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.nutz.dao.Cnd;
 import org.nutz.json.Json;
 import org.nutz.log.Log;
@@ -14,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -75,6 +78,15 @@ public class NianTuIndexController {
     @RequestMapping("tutorial.html")
     public String tutorial() {
         return "pages/front/h5/niantu/tutorial";
+    }
+
+    /**
+     * 进入黏土教程详情页
+     */
+    @RequestMapping("tutorialDetails.html")
+    public String tutorialDetails(String id, HttpServletRequest req) {
+        req.setAttribute("id",id);
+        return "pages/front/h5/niantu/tutorialDetails";
     }
 
     /**

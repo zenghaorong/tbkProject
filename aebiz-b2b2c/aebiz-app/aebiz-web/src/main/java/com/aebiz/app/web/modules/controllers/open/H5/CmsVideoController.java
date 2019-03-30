@@ -1,5 +1,6 @@
 package com.aebiz.app.web.modules.controllers.open.H5;
 
+import com.aebiz.app.cms.modules.models.Cms_article;
 import com.aebiz.app.cms.modules.models.Cms_channel;
 import com.aebiz.app.cms.modules.models.Cms_video;
 import com.aebiz.app.cms.modules.services.CmsArticleService;
@@ -64,10 +65,28 @@ public class CmsVideoController {
             cnd.and("delFlag", "=", 0 );
             cnd.desc("sort");
 
-            Pagination pagination = cmsVideoService.listPage(pageNumber,15,cnd);
+            Pagination pagination = cmsVideoService.listPage(pageNumber,15,cnd,"^(id|videoTitle|imageUrl|price)$");
             return Result.success("ok",pagination.getList());
         } catch (Exception e) {
             log.error("获取视频列表异常",e);
+            return Result.error("fail");
+        }
+    }
+
+    /**
+     * 获得视频详情信息
+     * @return
+     */
+    @RequestMapping("videoDetail.html")
+    @SJson
+    public Result getVideoDetail(String id){
+        try {
+
+            Cms_video cms_video = cmsVideoService.fetch(id);
+            cms_video.setVideoUrl("");
+            return Result.success("ok",cms_video);
+        } catch (Exception e) {
+            log.error("获取视频详情异常",e);
             return Result.error("fail");
         }
     }
@@ -108,7 +127,24 @@ public class CmsVideoController {
             Pagination pagination = cmsArticleService.listPage(pageNumber,15,cnd);
             return Result.success("ok",pagination.getList());
         } catch (Exception e) {
-            log.error("获取视频列表异常",e);
+            log.error("获取图文列表异常",e);
+            return Result.error("fail");
+        }
+    }
+
+
+    /**
+     * 获得 黏土教程 ，达人秀场 ，创意美术 详情信息
+     * @return
+     */
+    @RequestMapping("cmsArticle.html")
+    @SJson
+    public Result cmsArticle(String id){
+        try {
+            Cms_article cms_article = cmsArticleService.fetch(id);
+            return Result.success("ok",cms_article);
+        } catch (Exception e) {
+            log.error("获取图文详情异常",e);
             return Result.error("fail");
         }
     }

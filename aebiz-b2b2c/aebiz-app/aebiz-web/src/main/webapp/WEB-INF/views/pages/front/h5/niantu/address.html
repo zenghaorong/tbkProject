@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>订单确认</title>
+    <title>收货地址</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -34,16 +34,12 @@
 <header class="mui-bar mui-bar-nav top-color">
     <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: white;"></a>
     <h1 class="mui-title" style="color: white;">
-        订单确认
+        收货地址
     </h1>
 </header>
 
 <div class="mui-card" style="margin-top: 60px;">
-    <div class="mui-card-header">
-        <a class="mui-navigate-right" href="${base!}/open/h5/address/goAddress.html">
-        收货地址
-       </a>
-    </div>
+
     <div class="mui-card-header">
         <span>曾浩容</span><span>13655554127</span>
     </div>
@@ -52,49 +48,19 @@
             安徽省合肥市蜀山区黄山路与香樟大道交口西北角
         </div>
     </div>
-</div>
-
-<div class="mui-card">
     <div class="mui-card-header">
-        商品金额<span style="color: red;">￥63.00</span>
-    </div>
-    <div class="mui-card-header">
-        运费<span style="color: red;">￥0.00</span>
-    </div>
-    <div class="mui-card-header">
-        优惠劵<span style="color: red;">￥10.00</span>
-    </div>
-</div>
-
-<div class="mui-card">
-    <div class="mui-card-content">
-        <ul class="mui-table-view">
-            <li class="mui-table-view-cell mui-media" >
-                <a href="#">
-                    <img class="mui-media-object mui-pull-left" src="${base!}/assets/front/h5/img/商品图片6.JPG">
-                    <div class="mui-media-body" style="white-space:normal;">
-                        <span>超轻粘土24色儿童无毒橡皮泥彩泥太空水晶黏土女孩手工沙玩具套装</span>
-                        <p class='mui-ellipsis'style="margin-top: 35px;margin-left: 110px;">
-                            <span class="jiage-text">￥36.00</span>
-                            <span>*1</span>
-                        </p>
-                    </div>
-                </a>
-            </li>
-        </ul>
-    </div>
-</div>
-
-<nav class="mui-bar mui-bar-tab" style="height: 40px;">
-    <div class="mui-input-row mui-password" style="border: 0px;">
-        <button type="button" id="place"  class="mui-btn mui-btn-primary" style="width: 30%;top: 0px;line-height:1;
-            border: 0;background-color:red;">立即支付</button>
-        <button type="button" style="width: 70%;top: 0px;line-height:1;border: 0;background-color:white;"
-                class="mui-btn mui-btn-primary" id="review">
-            <span style="color: black;">应付:</span><span style="color: red;padding-left: 10px;">36.00</span>
+        <button type="button" class="mui-btn mui-btn-success" onclick="location.href='${base!}/open/h5/address/goAddressUp.html'">编辑</button>
+        <button type="button" class="mui-btn mui-btn-danger mui-btn-outlined">
+            删除
         </button>
     </div>
-</nav>
+</div>
+
+<div style="width: 300px;margin: 0 auto;">
+  <button type="button" class="mui-btn mui-btn-primary mui-btn-block" onclick="location.href='${base!}/open/h5/address/goAddressAdd.html'">新增地址</button>
+</div>
+
+
 
 <script type="text/javascript" src="${base!}/assets/front/h5/js/mui.js" ></script>
 <script type="text/javascript" src="${base!}/assets/front/h5/js/vue.js" ></script>

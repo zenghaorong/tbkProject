@@ -4,6 +4,7 @@ import com.aebiz.baseframework.base.model.BaseModel;
 import org.nutz.dao.entity.annotation.*;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @Auther: zenghaorong
@@ -19,7 +20,7 @@ public class Cms_review extends BaseModel implements Serializable {
     @Name
     @Comment("ID")
     @ColDefine(type = ColType.VARCHAR, width = 32)
-    @Prev(els = {@EL("ig(view.tableName,'')")})
+    @Prev(els = {@EL("uuid()")})
     private String id;
 
     @Column
@@ -42,9 +43,14 @@ public class Cms_review extends BaseModel implements Serializable {
     private String cmsTitle;
 
     @Column
-    @Comment("回复父级编号")
+    @Comment("回复父级评论编号")
     @ColDefine(type = ColType.VARCHAR, width = 32)
     private String reviewId;
+
+    @Column
+    @Comment("回复父级回复编号（区分回复的是评论底下哪条回复）")
+    @ColDefine(type = ColType.VARCHAR, width = 32)
+    private String reviewReplyId;
 
     @Column
     @Comment("类型 1评论 2回复")
@@ -85,6 +91,9 @@ public class Cms_review extends BaseModel implements Serializable {
     @Comment("是否为官方 1是 2不是")
     @ColDefine(type = ColType.CHAR, width = 2)
     private String isStore;
+
+    @Comment("回复实体")
+    private List<ReplyVO> replyVOList;
 
 
     public String getId() {
@@ -197,5 +206,21 @@ public class Cms_review extends BaseModel implements Serializable {
 
     public void setCmsTitle(String cmsTitle) {
         this.cmsTitle = cmsTitle;
+    }
+
+    public List<ReplyVO> getReplyVOList() {
+        return replyVOList;
+    }
+
+    public void setReplyVOList(List<ReplyVO> replyVOList) {
+        this.replyVOList = replyVOList;
+    }
+
+    public String getReviewReplyId() {
+        return reviewReplyId;
+    }
+
+    public void setReviewReplyId(String reviewReplyId) {
+        this.reviewReplyId = reviewReplyId;
     }
 }

@@ -92,23 +92,35 @@
 <ul class="mui-table-view">
     <li class="mui-table-view-cell">
         <a class="mui-navigate-right">
-            <img width="30" style="margin-bottom: -10px;" src="img/cr1.png">
+            <img width="30" style="margin-bottom: -10px;" src="${base!}/assets/front/h5/img/cr1.png" />
             <span style="margin-left: 15px;">我的积分</span>
         </a>
     </li>
     <li class="mui-table-view-cell">
         <a class="mui-navigate-right">
-            <img width="30" style="margin-bottom: -10px;" src="img/cr2.png">
+            <img width="30" style="margin-bottom: -10px;" src="${base!}/assets/front/h5/img/cr2.png" />
             <span style="margin-left: 15px;">我的视频</span>
         </a>
     </li>
+
 </ul>
 
+<div class="mui-content-padded" style="width: 70%;margin: 60px auto;margin-top:60px;">
+    <button id='out' class="mui-btn mui-btn-block mui-btn-primary" style="border-color: rgb(206, 56, 56);
+    background-color: rgb(206, 56, 56);">退出登录</button>
+</div>
+
+
 <script type="text/javascript" src="${base!}/assets/front/h5/js/mui.js" ></script>
+<script type="text/javascript" src="${base!}/assets/front/h5/js/jquery-2.0.0.min.js" ></script>
 <script type="application/javascript">
     mui.init({
         swipeBack:true //启用右滑关闭功能
     });
+
+    $("#out").click(function () {
+        window.location.href= '${base!}/open/H5/login/logout.html';
+    })
 
 </script>
 </body>

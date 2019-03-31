@@ -105,17 +105,18 @@
 
 
 <header class="mui-bar mui-bar-nav top-color">
+    <a class="mui-icon mui-icon-left-nav mui-pull-left" style="color: white;" href="${base!}/open/h5/niantu/index.html"></a>
     <h1 class="mui-title" style="color: white;">登录</h1>
 </header>
-<div class="mui-content">
+<div class="mui-content" id="vue">
     <form id='login-form' class="mui-input-group">
         <div class="mui-input-row">
             <label>账号</label>
-            <input id='account' type="text" class="mui-input-clear mui-input" placeholder="请输入账号">
+            <input id='account' type="text" v-model="mobile" class="mui-input-clear mui-input" placeholder="请输入账号">
         </div>
         <div class="mui-input-row">
             <label>密码</label>
-            <input id='password' type="password" class="mui-input-clear mui-input" placeholder="请输入密码">
+            <input id='password' type="password"  v-model="password" class="mui-input-clear mui-input" placeholder="请输入密码">
         </div>
     </form>
     <!--<form class="mui-input-group">-->
@@ -129,7 +130,7 @@
         <!--</ul>-->
     <!--</form>-->
     <div class="mui-content-padded">
-        <button id='login' type="button" class="mui-btn mui-btn-block mui-btn-primary" style="border-color: rgb(56,206,204);
+        <button id='login' type="button" v-on:click="login" class="mui-btn mui-btn-block mui-btn-primary" style="border-color: rgb(56,206,204);
     background-color: rgb(56,206,204);">登录</button>
         <div class="link-area">
             <a id='reg' href="${base!}/open/H5/login/reg.html">注册账号</a>
@@ -154,30 +155,37 @@
     var vue = new Vue({
         el: '#vue',
         data: {
-            videoList: [],
+            mobile:'',
+            password:''
         },
         created:function () {   //实例初始化创建完成执行
 
-            this.getvideoList()     //调用自身方法
+            // this.getvideoList()     //调用自身方法
 
         },
         methods:{              //定义封装方法
             //获取列表
-            getvideoList:function () {
+            login:function () {
                 var self = this;
                 $.ajax({
                     type:"POST",
-                    url:"${base!}/open/h5/cms/videoList.html",
+                    url:"${base!}/open/H5/login/doLogin",
                     dataType:"JSON",
                     data:{
-
+                        mobile:self.mobile,
+                        password:self.password
                     },
                     success:function(data){
                         if (data.code == 0) {
                             var d = data.data;
-                            self.videoList = d;
+                            window.location.href='${base!}/open/h5/niantu/index.html';
                         } else {
-
+                            //提示
+                            layer.open({
+                                content: '账号或密码不正确'
+                                ,skin: 'msg'
+                                ,time: 2 //2秒后自动关闭
+                            });
                         }
                     }
                 });
@@ -185,9 +193,9 @@
             }
         },
         watch:{     //监听器
-            // carModel:function () {
-            //     this.getProvince();
-            // }
+            mobile:function () {
+
+            }
         }
 
     })

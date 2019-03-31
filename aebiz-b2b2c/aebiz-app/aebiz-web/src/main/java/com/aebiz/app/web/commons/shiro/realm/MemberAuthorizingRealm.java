@@ -71,19 +71,20 @@ public class MemberAuthorizingRealm extends AuthorizingRealm {
             if (Lang.isEmpty(accountUser)) {
                 throw Lang.makeThrow(UnknownAccountException.class, "Member [ %s ] not found", loginname);
             }
-            Member_user user = memberUserService.fetch(Cnd.where("accountId", "=", accountUser.getAccountId()));
-            if (Lang.isEmpty(user)) {
-                throw Lang.makeThrow(UnknownAccountException.class, "Member [ %s ] not found", loginname);
-            }
+            Member_user user = new Member_user();
+// emberUserService.fetch(Cnd.where("accountId", "=", accountUser.getAccountId()));
+//            if (Lang.isEmpty(user)) {
+//                throw Lang.makeThrow(UnknownAccountException.class, "Member [ %s ] not found", loginname);
+//            }
             if (accountUser.isDisabled()) {
                 throw Lang.makeThrow(LockedAccountException.class, "Member [ %s ] is locked.", loginname);
             }
-            memberUserService.fetchLinks(user, null);
+//            memberUserService.fetchLinks(user, null);
             SecurityUtils.getSubject().getSession(true).setAttribute("memberErrCount", 0);
-            SecurityUtils.getSubject().getSession(true).setAttribute("memberUid", user.getAccountId());
+//            SecurityUtils.getSubject().getSession(true).setAttribute("memberUid", user.getAccountId());
             SecurityUtils.getSubject().getSession(true).setAttribute("memberUsername", accountUser.getLoginname());
 
-            SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(user, accountUser.getPassword(), getName());
+            SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(accountUser, accountUser.getPassword(), getName());
             info.setCredentialsSalt(ByteSource.Util.bytes(accountUser.getSalt()));
             return info;
         }

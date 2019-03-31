@@ -1,11 +1,14 @@
 package com.aebiz.app.web.modules.controllers.open.H5;
 
+import com.aebiz.app.acc.modules.models.Account_user;
 import com.aebiz.app.cms.modules.models.Cms_link;
 import com.aebiz.app.shop.modules.models.Shop_adv_main;
 import com.aebiz.app.shop.modules.services.ShopAdvMainService;
 import com.aebiz.baseframework.base.Result;
 import com.aebiz.baseframework.view.annotation.SJson;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.subject.Subject;
 import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.nutz.dao.Cnd;
 import org.nutz.json.Json;
@@ -53,6 +56,11 @@ public class NianTuIndexController {
      */
     @RequestMapping("userCenter.html")
     public String userCenter() {
+        Subject subject = SecurityUtils.getSubject();
+        Account_user accountUser = (Account_user) subject.getPrincipal();
+        if(accountUser==null){
+            return "pages/front/h5/niantu/login";
+        }
         return "pages/front/h5/niantu/userCenter";
     }
 

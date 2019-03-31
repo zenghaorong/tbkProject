@@ -6,6 +6,9 @@ import com.aebiz.app.acc.modules.models.Account_user;
 import com.aebiz.app.acc.modules.services.AccountLoginService;
 import com.aebiz.app.acc.modules.services.AccountUserService;
 import com.aebiz.app.member.modules.models.Member_user;
+import com.aebiz.app.sys.modules.models.Sys_log;
+import com.aebiz.app.web.commons.base.Globals;
+import com.aebiz.app.web.commons.log.annotation.SLog;
 import com.aebiz.app.web.commons.shiro.token.MemberCaptchaToken;
 import com.aebiz.baseframework.base.Result;
 import com.aebiz.baseframework.redis.RedisService;
@@ -30,6 +33,7 @@ import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ThreadContext;
 import org.apache.shiro.web.servlet.SimpleCookie;
+import org.nutz.dao.Cnd;
 import org.nutz.lang.Lang;
 import org.nutz.lang.Strings;
 import org.nutz.log.Log;
@@ -44,6 +48,7 @@ import redis.clients.jedis.Jedis;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.security.interfaces.RSAPrivateKey;
 import java.util.Date;
 
@@ -105,7 +110,7 @@ public class LoginController {
      * @param session
      * @return
      */
-    @RequestMapping(value = {"/doLogin", "/doLogin/{quick}"}, method = RequestMethod.POST)
+    @RequestMapping(value = {"/doLogin"}, method = RequestMethod.POST)
     @SJson
     public Object doLogin(@RequestParam("mobile") String username,
                           @RequestParam("password") String password,
@@ -117,16 +122,17 @@ public class LoginController {
             Subject subject = SecurityUtils.getSubject();
             ThreadContext.bind(subject);
 
-            String verifycode = Strings.sNull(session.getAttribute("memberCaptcha"));
-            if (!captcha.equalsIgnoreCase(Strings.sNull(verifycode))) {
-                return Result.error("sys.login.error.captcha");
-            }
-            subject.login(createToken(username, password, rememberMe, captcha, request, false));
+//            String verifycode = Strings.sNull(session.getAttribute("memberCaptcha"));
+//            if (!captcha.equalsIgnoreCase(Strings.sNull(verifycode))) {
+//                return Result.error("sys.login.error.captcha");
+//            }
+            AuthenticationToken authenticationToken =createToken(username, password, false, "6666", request);
+            subject.login(authenticationToken);
 
 
 
-            Member_user user = (Member_user) subject.getPrincipal();
-            Account_user accountUser = accountUserService.getAccount(user.getAccountId());
+            Account_user accountUser = (Account_user) subject.getPrincipal();
+//            Account_user accountUser = accountUserService.getAccount(user.getAccountId());
             if (accountUser.isDisabled()) {
                 return Result.error("此用户被冻结").addCode(3);
             }
@@ -146,7 +152,7 @@ public class LoginController {
             CookieUtil.setCookie(response, "cheryfs_member_login", "true");
 
             Account_login accountLogin = new Account_login();
-            accountLogin.setAccountId(user.getAccountId());
+            accountLogin.setAccountId(accountUser.getAccountId());
             accountLogin.setIp(Lang.getIP(request));
             accountLogin.setLoginType("member");
             accountLogin.setLoginAt((int) (System.currentTimeMillis() / 1000));
@@ -185,7 +191,7 @@ public class LoginController {
 
     }
 
-    protected AuthenticationToken createToken(String username, String password, boolean rememberMe, String captcha, HttpServletRequest request, boolean isQuickLogin) {
+    protected AuthenticationToken createToken(String username, String password, boolean rememberMe, String captcha, HttpServletRequest request) {
         String host = request.getRemoteHost();
         try {
             RSAPrivateKey memberPrivateKey = (RSAPrivateKey) request.getSession().getAttribute("memberPrivateKey");
@@ -195,7 +201,7 @@ public class LoginController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return new MemberCaptchaToken(username, password, rememberMe, host, captcha, isQuickLogin);
+        return new MemberCaptchaToken(username, password, rememberMe, host, captcha);
     }
 
 
@@ -220,6 +226,12 @@ public class LoginController {
 //                    return Result.error("验证码错误");
 //                }
 //            }
+            Cnd cnd = Cnd.NEW();
+            cnd.and("mobile", "=", mobile );
+            Account_user account_user = accountUserService.fetch(cnd);
+            if(account_user !=null){
+                return Result.error("当前手机号已注册");
+            }
             Account_user accountUser =new Account_user();
             accountUser.setMobile(mobile);
             accountUser.setPassword(password);
@@ -229,6 +241,18 @@ public class LoginController {
             e.printStackTrace();
             return Result.error("member.register.join.fail");
         }
+    }
+
+    /**
+     * 退出登录
+     */
+    @RequestMapping("logout.html")
+    @SLog(description = "用户退出", methodReturn = true, type = Sys_log.TypeEnum.LOGIN)
+    public void logout(HttpServletResponse response) throws IOException {
+        Subject subject = SecurityUtils.getSubject();
+        subject.logout();
+//        return "redirect:/open/H5/login/login.html"; 这样写会报错
+        response.sendRedirect("/open/H5/login/login.html");
     }
 
 

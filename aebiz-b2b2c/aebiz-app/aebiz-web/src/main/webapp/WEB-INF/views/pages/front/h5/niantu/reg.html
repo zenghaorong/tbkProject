@@ -109,11 +109,11 @@
                     success:function(data){
                         if (data.code == 0) {
                             var d = data.data;
-                            window.location.href='${base!}/open/h5/niantu/index.html';
+                            window.location.href='${base!}/open/H5/login/login.html';
                         } else {
                             //提示
                             layer.open({
-                                content: '账号密码错误'
+                                content: data.msg
                                 ,skin: 'msg'
                                 ,time: 2 //2秒后自动关闭
                             });

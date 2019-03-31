@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>图文详情</title>
+    <title>视频详情</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -31,19 +31,48 @@
     <header class="mui-bar mui-bar-nav top-color">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: white;"></a>
         <h1 class="mui-title" style="color: white;">
-           {{cms.title}}
+            创意视频
         </h1>
     </header>
 
-
     <div class="mui-card" style="margin-top: 60px;">
+
+        <div class="mui-card-header mui-card-media" style="height:80vw;padding-bottom: 60px;">
+            <p style="color: #333;">{{video.videoTitle}}</p>
+            <video :src="video.videoUrl" :poster="video.imageUrl" controls="controls" style="width: 100%;height: 100%;">
+                your browser does not support the video tag
+            </video>
+        </div>
+        <div class="mui-card-content" style="margin-top: 30px;">
+            <div class="mui-card-content-inner">
+                <p>Posted on : {{time}}</p>
+
+            </div>
+        </div>
+        <!--<div class="mui-card-footer">-->
+        <!--&lt;!&ndash;<a class="mui-card-link">Like</a>&ndash;&gt;-->
+        <!--&lt;!&ndash;<a class="mui-card-link">Read more</a>&ndash;&gt;-->
+        <!--</div>-->
+    </div>
+    <div class="mui-card" style="margin-top: 60px;margin-bottom: 60px;">
+        <p style="padding: 10px;color: #000000;">详情介绍：</p>
         <div class="mui-content" style="background: white;" >
-            <div class="detil" v-html="cms.content" style="padding-top: 20px;">
-                {{cms.content}}
+            <div class="detil" v-html="video.videoDetails">
+                {{video.videoDetails}}
             </div>
 
         </div>
     </div>
+
+    <!--<nav class="mui-bar mui-bar-tab" style="height: 40px;">-->
+        <!--<div class="mui-input-row mui-password" style="border: 0px;">-->
+            <!--<button type="button" id="place"  class="mui-btn mui-btn-primary" style="width: 30%;top: 0px;line-height:1;-->
+            <!--border: 0;background-color:rgb(56,206,204);">加入购物车</button>-->
+            <!--<button type="button" style="width: 70%;top: 0px;line-height:1;border: 0;background-color: rgb(247, 70, 33);"-->
+                    <!--class="mui-btn mui-btn-primary" id="review">立即购买</button>-->
+        <!--</div>-->
+    <!--</nav>-->
+
     <div style="padding: 20px;margin-bottom:30px;">
         <div class="title" style="padding-bottom: 10px;">
             评论
@@ -68,13 +97,6 @@
         </ul>
     </div>
 
-    <nav class="mui-bar mui-bar-tab" style="height: 40px;">
-        <div class="mui-input-row mui-password" style="border: 0px;">
-            <input type="text" id="place" v-model="content" class="mui-input-clear mui-input" placeholder="请输入评论内容" style="margin-bottom: 0px;width: 80%;">
-            <button type="button" v-on:click="isPlHf" style="width: 20%;top: 0px;line-height:1;"
-                        class="mui-btn mui-btn-primary" id="review">评论</button>
-        </div>
-    </nav>
 </div>
 <script type="text/javascript" src="${base!}/assets/front/h5/js/mui.js" ></script>
 <script type="text/javascript" src="${base!}/assets/front/h5/js/vue.js" ></script>
@@ -84,11 +106,11 @@
         swipeBack:true //启用右滑关闭功能
     });
 
-    var _this;
-
     var vue = new Vue({
         el: '#vue',
         data: {
+            video: '',
+            time:'',
             cms: '',
             cmsTitle:'',
             reviewList:'',
@@ -103,26 +125,26 @@
         },
         created:function () {   //实例初始化创建完成执行
 
-            this.getCmsList();     //调用自身方法
+            this.getVideoDesc();     //调用自身方法
             this.jqueryLin();
 
         },
         methods:{              //定义封装方法
             //获取列表
-            getCmsList:function () {
+            getVideoDesc:function () {
                 var self = this;
                 $.ajax({
                     type:"POST",
-                    url:"${base!}/open/h5/cms/cmsArticle.html",
+                    url:"${base!}/open/h5/cms/getVideoDesc.html",
                     dataType:"JSON",
                     data:{
                         id:'${id!}',
                     },
                     success:function(data){
                         if (data.code == 0) {
-                            var d = data.data;
-                            self.cms = d;
-                            self.cmsTitle = d.title;
+                            self.video=data.data;
+                            var time = timestamp(data.data.opAt)
+                            self.time = time;
                             self.getReview();
                         } else {
 
@@ -178,10 +200,10 @@
             },
             //点击回复
             clickReply:function(reviewId,reviewFatherName,reviewFatherId){
-                    this.reviewId = reviewId; //回复父级编号
-                    this.reviewFatherName = reviewFatherName;//回复父级发布人名称
-                    this.reviewFatherId = reviewFatherId; //回复父级发布人编号
-                    this.textBian();
+                this.reviewId = reviewId; //回复父级编号
+                this.reviewFatherName = reviewFatherName;//回复父级发布人名称
+                this.reviewFatherId = reviewFatherId; //回复父级发布人编号
+                this.textBian();
             },
             //点击回复下回复
             clickReply2:function(reviewId,reviewFatherName,reviewFatherId,reviewReplyId){
@@ -236,8 +258,9 @@
             },
             //初始化jquery监听
             jqueryLin:function () {
-                 _this = this;
+                _this = this;
             }
+
         },
         watch:{     //监听器
             reviewList:function () {
@@ -261,6 +284,7 @@
             _this.isHf=1;
         }
     })
+
 
 
     //处理时间戳

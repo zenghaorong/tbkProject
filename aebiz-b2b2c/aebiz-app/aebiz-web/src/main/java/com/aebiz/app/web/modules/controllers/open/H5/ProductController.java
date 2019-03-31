@@ -21,6 +21,15 @@ public class ProductController {
     }
 
 
+    /**
+     * 进入订单确认页
+     */
+    @RequestMapping("/orderConfirmation.html")
+    public String orderConfirmation() {
+        return "pages/front/h5/niantu/orderConfirmation";
+    }
+
+
 
 
 

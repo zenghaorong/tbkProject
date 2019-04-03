@@ -29,6 +29,14 @@ public class ProductController {
         return "pages/front/h5/niantu/orderConfirmation";
     }
 
+    /**
+     * 进入收银台
+     */
+    @RequestMapping("/checkoutCounter.html")
+    public String checkoutCounter() {
+        return "pages/front/h5/niantu/checkoutCounter";
+    }
+
 
 
 

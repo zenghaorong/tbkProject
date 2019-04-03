@@ -2,6 +2,8 @@ package com.aebiz.app.order.modules.models;
 
 import com.aebiz.app.acc.modules.models.Account_info;
 import com.aebiz.app.acc.modules.models.Account_user;
+import com.aebiz.app.goods.modules.models.Goods_main;
+import com.aebiz.app.member.modules.models.Member_address;
 import com.aebiz.app.store.modules.models.Store_main;
 import com.aebiz.baseframework.base.model.BaseModel;
 import org.nutz.dao.entity.annotation.*;
@@ -299,12 +301,34 @@ public class Order_main extends BaseModel implements Serializable {
 
     private Account_user accountUser;
 
+    private List<Goods_main> productList;
+
+    private Member_address addresses;
+
+
+
     private String endTime;
 
     @One(field = "storeId")
     private Store_main storeMain;
 
     private String expressInfo;
+
+    public List<Goods_main> getProductList() {
+        return productList;
+    }
+
+    public void setProductList(List<Goods_main> productList) {
+        this.productList = productList;
+    }
+
+    public Member_address getAddresses() {
+        return addresses;
+    }
+
+    public void setAddresses(Member_address addresses) {
+        this.addresses = addresses;
+    }
 
     public String getId() {
         return id;

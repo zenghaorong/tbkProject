@@ -10,11 +10,17 @@
 		<!--标准mui.css-->
 		<link rel="stylesheet" href="${base!}/assets/front/h5/css/mui.min.css" />
 		<link rel="stylesheet" href="${base!}/assets/front/h5/css/hryc.css" />
+		<style>
+			.productList{
+				width: 50%;
+			}
+
+		</style>
 		<!--App自定义的css-->
 		<!--<link rel="stylesheet" type="text/css" href="../css/app.css"/>-->
 	</head>
 	<body>
-		
+
 		
 		<header class="mui-bar mui-bar-nav top-color">
 		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: white;"></a>
@@ -40,95 +46,72 @@
 		
 		</nav>
 		
-		<div class="mui-content" style="background: white;">
+		<div class="mui-content" style="background: white;" id="productList">
 		        <ul class="mui-table-view mui-grid-view mui-grid-9" style="background: white;">
-		            <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-3" >
-		            	<a href="#">
-		            		<img src="${base!}/assets/front/h5/img/商品图片6.JPG" width="150px;"/>
-		                    <div class="mui-media-body">超轻黏土36色五毒无味</div>
+		            <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-3 productList"  v-for="item in productList" :key="item.id">
+		            	<a v-bind:href="'${base!}/open/h5/product/productDetail.html?id='+item.id" >
+		            		<img  :src="item.imgList"  style="width: 150px;height: 150px"/>
+		                    <div class="mui-media-body">{{item.name}}</div>
 		                    <div class="mui-media-body" style="height: 19px;">
-		                    	<span class="left1">￥28.6</span>
-		                    	<span class="left2 text-color-1">月销106笔</span>
-		                    	<img class="pon right1" src="img/购物车.png" width="20px"/>
+		                    	<span class="left1">￥{{item.price}}</span>
+		                    	<span class="left2 text-color-1">月销{{item.saleNumMonth}}笔</span>
+		                    	<img class="pon right1" src="${base!}/assets/front/h5/img/购物车.png" width="20px"/>
 		                    </div>
 		            	</a>
 		            </li>
-		            <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-3" >
-		            	<a href="#">
-		            		<img src="${base!}/assets/front/h5/img/商品图片6.JPG" width="150px;"/>
-		                    <div class="mui-media-body">超轻黏土36色五毒无味</div>
-		                    <div class="mui-media-body" style="height: 19px;">
-		                    	<span class="left1">￥28.6</span>
-		                    	<span class="left2 text-color-1">月销106笔</span>
-		                    	<img class="pon right1" src="img/购物车.png" width="20px"/>
-		                    </div>
-		            	</a>
-		            </li>
-		           <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-3" >
-		            	<a href="#">
-		            		<img src="${base!}/assets/front/h5/img/商品图片6.JPG" width="150px;"/>
-		                    <div class="mui-media-body">超轻黏土36色五毒无味</div>
-		                    <div class="mui-media-body" style="height: 19px;">
-		                    	<span class="left1">￥28.6</span>
-		                    	<span class="left2 text-color-1">月销106笔</span>
-		                    	<img class="pon right1" src="img/购物车.png" width="20px"/>
-		                    </div>
-		            	</a>
-		            </li>
-		            <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-3" >
-		            	<a href="#">
-		            		<img src="${base!}/assets/front/h5/img/商品图片6.JPG" width="150px;"/>
-		                    <div class="mui-media-body">超轻黏土36色五毒无味</div>
-		                    <div class="mui-media-body" style="height: 19px;">
-		                    	<span class="left1">￥28.6</span>
-		                    	<span class="left2 text-color-1">月销106笔</span>
-		                    	<img class="pon right1" src="img/购物车.png" width="20px"/>
-		                    </div>
-		            	</a>
-		            </li>
-		            <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-3" >
-		            	<a href="#">
-		            		<img src="${base!}/assets/front/h5/img/商品图片6.JPG" width="150px;"/>
-		                    <div class="mui-media-body">超轻黏土36色五毒无味</div>
-		                    <div class="mui-media-body" style="height: 19px;">
-		                    	<span class="left1">￥28.6</span>
-		                    	<span class="left2 text-color-1">月销106笔</span>
-		                    	<img class="pon right1" src="img/购物车.png" width="20px"/>
-		                    </div>
-		            	</a>
-		            </li>
-		            <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-3" >
-		            	<a href="#">
-		            		<img src="${base!}/assets/front/h5/img/商品图片6.JPG" width="150px;"/>
-		                    <div class="mui-media-body">超轻黏土36色五毒无味</div>
-		                    <div class="mui-media-body" style="height: 19px;">
-		                    	<span class="left1">￥28.6</span>
-		                    	<span class="left2 text-color-1">月销106笔</span>
-		                    	<img class="pon right1" src="img/购物车.png" width="20px"/>
-		                    </div>
-		            	</a>
-		            </li>
-		            <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-3" >
-		            	<a href="#">
-		            		<img src="${base!}/assets/front/h5/img/商品图片6.JPG" width="150px;"/>
-		                    <div class="mui-media-body">超轻黏土36色五毒无味</div>
-		                    <div class="mui-media-body" style="height: 19px;">
-		                    	<span class="left1">￥28.6</span>
-		                    	<span class="left2 text-color-1">月销106笔</span>
-		                    	<img class="pon right1" src="img/购物车.png" width="20px"/>
-		                    </div>
-		            	</a>
-		            </li>
-		            
-		        
-		        </ul> 
+		        </ul>
 		</div>
 		
 		<script type="text/javascript" src="${base!}/assets/front/h5/js/mui.js" ></script>
+		<script type="text/javascript" src="${base!}/assets/front/h5/js/vue.js" ></script>
+		<script type="text/javascript" src="${base!}/assets/front/h5/js/jquery-2.0.0.min.js" ></script>
+
 		<script type="application/javascript">
-			mui.init({
-				swipeBack:true //启用右滑关闭功能
-			});
+
+            mui.init({
+                swipeBack:true //启用右滑关闭功能
+            });
+
+            var vue = new Vue({
+                el: '#productList',
+                data: {
+                    productList: [],
+                },
+                created:function () {   //实例初始化创建完成执行
+
+                    this.getProductList()     //调用自身方法
+
+                },
+                methods:{              //定义封装方法
+                    //获取列表
+                    getProductList:function () {
+                        var self = this;
+                        $.ajax({
+                            type:"POST",
+                            url:"${base!}/open/h5/product/ProductList.html",
+                            dataType:"JSON",
+                            data:{
+
+                            },
+                            success:function(data){
+                                if (data.code == 0) {
+                                    var d = data.data;
+                                    self.productList = d;
+                                } else {
+
+                                }
+                            }
+                        });
+
+                    }
+                },
+                watch:{     //监听器
+                    // carModel:function () {
+                    //     this.getProvince();
+                    // }
+                }
+
+            })
 		</script>
 	</body>
 </html>

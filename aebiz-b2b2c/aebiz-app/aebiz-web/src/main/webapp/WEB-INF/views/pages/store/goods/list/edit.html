@@ -2348,18 +2348,18 @@ layout("/layouts/store.html"){
     }
 
     function validateAlbum() {
-        if ($("#saleClientPC").is(":checked") && $.trim($("#div_img_album_pc").html()) === "") {
-            Toast.error("${msg['goods.main.tip.pcalbumrequired']}");
-            return false;
-        }
+        // if ($("#saleClientPC").is(":checked") && $.trim($("#div_img_album_pc").html()) === "") {
+        //     Toast.error("${msg['goods.main.tip.pcalbumrequired']}");
+        //     return false;
+        // }
         if ($("#saleClientWAP").is(":checked") && $.trim($("#div_img_album_wap").html()) === "") {
             Toast.error("${msg['goods.main.tip.wapalbumrequired']}");
             return false;
         }
-        if ($("#saleClientTV").is(":checked") && $.trim($("#div_img_album_tv").html()) === "") {
-            Toast.error("${msg['goods.main.tip.tvalbumrequired']}");
-            return false;
-        }
+        // if ($("#saleClientTV").is(":checked") && $.trim($("#div_img_album_tv").html()) === "") {
+        //     Toast.error("${msg['goods.main.tip.tvalbumrequired']}");
+        //     return false;
+        // }
         return true;
     }
 
@@ -2601,18 +2601,18 @@ layout("/layouts/store.html"){
         }
 
         //验证：相应终端相册图必填
-        if ($("#saleClientPC").is(":checked") && $.trim($("#div_img_album_pc").html()) === "") {
-            Toast.error("${msg['goods.main.tip.pcalbumrequired']}");
-            return false;
-        }
+        // if ($("#saleClientPC").is(":checked") && $.trim($("#div_img_album_pc").html()) === "") {
+        //     Toast.error("${msg['goods.main.tip.pcalbumrequired']}");
+        //     return false;
+        // }
         if ($("#saleClientWAP").is(":checked") && $.trim($("#div_img_album_wap").html()) === "") {
             Toast.error("${msg['goods.main.tip.wapalbumrequired']}");
             return false;
         }
-        if ($("#saleClientTV").is(":checked") && $.trim($("#div_img_album_tv").html()) === "") {
-            Toast.error("${msg['goods.main.tip.tvalbumrequired']}");
-            return false;
-        }
+        // if ($("#saleClientTV").is(":checked") && $.trim($("#div_img_album_tv").html()) === "") {
+        //     Toast.error("${msg['goods.main.tip.tvalbumrequired']}");
+        //     return false;
+        // }
         return true;
     }
 

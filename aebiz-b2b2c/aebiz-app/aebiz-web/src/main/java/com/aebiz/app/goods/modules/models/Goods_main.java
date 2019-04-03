@@ -20,7 +20,7 @@ public class Goods_main extends BaseModel implements Serializable {
     @Name
     @Comment("ID")
     @ColDefine(type = ColType.VARCHAR, width = 32)
-    @Prev(els = {@EL("ig(view.tableName,'')")})
+    @Prev(els = {@EL("uuid()")})
     private String id;
 
     @Column
@@ -215,6 +215,36 @@ public class Goods_main extends BaseModel implements Serializable {
     @Many(field = "goodsId")
     private List<Goods_product> productList;
 
+    private String price;
+
+    private String marketPrice;
+
+    private String saleNumMonth;
+
+
+    public String getMarketPrice() {
+        return marketPrice;
+    }
+
+    public void setMarketPrice(String marketPrice) {
+        this.marketPrice = marketPrice;
+    }
+
+    public String getSaleNumMonth() {
+        return saleNumMonth;
+    }
+
+    public void setSaleNumMonth(String saleNumMonth) {
+        this.saleNumMonth = saleNumMonth;
+    }
+
+    public String getPrice() {
+        return price;
+    }
+
+    public void setPrice(String price) {
+        this.price = price;
+    }
 
     @ManyMany(from = "goodsId", relation = "goods_main_store_goodsclass", to = "storeGoodsClassId")
     private List<Store_goodsclass> storeGoodsClassList;

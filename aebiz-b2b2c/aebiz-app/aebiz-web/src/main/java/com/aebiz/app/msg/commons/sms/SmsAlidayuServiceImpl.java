@@ -5,11 +5,6 @@ import com.aebiz.app.msg.modules.models.Msg_conf_sms_tpl;
 import com.aebiz.app.msg.modules.services.MsgConfSmsService;
 import com.aebiz.app.msg.modules.services.MsgConfSmsTplService;
 import com.aebiz.app.web.commons.log.annotation.SLog;
-import com.taobao.api.ApiException;
-import com.taobao.api.DefaultTaobaoClient;
-import com.taobao.api.TaobaoClient;
-import com.taobao.api.request.AlibabaAliqinFcSmsNumSendRequest;
-import com.taobao.api.response.AlibabaAliqinFcSmsNumSendResponse;
 import org.nutz.dao.Cnd;
 import org.nutz.json.Json;
 import org.nutz.lang.Strings;
@@ -82,26 +77,26 @@ public class SmsAlidayuServiceImpl implements SmsService {
      */
     @SLog(description = "调用阿里大于短信接口发送短信")
     public void send(Msg_conf_sms conf, String templateId, String mobile, NutMap map) {
-        try {
-            String appkey = Strings.sNull(conf.getAppkey());
-            String secret = Strings.sNull(conf.getSecret());
-            String signname = Strings.sNull(conf.getSignname(), "阿里大于");
-            String url = Strings.sNull(conf.getUrl(), "http://gw.api.taobao.com/router/rest");
-            TaobaoClient client = new DefaultTaobaoClient(url, appkey, secret);
-            AlibabaAliqinFcSmsNumSendRequest req = new AlibabaAliqinFcSmsNumSendRequest();
-            req.setSmsType("normal");//短信类型，传入值请填写normal
-            req.setSmsFreeSignName(signname);
-            req.setSmsParamString(Json.toJson(map));
-            req.setRecNum(mobile);
-            req.setSmsTemplateCode(templateId);
-            AlibabaAliqinFcSmsNumSendResponse rsp = client.execute(req);
-            log.debug("发送信息返回结果: "+rsp);
-            //rsp.getBody();
-            //TODO 返回值怎么处理
-        } catch (ApiException e) {
-            log.debug(e.getMessage(),e);
-            //TODO 发送失败了怎么处理
-        }
+//        try {
+//            String appkey = Strings.sNull(conf.getAppkey());
+//            String secret = Strings.sNull(conf.getSecret());
+//            String signname = Strings.sNull(conf.getSignname(), "阿里大于");
+//            String url = Strings.sNull(conf.getUrl(), "http://gw.api.taobao.com/router/rest");
+//            TaobaoClient client = new DefaultTaobaoClient(url, appkey, secret);
+//            AlibabaAliqinFcSmsNumSendRequest req = new AlibabaAliqinFcSmsNumSendRequest();
+//            req.setSmsType("normal");//短信类型，传入值请填写normal
+//            req.setSmsFreeSignName(signname);
+//            req.setSmsParamString(Json.toJson(map));
+//            req.setRecNum(mobile);
+//            req.setSmsTemplateCode(templateId);
+//            AlibabaAliqinFcSmsNumSendResponse rsp = client.execute(req);
+//            log.debug("发送信息返回结果: "+rsp);
+//            //rsp.getBody();
+//            //TODO 返回值怎么处理
+//        } catch (ApiException e) {
+//            log.debug(e.getMessage(),e);
+//            //TODO 发送失败了怎么处理
+//        }
     }
 
 }

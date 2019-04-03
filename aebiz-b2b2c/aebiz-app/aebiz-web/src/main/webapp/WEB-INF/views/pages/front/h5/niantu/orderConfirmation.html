@@ -28,8 +28,8 @@
         }
     </style>
 </head>
-<body>
-
+<body >
+<div id="order">
 
 <header class="mui-bar mui-bar-nav top-color">
     <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: white;"></a>
@@ -44,39 +44,39 @@
         收货地址
        </a>
     </div>
-    <div class="mui-card-header">
-        <span>曾浩容</span><span>13655554127</span>
+    <div class="mui-card-header"  v-if ='order.addresses!=null'>
+        <span>{{order.addresses.fullName}}</span><span>{{order.addresses.mobile}}</span>
     </div>
-    <div class="mui-card-content">
-        <div class="mui-card-content-inner">
-            安徽省合肥市蜀山区黄山路与香樟大道交口西北角
+    <div class="mui-card-content" v-if ='order.addresses!=null'>
+        <div class="mui-card-content-inner" >
+            {{order.addresses.province}}{{order.addresses.city}}{{order.addresses.county}}{{order.addresses.address}}
         </div>
     </div>
 </div>
 
-<div class="mui-card">
-    <div class="mui-card-header">
-        商品金额<span style="color: red;">￥63.00</span>
+<div class="mui-card" >
+    <div class="mui-card-header" >
+        商品金额<span style="color: red;">￥{{order.goodsMoney/100}}</span>
     </div>
     <div class="mui-card-header">
-        运费<span style="color: red;">￥0.00</span>
+        运费<span style="color: red;">￥{{order.freightMoney/100}}</span>
     </div>
-    <div class="mui-card-header">
-        优惠劵<span style="color: red;">￥10.00</span>
-    </div>
+    <!--<div class="mui-card-header">-->
+        <!--优惠劵<span style="color: red;">￥10.00</span>-->
+    <!--</div>-->
 </div>
 
 <div class="mui-card">
-    <div class="mui-card-content">
+    <div class="mui-card-content" v-for="good in order.goodsList" :key="good.id">
         <ul class="mui-table-view">
             <li class="mui-table-view-cell mui-media" >
                 <a href="#">
-                    <img class="mui-media-object mui-pull-left" src="${base!}/assets/front/h5/img/商品图片6.JPG">
-                    <div class="mui-media-body" style="white-space:normal;">
-                        <span>超轻粘土24色儿童无毒橡皮泥彩泥太空水晶黏土女孩手工沙玩具套装</span>
-                        <p class='mui-ellipsis'style="margin-top: 35px;margin-left: 110px;">
-                            <span class="jiage-text">￥36.00</span>
-                            <span>*1</span>
+                    <img class="mui-media-object mui-pull-left" :src="good.imgUrl">
+                    <div class="mui-media-body" style="white-space:normal;" >
+                        <span>{{good.goodsName}}</span>
+                        <p class='mui-ellipsis'style="margin-top: 35px;margin-left: 110px;" >
+                            <span class="jiage-text">￥{{good.salePrice/100}}</span>
+                            <span>*{{good.buyNum}}</span>
                         </p>
                     </div>
                 </a>
@@ -91,11 +91,11 @@
             border: 0;background-color:red;">立即支付</button>
         <button type="button" style="width: 70%;top: 0px;line-height:1;border: 0;background-color:white;"
                 class="mui-btn mui-btn-primary" id="review">
-            <span style="color: black;">应付:</span><span style="color: red;padding-left: 10px;">36.00</span>
+            <span style="color: black;">应付:</span><span style="color: red;padding-left: 10px;">{{order.payMoney/100}}元</span>
         </button>
     </div>
 </nav>
-
+</div>
 <script type="text/javascript" src="${base!}/assets/front/h5/js/mui.js" ></script>
 <script type="text/javascript" src="${base!}/assets/front/h5/js/vue.js" ></script>
 <script type="text/javascript" src="${base!}/assets/front/h5/js/jquery-2.0.0.min.js" ></script>
@@ -105,30 +105,30 @@
     });
 
     var vue = new Vue({
-        el: '#vue',
+        el: '#order',
         data: {
-            videoList: [],
+            order: [],
         },
         created:function () {   //实例初始化创建完成执行
 
-            this.getvideoList()     //调用自身方法
+            this.getOrderInfo()     //调用自身方法
 
         },
         methods:{              //定义封装方法
             //获取列表
-            getvideoList:function () {
+            getOrderInfo:function () {
                 var self = this;
                 $.ajax({
                     type:"POST",
-                    url:"${base!}/open/h5/cms/videoList.html",
+                    url:"${base!}/open/h5/order/getOrderInfo.html",
                     dataType:"JSON",
                     data:{
-
+                        id:'${orderId!}'
                     },
                     success:function(data){
                         if (data.code == 0) {
                             var d = data.data;
-                            self.videoList = d;
+                            self.order = d;
                         } else {
 
                         }
@@ -143,8 +143,9 @@
             // }
         }
 
-    })
+    });
 
 </script>
+
 </body>
 </html>

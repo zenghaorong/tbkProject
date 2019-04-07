@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>订单确认</title>
+    <title>购物车</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -28,78 +28,44 @@
         }
     </style>
 </head>
-<body >
-<div id="order">
+<body style="background: white;">
+
 
 <header class="mui-bar mui-bar-nav top-color">
     <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: white;"></a>
-    <h1 class="mui-title" style="color: white;">
-        订单确认
-    </h1>
+    <h1 class="mui-title" style="color: white;">购物车</h1>
+    <button type="button" class="mui-btn mui-btn-danger mui-btn-outlined" style="float: right;background: red;color: white;">
+        删除
+    </button>
 </header>
 
-<div class="mui-card" style="margin-top: 60px;">
-    <div class="mui-card-header">
-        <a class="mui-navigate-right" href="${base!}/open/h5/address/goAddress.html">
-        收货地址
-       </a>
-    </div>
-    <div class="mui-card-header"  v-if ='address!=null'>
-        <span>{{address.fullName}}</span><span>{{address.mobile}}</span>
-    </div>
-    <div class="mui-card-content" v-if ='address!=null'>
-        <div class="mui-card-content-inner" >
-            {{address.address}}
-        </div>
-    </div>
-    <div class="mui-card-content" v-if ='address==null'>
-        <div class="mui-card-content-inner" >
-            您还未添加收货地址
-        </div>
-    </div>
-</div>
-
-<div class="mui-card" >
-    <div class="mui-card-header" >
-        商品金额<span style="color: red;">￥{{order.goodsMoney/100}}</span>
-    </div>
-    <div class="mui-card-header">
-        运费<span style="color: red;">￥{{order.freightMoney/100}}</span>
-    </div>
-    <!--<div class="mui-card-header">-->
-        <!--优惠劵<span style="color: red;">￥10.00</span>-->
-    <!--</div>-->
-</div>
-
-<div class="mui-card">
-    <div class="mui-card-content" v-for="good in order.goodsList" :key="good.id">
-        <ul class="mui-table-view">
-            <li class="mui-table-view-cell mui-media" >
-                <a href="#">
-                    <img class="mui-media-object mui-pull-left" :src="good.imgUrl">
-                    <div class="mui-media-body" style="white-space:normal;" >
-                        <span>{{good.goodsName}}</span>
-                        <p class='mui-ellipsis'style="margin-top: 35px;margin-left: 110px;" >
-                            <span class="jiage-text">￥{{good.salePrice/100}}</span>
-                            <span>*{{good.buyNum}}</span>
-                        </p>
-                    </div>
-                </a>
-            </li>
-        </ul>
-    </div>
-</div>
+<!--底部导航栏-->
 
 <nav class="mui-bar mui-bar-tab" style="height: 40px;">
     <div class="mui-input-row mui-password" style="border: 0px;">
         <button type="button" id="place"  class="mui-btn mui-btn-primary" style="width: 30%;top: 0px;line-height:1;
-            border: 0;background-color:red;">立即支付</button>
+            border: 0;background-color:red;">结算</button>
         <button type="button" style="width: 70%;top: 0px;line-height:1;border: 0;background-color:white;"
                 class="mui-btn mui-btn-primary" id="review">
-            <span style="color: black;">应付:</span><span style="color: red;padding-left: 10px;">{{order.payMoney/100}}元</span>
+            <span style="color: black;">应付:</span><span style="color: red;padding-left: 10px;">50元</span>
         </button>
     </div>
 </nav>
+<div class="mui-content" style="background: white;" id="vue" v-cloak>
+    <ul class="mui-table-view">
+        <li class="mui-table-view-cell mui-checkbox mui-left" v-for="item in videoList" :key="item.id">
+            <input name="checkbox" type="checkbox" style="top: 40px;" checked>
+            <a :href="'${base!}/open/h5/cms/videoBuyPage.html?id='+item.id" style="padding-left: 0px;margin-left: 0px;">
+                <img class="mui-media-object mui-pull-left" :src="item.imageUrl">
+                <div class="mui-media-body" style="white-space:normal;">
+                    {{item.videoTitle}}
+                    <p class='mui-ellipsis'>
+                        <span class="jiage-text">￥{{item.price}}</span>
+                    </p>
+                </div>
+            </a>
+        </li>
+    </ul>
 </div>
 <script type="text/javascript" src="${base!}/assets/front/h5/js/mui.js" ></script>
 <script type="text/javascript" src="${base!}/assets/front/h5/js/vue.js" ></script>
@@ -110,23 +76,22 @@
     });
 
     var vue = new Vue({
-        el: '#order',
+        el: '#vue',
         data: {
-            address: '',
-            order:''
+            videoList: [],
         },
         created:function () {   //实例初始化创建完成执行
 
-            this.defaultAddress()     //调用自身方法
+            this.getvideoList()     //调用自身方法
 
         },
         methods:{              //定义封装方法
-            //获取默认收货地址
-            defaultAddress:function () {
+            //获取列表
+            getvideoList:function () {
                 var self = this;
                 $.ajax({
                     type:"POST",
-                    url:"${base!}/open/h5/address/defaultAddress.html",
+                    url:"${base!}/open/h5/cms/videoList.html",
                     dataType:"JSON",
                     data:{
 
@@ -134,7 +99,7 @@
                     success:function(data){
                         if (data.code == 0) {
                             var d = data.data;
-                            self.address = d;
+                            self.videoList = d;
                         } else {
 
                         }
@@ -149,9 +114,8 @@
             // }
         }
 
-    });
+    })
 
 </script>
-
 </body>
 </html>

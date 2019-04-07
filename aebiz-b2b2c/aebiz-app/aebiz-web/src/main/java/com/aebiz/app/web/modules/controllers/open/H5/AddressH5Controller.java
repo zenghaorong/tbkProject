@@ -11,6 +11,7 @@ import org.apache.shiro.subject.Subject;
 import org.nutz.dao.Cnd;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -28,6 +29,7 @@ public class AddressH5Controller{
 
     private static final Log log = Logs.get();
 
+    @Autowired
     private MemberAddressService memberAddressService;
 
     /**
@@ -61,7 +63,7 @@ public class AddressH5Controller{
      */
     @RequestMapping("addressList.html")
     @SJson
-    public Result addressList(String id){
+    public Result addressList(){
         try {
             Subject subject = SecurityUtils.getSubject();
             Account_user accountUser = (Account_user) subject.getPrincipal();
@@ -69,6 +71,29 @@ public class AddressH5Controller{
             cnd.and("accountId", "=", accountUser.getId() );
             List<Member_address> list = memberAddressService.query(cnd);
             return Result.success("ok",list);
+        } catch (Exception e) {
+            log.error("查询收货地址列表异常",e);
+            return Result.error("fail");
+        }
+    }
+
+    /**
+     * 查询默认收货地址
+     */
+    @RequestMapping("defaultAddress.html")
+    @SJson
+    public Result defaultAddress(){
+        try {
+            Subject subject = SecurityUtils.getSubject();
+            Account_user accountUser = (Account_user) subject.getPrincipal();
+            Cnd cnd = Cnd.NEW();
+            cnd.and("accountId", "=", accountUser.getId() );
+            List<Member_address> list = memberAddressService.query(cnd);
+            Member_address member_address = new Member_address();
+            if(list!=null && list.size()>0){
+                member_address = list.get(0);
+            }
+            return Result.success("ok",member_address);
         } catch (Exception e) {
             log.error("查询收货地址列表异常",e);
             return Result.error("fail");
@@ -97,7 +122,20 @@ public class AddressH5Controller{
     /**
      * 编辑收货地址
      */
-
+    @RequestMapping("updateAddress.html")
+    @SJson
+    public Result updateAddress(String id,String address){
+        try {
+            Member_address member_address =new Member_address();
+            member_address.setId(id);
+            member_address.setAddress(address);
+            memberAddressService.updateIgnoreNull(member_address);
+            return Result.success("ok");
+        } catch (Exception e) {
+            log.error("查询收货地址列表异常",e);
+            return Result.error("fail");
+        }
+    }
 
 
 

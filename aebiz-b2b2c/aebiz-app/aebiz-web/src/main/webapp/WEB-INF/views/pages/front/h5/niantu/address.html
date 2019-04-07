@@ -37,22 +37,23 @@
         收货地址
     </h1>
 </header>
+<div id="vue" style="margin-top: 60px;" v-cloak>
+    <div class="mui-card"  v-for="item in addressList" :key="item.id">
 
-<div class="mui-card" style="margin-top: 60px;">
-
-    <div class="mui-card-header">
-        <span>曾浩容</span><span>13655554127</span>
-    </div>
-    <div class="mui-card-content">
-        <div class="mui-card-content-inner">
-            安徽省合肥市蜀山区黄山路与香樟大道交口西北角
+        <div class="mui-card-header">
+            <span>{{item.fullName}}</span><span>{{item.mobile}}</span>
         </div>
-    </div>
-    <div class="mui-card-header">
-        <button type="button" class="mui-btn mui-btn-success" onclick="location.href='${base!}/open/h5/address/goAddressUp.html'">编辑</button>
-        <button type="button" class="mui-btn mui-btn-danger mui-btn-outlined">
-            删除
-        </button>
+        <div class="mui-card-content">
+            <div class="mui-card-content-inner">
+                {{item.address}}
+            </div>
+        </div>
+        <div class="mui-card-header">
+            <button type="button" class="mui-btn mui-btn-success" onclick="location.href='${base!}/open/h5/address/goAddressUp.html'">编辑</button>
+            <button type="button" class="mui-btn mui-btn-danger mui-btn-outlined">
+                删除
+            </button>
+        </div>
     </div>
 </div>
 
@@ -73,20 +74,20 @@
     var vue = new Vue({
         el: '#vue',
         data: {
-            videoList: [],
+            addressList: [],
         },
         created:function () {   //实例初始化创建完成执行
 
-            this.getvideoList()     //调用自身方法
+            this.getAddressList()     //调用自身方法
 
         },
         methods:{              //定义封装方法
             //获取列表
-            getvideoList:function () {
+            getAddressList:function () {
                 var self = this;
                 $.ajax({
                     type:"POST",
-                    url:"${base!}/open/h5/cms/videoList.html",
+                    url:"${base!}/open/h5/address/addressList.html",
                     dataType:"JSON",
                     data:{
 
@@ -94,7 +95,7 @@
                     success:function(data){
                         if (data.code == 0) {
                             var d = data.data;
-                            self.videoList = d;
+                            self.addressList = d;
                         } else {
 
                         }

@@ -37,25 +37,25 @@
 		</nav>
 		
 		<div id="slider" class="mui-slider" >
-			<div class="mui-slider-group mui-slider-loop">
+			<div class="mui-slider-group mui-slider-loop" style="margin-top: 40px;">
 				<!-- 额外增加的一个节点(循环轮播：第一个节点是最后一张轮播) -->
 				<div class="mui-slider-item mui-slider-item-duplicate">
 					<a href="#">
-						<img src="${base!}/assets/front/h5/img/shuijiao.jpg">
+						<img :src="banner" style="height: 200px;">
 					</a>
 				</div>
 
 				<!-- 第二张 -->
 				<div class="mui-slider-item" v-for="item in bannerList" :key="item.id">
 					<a href="#">
-						<img :src="item.imgurl">
+						<img :src="item.imgurl" style="height: 200px;">
 					</a>
 				</div>
 		
 				<!-- 额外增加的一个节点(循环轮播：最后一个节点是第一张轮播) -->
 				<div class="mui-slider-item mui-slider-item-duplicate">
 					<a href="#">
-						<img src="${base!}/assets/front/h5/img/shuijiao.jpg">
+						<img :src="banner" style="height: 200px;">
 					</a>
 				</div>
 			</div>
@@ -123,6 +123,7 @@
                 el: '#vue',
                 data: {
                     bannerList: [],
+                    banner:''
                 },
                 created:function () {   //实例初始化创建完成执行
 
@@ -144,6 +145,7 @@
                                 if (data.code == 0) {
                                    var d = data.data;
                                     self.bannerList = d;
+                                    self.banner = d[0];
                                     var slider = mui("#slider");
                                     slider.slider({
                                         interval: 5000

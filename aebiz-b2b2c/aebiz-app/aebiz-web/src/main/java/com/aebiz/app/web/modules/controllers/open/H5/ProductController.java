@@ -61,13 +61,6 @@ public class ProductController {
         return "pages/front/h5/niantu/productDetails";
     }
 
-    /**
-     * 进入收银台
-     */
-    @RequestMapping("/checkoutCounter.html")
-    public String checkoutCounter() {
-        return "pages/front/h5/niantu/checkoutCounter";
-    }
 
 
 
@@ -153,6 +146,16 @@ public class ProductController {
             return Result.error("fail");
         }
     }
+
+
+    /**
+     * 进入购物车页
+     */
+    @RequestMapping("/shoppingCart.html")
+    public String shoppingCart() {
+        return "pages/front/h5/niantu/shoppingCart";
+    }
+
 
 
 }

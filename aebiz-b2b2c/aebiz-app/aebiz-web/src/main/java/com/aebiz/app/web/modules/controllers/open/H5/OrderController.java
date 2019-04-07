@@ -66,62 +66,18 @@ public class OrderController {
      */
     @RequestMapping("/orderConfirmation.html")
     public String orderConfirmation(HttpServletRequest request) {
-        String ids = request.getParameter("id");
-        String num = request.getParameter("num");
-
         Subject subject = SecurityUtils.getSubject();
         Account_user accountUser = (Account_user) subject.getPrincipal();
         if(accountUser==null){
             return "pages/front/h5/niantu/login";
         }
-        Goods_main good = goodsService.fetch(ids);
-        Order_main order_main = new Order_main();
-        Order_goods order_goods = new Order_goods();
-
-        order_main.setAccountId(accountUser.getAccountId());
-        order_main.setStoreId(good.getStoreId());
-        Cnd proCnd = Cnd.NEW();
-        proCnd.and("goodsId","=",good.getId());
-        List<Goods_product> gpList = goodsProductService.query(proCnd);
-        if(gpList!=null&&gpList.size()>0){
-            Goods_product goods_product = gpList.get(0);
-            Integer salePrice = goods_product.getSalePrice();
-            int n = Integer.parseInt(num);
-            int totalMoney = salePrice*n;
-            order_main.setGoodsMoney(totalMoney);
-            order_main.setGoodsFreeMoney(0);
-            String freight = sysDictService.getNameByCode("freight");
-            int freightMoney = Integer.parseInt(freight)*100;
-            int freeMoney = 0;
-            order_main.setPayMoney(totalMoney+freightMoney);
-            order_main.setFreightMoney(freightMoney);
-            order_main.setFreeMoney(0);
-            order_main.setPayStatus(0);
-            order_main.setOrderStatus(0);
-            order_main.setOrderAt(DateUtil.getTime(new Date()));
-            Order_main order = orderMainService.insert(order_main);
-            order_goods.setOrderId(order.getId());
-            order_goods.setAccountId(order.getAccountId());
-            order_goods.setGoodsId(good.getId());
-            order_goods.setStoreId(order_main.getStoreId());
-            order_goods.setGoodsName(good.getName());
-            order_goods.setProductId(goods_product.getId());
-            order_goods.setSku(goods_product.getSku());
-            order_goods.setName(goods_product.getName());
-            order_goods.setBuyNum(n);
-            order_goods.setSalePrice(goods_product.getSalePrice());
-            order_goods.setBuyPrice(goods_product.getSalePrice()-freeMoney);
-            order_goods.setTotalMoney(goods_product.getSalePrice()*n);
-            order_goods.setFreeMoney(freeMoney);
-            order_goods.setPayMoney(goods_product.getSalePrice()*n-freeMoney);
-            orderGoodsService.insert(order_goods);
-            request.setAttribute("orderId",order.getId());
-        }
-
-
-
+        String productIds = request.getParameter("productIds");
+        String num = request.getParameter("num");
+        request.setAttribute("productIds",productIds);
+        request.setAttribute("num",num);
         return "pages/front/h5/niantu/orderConfirmation";
     }
+
     /**
      * 获取订单信息
      */
@@ -167,4 +123,83 @@ public class OrderController {
             return Result.error("fail");
         }
     }
+
+    /**
+     * 进入订单列表页
+     */
+    @RequestMapping("/goOrderList.html")
+    public String goOrderList() {
+        return "pages/front/h5/niantu/orderList";
+    }
+
+    /**
+     * 进入订单详情页
+     */
+    @RequestMapping("/goOrderInfo.html")
+    public String goOrderInfo() {
+        return "pages/front/h5/niantu/orderInfo";
+    }
+
+
+    /**
+     * 进入收银台
+     */
+    @RequestMapping("/checkoutCounter.html")
+    public String checkoutCounter(HttpServletRequest request) {
+        String productIds = request.getParameter("productIds");
+        String num = request.getParameter("num");
+
+        Subject subject = SecurityUtils.getSubject();
+        Account_user accountUser = (Account_user) subject.getPrincipal();
+        if(accountUser==null){
+            return "pages/front/h5/niantu/login";
+        }
+        Goods_main good = goodsService.fetch(productIds);
+        Order_main order_main = new Order_main();
+        Order_goods order_goods = new Order_goods();
+
+        order_main.setAccountId(accountUser.getAccountId());
+        order_main.setStoreId(good.getStoreId());
+        Cnd proCnd = Cnd.NEW();
+        proCnd.and("goodsId","=",good.getId());
+        List<Goods_product> gpList = goodsProductService.query(proCnd);
+        if(gpList!=null&&gpList.size()>0){
+            Goods_product goods_product = gpList.get(0);
+            Integer salePrice = goods_product.getSalePrice();
+            int n = Integer.parseInt(num);
+            int totalMoney = salePrice*n;
+            order_main.setGoodsMoney(totalMoney);
+            order_main.setGoodsFreeMoney(0);
+            String freight = sysDictService.getNameByCode("freight");
+            int freightMoney = Integer.parseInt(freight)*100;
+            int freeMoney = 0;
+            order_main.setPayMoney(totalMoney+freightMoney);
+            order_main.setFreightMoney(freightMoney);
+            order_main.setFreeMoney(0);
+            order_main.setPayStatus(0);
+            order_main.setOrderStatus(0);
+            order_main.setOrderAt(DateUtil.getTime(new Date()));
+            Order_main order = orderMainService.insert(order_main);
+            order_goods.setOrderId(order.getId());
+            order_goods.setAccountId(order.getAccountId());
+            order_goods.setGoodsId(good.getId());
+            order_goods.setStoreId(order_main.getStoreId());
+            order_goods.setGoodsName(good.getName());
+            order_goods.setProductId(goods_product.getId());
+            order_goods.setSku(goods_product.getSku());
+            order_goods.setName(goods_product.getName());
+            order_goods.setBuyNum(n);
+            order_goods.setSalePrice(goods_product.getSalePrice());
+            order_goods.setBuyPrice(goods_product.getSalePrice()-freeMoney);
+            order_goods.setTotalMoney(goods_product.getSalePrice()*n);
+            order_goods.setFreeMoney(freeMoney);
+            order_goods.setPayMoney(goods_product.getSalePrice()*n-freeMoney);
+            orderGoodsService.insert(order_goods);
+            request.setAttribute("orderId",order.getId());
+        }
+        return "pages/front/h5/niantu/checkoutCounter";
+    }
+
+
+
 }

@@ -73,8 +73,11 @@ public class OrderController {
         }
         String productIds = request.getParameter("productIds");
         String num = request.getParameter("num");
+        String videoId = request.getParameter("videoId");
+
         request.setAttribute("productIds",productIds);
         request.setAttribute("num",num);
+        request.setAttribute("videoId",videoId);
         return "pages/front/h5/niantu/orderConfirmation";
     }
 

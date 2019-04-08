@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 
@@ -44,7 +45,8 @@ public class AddressH5Controller{
      * 进入收货地址编辑页
      */
     @RequestMapping("goAddressUp.html")
-    public String goAddressUp(){
+    public String goAddressUp(String id, HttpServletRequest request){
+        request.setAttribute("id",id);
         return "pages/front/h5/niantu/addressUp";
     }
 
@@ -86,14 +88,23 @@ public class AddressH5Controller{
         try {
             Subject subject = SecurityUtils.getSubject();
             Account_user accountUser = (Account_user) subject.getPrincipal();
-            Cnd cnd = Cnd.NEW();
-            cnd.and("accountId", "=", accountUser.getId() );
-            List<Member_address> list = memberAddressService.query(cnd);
-            Member_address member_address = new Member_address();
-            if(list!=null && list.size()>0){
-                member_address = list.get(0);
+
+            Cnd cnd1 = Cnd.NEW();
+            cnd1.and("accountId", "=", accountUser.getId());
+            cnd1.and("defaultValue", "=", 1);
+            Member_address memberAddress = memberAddressService.fetch(cnd1);
+            if(memberAddress != null){
+                return Result.success("ok",memberAddress);
+            }else {
+                Cnd cnd = Cnd.NEW();
+                cnd.and("accountId", "=", accountUser.getId() );
+                List<Member_address> list = memberAddressService.query(cnd);
+                Member_address member_address = new Member_address();
+                if(list!=null && list.size()>0){
+                    member_address = list.get(0);
+                }
+                return Result.success("ok",member_address);
             }
-            return Result.success("ok",member_address);
         } catch (Exception e) {
             log.error("查询收货地址列表异常",e);
             return Result.error("fail");
@@ -101,17 +112,37 @@ public class AddressH5Controller{
     }
 
     /**
+     * 设置当前收货地址为默认收货地址
+     */
+    @RequestMapping("setDefaultAddress.html")
+    @SJson
+    public Result setDefaultAddress(String id){
+        try {
+            Subject subject = SecurityUtils.getSubject();
+            Account_user accountUser = (Account_user) subject.getPrincipal();
+            memberAddressService.updateDefault(id,accountUser.getId());
+            return Result.success("ok");
+        } catch (Exception e) {
+            log.error("查询收货地址列表异常",e);
+            return Result.error("fail");
+        }
+    }
+
+
+    /**
      * 添加收货地址
      */
     @RequestMapping("addAddress.html")
     @SJson
-    public Result addAddress(String id){
+    public Result addAddress(String name,String mobile,String address){
         try {
             Subject subject = SecurityUtils.getSubject();
             Account_user accountUser = (Account_user) subject.getPrincipal();
-            Cnd cnd = Cnd.NEW();
-            cnd.and("accountId", "=", accountUser.getId() );
             Member_address member_address =new Member_address();
+            member_address.setAccountId(accountUser.getId());
+            member_address.setAddress(address);
+            member_address.setFullName(name);
+            member_address.setMobile(mobile);
             memberAddressService.insert(member_address);
             return Result.success("ok");
         } catch (Exception e) {
@@ -119,16 +150,19 @@ public class AddressH5Controller{
             return Result.error("fail");
         }
     }
+
     /**
      * 编辑收货地址
      */
     @RequestMapping("updateAddress.html")
     @SJson
-    public Result updateAddress(String id,String address){
+    public Result updateAddress(String id,String name,String mobile,String address){
         try {
             Member_address member_address =new Member_address();
             member_address.setId(id);
             member_address.setAddress(address);
+            member_address.setFullName(name);
+            member_address.setMobile(mobile);
             memberAddressService.updateIgnoreNull(member_address);
             return Result.success("ok");
         } catch (Exception e) {
@@ -137,6 +171,36 @@ public class AddressH5Controller{
         }
     }
 
+    /**
+     * 根据id查询收货地址
+     */
+    @RequestMapping("addressbyId.html")
+    @SJson
+    public Result addressbyId(String id){
+        try {
+
+            Member_address member_address = memberAddressService.fetch(id);
+            return Result.success("ok",member_address);
+        } catch (Exception e) {
+            log.error("查询收货地址列表异常",e);
+            return Result.error("fail");
+        }
+    }
+
+    /**
+     * 根据id删除收货地址
+     */
+    @RequestMapping("addressDelete.html")
+    @SJson
+    public Result addressDelete(String id){
+        try {
+            memberAddressService.delete(id);
+            return Result.success("ok");
+        } catch (Exception e) {
+            log.error("查询收货地址列表异常",e);
+            return Result.error("fail");
+        }
+    }
 
 
 }

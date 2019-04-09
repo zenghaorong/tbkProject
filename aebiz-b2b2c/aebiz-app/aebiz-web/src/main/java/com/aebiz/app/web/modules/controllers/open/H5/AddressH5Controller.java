@@ -37,7 +37,8 @@ public class AddressH5Controller{
      * 进入收货地址列表页
      */
     @RequestMapping("goAddress.html")
-    public String goAddress(){
+    public String goAddress(String productList,HttpServletRequest request){
+        request.setAttribute("productList",productList);
         return "pages/front/h5/niantu/address";
     }
 

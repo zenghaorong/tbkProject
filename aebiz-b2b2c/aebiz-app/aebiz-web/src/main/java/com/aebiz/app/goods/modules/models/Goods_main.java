@@ -221,6 +221,16 @@ public class Goods_main extends BaseModel implements Serializable {
 
     private String saleNumMonth;
 
+    //用于下单时购买数量
+    private String num;
+
+    public String getNum() {
+        return num;
+    }
+
+    public void setNum(String num) {
+        this.num = num;
+    }
 
     public String getMarketPrice() {
         return marketPrice;

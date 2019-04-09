@@ -260,7 +260,12 @@
     });
     function fastBuy() {
         var num = $("#productNum").val();
-        window.location.href="${base!}/open/h5/order/orderConfirmation.html?id=${id!}&num="+num;
+        var array = [];
+        var pdata = {};
+        pdata.num = num;
+        pdata.productId = '${id!}';
+        array[0]=pdata;
+        window.location.href="${base!}/open/h5/order/orderConfirmation.html?productList="+JSON.stringify(array);
     }
     var slider = mui("#slider");
     document.getElementById("switch").addEventListener('toggle', function(e) {

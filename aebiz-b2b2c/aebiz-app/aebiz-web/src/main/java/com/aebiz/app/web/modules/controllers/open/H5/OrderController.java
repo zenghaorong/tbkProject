@@ -1,6 +1,8 @@
 package com.aebiz.app.web.modules.controllers.open.H5;
 
 import com.aebiz.app.acc.modules.models.Account_user;
+import com.aebiz.app.cms.modules.models.Cms_video;
+import com.aebiz.app.cms.modules.services.CmsVideoService;
 import com.aebiz.app.goods.modules.models.Goods_image;
 import com.aebiz.app.goods.modules.models.Goods_main;
 import com.aebiz.app.goods.modules.models.Goods_product;
@@ -62,6 +64,9 @@ public class OrderController {
     @Autowired
     private OrderGoodsService orderGoodsService;
 
+    @Autowired
+    private CmsVideoService cmsVideoService;
+
 
     /**
      * 进入订单确认页
@@ -69,8 +74,12 @@ public class OrderController {
     @RequestMapping("/orderConfirmation.html")
     public String orderConfirmation(HttpServletRequest request) {
         Subject subject = SecurityUtils.getSubject();
-        Account_user accountUser = (Account_user) subject.getPrincipal();
-        if(accountUser==null){
+        try {
+            Account_user accountUser = (Account_user) subject.getPrincipal();
+            if (accountUser == null) {
+                return "pages/front/h5/niantu/login";
+            }
+        }catch (Exception e){
             return "pages/front/h5/niantu/login";
         }
         String productList = request.getParameter("productList");
@@ -152,7 +161,7 @@ public class OrderController {
      * 进入收银台
      */
     @RequestMapping("/checkoutCounter.html")
-    public String checkoutCounter(HttpServletRequest request,String productList) {
+    public String checkoutCounter(HttpServletRequest request,String productList,String addressId) {
 
         List<Map<String,Object>> list = (List<Map<String, Object>>) JSON.parse(productList);
 
@@ -161,6 +170,10 @@ public class OrderController {
         if(accountUser==null){
             return "pages/front/h5/niantu/login";
         }
+
+        //查询收货信息
+        Member_address member_address = memberAddressService.fetch(addressId);
+
         for(Map<String,Object> map:list) {
             String id = (String) map.get("productId");
             String num = (String) map.get("num");
@@ -189,6 +202,8 @@ public class OrderController {
                 order_main.setPayStatus(0);
                 order_main.setOrderStatus(0);
                 order_main.setOrderAt(DateUtil.getTime(new Date()));
+                order_main.setDeliveryAddress(member_address.getAddress());
+                order_main.setDeliveryMobile(member_address.getMobile());
                 Order_main order = orderMainService.insert(order_main);
                 order_goods.setOrderId(order.getId());
                 order_goods.setAccountId(order.getAccountId());
@@ -211,6 +226,32 @@ public class OrderController {
         return "pages/front/h5/niantu/checkoutCounter";
     }
 
+    /**
+     * 视频下单进入收银台
+     */
+    @RequestMapping("/videoCheckoutCounter.html")
+    public String videoCheckoutCounter(HttpServletRequest request,String videoId) {
+        Subject subject = SecurityUtils.getSubject();
+        Account_user accountUser = (Account_user) subject.getPrincipal();
+        if(accountUser==null){
+            return "pages/front/h5/niantu/login";
+        }
+        Cms_video cms_video=cmsVideoService.fetch(videoId);
+        Order_main order_main = new Order_main();
+        order_main.setAccountId(accountUser.getAccountId());
+        order_main.setStoreId(cms_video.getStoreId());
+        order_main.setGoodsMoney(cms_video.getPrice().intValue());
+        order_main.setGoodsFreeMoney(0);
+        order_main.setPayMoney(cms_video.getPrice().intValue());
+        order_main.setFreightMoney(0);
+        order_main.setFreeMoney(0);
+        order_main.setPayStatus(0);
+        order_main.setOrderStatus(0);
+        order_main.setOrderAt(DateUtil.getTime(new Date()));
+        Order_main order = orderMainService.insert(order_main);
+        request.setAttribute("order",order);
+        return "pages/front/h5/niantu/checkoutCounter";
+    }
 
 
 }

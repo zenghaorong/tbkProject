@@ -63,10 +63,10 @@
 
     <nav class="mui-bar mui-bar-tab" style="height: 40px;">
         <div class="mui-input-row mui-password" style="border: 0px;">
-            <button type="button" id="place"  class="mui-btn mui-btn-primary" style="width: 30%;top: 0px;line-height:1;
-            border: 0;background-color:rgb(56,206,204);">加入购物车</button>
-            <button type="button" style="width: 70%;top: 0px;line-height:1;border: 0;background-color: rgb(247, 70, 33);"
-                    class="mui-btn mui-btn-primary" id="review">立即购买</button>
+            <!--<button type="button" id="place"  class="mui-btn mui-btn-primary" style="width: 30%;top: 0px;line-height:1;-->
+            <!--border: 0;background-color:rgb(56,206,204);">加入购物车</button>-->
+            <button type="button" style="width: 100%;top: 0px;line-height:1;border: 0;background-color: rgb(247, 70, 33);"
+                    v-on:click="save"      class="mui-btn mui-btn-primary" id="review">立即购买</button>
         </div>
     </nav>
 </div>
@@ -113,6 +113,10 @@
                 });
 
             },
+            save:function () {
+                var id= this.video.id;
+                window.location.href="${base!}/open/h5/order/videoCheckoutCounter.html?videoId="+id;
+            }
 
         },
         watch:{     //监听器

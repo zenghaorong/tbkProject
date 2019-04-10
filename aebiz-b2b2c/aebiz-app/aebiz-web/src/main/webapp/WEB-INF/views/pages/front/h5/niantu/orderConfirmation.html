@@ -89,6 +89,12 @@
         </ul>
     </div>
 </div>
+<div class="mui-content-padded">
+    可用优惠劵
+    <select class="mui-btn mui-btn-block" v-model="couponId">
+        <option :value="item.couponId" v-for="item in coupons" :key="item.id" selected>{{item.couponId}}</option>
+    </select>
+</div>
 
 <nav class="mui-bar mui-bar-tab" style="height: 40px;">
     <div class="mui-input-row mui-password" style="border: 0px;">
@@ -118,12 +124,15 @@
             order:'',
             goodsList:[],
             zongPrice:'',
-            yunPrice:0
+            yunPrice:0,
+            coupons:[],
+            couponId:''
         },
         created:function () {   //实例初始化创建完成执行
 
             this.defaultAddress();    //调用自身方法
             this.getOrderProductList();
+            this.getMyOrderCoupon();
 
         },
         methods:{              //定义封装方法
@@ -172,9 +181,29 @@
                     }
                 });
             },
+            //查询可用优惠劵
+            getMyOrderCoupon:function () {
+                var self = this;
+                $.ajax({
+                    type:"POST",
+                    url:"${base!}/open/h5/coupon/getMyOrderCoupon.html",
+                    dataType:"JSON",
+                    data:{
+
+                    },
+                    success:function(data){
+                        if (data.code == 0) {
+                           self.coupons = data.data;
+                        } else {
+
+                        }
+                    }
+                });
+            },
             save:function () {
                 var json = '${productList}';
-                window.location.href="${base!}/open/h5/order/checkoutCounter.html?productList="+json;
+                var addressId = this.address.id;
+                window.location.href="${base!}/open/h5/order/checkoutCounter.html?productList="+json+"&addressId="+addressId;
             }
         },
         watch:{     //监听器

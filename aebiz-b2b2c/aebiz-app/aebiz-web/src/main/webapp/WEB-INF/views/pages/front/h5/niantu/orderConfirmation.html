@@ -92,7 +92,7 @@
 <div class="mui-content-padded">
     可用优惠劵
     <select class="mui-btn mui-btn-block" v-model="couponId">
-        <option :value="item.couponId" v-for="item in coupons" :key="item.id" selected>{{item.couponId}}</option>
+        <option :value="item.couponId" v-for="item in coupons" :key="item.id">{{item.sales_coupon.name}}</option>
     </select>
 </div>
 
@@ -194,6 +194,9 @@
                     success:function(data){
                         if (data.code == 0) {
                            self.coupons = data.data;
+                            if(self.coupons.length>0) {
+                                self.couponId = self.coupons[0].couponId; //让select默认选中
+                            }
                         } else {
 
                         }

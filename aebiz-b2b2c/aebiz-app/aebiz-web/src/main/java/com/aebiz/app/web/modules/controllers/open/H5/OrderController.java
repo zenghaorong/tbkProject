@@ -227,6 +227,20 @@ public class OrderController {
     }
 
     /**
+     * 视频下单进入订单确认页
+     */
+    @RequestMapping("/videoOrderConfirmation.html")
+    public String videoOrderConfirmation(HttpServletRequest request,String videoId) {
+        Subject subject = SecurityUtils.getSubject();
+        Account_user accountUser = (Account_user) subject.getPrincipal();
+        if (accountUser == null) {
+            return "pages/front/h5/niantu/login";
+        }
+        request.setAttribute("videoId",videoId);
+        return "pages/front/h5/niantu/videoOrderConfirmation";
+    }
+
+    /**
      * 视频下单进入收银台
      */
     @RequestMapping("/videoCheckoutCounter.html")

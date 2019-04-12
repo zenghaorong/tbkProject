@@ -4,6 +4,8 @@ import com.aebiz.app.acc.modules.models.Account_user;
 import com.aebiz.app.cms.modules.models.Cms_video;
 import com.aebiz.app.member.modules.models.Member_coupon;
 import com.aebiz.app.member.modules.services.MemberCouponService;
+import com.aebiz.app.sales.modules.models.Sales_coupon;
+import com.aebiz.app.sales.modules.services.SalesCouponService;
 import com.aebiz.baseframework.base.Result;
 import com.aebiz.baseframework.view.annotation.SJson;
 import org.apache.shiro.SecurityUtils;
@@ -30,6 +32,8 @@ public class CouponH5Controller {
 
     @Autowired
     private MemberCouponService memberCouponService;
+    @Autowired
+    private SalesCouponService salesCouponService;
 
     /**
      * 订单确认页查询可用优惠劵列表
@@ -45,6 +49,10 @@ public class CouponH5Controller {
             cnd.and("accountId", "=", accountUser.getId() );
             cnd.and("status", "=", 2);
             List<Member_coupon> member_couponList = memberCouponService.query(cnd);
+            for(Member_coupon member_coupon : member_couponList){
+                Sales_coupon sales_coupon = salesCouponService.fetch(member_coupon.getCouponId());
+                member_coupon.setSales_coupon(sales_coupon);
+            }
             return Result.success("ok",member_couponList);
         } catch (Exception e) {
             log.error("获取订单可用优惠劵异常",e);

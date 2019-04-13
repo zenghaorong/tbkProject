@@ -216,7 +216,6 @@ public class Goods_main extends BaseModel implements Serializable {
     private List<Goods_product> productList;
 
     private String price;
-
     private String marketPrice;
 
     private String saleNumMonth;

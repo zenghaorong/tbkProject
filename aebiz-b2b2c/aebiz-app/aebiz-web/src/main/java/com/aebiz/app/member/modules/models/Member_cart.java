@@ -22,7 +22,7 @@ public class Member_cart extends BaseModel implements Serializable {
     @Name
     @Comment("ID")
     @ColDefine(type = ColType.VARCHAR, width = 32)
-    @Prev(els = {@EL("ig(view.tableName,'')")})
+    @Prev(els = {@EL("uuid()")})
     private String id;
 
     @Column
@@ -79,6 +79,16 @@ public class Member_cart extends BaseModel implements Serializable {
     private Integer  salesPrice;
 
     private String salesId;//当前选择的促销Id
+
+    private String productName;
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
 
     public String getId() {
         return id;

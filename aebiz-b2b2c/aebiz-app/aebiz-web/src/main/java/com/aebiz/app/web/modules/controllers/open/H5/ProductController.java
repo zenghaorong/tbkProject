@@ -196,13 +196,6 @@ public class ProductController {
     }
 
 
-    /**
-     * 进入购物车页
-     */
-    @RequestMapping("/shoppingCart.html")
-    public String shoppingCart() {
-        return "pages/front/h5/niantu/shoppingCart";
-    }
 
 
 

@@ -142,7 +142,7 @@
 <footer class="bar bar-tab bushFooter" style="background: white;">
     <div class="btns" >
 
-        <a href="/zyDealerNew/toAppointmentSJ.html?storeId=270&amp;productId=36807&amp;saleId=" class="orange">加入购物车</a>
+        <a href="#" onclick="addCart()" class="orange">加入购物车</a>
         <a href="#" onclick="fastBuy()" class="red">立即购买</a>
 
 
@@ -249,7 +249,7 @@
                     }
                 });
 
-            }
+            },
         },
         watch:{     //监听器
             // carModel:function () {
@@ -266,6 +266,28 @@
         pdata.productId = '${id!}';
         array[0]=pdata;
         window.location.href="${base!}/open/h5/order/orderConfirmation.html?productList="+JSON.stringify(array);
+    }
+    //添加购物车
+    function addCart() {
+        $.ajax({
+            type:"POST",
+            url:"${base!}/open/h5/cart/addCart.html",
+            dataType:"JSON",
+            data:{
+                productId:'${id!}',
+                num:1
+            },
+            success:function(data){
+                if (data.code == 0) {
+                    alert("添加成功！")
+                } else if(data.code == -1){
+                    alert("您没有登录，请登录！");
+                    window.location.href="${base!}/open/H5/login/login.html"
+                }else {
+                    alert("商品不存在！");
+                }
+            }
+        });
     }
     var slider = mui("#slider");
     document.getElementById("switch").addEventListener('toggle', function(e) {

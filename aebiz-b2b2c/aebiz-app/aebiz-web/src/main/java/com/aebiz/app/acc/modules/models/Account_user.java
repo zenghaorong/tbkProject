@@ -66,6 +66,11 @@ public class Account_user extends BaseModel implements Serializable {
     @ColDefine(type = ColType.VARCHAR, width = 32)
     private String accountId;
 
+    @Column
+    @Comment("会员头像")
+    @ColDefine(type = ColType.VARCHAR, width = 255)
+    private String image;
+
     @One(target = Account_info.class, field = "accountId")
     private Account_info accountInfo;
 
@@ -147,5 +152,13 @@ public class Account_user extends BaseModel implements Serializable {
 
     public void setPasswordStrength(Integer passwordStrength) {
         this.passwordStrength = passwordStrength;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 }

@@ -46,7 +46,7 @@
         <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3" style="padding: 0;border:0;">
             <a href="productList.html">
                 <img src="${base!}/assets/front/h5/img/tu1.png" width="80px;"/>
-                <div class="mui-media-body" style="color: white;">我逝去的青春</div>
+                <div class="mui-media-body" style="color: white;">${accountUser.loginname!}</div>
             </a>
         </li>
         <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3" style="padding: 0;border:0;">
@@ -62,19 +62,19 @@
             </a>
         </li>
         <li class="mui-table-view-cell mui-media mui-col-xs-2 mui-col-sm-3" style="padding: 0;margin-left:10px;border: 0; ">
-            <a href="#">
+            <a href="${base!}/open/h5/order/goOrderList.html">
                 <img src="${base!}/assets/front/h5/img/c2.png" width="62px;"/>
                 <div class="mui-media-body">待发货</div>
             </a>
         </li>
         <li class="mui-table-view-cell mui-media mui-col-xs-2 mui-col-sm-3" style="padding: 0;margin-left:10px;border: 0; ">
-            <a href="#">
+            <a href="${base!}/open/h5/order/goOrderList.html">
                 <img src="${base!}/assets/front/h5/img/c3.png" width="62px;"/>
                 <div class="mui-media-body">待收货</div>
             </a>
         </li>
         <li class="mui-table-view-cell mui-media mui-col-xs-2 mui-col-sm-3" style="padding: 0;margin-left:10px;border: 0; ">
-            <a href="#">
+            <a href="${base!}/open/h5/order/goOrderList.html">
                 <img src="${base!}/assets/front/h5/img/c4.png" width="62px;"/>
                 <div class="mui-media-body">待评价</div>
             </a>
@@ -113,6 +113,7 @@
 
 <script type="text/javascript" src="${base!}/assets/front/h5/js/mui.js" ></script>
 <script type="text/javascript" src="${base!}/assets/front/h5/js/jquery-2.0.0.min.js" ></script>
+<script type="text/javascript" src="${base!}/assets/decorate/pc/decoratecommon/js/layer/mobile/layer.js" ></script>
 <script type="application/javascript">
     mui.init({
         swipeBack:true //启用右滑关闭功能

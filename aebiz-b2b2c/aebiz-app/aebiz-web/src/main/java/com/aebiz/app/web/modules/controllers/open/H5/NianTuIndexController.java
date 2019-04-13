@@ -55,12 +55,13 @@ public class NianTuIndexController {
      * 进入个人中心页
      */
     @RequestMapping("userCenter.html")
-    public String userCenter() {
+    public String userCenter(HttpServletRequest request) {
         Subject subject = SecurityUtils.getSubject();
         Account_user accountUser = (Account_user) subject.getPrincipal();
         if(accountUser==null){
             return "pages/front/h5/niantu/login";
         }
+        request.setAttribute("accountUser",accountUser);
         return "pages/front/h5/niantu/userCenter";
     }
 

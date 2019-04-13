@@ -137,6 +137,11 @@ public class Order_main extends BaseModel implements Serializable {
     private Integer orderStatus;//OrderStatusEnum
 
     @Column
+    @Comment("订单类型")
+    @ColDefine(type = ColType.VARCHAR, width = 10)
+    private String orderType; //1.商品订单 2.视频订单
+
+    @Column
     @Comment("下单时间")
     @ColDefine(type = ColType.INT)
     private Integer orderAt;
@@ -792,5 +797,13 @@ public class Order_main extends BaseModel implements Serializable {
 
     public void setExpressInfo(String expressInfo) {
         this.expressInfo = expressInfo;
+    }
+
+    public String getOrderType() {
+        return orderType;
+    }
+
+    public void setOrderType(String orderType) {
+        this.orderType = orderType;
     }
 }

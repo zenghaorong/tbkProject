@@ -211,7 +211,7 @@
 </div>
 </div>
 </div>
-<script src="${base!}/assets/front/h5/js/mui.min.js"></script>
+<script type="text/javascript" src="${base!}/assets/front/h5/js/mui.js" ></script>
 <script type="text/javascript" src="${base!}/assets/front/h5/js/vue.js" ></script>
 <script type="text/javascript" src="${base!}/assets/front/h5/js/jquery-2.0.0.min.js" ></script>
 <script type="text/javascript" charset="utf-8">
@@ -243,6 +243,10 @@
                         if (data.code == 0) {
                             var d = data.data;
                             self.product = d;
+                            var slider = mui("#slider");
+                            slider.slider({
+                                interval: 5000
+                            });
                         } else {
 
                         }
@@ -289,18 +293,7 @@
             }
         });
     }
-    var slider = mui("#slider");
-    document.getElementById("switch").addEventListener('toggle', function(e) {
-        if (e.detail.isActive) {
-            slider.slider({
-                interval: 5000
-            });
-        } else {
-            slider.slider({
-                interval: 0
-            });
-        }
-    });
+
 
 </script>
 </body>

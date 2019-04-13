@@ -30,6 +30,11 @@ public class Order_goods extends BaseModel implements Serializable {
     private String orderId;
 
     @Column
+    @Comment("订单类型")
+    @ColDefine(type = ColType.VARCHAR, width = 10)
+    private String orderType; //1.商品订单 2.视频订单
+
+    @Column
     @Comment("帐号ID")
     @ColDefine(type = ColType.VARCHAR, width = 32)
     private String accountId;
@@ -391,5 +396,13 @@ public class Order_goods extends BaseModel implements Serializable {
 
     public void setGoodsMain(Goods_main goodsMain) {
         this.goodsMain = goodsMain;
+    }
+
+    public String getOrderType() {
+        return orderType;
+    }
+
+    public void setOrderType(String orderType) {
+        this.orderType = orderType;
     }
 }

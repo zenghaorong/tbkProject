@@ -116,7 +116,7 @@ public class StoreSalesCouponController {
         req.setAttribute("areaMap", shopAreaManagementService.getShopAreaManagementMap());
         req.setAttribute("memberTypeList", mtl);
         req.setAttribute("memberTypeMap", memberTypeMap);
-        return "pages/store/sales/coupon/add";
+        return "pages/store/sales/coupon/add2";
     }
 
     @RequestMapping("/addDo")

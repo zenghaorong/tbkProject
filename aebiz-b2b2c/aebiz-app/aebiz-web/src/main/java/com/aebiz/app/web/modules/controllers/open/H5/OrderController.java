@@ -13,6 +13,7 @@ import com.aebiz.app.member.modules.models.Member_address;
 import com.aebiz.app.member.modules.services.MemberAddressService;
 import com.aebiz.app.order.modules.models.Order_goods;
 import com.aebiz.app.order.modules.models.Order_main;
+import com.aebiz.app.order.modules.models.em.OrderTypeEnum;
 import com.aebiz.app.order.modules.services.OrderGoodsService;
 import com.aebiz.app.order.modules.services.OrderMainService;
 import com.aebiz.app.sys.modules.services.SysDictService;
@@ -204,6 +205,7 @@ public class OrderController {
                 order_main.setOrderAt(DateUtil.getTime(new Date()));
                 order_main.setDeliveryAddress(member_address.getAddress());
                 order_main.setDeliveryMobile(member_address.getMobile());
+                order_main.setOrderType(OrderTypeEnum.product_order_type.getKey());
                 Order_main order = orderMainService.insert(order_main);
                 order_goods.setOrderId(order.getId());
                 order_goods.setAccountId(order.getAccountId());
@@ -262,6 +264,7 @@ public class OrderController {
         order_main.setPayStatus(0);
         order_main.setOrderStatus(0);
         order_main.setOrderAt(DateUtil.getTime(new Date()));
+        order_main.setOrderType(OrderTypeEnum.video_order_type.getKey());
         Order_main order = orderMainService.insert(order_main);
         request.setAttribute("order",order);
         return "pages/front/h5/niantu/checkoutCounter";

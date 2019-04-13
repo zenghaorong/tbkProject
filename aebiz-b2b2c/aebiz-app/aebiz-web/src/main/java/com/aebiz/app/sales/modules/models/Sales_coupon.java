@@ -36,7 +36,7 @@ public class Sales_coupon extends BaseModel implements Serializable {
     private String codeprefix;
 
     @Column
-    @Comment("优惠券类型")
+    @Comment("优惠券类型") //优惠券类型 1.订单满减 2.订单免运费 3.订单打折
     @ColDefine(type = ColType.VARCHAR, width = 32)
     private String type;
     //A.此类优惠券，顾客只需获得一张，即可在规定的时间内重复使用。
@@ -83,6 +83,76 @@ public class Sales_coupon extends BaseModel implements Serializable {
 
     @One(target = Sales_rule_order.class, field = "ruleId")
     private Sales_rule_order salesRuleOrder;
+
+    @Column
+    @Comment("优惠劵可用开始时间")
+    @ColDefine(type = ColType.INT)
+    private Integer startTime;
+
+    @Column
+    @Comment("优惠劵可用结束时间")
+    @ColDefine(type = ColType.INT)
+    private Integer endTime;
+
+    @Column
+    @Comment("满减抵扣的金额")
+    @ColDefine(type = ColType.FLOAT)
+    private Double deductibleAmount;
+
+    @Column
+    @Comment("满减抵扣的金额")
+    @ColDefine(type = ColType.FLOAT)
+    private Double conditionAmount;
+
+    @Column
+    @Comment("根据商品数量优惠")
+    @ColDefine(type = ColType.INT)
+    private Integer productQuantityRule;
+
+    @Column
+    @Comment("优惠劵折扣额")
+    @ColDefine(type = ColType.FLOAT)
+    private Double discount;
+
+    public Integer getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(Integer startTime) {
+        this.startTime = startTime;
+    }
+
+    public Integer getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(Integer endTime) {
+        this.endTime = endTime;
+    }
+
+    public Double getDeductibleAmount() {
+        return deductibleAmount;
+    }
+
+    public void setDeductibleAmount(Double deductibleAmount) {
+        this.deductibleAmount = deductibleAmount;
+    }
+
+    public Double getConditionAmount() {
+        return conditionAmount;
+    }
+
+    public void setConditionAmount(Double conditionAmount) {
+        this.conditionAmount = conditionAmount;
+    }
+
+    public Integer getProductQuantityRule() {
+        return productQuantityRule;
+    }
+
+    public void setProductQuantityRule(Integer productQuantityRule) {
+        this.productQuantityRule = productQuantityRule;
+    }
 
     private boolean hasReceive;//是否领取
 

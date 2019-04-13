@@ -90,21 +90,25 @@ layout("/layouts/store.html"){
                                         <label class="col-sm-2 control-label">${msg['sales.coupon.column.type']}</label>
                                         <div class="col-sm-8 radio">
                                             <div class="form-inline">
-                                                <label><input type="radio" class="" name="type" value="A" checked>A类优惠券</label><span>（此类优惠券，顾客只需获得一张，即可在规定的时间内重复使用。）</span>
+                                                <label><input type="radio" class="" name="type" value="1" checked>订单满减优惠劵</label><span>（此类优惠券，顾客当订单金额达到配置金额是便可用优惠劵抵扣。）</span>
                                             </div>
                                             <div class="form-inline">
-                                                <label><input type="radio" class="" name="type" value="B" >B类优惠券</label><span>（此类优惠券，顾客可一次获得多张，但在规定时间内每张只能使用一次，无法重复使用。只限会员使用。）</span>
+                                                <label><input type="radio" class="" name="type" value="2" >订单免运费优惠券</label><span>（当购买商品数量达到配置的数量时，则进行免运费。）</span>
+                                            </div>
+                                            <div class="form-inline">
+                                                <label><input type="radio" class="" name="type" value="3" >订单打折优惠券</label><span>（当购买商品数量达到配置时，可使用此劵的折扣额）</span>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="form-group">
-                                        <label class="col-sm-2 control-label">${msg['sales.coupon.column.send_type']}</label>
-                                        <div class="col-sm-8 form-inline radio">
-                                            <label><input type="radio" class="" name="send_type" value="receive" checked>领取(店铺领取或通过code领取)</label>
-                                            <label><input type="radio" class="" name="send_type" value="score">积分兑换</label>
-                                            <input type="text" id="score" class="form-control input-sm" style="display: none" name="score" value="" data-parsley-required="true" placeholder="${msg['sales.coupon.column.score']}">
-                                        </div>
-                                    </div>
+                                    <!--获取方式-->
+                                    <!--<div class="form-group">-->
+                                        <!--<label class="col-sm-2 control-label">${msg['sales.coupon.column.send_type']}</label>-->
+                                        <!--<div class="col-sm-8 form-inline radio">-->
+                                            <!--<label><input type="radio" class="" name="send_type" value="receive" checked>领取(店铺领取或通过code领取)</label>-->
+                                            <!--<label><input type="radio" class="" name="send_type" value="score">积分兑换</label>-->
+                                            <!--<input type="text" id="score" class="form-control input-sm" style="display: none" name="score" value="" data-parsley-required="true" placeholder="${msg['sales.coupon.column.score']}">-->
+                                        <!--</div>-->
+                                    <!--</div>-->
                                     <div class="form-group">
                                         <label class="col-sm-2 control-label">${msg['sales.coupon.column.enabled']}</label>
                                         <div class="col-sm-1 switcha">
@@ -114,13 +118,14 @@ layout("/layouts/store.html"){
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="form-group">
-                                        <label class="col-sm-2 control-label">${msg['sales.rule.order.column.limit_other']}</label>
-                                        <div class="col-sm-8">
-                                            <label class="radio-inline"><input type="radio" class="" name="salesRuleOrder.limit_other" value="1" checked>是</label>
-                                            <label class="radio-inline"><input type="radio" class="" name="salesRuleOrder.limit_other" value="0" >否</label>
-                                        </div>
-                                    </div>
+                                    <!--是否排他-->
+                                    <!--<div class="form-group">-->
+                                        <!--<label class="col-sm-2 control-label">${msg['sales.rule.order.column.limit_other']}</label>-->
+                                        <!--<div class="col-sm-8">-->
+                                            <!--<label class="radio-inline"><input type="radio" class="" name="salesRuleOrder.limit_other" value="1" checked>是</label>-->
+                                            <!--<label class="radio-inline"><input type="radio" class="" name="salesRuleOrder.limit_other" value="0" >否</label>-->
+                                        <!--</div>-->
+                                    <!--</div>-->
                                     <div class="form-group">
                                         <label for="salesRuleOrder_limit_priority" class="col-sm-2 control-label">${msg['sales.rule.order.column.limit_priority']}</label>
                                         <div class="col-sm-2">
@@ -130,7 +135,7 @@ layout("/layouts/store.html"){
                                     <div class="form-group">
                                         <label for="limit_num" class="col-sm-2 control-label">${msg['sales.coupon.column.limit_num']}</label>
                                         <div class="col-sm-2">
-                                            <input type="text" id="limit_num" class="form-control" name="limit_num" data-parsley-required="true" placeholder="${msg['sales.coupon.column.limit_num']}">
+                                            <input type="text" id="limit_num" class="form-control" name="limit_num" data-parsley-required="true" placeholder="用户可领取最多张数">
                                         </div>
                                     </div>
                                 </div>

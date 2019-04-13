@@ -14,14 +14,14 @@ layout("/layouts/store.html"){
                         <label class="control-label"></label>
                         <input type="text" class="form-control" name="codeprefix" placeholder="${msg['sales.coupon.column.codeprefix']}" />
                     </div>
-                    <div class="form-group">
-                        <label class="control-label"></label>
-                        <select class="form-control" name="type">
-                            <option value="">请选择类型</option>
-                            <option value="A">A类</option>
-                            <option value="B">B类</option>
-                        </select>
-                    </div>
+                    <!--<div class="form-group">-->
+                        <!--<label class="control-label"></label>-->
+                        <!--<select class="form-control" name="type">-->
+                            <!--<option value="">请选择类型</option>-->
+                            <!--<option value="A">A类</option>-->
+                            <!--<option value="B">B类</option>-->
+                        <!--</select>-->
+                    <!--</div>-->
                     <div class="form-group">
                         <label class="control-label"></label>
                         <select class="form-control" name="p_enabled">
@@ -30,15 +30,13 @@ layout("/layouts/store.html"){
                             <option value="false">启用</option>
                         </select>
                     </div>
-                    <div class="form-group">
-                        <label class="control-label"></label>
-                        <select class="form-control" name="p_checkStatus">
-                            <option value="">请选择审核状态</option>
-                            <!--#for(status in salesCheckStatusEnumValues!){#-->
-                            <option value="${status.key}">${status.value}</option>
-                            <!--#}#-->
-                        </select>
-                    </div>
+                    <!--<div class="form-group">-->
+                        <!--<label class="control-label"></label>-->
+                        <!--<select class="form-control" name="p_checkStatus">-->
+                            <!--<option value="">请选择审核状态</option>-->
+                            <!---->
+                        <!--</select>-->
+                    <!--</div>-->
                     <div class="form-group">
                         <button type="button" class="btn btn-primary js-search-ok" >${msg['globals.button.search']}</button>
                         <button type="button" class="btn btn-default js-search-reset" >${msg['globals.button.reset']}</button>
@@ -61,9 +59,9 @@ layout("/layouts/store.html"){
                         <th>${msg['sales.coupon.column.limit_num']}</th>
                         <th>${msg['sales.coupon.column.send_num']}</th>
                         <th>${msg['sales.coupon.column.send_type']}</th>
-                        <th>${msg['sales.coupon.column.score']}</th>
-                        <th>${msg['sales.coupon.column.checkStatus']}</th>
+                        <!--<th>${msg['sales.coupon.column.score']}</th>-->
                         <th>${msg['sales.coupon.column.enabled']}</th>
+                        <th>${msg['sales.coupon.column.checkStatus']}</th>
                         <th>${msg['globals.table.column.operation']}</th>
                     </tr>
                 </thead>
@@ -137,30 +135,31 @@ layout("/layouts/store.html"){
                     {"data": "limit_num", "bSortable": true},
                     {"data": "send_num", "bSortable": true},
                     {"data": "send_type", "bSortable": true},
-                    {"data": "score", "bSortable": false},
+                    // {"data": "score", "bSortable": false},
                     {"data": "disabled", "bSortable": true},
                     {"data": "checkStatus", "bSortable": true},
             ],
             "columnDefs": [
                 {
                     "render": function (data, type, row) {
-                        if (data == 'receive') {
-                            return '领取';
-                        } else if (data == 'score') {
-                            return '积分兑换';
+                        if(row.type == 1){
+                            return "满减优惠劵";
+                        }
+                        if(row.type == 2){
+                            return "订单免运费优惠劵";
+                        }
+                        if(row.type == 3){
+                            return "订单打折劵";
                         }
                         return '';
                     },
-                    "targets": 5
+                    "targets": 2
                 },
                 {
                     "render": function (data, type, row) {
-                        if (row.send_type == 'score') {
-                            return data;
-                        }
-                        return '';
+                        return '领劵中心';
                     },
-                    "targets": 6
+                    "targets": 5
                 },
                 {
                     "render": function (data, type, row) {
@@ -170,7 +169,7 @@ layout("/layouts/store.html"){
                             return '<i id="disabled_' + row.id + '" class="fa fa-circle text-success ml5"></i>';
                         }
                     },
-                    "targets": 7
+                    "targets": 6
                 },
                 {//0 未提交  1 待审核  2 审核通过  3 未通过
                     "render": function (data, type, row) {
@@ -183,7 +182,7 @@ layout("/layouts/store.html"){
                         }
                         return str;
                     },
-                    "targets": 8
+                    "targets": 7
                 },
                 {
                     "render": function (data, type, row) {
@@ -200,7 +199,7 @@ layout("/layouts/store.html"){
                         returnHtml += '</ul></div>';
                         return returnHtml;
                     },
-                    "targets": 9
+                    "targets": 8
                 }
             ]
         });

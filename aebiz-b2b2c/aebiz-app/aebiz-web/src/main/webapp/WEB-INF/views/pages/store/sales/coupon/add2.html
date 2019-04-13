@@ -62,7 +62,7 @@ layout("/layouts/store.html"){
 <div class="content-wrap">
     <div class="wrapper" style="min-height:500px;">
         <section class="panel panel-form">
-            <form id="addForm" role="form" class="form-horizontal parsley-form" data-parsley-validate action="${base}/platform/self/sales/coupon/addDo" method="post">
+            <form id="addForm" role="form" class="form-horizontal parsley-form" data-parsley-validate action="${base}/store/sales/coupon/addDo" method="post">
                 <input type="hidden" name="checkStatus" value="2"/>
                 <!--<div class="box-tab ">-->
                     <!--<ul class="nav nav-tabs">-->
@@ -153,40 +153,40 @@ layout("/layouts/store.html"){
                                                 <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
                                                 <span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
                                             </div>
-                                            <input type="hidden" id="salesRuleOrder_sartAt" name="tmp_sartAt" value="${@date.getDateTime()}" />
+                                            <input type="hidden" id="salesRuleOrder_sartAt" name="startTime" value="${@date.getDateTime()}" />
                                             <span>至</span>
                                             <div class="input-group date js-end-time " style="min-width:260px;" data-date="1979-09-16T05:25:07Z" data-date-format="yyyy-mm-dd hh:ii:ss" data-link-field="salesRuleOrder_endAt">
                                                 <input type="text" size="16" readonly class="form-control" value="${@date.getDateTime()}" data-parsley-required="true" placeholder="${msg['sales.rule.order.column.endAt']}">
                                                 <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
                                                 <span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
                                             </div>
-                                            <input type="hidden" id="salesRuleOrder_endAt" name="tmp_endAt" value="${@date.getDateTime()}" />
+                                            <input type="hidden" id="salesRuleOrder_endAt" name="endTime" value="${@date.getDateTime()}" />
                                         </div>
                                     </div>
 
                                     <div class="form-group" id="deductibleAmountFor">
                                         <label for="deductibleAmount" class="col-sm-2 control-label">满减抵扣的金额</label>
                                         <div class="col-sm-2">
-                                            <input type="text" id="deductibleAmount" class="form-control" name="deductibleAmount" data-parsley-required="true" placeholder="满减抵扣的金额">
+                                            <input type="text" id="deductibleAmount" class="form-control" name="deductibleAmount"  placeholder="满减抵扣的金额">
                                         </div>
                                     </div>
 
                                     <div class="form-group" id="conditionAmountFor">
                                         <label for="conditionAmount" class="col-sm-2 control-label">条件金额</label>
                                         <div class="col-sm-2">
-                                            <input type="text" id="conditionAmount" class="form-control" name="conditionAmount" data-parsley-required="true" placeholder="订单满多少 条件金额">
+                                            <input type="text" id="conditionAmount" class="form-control" name="conditionAmount"  placeholder="订单满多少 条件金额">
                                         </div>
                                     </div>
                                     <div class="form-group" style="display: none;" id="productQuantityRuleFor">
                                         <label for="productQuantityRule" class="col-sm-2 control-label">条件商品数</label>
                                         <div class="col-sm-2">
-                                            <input type="text" id="productQuantityRule" class="form-control" name="productQuantityRule" data-parsley-required="true" placeholder="优惠条件商品数">
+                                            <input type="text" id="productQuantityRule" class="form-control" name="productQuantityRule"  placeholder="优惠条件商品数">
                                         </div>
                                     </div>
                                     <div class="form-group" style="display: none;" id="discountFor">
                                         <label for="productQuantityRule" class="col-sm-2 control-label">优惠劵折扣额</label>
                                         <div class="col-sm-2">
-                                            <input type="text" id="discount" class="form-control" name="discount" data-parsley-required="true" placeholder="优惠劵折扣额">
+                                            <input type="text" id="discount" class="form-control" name="discount"  placeholder="优惠劵折扣额">
                                         </div>
                                     </div>
 
@@ -206,46 +206,24 @@ layout("/layouts/store.html"){
 
         //保存
         $(".js-save").click(function () {
-            // if (validateForm()) {
-            // $('#addForm').ajaxForm({
-            //     dataType: 'json',
-            //     beforeSubmit: function (arr, form, options) {
-            //         form.find("button:submit").button("loading");
-            //     },
-            //     success: function (data, statusText, xhr, form) {
-            //         if (data.code == 0) {
-            //             window.location.href = '/store/sales/coupon/add';
-            //         } else {
-            //             Toast.error(data.msg);
-            //         }
-            //         form.find("button:submit").button("reset");
-            //     }
-            // });
-            // }
-            var postData = $("#addForm").serialize();
-            var tmpDic={};
-            for(var i in postData.split("&")){
-                var row=postData.split("&")[i];
-                tmpDic[row.split("=")[0]]=decodeURIComponent(row.split("=")[1]);
-            }
-            console.log("提交数据："+JSON.stringify(tmpDic))
-            $.ajax({
-                type: "POST",
-                url:'${base}/platform/self/sales/coupon/addDo',
-                dataType: "json",
-                data:tmpDic,
-                success: function (data) {
-                    console.log(data);
-                    if (data.code == 0) {
-                          window.location.href = '/store/sales/coupon/list';
-                     }else {
-                        alert("网络异常")
-                    }
+            $('#addForm').submit();
+
+        });
+
+        $('#addForm').ajaxForm({
+            dataType: 'json',
+            beforeSubmit: function (arr, form, options) {
+                form.find("button:submit").button("loading");
+            },
+            success: function (data, statusText, xhr, form) {
+                if (data.code == 0) {
+                    Toast.success(data.msg);
+                    window.location.href="${base}/store/sales/coupon";
+                } else {
+                    Toast.error(data.msg);
                 }
-
-            })
-
-
+                form.find("button:submit").button("reset");
+            }
         });
 
 

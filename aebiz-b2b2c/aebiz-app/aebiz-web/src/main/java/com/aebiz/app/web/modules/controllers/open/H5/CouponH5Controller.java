@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -57,6 +58,57 @@ public class CouponH5Controller {
         } catch (Exception e) {
             log.error("获取订单可用优惠劵异常",e);
             return Result.error("fail");
+        }
+    }
+
+    /**
+     * 进入领劵中心
+     */
+    @RequestMapping("receiveCoupon.html")
+    public String receiveCoupon(String id){
+        Subject subject = SecurityUtils.getSubject();
+        Account_user accountUser = (Account_user) subject.getPrincipal();
+        if (accountUser == null) {
+            return "pages/front/h5/niantu/login";
+        }
+        return "pages/front/h5/niantu/receiveCoupon";
+    }
+
+    /**
+     * 获取领劵中心优惠劵列表
+     */
+    @RequestMapping("couponList.html")
+    @SJson
+    public Result couponList(){
+        try {
+            int time = getSecondTimestamp(new Date());
+            Cnd cnd = Cnd.NEW();
+            cnd.and("delFlag", "=", 0 );
+            cnd.and("disabled", "=", 0);
+            cnd.and("startTime", "<", time);
+            cnd.and("endTime", ">", time);
+            List<Sales_coupon> list= salesCouponService.query(cnd);
+            return Result.success("ok",list);
+        } catch (Exception e) {
+            log.error("获取领劵中心优惠劵列表异常",e);
+            return Result.error("fail");
+        }
+    }
+
+    /**
+     * 获取精确到秒的时间戳
+     * @return
+     */
+    public static int getSecondTimestamp(Date date){
+        if (null == date) {
+            return 0;
+        }
+        String timestamp = String.valueOf(date.getTime());
+        int length = timestamp.length();
+        if (length > 3) {
+            return Integer.valueOf(timestamp.substring(0,length-3));
+        } else {
+            return 0;
         }
     }
 

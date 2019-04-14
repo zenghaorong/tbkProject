@@ -100,7 +100,7 @@ public class Sales_coupon extends BaseModel implements Serializable {
     private Double deductibleAmount;
 
     @Column
-    @Comment("满减抵扣的金额")
+    @Comment("订单满多少 条件金额")
     @ColDefine(type = ColType.FLOAT)
     private Double conditionAmount;
 

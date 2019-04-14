@@ -27,16 +27,23 @@
             display: none !important;
         }
         .lijilq{
-            width: 100px;
+            width: 34%;
             background: green;
             color: white;
             padding: 10px 16px;
             border-radius: 25px;
-            /*margin-left: 70%;*/
-            /*margin-top: 10px;*/
-            position: relative;
-            bottom: 20px;
-            left: 3%;
+            /* margin-left: 70%; */
+            margin-top: 15px;
+            /* position: absolute; */
+            /* bottom: 20px; */
+            /* left: 250px; */
+            float: left;
+        }
+        .left-con{
+            white-space: normal;
+            color: white;
+            width: 66%;
+            float: left;
         }
     </style>
 </head>
@@ -69,12 +76,16 @@
         <li class="mui-table-view-cell mui-media" v-for="item in couponList" :key="item.id"
             style="background-color:#f0ad4e;margin-top: 10px; height: 90px;border-radius:12px;">
             <!--<a :href="'${base!}/open/h5/cms/videoBuyPage.html?id='+item.id">-->
-                <span class="mui-media-body" style="white-space:normal;color: white;">
-                    {{item.videoTitle}}<br><br>{{item.videoTitle}}
-                </span>
-                <span class="lijilq">
+                <div class="mui-media-body left-con">
+                    {{item.name}}
+                    <br><br>
+                    <span v-if="item.type==1">满减劵</span>
+                    <span v-if="item.type==2">免运费劵</span>
+                    <span v-if="item.type==3">折扣劵</span>
+                </div>
+                <div class="lijilq" v-on:click="receive(item.id)">
                    立即领取
-                </span>
+                </div>
             <!--</a>-->
         </li>
     </ul>
@@ -118,6 +129,33 @@
                     }
                 });
 
+            },
+            receive:function (couponId) {
+                var self = this;
+                $.ajax({
+                    type:"POST",
+                    url:"${base!}/open/h5/coupon/receive.html",
+                    dataType:"JSON",
+                    data:{
+                        couponId:couponId
+                    },
+                    success:function(data){
+                        if (data.code == 0) {
+                            //信息框
+                            layer.open({
+                                content: '领取成功'
+                                ,btn: '我知道了'
+                            });
+                        } else {
+                            //信息框
+                            layer.open({
+                                content: data.msg
+                                ,skin: 'msg'
+                                ,time: 2 //2秒后自动关闭
+                            });
+                        }
+                    }
+                });
             }
         },
         watch:{     //监听器

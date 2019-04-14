@@ -182,7 +182,7 @@ public class OrderController {
             Order_main order_main = new Order_main();
             Order_goods order_goods = new Order_goods();
 
-            order_main.setAccountId(accountUser.getAccountId());
+            order_main.setAccountId(accountUser.getId());
             order_main.setStoreId(good.getStoreId());
             Cnd proCnd = Cnd.NEW();
             proCnd.and("goodsId", "=", good.getId());
@@ -254,7 +254,7 @@ public class OrderController {
         }
         Cms_video cms_video=cmsVideoService.fetch(videoId);
         Order_main order_main = new Order_main();
-        order_main.setAccountId(accountUser.getAccountId());
+        order_main.setAccountId(accountUser.getId());
         order_main.setStoreId(cms_video.getStoreId());
         order_main.setGoodsMoney(cms_video.getPrice().intValue());
         order_main.setGoodsFreeMoney(0);

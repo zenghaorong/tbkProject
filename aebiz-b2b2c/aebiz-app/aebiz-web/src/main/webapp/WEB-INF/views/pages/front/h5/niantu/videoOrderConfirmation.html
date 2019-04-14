@@ -144,7 +144,9 @@
                     url:"${base!}/open/h5/coupon/getMyOrderCoupon.html",
                     dataType:"JSON",
                     data:{
-
+                        productNum:self.goodsList.length,
+                        price:self.zongPrice,
+                        productType:"2"
                     },
                     success:function(data){
                         if (data.code == 0) {

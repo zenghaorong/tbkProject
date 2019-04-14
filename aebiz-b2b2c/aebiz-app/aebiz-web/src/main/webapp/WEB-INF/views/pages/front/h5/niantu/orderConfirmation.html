@@ -92,7 +92,8 @@
 <div class="mui-content-padded">
     可用优惠劵
     <select class="mui-btn mui-btn-block" v-model="couponId">
-        <option :value="item.couponId" v-for="item in coupons" :key="item.id">{{item.sales_coupon.name}}</option>
+        <option v-if="item.sales_coupon!=null" :value="item.couponId" v-for="item in coupons" :key="item.id">{{item.sales_coupon.name}}</option>
+        <option v-else selected="selected">暂无可用优惠劵</option>
     </select>
 </div>
 
@@ -132,7 +133,6 @@
 
             this.defaultAddress();    //调用自身方法
             this.getOrderProductList();
-            this.getMyOrderCoupon();
 
         },
         methods:{              //定义封装方法
@@ -175,6 +175,7 @@
                                 price = price + parseFloat(self.goodsList[o].price);
                             }
                             self.zongPrice=price;
+                            self.getMyOrderCoupon();
                         } else {
 
                         }
@@ -189,7 +190,9 @@
                     url:"${base!}/open/h5/coupon/getMyOrderCoupon.html",
                     dataType:"JSON",
                     data:{
-
+                        productNum:self.goodsList.length,
+                        price:self.zongPrice,
+                        productType:"1"
                     },
                     success:function(data){
                         if (data.code == 0) {

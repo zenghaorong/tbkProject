@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>领劵中心</title>
+    <title>我的优惠劵</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -53,43 +53,24 @@
 
 <header class="mui-bar mui-bar-nav top-color">
     <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: white;"></a>
-    <h1 class="mui-title" style="color: white;">领劵中心</h1>
+    <h1 class="mui-title" style="color: white;">我的优惠劵</h1>
 </header>
 
-<!--底部导航栏-->
-<nav class="mui-bar mui-bar-tab" style="background: white;">
-    <a class="mui-tab-item" onclick="window.location.href='${base!}/open/h5/niantu/index.html'">
-        <span class="mui-icon mui-icon-home"></span>
-        <span class="mui-tab-label">首页</span>
-    </a>
-    <a class="mui-tab-item" onclick="window.location.href='${base!}/open/h5/cart/shoppingCart.html'">
-        <span class="mui-icon mui-icon-extra mui-icon-extra-cart"></span>
-        <span class="mui-tab-label">购物车</span>
-    </a>
-    <a class="mui-tab-item mui-active" href="#tabbar">
-        <span class="mui-icon mui-icon-extra mui-icon-extra-gift"></span>
-        <span class="mui-tab-label">领劵中心</span>
-    </a>
-    <a class="mui-tab-item" onclick="window.location.href='${base!}/open/h5/niantu/userCenter.html'">
-        <span class="mui-icon mui-icon-person"></span>
-        <span class="mui-tab-label">个人中心</span>
-    </a>
-</nav>
 <div class="mui-content" style="background: white;" id="vue" v-cloak>
     <ul class="mui-table-view" style="padding: 10px;">
         <li class="mui-table-view-cell mui-media" v-for="item in couponList" :key="item.id"
             style="background-color:#f0ad4e;margin-top: 10px; height: 90px;border-radius:12px;">
             <!--<a :href="'${base!}/open/h5/cms/videoBuyPage.html?id='+item.id">-->
-                <div class="mui-media-body left-con">
-                    {{item.name}}
-                    <br><br>
-                    <span v-if="item.type==1">满减劵</span>
-                    <span v-if="item.type==2">免运费劵</span>
-                    <span v-if="item.type==3">折扣劵</span>
-                </div>
-                <div class="lijilq" v-on:click="receive(item.id)">
-                   立即领取
-                </div>
+            <div class="mui-media-body left-con">
+                {{item.sales_coupon.name}}
+                <br><br>
+                <span v-if="item.sales_coupon.type==1">满减劵</span>
+                <span v-if="item.sales_coupon.type==2">免运费劵</span>
+                <span v-if="item.sales_coupon.type==3">折扣劵</span>
+            </div>
+            <div class="lijilq" v-on:click="receive(item.id)">
+                立即使用
+            </div>
             <!--</a>-->
         </li>
     </ul>
@@ -97,7 +78,6 @@
 <script type="text/javascript" src="${base!}/assets/front/h5/js/mui.js" ></script>
 <script type="text/javascript" src="${base!}/assets/front/h5/js/vue.js" ></script>
 <script type="text/javascript" src="${base!}/assets/front/h5/js/jquery-2.0.0.min.js" ></script>
-<script type="text/javascript" src="${base!}/assets/decorate/pc/decoratecommon/js/layer/mobile/layer.js" ></script>
 <script type="application/javascript">
     mui.init({
         swipeBack:true //启用右滑关闭功能
@@ -119,7 +99,7 @@
                 var self = this;
                 $.ajax({
                     type:"POST",
-                    url:"${base!}/open/h5/coupon/couponList.html",
+                    url:"${base!}/open/h5/coupon/getMyCoupon.html",
                     dataType:"JSON",
                     data:{
 
@@ -136,31 +116,7 @@
 
             },
             receive:function (couponId) {
-                var self = this;
-                $.ajax({
-                    type:"POST",
-                    url:"${base!}/open/h5/coupon/receive.html",
-                    dataType:"JSON",
-                    data:{
-                        couponId:couponId
-                    },
-                    success:function(data){
-                        if (data.code == 0) {
-                            //信息框
-                            layer.open({
-                                content: '领取成功'
-                                ,btn: '我知道了'
-                            });
-                        } else {
-                            //信息框
-                            layer.open({
-                                content: data.msg
-                                ,skin: 'msg'
-                                ,time: 2 //2秒后自动关闭
-                            });
-                        }
-                    }
-                });
+                window.location.href = "${base!}/open/h5/product/list.html";
             }
         },
         watch:{     //监听器

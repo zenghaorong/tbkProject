@@ -53,27 +53,32 @@ public class CouponH5Controller {
             Cnd cnd = Cnd.NEW();
             cnd.and("delFlag", "=", 0 );
             cnd.and("accountId", "=", accountUser.getId() );
-            cnd.and("status", "=", 2);
             List<Member_coupon> member_couponList = memberCouponService.query(cnd);
             for(Member_coupon member_coupon : member_couponList){
                 Sales_coupon sales_coupon = salesCouponService.fetch(member_coupon.getCouponId());
                 //判断优惠劵类型
                 if("1".equals(sales_coupon.getType())){ //满减劵
-                    if(price>=sales_coupon.getConditionAmount()){
-                        member_coupon.setSales_coupon(sales_coupon);
+                    if(sales_coupon.getConditionAmount()!=null) {
+                        if (price >= sales_coupon.getConditionAmount()) {
+                            member_coupon.setSales_coupon(sales_coupon);
+                        }
                     }
                 }
 
                 //判断为黏土商品
                 if("1".equals(productType)){
                     if("2".equals(sales_coupon.getType())){ //免运费劵
-                        if(productNum>=sales_coupon.getProductQuantityRule()){
-                            member_coupon.setSales_coupon(sales_coupon);
+                        if(sales_coupon.getProductQuantityRule()!=null) {
+                            if (productNum >= sales_coupon.getProductQuantityRule()) {
+                                member_coupon.setSales_coupon(sales_coupon);
+                            }
                         }
                     }
                     if("3".equals(sales_coupon.getType())){ //折扣劵
-                        if(productNum>=sales_coupon.getProductQuantityRule()){
-                            member_coupon.setSales_coupon(sales_coupon);
+                        if(sales_coupon.getProductQuantityRule()!=null) {
+                            if (productNum >= sales_coupon.getProductQuantityRule()) {
+                                member_coupon.setSales_coupon(sales_coupon);
+                            }
                         }
                     }
                 }
@@ -158,6 +163,44 @@ public class CouponH5Controller {
             log.error("获取领劵中心优惠劵列表异常",e);
             return Result.error("fail");
         }
+    }
+
+
+    /***
+     * 获取我的优惠劵
+     * @return
+     */
+    @RequestMapping("getMyCoupon.html")
+    @SJson
+    public Result getMyCoupon(){
+        try {
+            Subject subject = SecurityUtils.getSubject();
+            Account_user accountUser = (Account_user) subject.getPrincipal();
+            Cnd cnd = Cnd.NEW();
+            cnd.and("accountId", "=", accountUser.getId() );
+            List<Member_coupon> member_couponList = memberCouponService.query(cnd);
+            for(Member_coupon member_coupon : member_couponList) {
+                Sales_coupon sales_coupon = salesCouponService.fetch(member_coupon.getCouponId());
+                member_coupon.setSales_coupon(sales_coupon);
+            }
+            return Result.success("ok",member_couponList);
+        } catch (Exception e) {
+            log.error("获取订单可用优惠劵异常",e);
+            return Result.error("fail");
+        }
+    }
+
+    /**
+     * 进入我的优惠劵
+     */
+    @RequestMapping("goMyCoupon.html")
+    public String goMyCoupon(){
+        Subject subject = SecurityUtils.getSubject();
+        Account_user accountUser = (Account_user) subject.getPrincipal();
+        if (accountUser == null) {
+            return "pages/front/h5/niantu/login";
+        }
+        return "pages/front/h5/niantu/myCoupon";
     }
 
     /**

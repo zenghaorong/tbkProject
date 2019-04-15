@@ -172,7 +172,7 @@
                             self.goodsList = data.data;
                             var price = 0;
                             for(var o=0;o<self.goodsList.length;o++){
-                                price = price + parseFloat(self.goodsList[o].price);
+                                price = price + parseFloat(self.goodsList[o].price)*self.goodsList[o].num;
                             }
                             self.zongPrice=price;
                             self.getMyOrderCoupon();

@@ -44,7 +44,7 @@ public class Order_main extends BaseModel implements Serializable {
 
     @Column
     @Comment("商城ID")
-    @ColDefine(type = ColType.VARCHAR, width = 32)
+        @ColDefine(type = ColType.VARCHAR, width = 32)
     private String storeId;    //store_main 表中的id
 
     @Column

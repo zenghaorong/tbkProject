@@ -10,7 +10,9 @@ import com.aebiz.app.goods.modules.services.GoodsImageService;
 import com.aebiz.app.goods.modules.services.GoodsProductService;
 import com.aebiz.app.goods.modules.services.GoodsService;
 import com.aebiz.app.member.modules.models.Member_address;
+import com.aebiz.app.member.modules.models.Member_cart;
 import com.aebiz.app.member.modules.services.MemberAddressService;
+import com.aebiz.app.member.modules.services.MemberCartService;
 import com.aebiz.app.order.modules.models.Order_goods;
 import com.aebiz.app.order.modules.models.Order_main;
 import com.aebiz.app.order.modules.models.em.OrderTypeEnum;
@@ -21,6 +23,8 @@ import com.aebiz.baseframework.base.Result;
 import com.aebiz.baseframework.view.annotation.SJson;
 import com.aebiz.commons.utils.DateUtil;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.nutz.dao.Cnd;
@@ -31,10 +35,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author chengzhuming
@@ -67,6 +68,9 @@ public class OrderController {
 
     @Autowired
     private CmsVideoService cmsVideoService;
+
+    @Autowired
+    private MemberCartService memberCartService;
 
 
     /**
@@ -270,5 +274,34 @@ public class OrderController {
         return "pages/front/h5/niantu/checkoutCounter";
     }
 
+    @RequestMapping("/submitOrder.html")
+    public String submitOrder(HttpServletRequest request){
+        Subject subject = SecurityUtils.getSubject();
+        try {
+            Account_user accountUser = (Account_user) subject.getPrincipal();
+            if (accountUser == null) {
+                return "pages/front/h5/niantu/login";
+            }
+        }catch (Exception e){
+            return "pages/front/h5/niantu/login";
+        }
+        List<Map<String,Object>> pList = new ArrayList<>();
+        String cartIds = request.getParameter("cartIds");
+        try{
+            String[] ids = StringUtils.split(cartIds, ";");
+            for (int i = 0 ; i<ids.length;i++){
+                Map<String,Object> p = new HashMap<>();
+                Member_cart cart = memberCartService.fetch(ids[i]);
+                p.put("productId",cart.getGoodsId());
+                p.put("num",cart.getNum().toString());
+                pList.add(p);
+                cart.setDelFlag(true);
+                memberCartService.update(cart);
+            }
+        }catch (Exception e){
 
+        }
+        request.setAttribute("productList",JSON.toJSONString(pList));
+        return "pages/front/h5/niantu/orderConfirmation";
+    }
 }

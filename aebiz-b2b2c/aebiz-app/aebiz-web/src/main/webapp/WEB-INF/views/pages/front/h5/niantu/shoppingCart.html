@@ -43,11 +43,11 @@
 
 <nav class="mui-bar mui-bar-tab" style="height: 40px;">
     <div class="mui-input-row mui-password" style="border: 0px;">
-        <button type="button" id="place"  class="mui-btn mui-btn-primary" style="width: 30%;top: 0px;line-height:1;
+        <button type="button" id="place"  class="mui-btn mui-btn-primary" onclick="submitOrder()" style="width: 30%;top: 0px;line-height:1;
             border: 0;background-color:red;">结算</button>
         <button type="button" style="width: 70%;top: 0px;line-height:1;border: 0;background-color:white;"
                 class="mui-btn mui-btn-primary" id="review">
-            <span style="color: black;">应付:</span><span style="color: red;padding-left: 10px;">50元</span>
+            <span style="color: black;">应付:</span><span id="totalMoney" style="color: red;padding-left: 10px;"></span>
         </button>
     </div>
 </nav>
@@ -56,32 +56,31 @@
         <li   class="mui-table-view-cell mui-checkbox  mui-left " v-for="item in member_carts" :key="item.id">
             <div class="" style="width: 100%;height: 100%">
                 <div >
-                    <input name="checkbox" :cart-id="item.id" name="cart-input" type="checkbox" class="mui-checkbox " style="top: 40px;" checked>
+                    <input name="checkbox" id="ck" :cart-id="item.id" onchange="updatePrice(this)" type="checkbox" class="mui-checkbox " style="top: 40px;" checked>
+                    <span style="display: none" name="goodPrice">{{item.price/100}}</span>
                 </div>
                 <div>
                     <a :href="'${base!}/open/h5/cms/videoBuyPage.html?id='+item.id" style="padding-left: 0px;margin-left: 0px;">
                         <img class="mui-media-object mui-pull-left" :src="item.imgurl">
                     </a>
                 </div>
-            <div>
                 <div class="mui-media-body" style="white-space:normal;font-size: 15px;margin-left: 46%;" >
                     <div>
                         {{item.productName}}
                     </div>
                     <div>
                         <p class='mui-ellipsis' style="    position: absolute;left: 51%;top: 38%;">
-                            <span class="jiage-text">￥{{item.price}}</span>
+                            <span class="jiage-text">￥{{item.price/100}}</span>
                         </p>
                     </div>
 
                 </div>
-                <div style="float: right;width: 130px;height:30px;left: -16%;margin-top: 50px;" :item-id="item.goodsId"  class="mui-numbox cart-good-id" data-numbox-min='1' data-numbox-max='1000'>
+                <div style="float: right;width: 130px;height:30px;left: -16%;margin-top: 50px;" :item-id="item.goodsId" name="num"  class="mui-numbox cart-good-id" data-numbox-min='1' data-numbox-max='1000'>
                     <button class="mui-btn mui-btn-numbox-minus " onclick="minus(this)" type="button" >-</button>
-                    <input id="" class="mui-input-numbox" type="number" :value="item.num" />
+                    <input onchange="updateNum(this)" onclick="selectThis(this)" class="mui-input-numbox" type="number" :value="item.num" />
                     <button class="mui-btn mui-btn-numbox-plus" onclick="add(this)" type="button">+</button>
                 </div>
 
-            </div>
             </div>
         </li>
     </ul>
@@ -98,6 +97,7 @@
     function add(a) {
         var num =  $(a).siblings("input").val()*1;
         var productId =  $(a).parent().attr("item-id");
+        $(a).parent().siblings().children("input").prop("checked",true);
         $(a).siblings("input").val(1+num);
         $.ajax({
             type:"POST",
@@ -109,6 +109,13 @@
             },
             success:function(data){
                 if (data.code == 0) {
+                    var price = 0 ;
+                    $("input[type='checkbox']:checked").each(function(index,item){
+                        var n = $(this).parent().siblings().children("input[type='number']").val();
+                        price =price+  $(this).siblings("span").text()*1*n;
+
+                    });
+                    $("#totalMoney").html(price+"元");
                 }
             }
         });
@@ -116,6 +123,7 @@
     function minus(b) {
         var num =  $(b).siblings("input").val()*1;
         var productId =  $(b).parent().attr("item-id");
+        $(b).parent().siblings().children("input[type='checkbox']").prop("checked",true);
         if(num>0){
             if(num==1){
                 return "";
@@ -133,25 +141,98 @@
                 },
                 success:function(data){
                     if (data.code == 0) {
+                        var price = 0 ;
+                        $("input[type='checkbox']:checked").each(function(index,item){
+                            var n = $(this).parent().siblings().children("input[type='number']").val();
+                            price =price+  $(this).siblings("span").text()*1*n;
+
+                        });
+                        $("#totalMoney").html(price+"元");
                     }
                 }
             });
         }
 
     }
-    function delCart() {
-        var pids ="";
-        obj = document.getElementsByName("cart-input");
-        alert(obj);
-        debugger;
-        for(k in obj){
-            alert(k);
-            if(obj[k].checked){
-                var pid = obj[k].attr("cart-id");
-                pids = pids+";"+pid;
+    function selectThis(d) {
+        $(d).parent().siblings().children("input").prop("checked",true);
+    }
+    function updateNum(c) {
+        var productId =  $(c).parent().attr("item-id");
+        $(c).parent().siblings().children("input").prop("checked",true);
+        var num = $(c).val();
+            if(num==1){
+                return "";
+            }else if(num<1){
+                num=1;
+                $(c).val(1);
             }
-        }
-        alert(pids);
+            $.ajax({
+                type:"POST",
+                url:"${base!}/open/h5/cart/updateCart.html",
+                dataType:"JSON",
+                data:{
+                    productId:productId,
+                    num:num
+                },
+                success:function(data){
+                    if (data.code == 0) {
+                        var price = 0 ;
+                        $("input[type='checkbox']:checked").each(function(index,item){
+                            var n = $(this).parent().siblings().children("input[type='number']").val();
+                            price =price+  $(this).siblings("span").text()*1*n;
+
+                        });
+                        $("#totalMoney").html(price+"元");
+                    }
+                }
+            });
+    }
+    function updatePrice(e) {
+        var price = 0 ;
+        $("input[type='checkbox']:checked").each(function(index,item){
+            var n = $(this).parent().siblings().children("input[type='number']").val();
+            price =price+  $(this).siblings("span").text()*1*n;
+
+        });
+        $("#totalMoney").html(price+"元");
+    }
+    function delCart() {
+        var cartIds ="";
+        $("input[type='checkbox']:checked").each(function(index,item){
+            var id = $(this).attr("cart-id");
+           if(cartIds==""){
+                    cartIds=id;
+                }else {
+                    cartIds=cartIds+";"+id;
+                }
+        });
+        $.ajax({
+            type:"POST",
+            url:"${base!}/open/h5/cart/deleteCart.html",
+            dataType:"JSON",
+            data:{
+                cartIds:cartIds
+            },
+            success:function(data){
+                if (data.code == 0) {
+                    window.location.reload();
+                }
+            }
+        });
+
+    }
+    function submitOrder() {
+        var cartIds ="";
+        $("input[type='checkbox']:checked").each(function(index,item){
+            var id = $(this).attr("cart-id");
+            if(cartIds==""){
+                cartIds=id;
+            }else {
+                cartIds=cartIds+";"+id;
+            }
+        });
+        window.location.href="${base!}/open/h5/order/submitOrder.html?cartIds="+cartIds;
     }
     //          $(".carLi").click(function (event) {
     //              event.preventDefault();
@@ -182,6 +263,13 @@
                         if (data.code == 0) {
                             var d = data.data;
                             self.member_carts = d;
+                            var total = 0;
+                            if(d!=null){
+                                for (var i =0;i<d.length;i++){
+                                    total = total+d[i].price*1*d[i].num;
+                                }
+                            }
+                            $("#totalMoney").html(total/100+"元");
                         } else if(data.code == -1){
                             alert("您没有登录，请登录！");
                             window.location.href="${base!}/open/H5/login/login.html"

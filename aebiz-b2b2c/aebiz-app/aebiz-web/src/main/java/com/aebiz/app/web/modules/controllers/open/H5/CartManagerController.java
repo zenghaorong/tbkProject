@@ -11,6 +11,7 @@ import com.aebiz.app.member.modules.models.Member_cart;
 import com.aebiz.app.member.modules.services.MemberCartService;
 import com.aebiz.baseframework.base.Result;
 import com.aebiz.baseframework.view.annotation.SJson;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.nutz.dao.Cnd;
@@ -64,6 +65,7 @@ public class CartManagerController {
         }
         Cnd cartCnd = Cnd.NEW();
         cartCnd.and("goodsId","=",productId);
+        cartCnd.and("delFlag","=",false);
         List<Member_cart> carList = memberCartService.query(cartCnd);
         if(carList!=null&&carList.size()>0){
             Member_cart mc = carList.get(0);
@@ -104,6 +106,7 @@ public class CartManagerController {
 
         Cnd cnd = Cnd.NEW();
         cnd.and("accountId","=",accountUser.getAccountId());
+        cnd.and("delFlag","=",false);
         List<Member_cart> member_carts =  memberCartService.query(cnd);
         for (Member_cart m:member_carts
              ) {
@@ -137,6 +140,7 @@ public class CartManagerController {
             Cnd cnd = Cnd.NEW();
             cnd.and("accountId","=",accountUser.getAccountId());
             cnd.and("goodsId","=",productId);
+            cnd.and("delFlag","=",false);
             List<Member_cart> member_carts =  memberCartService.query(cnd);
             if(member_carts!=null&&member_carts.size()>0){
                 Member_cart member_cart = member_carts.get(0);
@@ -157,17 +161,13 @@ public class CartManagerController {
         if(accountUser==null){
             return Result.error(-1,"未登录，请重新登录！");
         }
-        String productId = request.getParameter("productId");
-        String num = request.getParameter("num");
+        String cartIds = request.getParameter("cartIds");
         try{
-            Cnd cnd = Cnd.NEW();
-            cnd.and("accountId","=",accountUser.getAccountId());
-            cnd.and("goodsId","=",productId);
-            List<Member_cart> member_carts =  memberCartService.query(cnd);
-            if(member_carts!=null&&member_carts.size()>0){
-                Member_cart member_cart = member_carts.get(0);
-                member_cart.setDelFlag(true);
-                memberCartService.update(member_cart);
+            String[] ids = StringUtils.split(cartIds, ";");
+            for (int i = 0 ; i<ids.length;i++){
+                Member_cart cart = memberCartService.fetch(ids[i]);
+                cart.setDelFlag(true);
+                memberCartService.update(cart);
             }
             return Result.success();
         }catch (Exception e){

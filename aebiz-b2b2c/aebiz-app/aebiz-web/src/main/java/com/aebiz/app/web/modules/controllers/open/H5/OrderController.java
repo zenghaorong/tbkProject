@@ -258,6 +258,7 @@ public class OrderController {
         }
         Cms_video cms_video=cmsVideoService.fetch(videoId);
         Order_main order_main = new Order_main();
+        Order_goods order_goods = new Order_goods();
         order_main.setAccountId(accountUser.getAccountId());
         order_main.setStoreId(cms_video.getStoreId());
         order_main.setGoodsMoney(cms_video.getPrice().intValue());
@@ -270,6 +271,19 @@ public class OrderController {
         order_main.setOrderAt(DateUtil.getTime(new Date()));
         order_main.setOrderType(OrderTypeEnum.video_order_type.getKey());
         Order_main order = orderMainService.insert(order_main);
+        order_goods.setOrderId(order.getId());
+        order_goods.setAccountId(order.getAccountId());
+        order_goods.setGoodsId(cms_video.getId());
+        order_goods.setStoreId(order_main.getStoreId());
+        order_goods.setGoodsName(cms_video.getVideoTitle());
+        order_goods.setProductId(cms_video.getId());
+        order_goods.setSku(cms_video.getId());
+        order_goods.setName(cms_video.getVideoTitle());
+        order_goods.setBuyNum(1);
+        order_goods.setSalePrice(cms_video.getPrice().intValue());
+        order_goods.setBuyPrice(cms_video.getPrice().intValue());
+        order_goods.setOrderType(OrderTypeEnum.video_order_type.getKey());
+        orderGoodsService.insert(order_goods);
         request.setAttribute("order",order);
         return "pages/front/h5/niantu/checkoutCounter";
     }

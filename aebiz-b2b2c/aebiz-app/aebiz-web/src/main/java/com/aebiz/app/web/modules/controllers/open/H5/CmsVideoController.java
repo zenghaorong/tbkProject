@@ -7,6 +7,12 @@ import com.aebiz.app.cms.modules.models.Cms_video;
 import com.aebiz.app.cms.modules.services.CmsArticleService;
 import com.aebiz.app.cms.modules.services.CmsChannelService;
 import com.aebiz.app.cms.modules.services.CmsVideoService;
+import com.aebiz.app.order.modules.models.Order_goods;
+import com.aebiz.app.order.modules.models.Order_main;
+import com.aebiz.app.order.modules.models.em.OrderPayStatusEnum;
+import com.aebiz.app.order.modules.models.em.OrderTypeEnum;
+import com.aebiz.app.order.modules.services.OrderGoodsService;
+import com.aebiz.app.order.modules.services.OrderMainService;
 import com.aebiz.app.shop.modules.models.Shop_adv_main;
 import com.aebiz.baseframework.base.Result;
 import com.aebiz.baseframework.page.Pagination;
@@ -24,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -44,6 +51,12 @@ public class CmsVideoController {
 
     @Autowired
     private CmsArticleService cmsArticleService;
+
+    @Autowired
+    private OrderGoodsService orderGoodsService;
+
+    @Autowired
+    private OrderMainService orderMainService;
 
     /**
      * 进入视频列表页
@@ -200,6 +213,59 @@ public class CmsVideoController {
         }
     }
 
+
+    /**
+     * 进入我的视频列表
+     */
+
+    @RequestMapping("/goMyVideoList.html")
+    public String goMyVideoList() {
+
+        Subject subject = SecurityUtils.getSubject();
+        Account_user accountUser = (Account_user) subject.getPrincipal();
+        if(accountUser==null){
+            return "pages/front/h5/niantu/login";
+        }
+        return "pages/front/h5/niantu/videoList";
+    }
+
+    /**
+     * 获得我的视频列表
+     * @return
+     */
+    @RequestMapping("myVideoList.html")
+    @SJson
+    public Result getMyVideoList(){
+        try {
+            Subject subject = SecurityUtils.getSubject();
+            Account_user accountUser = (Account_user) subject.getPrincipal();
+
+            Cnd cndMain = Cnd.NEW();
+            cndMain.and("payStatus", "=", OrderPayStatusEnum.PAYALL.getKey());
+            cndMain.and("orderType", "=", OrderTypeEnum.product_order_type.getKey());
+            cndMain.and("accountId", "=", accountUser.getAccountId());
+            List<Order_main> order_mainList = orderMainService.query(cndMain);
+
+            List<Order_goods> order_goodsList = new ArrayList<>();
+            for (Order_main o:order_mainList){
+                Cnd cndOrder = Cnd.NEW();
+                cndOrder.and("orderType", "=", OrderTypeEnum.product_order_type.getKey());
+                cndOrder.and("orderId","=",o.getId());
+                Order_goods order_goods = orderGoodsService.fetch(cndOrder);
+                order_goodsList.add(order_goods);
+            }
+
+            List<Cms_video> cms_videoList = new ArrayList<>();
+            for (Order_goods ol : order_goodsList){
+                Cms_video cms_video = cmsVideoService.fetch(ol.getProductId());
+                cms_videoList.add(cms_video);
+            }
+            return Result.success("ok",cms_videoList);
+        } catch (Exception e) {
+            log.error("获取视频列表异常",e);
+            return Result.error("fail");
+        }
+    }
 
 
 

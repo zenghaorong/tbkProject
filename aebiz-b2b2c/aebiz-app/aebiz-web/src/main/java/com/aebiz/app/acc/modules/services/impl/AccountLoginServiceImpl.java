@@ -9,15 +9,20 @@ import com.aebiz.baseframework.base.service.BaseServiceImpl;
 import com.aebiz.app.acc.modules.models.Account_login;
 import com.aebiz.app.acc.modules.services.AccountLoginService;
 import com.aebiz.commons.utils.DateUtil;
+import com.aebiz.commons.utils.UserAgentUtils;
+import eu.bitwalker.useragentutils.Browser;
+import eu.bitwalker.useragentutils.OperatingSystem;
 import org.apache.shiro.crypto.RandomNumberGenerator;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.nutz.dao.Dao;
+import org.nutz.lang.Lang;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 
 @Service
@@ -70,5 +75,34 @@ public class AccountLoginServiceImpl extends BaseServiceImpl<Account_login> impl
         accountUser.setMobile(accountUser.getMobile());
         accountUser.setAccountId(accountId);
         accountUserService.insert(accountUser);
+    }
+    @Override
+    public void login(HttpServletRequest request, String accountId, String loginType) {
+        //登录日志
+        Account_login loginLog = new Account_login();
+        loginLog.setAccountId(accountId);
+        loginLog.setIp(Lang.getIP(request));
+        loginLog.setLoginAt(DateUtil.getTime(new Date()));
+
+        // 已知登录类型有2种:member--会员登录,store--商户/经销商登录
+        loginLog.setLoginType(loginType);
+
+        //获取操作系统
+        OperatingSystem operatingSystem = UserAgentUtils.getOperatingSystem(request);
+        if (operatingSystem != null) {
+            //如果操作系统对象不为空，获取名称,类型
+            loginLog.setClientName(operatingSystem.getName());
+            loginLog.setClientType(operatingSystem.getDeviceType().getName());
+        }
+
+        //获取浏览器
+        Browser browser = UserAgentUtils.getBrowser(request);
+        if (browser != null) {
+            //如果浏览器对象不为空，获取名称
+            loginLog.setClientBrowser(browser.getName());
+        }
+
+        //记录登录日志
+        this.insert(loginLog);
     }
 }

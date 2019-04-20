@@ -20,4 +20,10 @@ public interface MemberUserService extends BaseService<Member_user>{
      * @return true 注册成功，false 注册失败
      */
     boolean memberRegister(String mobile,String password,String username);
+
+    /**
+     * 自动注册
+     * @param mobile 手机号
+     */
+    void autoRegister(String mobile) throws Exception;
 }

@@ -6,11 +6,16 @@ import com.aebiz.app.acc.modules.models.Account_user;
 import com.aebiz.app.acc.modules.services.AccountLoginService;
 import com.aebiz.app.acc.modules.services.AccountUserService;
 import com.aebiz.app.member.modules.models.Member_user;
+import com.aebiz.app.member.modules.services.MemberRegisterService;
+import com.aebiz.app.member.modules.services.MemberUserService;
 import com.aebiz.app.sys.modules.models.Sys_log;
+import com.aebiz.app.sys.modules.services.SysApiService;
 import com.aebiz.app.web.commons.base.Globals;
 import com.aebiz.app.web.commons.log.annotation.SLog;
 import com.aebiz.app.web.commons.shiro.token.MemberCaptchaToken;
+import com.aebiz.app.web.commons.utils.CheckPasswordUtil;
 import com.aebiz.baseframework.base.Result;
+import com.aebiz.baseframework.base.service.BaseService;
 import com.aebiz.baseframework.redis.RedisService;
 import com.aebiz.baseframework.shiro.exception.CaptchaEmptyException;
 import com.aebiz.baseframework.shiro.exception.CaptchaIncorrectException;
@@ -36,6 +41,7 @@ import org.apache.shiro.web.servlet.SimpleCookie;
 import org.nutz.dao.Cnd;
 import org.nutz.lang.Lang;
 import org.nutz.lang.Strings;
+import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,7 +76,32 @@ public class LoginController {
     private AccountLoginService accountLoginService;
 
     @Autowired
+    private MemberRegisterService memberRegisterService;
+
+    @Autowired
     private RedisService redisService;
+
+    @Autowired
+    private SysApiService apiService;
+
+    @Autowired
+    private MemberUserService userService;
+
+    /**
+     * 手机短信验证码前缀
+     */
+    private final String MOBILE_CAPTCHA = "mobile_sms_captcha_";
+
+    /**
+     * token的有效期,默认是2小时
+     */
+    private final Integer TOKEN_EXP_TIME = 2 * 60 * 60 * 1000;
+
+    /**
+     * 应用的appId
+     */
+    private final String APPID = "a400da4ef4";
+
 
     private static final String cookieName = "cheryfsmemberRemeberMe";
 
@@ -117,91 +148,41 @@ public class LoginController {
                           @RequestParam(value = "rememberme", defaultValue = "0", required = false) boolean rememberMe,
                           @RequestParam(value = "captcha", defaultValue = "", required = false) String captcha,
                           HttpServletRequest request, HttpServletResponse response, HttpSession session) {
-        int errCount = 0;
-        try {
-            Subject subject = SecurityUtils.getSubject();
-            ThreadContext.bind(subject);
 
-//            String verifycode = Strings.sNull(session.getAttribute("memberCaptcha"));
-//            if (!captcha.equalsIgnoreCase(Strings.sNull(verifycode))) {
-//                return Result.error("sys.login.error.captcha");
-//            }
-            AuthenticationToken authenticationToken =createToken(username, password, false, "6666", request);
-            subject.login(authenticationToken);
-
-
-
-            Account_user accountUser = (Account_user) subject.getPrincipal();
-//            Account_user accountUser = accountUserService.getAccount(user.getAccountId());
-            if (accountUser.isDisabled()) {
-                return Result.error("此用户被冻结").addCode(3);
-            }
-            if (rememberMe) {
-                SimpleCookie cookie = new SimpleCookie(cookieName);
-                cookie.setHttpOnly(true);
-                cookie.setMaxAge(31536000);
-                String base64 = Base64.encodeToString(accountUser.getLoginname().getBytes());
-                cookie.setValue(base64);
-                cookie.saveTo(request, response);
+        try (Jedis jedis = redisService.jedis()) {
+            if (Strings.isEmpty(username) || Strings.isEmpty(captcha)) {
+                return Result.error("请求参数为空");
             } else {
-                SimpleCookie cookie = new SimpleCookie(cookieName);
-                cookie.removeFrom(request, response);
+                if (!Strings.isMobile(username)) {
+                    return Result.error("请输入正确的手机号");
+                }
             }
 
-            //设置登录
-            CookieUtil.setCookie(response, "cheryfs_member_login", "true");
+            if (!captcha.equals(jedis.get(MOBILE_CAPTCHA + username))) {
+                return Result.error("验证码不正确");
+            }
 
-            Account_login accountLogin = new Account_login();
-            accountLogin.setAccountId(accountUser.getAccountId());
-            accountLogin.setIp(Lang.getIP(request));
-            accountLogin.setLoginType("member");
-            accountLogin.setLoginAt((int) (System.currentTimeMillis() / 1000));
-            accountLogin.setClientType("wap");
-            OperatingSystem operatingSystem = UserAgentUtils.getOperatingSystem(request);
-            if (operatingSystem != null) {
-                accountLogin.setClientName(operatingSystem.getName());
+            Cnd cnd = Cnd.where("mobile", "=", username);
+            Account_user accountUser = accountUserService.fetch(cnd);
+            if (Lang.isEmpty(accountUser)) {
+                // 如果未找到用户,就自动注册为会员,然后登录
+                userService.autoRegister(username);
+            } else if (accountUser.isDisabled() || accountUser.getDelFlag()) {
+                return Result.error("该手机号对应的账户被冻结/删除");
             }
-            Browser browser = UserAgentUtils.getBrowser(request);
-            if (browser != null) {
-                accountLogin.setClientBrowser(browser.getName());
-            }
-            accountLoginService.insert(accountLogin);
-            return Result.success("sys.login.success");
-        } catch (CaptchaIncorrectException e) {
-            //自定义的验证码错误异常
-            return Result.error(1, "sys.login.error.captcha");
-        } catch (CaptchaEmptyException e) {
-            //验证码为空
-            return Result.error(2, "sys.login.error.captcha");
-        } catch (LockedAccountException e) {
-            return Result.error(3, "sys.login.error.locked");
-        } catch (UnknownAccountException e) {
-            errCount++;
-            SecurityUtils.getSubject().getSession(true).setAttribute("memberErrCount", errCount);
-            return Result.error(4, "sys.login.error.username");
-        } catch (AuthenticationException e) {
-            errCount++;
-            SecurityUtils.getSubject().getSession(true).setAttribute("memberErrCount", errCount);
-            return Result.error(5, "sys.login.error.password");
+            accountUser = accountUserService.fetch(cnd);
+            accountLoginService.login(request, accountUser.getAccountId(), "member");
+            NutMap returnData = NutMap.NEW();
+            returnData.put("token", apiService.generateToken(new Date(System.currentTimeMillis() + TOKEN_EXP_TIME), APPID));
+            returnData.put("accountId", accountUser.getAccountId());
+            returnData.put("accountName", accountUser.getLoginname());
+            returnData.put("mobile", accountUser.getMobile());
+            return Result.success("登录成功", returnData);
         } catch (Exception e) {
-            errCount++;
-            SecurityUtils.getSubject().getSession(true).setAttribute("memberErrCount", errCount);
-            return Result.error(6, "sys.login.error.system");
-        }
-
-    }
-
-    protected AuthenticationToken createToken(String username, String password, boolean rememberMe, String captcha, HttpServletRequest request) {
-        String host = request.getRemoteHost();
-        try {
-            RSAPrivateKey memberPrivateKey = (RSAPrivateKey) request.getSession().getAttribute("memberPrivateKey");
-            if (memberPrivateKey != null) {
-                password = RSAUtil.decryptByPrivateKey(password, memberPrivateKey);
-            }
-        } catch (Exception e) {
+            log.error(e.getMessage());
             e.printStackTrace();
+            return Result.error(-1, "登录失败");
         }
-        return new MemberCaptchaToken(username, password, rememberMe, host, captcha);
     }
 
 
@@ -215,31 +196,25 @@ public class LoginController {
                              @RequestParam("password") String password,
                              @RequestParam(value = "promotionCode",required = false) String promotionCode,
                              @RequestParam(value = "captcha",required = false) String captcha,HttpSession session,HttpServletRequest request) {
-        try {
-            //验证码校验
-//            String key = "memberRegisterMobileCaptcha_" + mobile;
-//            try (Jedis jedis = redisService.jedis()) {
-//                String code = jedis.get(key);
-//                if (Strings.isBlank(code)) {//验证码失效
-//                    return Result.error("验证码失效");
-//                } else if (!Strings.sNull(mobileCode).equalsIgnoreCase(code)) {//验证码不对
-//                    return Result.error("验证码错误");
-//                }
+        try (Jedis jedis = redisService.jedis()) {
+//            Cnd cnd = Cnd.where(USERNAME, ET, userName).and("delFlag", "=", false);
+//            if (isExist(accountUserService, cnd)) {
+//                return Result.error("用户名已存在");
 //            }
-            Cnd cnd = Cnd.NEW();
-            cnd.and("mobile", "=", mobile );
-            Account_user account_user = accountUserService.fetch(cnd);
-            if(account_user !=null){
-                return Result.error("当前手机号已注册");
+            Cnd cnd = Cnd.where("mobile", "=", mobile).and("delFlag", "=", false);
+            if (isExist(accountUserService, cnd)) {
+                return Result.error("手机号已存在");
             }
-            Account_user accountUser =new Account_user();
-            accountUser.setMobile(mobile);
-            accountUser.setPassword(password);
-            accountLoginService.memberRegister(accountUser);
-            return Result.success("member.register.join.success");
-        }catch (Exception e){
+            if (!captcha.equals(jedis.get(MOBILE_CAPTCHA + mobile))) {
+                return Result.error("验证码不正确");
+            }
+
+            //注册
+            memberRegisterService.memberRegister(mobile, password, mobile, CheckPasswordUtil.checkPassword(password).toString());
+            return Result.success();
+        } catch (Exception e) {
             e.printStackTrace();
-            return Result.error("member.register.join.fail");
+            return Result.error(-1, e.getMessage());
         }
     }
 
@@ -255,5 +230,18 @@ public class LoginController {
         response.sendRedirect("/open/H5/login/login.html");
     }
 
-
+    /**
+     * 判断是否能根据条件(cnd),查到对面表的数据(用service查)
+     * 主要目的是判断某字段是否存在
+     *
+     * @param service 任何实现BaseService的service
+     * @param cnd     查询条件
+     */
+    private boolean isExist(BaseService service, Cnd cnd) {
+        Object obj = service.fetch(cnd);
+        if (!Lang.isEmpty(obj)) {
+            return true;
+        }
+        return false;
+    }
 }

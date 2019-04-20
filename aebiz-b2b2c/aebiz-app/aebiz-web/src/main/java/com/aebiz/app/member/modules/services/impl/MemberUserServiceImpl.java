@@ -30,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.beans.Transient;
 import java.util.Calendar;
+import java.util.Date;
 
 @Service
 public class MemberUserServiceImpl extends BaseServiceImpl<Member_user> implements MemberUserService {
@@ -204,4 +205,40 @@ public class MemberUserServiceImpl extends BaseServiceImpl<Member_user> implemen
         this.insert(memberUser);
         return true;
     }
+
+    /**
+     * 自动注册
+     *
+     * @param mobile 手机号
+     *
+     * @return true 注册成功，false 注册失败
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void autoRegister(String mobile) throws Exception {
+        /*账户信息表添加一条记录*/
+        Account_info accountInfo = new Account_info();
+        accountInfo = accountInfoService.insert(accountInfo);
+
+        // 获取账户id
+        String accountId = accountInfo.getId();
+
+        /*账户用户表添加一条记录*/
+        Account_user accountUser = new Account_user();
+        accountUser.setAccountId(accountId);
+        accountUser.setMobile(mobile);
+        accountUser.setLoginname(mobile);
+        accountUserService.insert(accountUser);
+
+        /*会员账户表添加一条记录*/
+        Member_account memberAccount = new Member_account();
+        memberAccount.setAccountId(accountId);
+        memberAccountService.insert(memberAccount);
+
+        /*会员用户表添加一条记录*/
+        Member_user memberUser = new Member_user();
+        memberUser.setAccountId(accountId);
+        this.insert(memberUser);
+    }
+
 }

@@ -95,7 +95,7 @@ public class CmsH5ReviewController {
             cms_review.setCmsTitle(cmsTitle);
             cms_review.setContent(content);
             cms_review.setReviewOpName(accountUser.getMobile());
-            cms_review.setReviewOpId(accountUser.getId());
+            cms_review.setReviewOpId(accountUser.getAccountId());
             cmsReviewService.insert(cms_review);
             return Result.success("ok");
         } catch (Exception e) {
@@ -124,7 +124,7 @@ public class CmsH5ReviewController {
             cms_review.setCmsTitle(cmsTitle);
             cms_review.setContent(content);
             cms_review.setReviewOpName(accountUser.getMobile());
-            cms_review.setReviewOpId(accountUser.getId());
+            cms_review.setReviewOpId(accountUser.getAccountId());
             cms_review.setReviewId(reviewId);
             cms_review.setReviewFatherName(reviewFatherName);
             cms_review.setReviewFatherId(reviewFatherId);

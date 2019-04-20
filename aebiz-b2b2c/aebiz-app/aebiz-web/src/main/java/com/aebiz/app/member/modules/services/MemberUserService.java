@@ -5,6 +5,8 @@ import com.aebiz.app.acc.modules.models.Account_user;
 import com.aebiz.app.member.modules.models.Member_user;
 import com.aebiz.baseframework.base.service.BaseService;
 
+import javax.servlet.http.HttpServletRequest;
+
 public interface MemberUserService extends BaseService<Member_user>{
     void addMemberUser(Member_user memberUser, Account_user accountUser, Account_info accountInfo);
     void updateMemberUser(Member_user memberUser, Account_user accountUser, Account_info accountInfo);
@@ -25,5 +27,5 @@ public interface MemberUserService extends BaseService<Member_user>{
      * 自动注册
      * @param mobile 手机号
      */
-    void autoRegister(String mobile) throws Exception;
+    void autoRegister(String mobile, HttpServletRequest request) throws Exception;
 }

@@ -52,7 +52,7 @@ public class CouponH5Controller {
             Account_user accountUser = (Account_user) subject.getPrincipal();
             Cnd cnd = Cnd.NEW();
             cnd.and("delFlag", "=", 0 );
-            cnd.and("accountId", "=", accountUser.getId() );
+            cnd.and("accountId", "=", accountUser.getAccountId() );
             List<Member_coupon> member_couponList = memberCouponService.query(cnd);
             for(Member_coupon member_coupon : member_couponList){
                 Sales_coupon sales_coupon = salesCouponService.fetch(member_coupon.getCouponId());
@@ -121,7 +121,7 @@ public class CouponH5Controller {
             //查询本人优惠劵
             Cnd cndC = Cnd.NEW();
             cndC.and("couponId", "=", couponId );
-            cndC.and("accountId", "=", accountUser.getId());
+            cndC.and("accountId", "=", accountUser.getAccountId());
             List<Member_coupon> member_couponList = memberCouponService.query(cndC);
             if(member_couponList!=null) {
                 if (sales_coupon.getLimit_num() >= member_couponList.size()) {
@@ -131,7 +131,7 @@ public class CouponH5Controller {
 
             //绑定该用户
             Member_coupon member_coupon = new Member_coupon();
-            member_coupon.setAccountId(accountUser.getId());
+            member_coupon.setAccountId(accountUser.getAccountId());
             member_coupon.setCouponId(couponId);
             int codeTime=getSecondTimestamp(new Date());
             String random =  getStringRandom(4);
@@ -177,7 +177,7 @@ public class CouponH5Controller {
             Subject subject = SecurityUtils.getSubject();
             Account_user accountUser = (Account_user) subject.getPrincipal();
             Cnd cnd = Cnd.NEW();
-            cnd.and("accountId", "=", accountUser.getId() );
+            cnd.and("accountId", "=", accountUser.getAccountId() );
             List<Member_coupon> member_couponList = memberCouponService.query(cnd);
             for(Member_coupon member_coupon : member_couponList) {
                 Sales_coupon sales_coupon = salesCouponService.fetch(member_coupon.getCouponId());

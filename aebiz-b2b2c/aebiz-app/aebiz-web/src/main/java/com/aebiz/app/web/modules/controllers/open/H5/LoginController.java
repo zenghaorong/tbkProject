@@ -10,6 +10,7 @@ import com.aebiz.app.member.modules.services.MemberRegisterService;
 import com.aebiz.app.member.modules.services.MemberUserService;
 import com.aebiz.app.sys.modules.models.Sys_log;
 import com.aebiz.app.sys.modules.services.SysApiService;
+import com.aebiz.app.utils.modules.services.SmsService;
 import com.aebiz.app.web.commons.base.Globals;
 import com.aebiz.app.web.commons.log.annotation.SLog;
 import com.aebiz.app.web.commons.shiro.token.MemberCaptchaToken;
@@ -20,10 +21,7 @@ import com.aebiz.baseframework.redis.RedisService;
 import com.aebiz.baseframework.shiro.exception.CaptchaEmptyException;
 import com.aebiz.baseframework.shiro.exception.CaptchaIncorrectException;
 import com.aebiz.baseframework.view.annotation.SJson;
-import com.aebiz.commons.utils.CookieUtil;
-import com.aebiz.commons.utils.DateUtil;
-import com.aebiz.commons.utils.RSAUtil;
-import com.aebiz.commons.utils.UserAgentUtils;
+import com.aebiz.commons.utils.*;
 import eu.bitwalker.useragentutils.Browser;
 import eu.bitwalker.useragentutils.OperatingSystem;
 import org.apache.shiro.SecurityUtils;
@@ -46,6 +44,7 @@ import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -103,6 +102,9 @@ public class LoginController {
     private final String APPID = "a400da4ef4";
 
 
+    @Autowired
+    private SmsService smsService;
+
     private static final String cookieName = "cheryfsmemberRemeberMe";
 
     /**
@@ -131,23 +133,16 @@ public class LoginController {
 
 
     /**
-     * 会员登录接口
+     * 会员验证码登录接口
      * @param username
-     * @param password
-     * @param rememberMe
      * @param captcha
      * @param request
-     * @param response
-     * @param session
      * @return
      */
-    @RequestMapping(value = {"/doLogin"}, method = RequestMethod.POST)
+    @RequestMapping(value = {"/doCodeLogin"}, method = RequestMethod.POST)
     @SJson
-    public Object doLogin(@RequestParam("mobile") String username,
-                          @RequestParam("password") String password,
-                          @RequestParam(value = "rememberme", defaultValue = "0", required = false) boolean rememberMe,
-                          @RequestParam(value = "captcha", defaultValue = "", required = false) String captcha,
-                          HttpServletRequest request, HttpServletResponse response, HttpSession session) {
+    public Object doCodeLogin(@RequestParam("mobile") String username, String captcha,
+                              HttpServletRequest request,HttpServletResponse response) {
 
         try (Jedis jedis = redisService.jedis()) {
             if (Strings.isEmpty(username) || Strings.isEmpty(captcha)) {
@@ -166,7 +161,7 @@ public class LoginController {
             Account_user accountUser = accountUserService.fetch(cnd);
             if (Lang.isEmpty(accountUser)) {
                 // 如果未找到用户,就自动注册为会员,然后登录
-                userService.autoRegister(username);
+                userService.autoRegister(username,request);
             } else if (accountUser.isDisabled() || accountUser.getDelFlag()) {
                 return Result.error("该手机号对应的账户被冻结/删除");
             }
@@ -177,12 +172,135 @@ public class LoginController {
             returnData.put("accountId", accountUser.getAccountId());
             returnData.put("accountName", accountUser.getLoginname());
             returnData.put("mobile", accountUser.getMobile());
+
+            Subject subject = SecurityUtils.getSubject();
+            ThreadContext.bind(subject);
+
+            AuthenticationToken authenticationToken =createToken(username, accountUser.getPassword(), false, "6666", request);
+            subject.login(authenticationToken);
+
+            //设置登录
+            CookieUtil.setCookie(response, "cheryfs_member_login", "true");
+
+            Account_login accountLogin = new Account_login();
+            accountLogin.setAccountId(accountUser.getAccountId());
+            accountLogin.setIp(Lang.getIP(request));
+            accountLogin.setLoginType("member");
+            accountLogin.setLoginAt((int) (System.currentTimeMillis() / 1000));
+            accountLogin.setClientType("wap");
+            OperatingSystem operatingSystem = UserAgentUtils.getOperatingSystem(request);
+            if (operatingSystem != null) {
+                accountLogin.setClientName(operatingSystem.getName());
+            }
+            Browser browser = UserAgentUtils.getBrowser(request);
+            if (browser != null) {
+                accountLogin.setClientBrowser(browser.getName());
+            }
+
             return Result.success("登录成功", returnData);
         } catch (Exception e) {
             log.error(e.getMessage());
             e.printStackTrace();
             return Result.error(-1, "登录失败");
         }
+    }
+
+
+    /**
+     * 会员登录接口
+     * @param username
+     * @param password
+     * @param rememberMe
+     * @param request
+     * @param response
+     * @return
+     */
+    @RequestMapping(value = {"/doLogin"}, method = RequestMethod.POST)
+    @SJson
+    public Object doLogin(@RequestParam("mobile") String username,
+                          @RequestParam("password") String password,
+                          @RequestParam(value = "rememberme", defaultValue = "0", required = false) boolean rememberMe,
+                          HttpServletRequest request, HttpServletResponse response) {
+        int errCount = 0;
+        try {
+            Subject subject = SecurityUtils.getSubject();
+            ThreadContext.bind(subject);
+
+            AuthenticationToken authenticationToken =createToken(username, password, false, "6666", request);
+            subject.login(authenticationToken);
+
+
+
+            Account_user accountUser = (Account_user) subject.getPrincipal();
+            if (accountUser.isDisabled()) {
+                return Result.error("此用户被冻结").addCode(3);
+            }
+            if (rememberMe) {
+                SimpleCookie cookie = new SimpleCookie(cookieName);
+                cookie.setHttpOnly(true);
+                cookie.setMaxAge(31536000);
+                String base64 = Base64.encodeToString(accountUser.getLoginname().getBytes());
+                cookie.setValue(base64);
+                cookie.saveTo(request, response);
+            } else {
+                SimpleCookie cookie = new SimpleCookie(cookieName);
+                cookie.removeFrom(request, response);
+            }
+
+            //设置登录
+            CookieUtil.setCookie(response, "cheryfs_member_login", "true");
+
+            Account_login accountLogin = new Account_login();
+            accountLogin.setAccountId(accountUser.getAccountId());
+            accountLogin.setIp(Lang.getIP(request));
+            accountLogin.setLoginType("member");
+            accountLogin.setLoginAt((int) (System.currentTimeMillis() / 1000));
+            accountLogin.setClientType("wap");
+            OperatingSystem operatingSystem = UserAgentUtils.getOperatingSystem(request);
+            if (operatingSystem != null) {
+                accountLogin.setClientName(operatingSystem.getName());
+            }
+            Browser browser = UserAgentUtils.getBrowser(request);
+            if (browser != null) {
+                accountLogin.setClientBrowser(browser.getName());
+            }
+            accountLoginService.insert(accountLogin);
+            return Result.success("sys.login.success");
+        } catch (CaptchaIncorrectException e) {
+            //自定义的验证码错误异常
+            return Result.error(1, "sys.login.error.captcha");
+        } catch (CaptchaEmptyException e) {
+            //验证码为空
+            return Result.error(2, "sys.login.error.captcha");
+        } catch (LockedAccountException e) {
+            return Result.error(3, "sys.login.error.locked");
+        } catch (UnknownAccountException e) {
+            errCount++;
+            SecurityUtils.getSubject().getSession(true).setAttribute("memberErrCount", errCount);
+            return Result.error(4, "sys.login.error.username");
+        } catch (AuthenticationException e) {
+            errCount++;
+            SecurityUtils.getSubject().getSession(true).setAttribute("memberErrCount", errCount);
+            return Result.error(5, "sys.login.error.password");
+        } catch (Exception e) {
+            errCount++;
+            SecurityUtils.getSubject().getSession(true).setAttribute("memberErrCount", errCount);
+            return Result.error(6, "sys.login.error.system");
+        }
+
+    }
+
+    protected AuthenticationToken createToken(String username, String password, boolean rememberMe, String captcha, HttpServletRequest request) {
+        String host = request.getRemoteHost();
+        try {
+            RSAPrivateKey memberPrivateKey = (RSAPrivateKey) request.getSession().getAttribute("memberPrivateKey");
+            if (memberPrivateKey != null) {
+                password = RSAUtil.decryptByPrivateKey(password, memberPrivateKey);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new MemberCaptchaToken(username, password, rememberMe, host, captcha);
     }
 
 
@@ -244,4 +362,64 @@ public class LoginController {
         }
         return false;
     }
+    /**
+     * 获取登录验证码
+     */
+    @RequestMapping("/getLoginMsgCode")
+    @SJson
+    public Result getLoginMsgCode(@RequestParam("mobile") String mobile) {
+        try {
+            String key = MOBILE_CAPTCHA + mobile;
+            String expireTime = "300";
+            String code = StringUtil.getRndNumber(6);
+            try (Jedis jedis = redisService.jedis()) {
+                jedis.set(key, code);
+                jedis.expire(key, Integer.valueOf(expireTime));
+            }
+            String content = "验证码"+code+"。次验正码用于校验身份";
+            smsService.sendMessages(content,mobile);
+            log.info("短信验证码:  " + code);
+            return Result.success("member.register.join.success");
+        }catch (Exception e){
+            e.printStackTrace();
+            return Result.error("member.register.join.fail");
+        }
+    }
+
+    /**
+     * 重置密码
+     */
+    @RequestMapping("/resetPassword")
+    @SJson
+    public Result resetPassword(@RequestParam("mobile") String mobile,
+                                @RequestParam("password") String password,
+                                @RequestParam("mobile") String captcha,HttpServletRequest request) {
+        try (Jedis jedis = redisService.jedis()) {
+            if (Strings.isEmpty(mobile) || Strings.isEmpty(captcha) || Strings.isEmpty(password)) {
+                return Result.error("请求参数为空");
+            } else {
+                if (!Strings.isMobile(mobile)) {
+                    return Result.error("请输入正确的手机号");
+                }
+            }
+
+            if (!captcha.equals(jedis.get(MOBILE_CAPTCHA + mobile))) {
+                return Result.error("验证码不正确");
+            }
+
+            RSAPrivateKey memberPrivateKey = (RSAPrivateKey) request.getSession().getAttribute("memberPrivateKey");
+            if (memberPrivateKey != null) {
+                password = RSAUtil.decryptByPrivateKey(password, memberPrivateKey);
+            }
+            Account_user account_user = new Account_user();
+            account_user.setPassword(password);
+            accountUserService.updateIgnoreNull(account_user);
+            return Result.success("member.register.join.success");
+        }catch (Exception e){
+            e.printStackTrace();
+            return Result.error("member.register.join.fail");
+        }
+    }
+
+
 }

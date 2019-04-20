@@ -15,6 +15,7 @@ import com.aebiz.app.member.modules.services.MemberUserService;
 import com.aebiz.app.shop.modules.services.ShopAreaService;
 import com.aebiz.baseframework.base.service.BaseServiceImpl;
 import com.aebiz.commons.utils.DateUtil;
+import com.aebiz.commons.utils.RSAUtil;
 import com.aebiz.commons.utils.StringUtil;
 import org.apache.shiro.crypto.RandomNumberGenerator;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
@@ -28,7 +29,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.beans.Transient;
+import java.security.interfaces.RSAPrivateKey;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -215,7 +218,7 @@ public class MemberUserServiceImpl extends BaseServiceImpl<Member_user> implemen
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void autoRegister(String mobile) throws Exception {
+    public void autoRegister(String mobile, HttpServletRequest request) throws Exception {
         /*账户信息表添加一条记录*/
         Account_info accountInfo = new Account_info();
         accountInfo = accountInfoService.insert(accountInfo);
@@ -228,6 +231,12 @@ public class MemberUserServiceImpl extends BaseServiceImpl<Member_user> implemen
         accountUser.setAccountId(accountId);
         accountUser.setMobile(mobile);
         accountUser.setLoginname(mobile);
+        String passwordCode = StringUtil.getRndNumber(6);
+        RSAPrivateKey memberPrivateKey = (RSAPrivateKey) request.getSession().getAttribute("memberPrivateKey");
+        if (memberPrivateKey != null) {
+            passwordCode = RSAUtil.decryptByPrivateKey(passwordCode, memberPrivateKey);
+        }
+        accountUser.setPassword(passwordCode);
         accountUserService.insert(accountUser);
 
         /*会员账户表添加一条记录*/

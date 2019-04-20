@@ -71,7 +71,7 @@ public class AddressH5Controller{
             Subject subject = SecurityUtils.getSubject();
             Account_user accountUser = (Account_user) subject.getPrincipal();
             Cnd cnd = Cnd.NEW();
-            cnd.and("accountId", "=", accountUser.getId() );
+            cnd.and("accountId", "=", accountUser.getAccountId());
             List<Member_address> list = memberAddressService.query(cnd);
             return Result.success("ok",list);
         } catch (Exception e) {
@@ -91,14 +91,14 @@ public class AddressH5Controller{
             Account_user accountUser = (Account_user) subject.getPrincipal();
 
             Cnd cnd1 = Cnd.NEW();
-            cnd1.and("accountId", "=", accountUser.getId());
+            cnd1.and("accountId", "=", accountUser.getAccountId());
             cnd1.and("defaultValue", "=", 1);
             Member_address memberAddress = memberAddressService.fetch(cnd1);
             if(memberAddress != null){
                 return Result.success("ok",memberAddress);
             }else {
                 Cnd cnd = Cnd.NEW();
-                cnd.and("accountId", "=", accountUser.getId() );
+                cnd.and("accountId", "=", accountUser.getAccountId() );
                 List<Member_address> list = memberAddressService.query(cnd);
                 Member_address member_address = new Member_address();
                 if(list!=null && list.size()>0){
@@ -121,7 +121,7 @@ public class AddressH5Controller{
         try {
             Subject subject = SecurityUtils.getSubject();
             Account_user accountUser = (Account_user) subject.getPrincipal();
-            memberAddressService.updateDefault(id,accountUser.getId());
+            memberAddressService.updateDefault(id,accountUser.getAccountId());
             return Result.success("ok");
         } catch (Exception e) {
             log.error("查询收货地址列表异常",e);
@@ -140,7 +140,7 @@ public class AddressH5Controller{
             Subject subject = SecurityUtils.getSubject();
             Account_user accountUser = (Account_user) subject.getPrincipal();
             Member_address member_address =new Member_address();
-            member_address.setAccountId(accountUser.getId());
+            member_address.setAccountId(accountUser.getAccountId());
             member_address.setAddress(address);
             member_address.setFullName(name);
             member_address.setMobile(mobile);

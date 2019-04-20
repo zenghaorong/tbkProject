@@ -37,35 +37,35 @@
         订单列表
     </h1>
 </header>
-
-<div class="mui-card" style="margin-top: 60px;">
-
-    <div class="mui-card-header">
-        <span>订单编号：</span><span>23353353565355555455</span>
-    </div>
-    <div class="mui-card-content">
-        <div class="mui-card-content" v-for="good in order.goodsList" :key="good.id">
-            <ul class="mui-table-view">
-                <li class="mui-table-view-cell mui-media" >
-                    <a href="${base!}/open/h5/order/goOrderInfo.html?orderId=">
-                        <img class="mui-media-object mui-pull-left" :src="good.imgUrl">
-                        <div class="mui-media-body" style="white-space:normal;" >
-                            <span>{{good.goodsName}}</span>
-                            <p class='mui-ellipsis'style="margin-top: 35px;margin-left: 110px;" >
-                                <span class="jiage-text">￥{{good.salePrice/100}}</span>
-                                <span>*{{good.buyNum}}</span>
-                            </p>
-                        </div>
-                    </a>
-                </li>
-            </ul>
+<div id="vue" style="margin-top: 60px;" v-cloak>
+    <div class="mui-card"  v-for="item in orderList" :key="item.id">
+        <div class="mui-card-header">
+            <span>订单编号：</span><span>{{item.id}}</span>
         </div>
-    </div>
-    <div class="mui-card-header">
-        <button type="button" class="mui-btn mui-btn-success" onclick="location.href='${base!}/open/h5/address/goAddressUp.html'">支付</button>
-        <button type="button" class="mui-btn mui-btn-danger mui-btn-outlined">
-            取消
-        </button>
+        <div class="mui-card-content">
+            <div class="mui-card-content" v-for="good in item.goodsList" :key="good.id">
+                <ul class="mui-table-view">
+                    <li class="mui-table-view-cell mui-media" >
+                        <a :href="'${base!}/open/h5/order/goOrderInfo.html?orderId='+item.id">
+                            <img class="mui-media-object mui-pull-left" :src="good.imgUrl">
+                            <div class="mui-media-body" style="white-space:normal;" >
+                                <span>{{good.goodsName}}</span>
+                                <p class='mui-ellipsis'style="margin-top: 35px;margin-left: 110px;" >
+                                    <span class="jiage-text">￥{{good.salePrice/100}}</span>
+                                    <span>*{{good.buyNum}}</span>
+                                </p>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <!--<div class="mui-card-header">-->
+            <!--<button type="button" class="mui-btn mui-btn-success" onclick="location.href='${base!}/open/h5/address/goAddressUp.html'">支付</button>-->
+            <!--<button type="button" class="mui-btn mui-btn-danger mui-btn-outlined">-->
+                <!--取消-->
+            <!--</button>-->
+        <!--</div>-->
     </div>
 </div>
 
@@ -82,20 +82,20 @@
     var vue = new Vue({
         el: '#vue',
         data: {
-            videoList: [],
+            orderList: [],
         },
         created:function () {   //实例初始化创建完成执行
 
-            this.getvideoList()     //调用自身方法
+            this.getMyOrderList()     //调用自身方法
 
         },
         methods:{              //定义封装方法
             //获取列表
-            getvideoList:function () {
+            getMyOrderList:function () {
                 var self = this;
                 $.ajax({
                     type:"POST",
-                    url:"${base!}/open/h5/cms/videoList.html",
+                    url:"${base!}/open/h5/order/getMyOrderList.html",
                     dataType:"JSON",
                     data:{
 
@@ -103,7 +103,7 @@
                     success:function(data){
                         if (data.code == 0) {
                             var d = data.data;
-                            self.videoList = d;
+                            self.orderList = d;
                         } else {
 
                         }

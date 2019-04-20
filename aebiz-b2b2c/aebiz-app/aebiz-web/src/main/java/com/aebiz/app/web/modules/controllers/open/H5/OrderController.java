@@ -15,6 +15,7 @@ import com.aebiz.app.member.modules.services.MemberAddressService;
 import com.aebiz.app.member.modules.services.MemberCartService;
 import com.aebiz.app.order.modules.models.Order_goods;
 import com.aebiz.app.order.modules.models.Order_main;
+import com.aebiz.app.order.modules.models.em.OrderPayStatusEnum;
 import com.aebiz.app.order.modules.models.em.OrderTypeEnum;
 import com.aebiz.app.order.modules.services.OrderGoodsService;
 import com.aebiz.app.order.modules.services.OrderMainService;
@@ -146,10 +147,13 @@ public class OrderController {
     }
 
     /**
-     * 进入订单列表页
+     * 进入我的订单列表页
+     * @param status 订单状态
+     * @return
      */
     @RequestMapping("/goOrderList.html")
-    public String goOrderList() {
+    public String goOrderList(String status,HttpServletRequest request) {
+        request.setAttribute("status",status);
         return "pages/front/h5/niantu/orderList";
     }
 
@@ -224,6 +228,7 @@ public class OrderController {
                 order_goods.setBuyPrice(goods_product.getSalePrice() - freeMoney);
                 order_goods.setTotalMoney(goods_product.getSalePrice() * n);
                 order_goods.setFreeMoney(freeMoney);
+//                order_goods.setImgUrl(goods_product.get);  缺商品图片
                 order_goods.setPayMoney(goods_product.getSalePrice() * n - freeMoney);
                 orderGoodsService.insert(order_goods);
                 request.setAttribute("orderId", order.getId());
@@ -317,5 +322,37 @@ public class OrderController {
         }
         request.setAttribute("productList",JSON.toJSONString(pList));
         return "pages/front/h5/niantu/orderConfirmation";
+    }
+
+
+    /**
+     * 获得我的订单列表
+     * @return
+     */
+    @RequestMapping("getMyOrderList.html")
+    @SJson
+    public Result getMyOrderList(){
+        try {
+            Subject subject = SecurityUtils.getSubject();
+            Account_user accountUser = (Account_user) subject.getPrincipal();
+
+            Cnd cndMain = Cnd.NEW();
+            cndMain.and("orderType", "=", OrderTypeEnum.product_order_type.getKey());
+            cndMain.and("accountId", "=", accountUser.getAccountId());
+            List<Order_main> order_mainList = orderMainService.query(cndMain);
+
+            List<Order_goods> order_goodsList = new ArrayList<>();
+            for (Order_main o:order_mainList){
+                Cnd cndOrder = Cnd.NEW();
+                cndOrder.and("orderId","=",o.getId());
+                List<Order_goods> order_goods = orderGoodsService.query(cndOrder);
+                o.setGoodsList(order_goods);
+            }
+
+            return Result.success("ok",order_mainList);
+        } catch (Exception e) {
+            log.error("获取视频列表异常",e);
+            return Result.error("fail");
+        }
     }
 }

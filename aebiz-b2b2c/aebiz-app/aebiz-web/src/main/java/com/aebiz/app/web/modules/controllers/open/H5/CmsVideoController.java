@@ -226,7 +226,7 @@ public class CmsVideoController {
         if(accountUser==null){
             return "pages/front/h5/niantu/login";
         }
-        return "pages/front/h5/niantu/videoList";
+        return "pages/front/h5/niantu/myVideoList";
     }
 
     /**
@@ -242,14 +242,14 @@ public class CmsVideoController {
 
             Cnd cndMain = Cnd.NEW();
             cndMain.and("payStatus", "=", OrderPayStatusEnum.PAYALL.getKey());
-            cndMain.and("orderType", "=", OrderTypeEnum.product_order_type.getKey());
+            cndMain.and("orderType", "=", OrderTypeEnum.video_order_type.getKey());
             cndMain.and("accountId", "=", accountUser.getAccountId());
             List<Order_main> order_mainList = orderMainService.query(cndMain);
 
             List<Order_goods> order_goodsList = new ArrayList<>();
             for (Order_main o:order_mainList){
                 Cnd cndOrder = Cnd.NEW();
-                cndOrder.and("orderType", "=", OrderTypeEnum.product_order_type.getKey());
+                cndOrder.and("orderType", "=", OrderTypeEnum.video_order_type.getKey());
                 cndOrder.and("orderId","=",o.getId());
                 Order_goods order_goods = orderGoodsService.fetch(cndOrder);
                 order_goodsList.add(order_goods);

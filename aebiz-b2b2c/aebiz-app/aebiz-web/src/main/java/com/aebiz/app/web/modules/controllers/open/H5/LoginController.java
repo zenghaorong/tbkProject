@@ -393,7 +393,7 @@ public class LoginController {
     @SJson
     public Result resetPassword(@RequestParam("mobile") String mobile,
                                 @RequestParam("password") String password,
-                                @RequestParam("mobile") String captcha,HttpServletRequest request) {
+                                @RequestParam("captcha") String captcha,HttpServletRequest request) {
         try (Jedis jedis = redisService.jedis()) {
             if (Strings.isEmpty(mobile) || Strings.isEmpty(captcha) || Strings.isEmpty(password)) {
                 return Result.error("请求参数为空");
@@ -407,13 +407,16 @@ public class LoginController {
                 return Result.error("验证码不正确");
             }
 
-            RSAPrivateKey memberPrivateKey = (RSAPrivateKey) request.getSession().getAttribute("memberPrivateKey");
-            if (memberPrivateKey != null) {
-                password = RSAUtil.decryptByPrivateKey(password, memberPrivateKey);
-            }
-            Account_user account_user = new Account_user();
-            account_user.setPassword(password);
-            accountUserService.updateIgnoreNull(account_user);
+            RandomNumberGenerator rng = new SecureRandomNumberGenerator();
+            String passwordLength=CheckPasswordUtil.checkPassword(password).toString();
+            String salt = rng.nextBytes().toBase64();
+            String hashedPasswordBase64 = new Sha256Hash(password, salt, 1024).toBase64();
+
+            Account_user account_user = accountUserService.getAccountByLoginname(mobile);
+            account_user.setSalt(salt);// 设置密码盐
+            account_user.setPassword(hashedPasswordBase64);
+            account_user.setPasswordStrength(Integer.parseInt(passwordLength));
+            accountUserService.update(account_user);
             return Result.success("member.register.join.success");
         }catch (Exception e){
             e.printStackTrace();

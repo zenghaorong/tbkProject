@@ -13,6 +13,7 @@ import com.aebiz.app.member.modules.services.MemberLevelService;
 import com.aebiz.app.member.modules.services.MemberTypeService;
 import com.aebiz.app.member.modules.services.MemberUserService;
 import com.aebiz.app.shop.modules.services.ShopAreaService;
+import com.aebiz.app.web.commons.utils.CheckPasswordUtil;
 import com.aebiz.baseframework.base.service.BaseServiceImpl;
 import com.aebiz.commons.utils.DateUtil;
 import com.aebiz.commons.utils.RSAUtil;
@@ -231,12 +232,13 @@ public class MemberUserServiceImpl extends BaseServiceImpl<Member_user> implemen
         accountUser.setAccountId(accountId);
         accountUser.setMobile(mobile);
         accountUser.setLoginname(mobile);
+        RandomNumberGenerator rng = new SecureRandomNumberGenerator();
         String passwordCode = StringUtil.getRndNumber(6);
-        RSAPrivateKey memberPrivateKey = (RSAPrivateKey) request.getSession().getAttribute("memberPrivateKey");
-        if (memberPrivateKey != null) {
-            passwordCode = RSAUtil.decryptByPrivateKey(passwordCode, memberPrivateKey);
-        }
-        accountUser.setPassword(passwordCode);
+        passwordCode=CheckPasswordUtil.checkPassword(passwordCode).toString();
+        String salt = rng.nextBytes().toBase64();
+        String hashedPasswordBase64 = new Sha256Hash(passwordCode, salt, 1024).toBase64();
+        accountUser.setSalt(salt);// 设置密码盐
+        accountUser.setPassword(hashedPasswordBase64);
         accountUserService.insert(accountUser);
 
         /*会员账户表添加一条记录*/

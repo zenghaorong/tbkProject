@@ -178,6 +178,13 @@ public class CmsVideoController {
 
         //判断是否购买 从而判断进入购买页还是详情页
 
+
+        Cms_video cms_video = cmsVideoService.fetch(id);
+        int num = cms_video.getLikeNum();
+        num++;
+        cms_video.setLikeNum(num);
+        cmsVideoService.update(cms_video);
+
         return "pages/front/h5/niantu/videoBuyPage";
     }
 
@@ -187,6 +194,12 @@ public class CmsVideoController {
     @RequestMapping("goVideoDetail.html")
     public String goVideoDetail(String id, HttpServletRequest req){
         req.setAttribute("id",id);
+
+        Cms_video cms_video = cmsVideoService.fetch(id);
+        int num = cms_video.getLikeNum();
+        num++;
+        cms_video.setLikeNum(num);
+        cmsVideoService.update(cms_video);
         return "pages/front/h5/niantu/videoDetail";
     }
 

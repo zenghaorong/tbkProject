@@ -9,6 +9,7 @@
 
     <!--标准mui.css-->
     <link rel="stylesheet" href="${base!}/assets/front/h5/css/mui.min.css" />
+    <link rel="stylesheet" type="text/css" href="${base!}/assets/front/h5/css/icons-extra.css" />
     <link rel="stylesheet" href="${base!}/assets/front/h5/css/hryc.css" />
     <!--App自定义的css-->
     <!--<link rel="stylesheet" type="text/css" href="../css/app.css"/>-->
@@ -22,6 +23,12 @@
         }
         .detil img{
             width: 100%;
+        }
+        .aActive{
+            color: #cf0c0c;
+        }
+        .aNoActive{
+            color: #819fc0;
         }
     </style>
 </head>
@@ -45,8 +52,11 @@
         </div>
     </div>
     <div style="padding: 20px;margin-bottom:30px;">
-        <div class="title" style="padding-bottom: 10px;">
+        <div class="title" class="flex-container" style="padding-bottom: 10px;">
             评论
+            <a style="float: right;margin-right: 20px;" class="aNoActive" id="love" v-on:click="cmsLove">
+                <span class="mui-icon-extra mui-icon-extra-like"></span>
+            </a>
         </div>
         <ul class="mui-table-view">
             <div id="zanwu" style="display: none;margin: 40px 30px;">暂无评论....</div>
@@ -79,6 +89,7 @@
 <script type="text/javascript" src="${base!}/assets/front/h5/js/mui.js" ></script>
 <script type="text/javascript" src="${base!}/assets/front/h5/js/vue.js" ></script>
 <script type="text/javascript" src="${base!}/assets/front/h5/js/jquery-2.0.0.min.js" ></script>
+<script type="text/javascript" src="${base!}/assets/decorate/pc/decoratecommon/js/layer/mobile/layer.js" ></script>
 <script type="application/javascript">
     mui.init({
         swipeBack:true //启用右滑关闭功能
@@ -105,6 +116,8 @@
 
             this.getCmsList();     //调用自身方法
             this.jqueryLin();
+            this.addPageViews();  //增加浏览量
+            this.queryIsLike();
 
         },
         methods:{              //定义封装方法
@@ -151,6 +164,70 @@
                     }
                 });
 
+            },
+            cmsLove:function(){ //点赞接口
+                var self = this;
+                $.ajax({
+                    type:"POST",
+                    url:"${base!}/open/h5/cms/cmsLike.html",
+                    dataType:"JSON",
+                    data:{
+                        cmsId:'${id!}'
+                    },
+                    success:function(data){
+                        if (data.code == 0) {
+                            if(data.msg=='ok2'){
+                                $("#love").removeClass("aActive")
+                                $("#love").addClass("aNoActive")
+                            }
+                            if(data.msg=='ok1'){
+                                $("#love").removeClass("aNoActive")
+                                $("#love").addClass("aActive")
+                            }
+                        } else {
+                           if(data.code == 2){
+                                layerAlert("请先登录")
+                           }
+                        }
+                    }
+                });
+            },
+            queryIsLike:function(){ //查询是否点赞
+                var self = this;
+                $.ajax({
+                    type:"POST",
+                    url:"${base!}/open/h5/cms/queryIsLike.html",
+                    dataType:"JSON",
+                    data:{
+                        cmsId:'${id!}'
+                    },
+                    success:function(data){
+                        if (data.code == 0) {
+                            $("#love").removeClass("aNoActive")
+                            $("#love").addClass("aActive")
+                        } else {
+
+                        }
+                    }
+                });
+            },
+            addPageViews:function(){
+                var self = this;
+                $.ajax({
+                    type:"POST",
+                    url:"${base!}/open/h5/cms/addPageViews.html",
+                    dataType:"JSON",
+                    data:{
+                        cmsId:'${id!}'
+                    },
+                    success:function(data){
+                        if (data.code == 0) {
+
+                        } else {
+
+                        }
+                    }
+                });
             },
             //发布评论
             review:function () {
@@ -274,6 +351,16 @@
         s = date.getSeconds();
         return Y+M+D+h+m;
     }
+
+    function layerAlert(msg) {
+        //提示
+        layer.open({
+            content: msg
+            ,skin: 'msg'
+            ,time: 2 //2秒后自动关闭
+        });
+    }
+
 </script>
 </body>
 </html>

@@ -70,6 +70,21 @@ public class Cms_article extends BaseModel implements Serializable {
     private Integer publishAt;
 
     @Column
+    @Comment("浏览量")
+    @ColDefine(type = ColType.INT, width = 6)
+    private Integer pageViews;
+
+    @Column
+    @Comment("点赞量")
+    @ColDefine(type = ColType.INT, width = 6)
+    private Integer likeNum;
+
+    @Column
+    @Comment("评论数量")
+    @ColDefine(type = ColType.INT, width = 6)
+    private Integer evaluateNum;
+
+    @Column
     @Comment("排序字段")
     @Prev({
             @SQL(db= DB.MYSQL,value = "SELECT IFNULL(MAX(location),0)+1 FROM cms_article"),
@@ -83,6 +98,31 @@ public class Cms_article extends BaseModel implements Serializable {
 
     @One(field = "channelId")
     private Cms_channel channel;
+
+
+    public Integer getPageViews() {
+        return pageViews;
+    }
+
+    public void setPageViews(Integer pageViews) {
+        this.pageViews = pageViews;
+    }
+
+    public Integer getLikeNum() {
+        return likeNum;
+    }
+
+    public void setLikeNum(Integer likeNum) {
+        this.likeNum = likeNum;
+    }
+
+    public Integer getEvaluateNum() {
+        return evaluateNum;
+    }
+
+    public void setEvaluateNum(Integer evaluateNum) {
+        this.evaluateNum = evaluateNum;
+    }
 
     public String getId() {
         return id;

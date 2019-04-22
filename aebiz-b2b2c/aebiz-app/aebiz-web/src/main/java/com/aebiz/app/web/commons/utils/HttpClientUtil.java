@@ -289,6 +289,35 @@ public class HttpClientUtil {
 		}
 	}
 
+	public static Object postMethod4Gbk(String url, String jsonStr) throws Exception {
+		HttpPost httpost = new HttpPost(url);
+		httpost.setConfig(requestConfig);
+		httpost.setHeader("Content-type", "application/json");
+		StringEntity requestEntity = new StringEntity(jsonStr,"GBK");
+		requestEntity.setContentEncoding("GBK");
+		httpost.setEntity(requestEntity);
+		HttpContext httpContext = new BasicHttpContext();
+		CloseableHttpResponse response = null;
+		try {
+			response = HTTP_CLIENT.execute(httpost, httpContext);
+			HttpEntity entity = response.getEntity();
+			if (entity != null) {
+				InputStream is = response.getEntity().getContent();
+				String resultStr = getStreamAsString(is, "UTF-8");
+				JSONObject object = JSON.parseObject(resultStr);
+				return object;
+			}
+			return null;
+		}catch (Exception e){
+			e.printStackTrace();
+			return null;
+		}finally {
+			if (response != null) {
+				response.close();
+			}
+		}
+	}
+
 	public static String submitHttpDate(String url, String jsonStr) throws Exception {
 		HttpPost httpost = new HttpPost(url);
 		httpost.setConfig(requestConfig);

@@ -15,6 +15,7 @@ import org.nutz.ioc.impl.PropertiesProxy;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,6 +25,7 @@ import java.util.Map;
  * @Date: 2019/4/19  14:17
  * @Description: 微信支付实现
  */
+@Service
 public class WxPayServiceImpl implements WxPayService {
 
     private static final Log log = Logs.get();
@@ -55,8 +57,9 @@ public class WxPayServiceImpl implements WxPayService {
             map.put("total_fee",total); //金额(分)
             map.put("spbill_create_ip", wxGetPayInfoQO.getThisIp());
             map.put("notify_url", notify_url);//通知地址
-            map.put("trade_type", "JSAPI");//通知地址
+            map.put("trade_type", "JSAPI");//微信浏览器里支付 必须传openId
             map.put("product_id", wxGetPayInfoQO.getProductId());
+            map.put("openid", wxGetPayInfoQO.getOpenId());
             String signStr = WXPayUtil.generateSignature(map, key);//签名参数
             map.put("sign", signStr);
             log.info("传入map参数:" + JSON.toJSONString(map));
@@ -74,6 +77,52 @@ public class WxPayServiceImpl implements WxPayService {
              }else {
                  return xmlJson.toString();
              }
+        }catch (Exception e){
+            log.error("请求微信支付二维码异常",e);
+        }
+        return null;
+    }
+
+    @Override
+    public String wxGetPayInfoH5(WxGetPayInfoQO wxGetPayInfoQO) {
+        try {
+
+            String key = config.get("wx.pay.sign.key");
+            String appid = config.get("wx.pay.AppID");
+            String appSecret = config.get("wx.pay.AppSecret");
+            String mchid = config.get("wx.pay.mchid");
+            String notify_url = config.get("wx.pay.notify_url");
+
+            Map map = new HashMap();
+            String nonce_str = String.valueOf(System.currentTimeMillis());
+            String total=wxGetPayInfoQO.getTotal_fee();
+            map.put("appid",appid);
+            map.put("mch_id",mchid);
+            map.put("nonce_str", nonce_str);
+            map.put("body", wxGetPayInfoQO.getProductBody());
+            map.put("out_trade_no", wxGetPayInfoQO.getOut_trade_no());
+            map.put("total_fee",total); //金额(分)
+            map.put("spbill_create_ip", wxGetPayInfoQO.getThisIp());
+            map.put("notify_url", notify_url);//通知地址
+            map.put("trade_type", "MWEB");//H5支付的交易类型为MWEB
+            map.put("product_id", wxGetPayInfoQO.getProductId());
+            String signStr = WXPayUtil.generateSignature(map, key);//签名参数
+            map.put("sign", signStr);
+            log.info("传入map参数:" + JSON.toJSONString(map));
+            JSONObject mapNobject = JSONObject.fromObject(map);
+            String postXml = json2Xml(mapNobject);
+            //3.统一下单
+            String wxXml = HttpClientUtil.submitHttpDate("https://api.mch.weixin.qq.com/pay/unifiedorder", postXml);
+            log.info("微信下单返回参数" + wxXml);
+            JSONObject xmlJson =  xml2Json(wxXml);
+            log.info("微信下单返回参数信息："+xmlJson.toString());
+            //判断下单是否成功
+            if(!"SUCCESS".equals(xmlJson.get("return_code"))){
+                log.error("微信下单失败："+xmlJson.get("return_msg"));
+                return null;
+            }else {
+                return xmlJson.toString();
+            }
         }catch (Exception e){
             log.error("请求微信支付二维码异常",e);
         }

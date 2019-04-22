@@ -22,6 +22,8 @@ import com.aebiz.baseframework.shiro.exception.CaptchaEmptyException;
 import com.aebiz.baseframework.shiro.exception.CaptchaIncorrectException;
 import com.aebiz.baseframework.view.annotation.SJson;
 import com.aebiz.commons.utils.*;
+import com.alibaba.dubbo.common.json.JSON;
+import com.alibaba.fastjson.JSONObject;
 import eu.bitwalker.useragentutils.Browser;
 import eu.bitwalker.useragentutils.OperatingSystem;
 import org.apache.shiro.SecurityUtils;
@@ -90,6 +92,8 @@ public class LoginController {
      * 手机短信验证码前缀
      */
     private final String MOBILE_CAPTCHA = "mobile_sms_captcha_";
+
+    private static final String session_login_key="session_login_key_yd_sms";
 
     /**
      * token的有效期,默认是2小时
@@ -375,9 +379,23 @@ public class LoginController {
             try (Jedis jedis = redisService.jedis()) {
                 jedis.set(key, code);
                 jedis.expire(key, Integer.valueOf(expireTime));
+
+                String content = "验证码"+code+"。次验正码用于校验身份";
+                String sndJson = smsService.sendMessages(content,mobile);
+                JSONObject jsonObject = (JSONObject) com.alibaba.fastjson.JSON.parseObject(sndJson);
+                String sendStatus = jsonObject.getString("status");
+                if("-1".equals(sendStatus)){
+                    //获取登录session
+                    String loginJSON = smsService.SmsYdLogin();
+                    JSONObject jsonObjectLogin = com.alibaba.fastjson.JSON.parseObject(loginJSON);
+                    String loginStatus = jsonObjectLogin.getString("status");
+                    if("0".equals(loginStatus)){ //调用成功
+                        String sessionId = jsonObjectLogin.getString("sessionId");
+                        jedis.set(session_login_key,sessionId);
+                        smsService.sendMessages(content,mobile);
+                    }
+                }
             }
-            String content = "验证码"+code+"。次验正码用于校验身份";
-            smsService.sendMessages(content,mobile);
             log.info("短信验证码:  " + code);
             return Result.success("member.register.join.success");
         }catch (Exception e){

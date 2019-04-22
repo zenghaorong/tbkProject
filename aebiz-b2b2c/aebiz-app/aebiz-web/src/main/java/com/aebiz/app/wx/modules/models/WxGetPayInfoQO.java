@@ -17,7 +17,7 @@ public class WxGetPayInfoQO {
     //支付金额 单位分
     private String total_fee;
 
-    //openId
+    //openId 微信里公众号支付才传
     private String openId;
 
     //本机ip

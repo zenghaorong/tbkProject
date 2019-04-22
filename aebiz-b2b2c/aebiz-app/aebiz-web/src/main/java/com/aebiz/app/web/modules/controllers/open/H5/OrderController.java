@@ -183,7 +183,7 @@ public class OrderController {
         //查询收货信息
         Member_address member_address = memberAddressService.fetch(addressId);
 
-        for(Map<String,Object> map:list) {
+        Map<String,Object> map=list.get(0);
             String id = (String) map.get("productId");
             String num = (String) map.get("num");
             Goods_main good = goodsService.fetch(id);
@@ -231,9 +231,8 @@ public class OrderController {
 //                order_goods.setImgUrl(goods_product.get);  缺商品图片
                 order_goods.setPayMoney(goods_product.getSalePrice() * n - freeMoney);
                 orderGoodsService.insert(order_goods);
-                request.setAttribute("orderId", order.getId());
+                request.setAttribute("order", order);
             }
-        }
         return "pages/front/h5/niantu/checkoutCounter";
     }
 

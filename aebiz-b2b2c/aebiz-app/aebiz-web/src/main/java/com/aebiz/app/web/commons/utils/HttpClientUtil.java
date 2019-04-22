@@ -15,6 +15,7 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.params.ClientPNames;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
@@ -318,30 +319,29 @@ public class HttpClientUtil {
 		}
 	}
 
-	public static String submitHttpDate(String url, String jsonStr) throws Exception {
-		HttpPost httpost = new HttpPost(url);
-		httpost.setConfig(requestConfig);
-		httpost.setHeader("Content-type", "application/json");
-		StringEntity requestEntity = new StringEntity(jsonStr,"utf-8");
-		requestEntity.setContentEncoding("UTF-8");
-		httpost.setEntity(requestEntity);
-		HttpContext httpContext = new BasicHttpContext();
-		CloseableHttpResponse response = null;
+	public static String submitHttpDate(String url, String xml) throws Exception {
+		DefaultHttpClient client = new DefaultHttpClient();
+		client.getParams().setParameter(ClientPNames.ALLOW_CIRCULAR_REDIRECTS, true);
+		HttpPost pmethod = new HttpPost(url); // 设置响应头信息
+		pmethod.addHeader("Connection", "keep-alive");
+		pmethod.addHeader("Accept", "*/*");
+		pmethod.addHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+		pmethod.addHeader("Host", "api.mch.weixin.qq.com");
+		pmethod.addHeader("X-Requested-With", "XMLHttpRequest");
+		pmethod.addHeader("Cache-Control", "max-age=0");
+		pmethod.addHeader("User-Agent", "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.0) ");
+		pmethod.setEntity(new StringEntity(xml, "UTF-8"));
+		HttpResponse response = client.execute(pmethod);
+
 		try {
-			response = HTTP_CLIENT.execute(httpost, httpContext);
-			HttpEntity entity = response.getEntity();
-			if (entity != null) {
-				InputStream is = response.getEntity().getContent();
-				String resultStr = getStreamAsString(is, "UTF-8");
-				return resultStr;
-			}
-			return null;
+			String jsonStr = EntityUtils.toString(response.getEntity(), "UTF-8");
+			return jsonStr;
 		}catch (Exception e){
 			e.printStackTrace();
 			return null;
 		}finally {
 			if (response != null) {
-				response.close();
+				((CloseableHttpResponse) response).close();
 			}
 		}
 	}

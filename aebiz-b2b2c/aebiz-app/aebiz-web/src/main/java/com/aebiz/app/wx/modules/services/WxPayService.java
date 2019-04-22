@@ -19,4 +19,11 @@ public interface WxPayService {
      * 微信H5支付下单接口
      */
     public String wxGetPayInfoH5(WxGetPayInfoQO wxGetPayInfoQO);
+
+
+    /**
+     * 微信退款接口
+     */
+    public boolean wxRefund();
+
 }

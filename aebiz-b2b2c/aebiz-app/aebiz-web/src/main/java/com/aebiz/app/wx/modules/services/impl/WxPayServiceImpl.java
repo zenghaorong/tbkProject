@@ -129,6 +129,22 @@ public class WxPayServiceImpl implements WxPayService {
         return null;
     }
 
+
+    /**
+     * 微信退款
+     * @return
+     */
+    @Override
+    public boolean wxRefund() {
+
+        return false;
+    }
+
+    /**
+     * xml转json
+     * @param xml
+     * @return
+     */
     public static JSONObject xml2Json(String xml){
         XMLSerializer xmlSerializer = new XMLSerializer();
         //将xml转为json（注：如果是元素的属性，会在json里的key前加一个@标识）
@@ -136,6 +152,12 @@ public class WxPayServiceImpl implements WxPayService {
         return JSONObject.fromObject(json);
     }
 
+    /**
+     * json转xml
+     * @param json
+     * @return
+     * @throws DocumentException
+     */
     public static String json2Xml(JSONObject json) throws DocumentException {
         String sXml = "";
         XMLSerializer xmlSerializer = new XMLSerializer();

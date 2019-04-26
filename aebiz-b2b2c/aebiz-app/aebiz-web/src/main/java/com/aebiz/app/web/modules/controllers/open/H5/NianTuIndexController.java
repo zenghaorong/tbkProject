@@ -4,14 +4,20 @@ import com.aebiz.app.acc.modules.models.Account_user;
 import com.aebiz.app.cms.modules.models.Cms_link;
 import com.aebiz.app.shop.modules.models.Shop_adv_main;
 import com.aebiz.app.shop.modules.services.ShopAdvMainService;
+import com.aebiz.app.wx.modules.services.WxConfigService;
 import com.aebiz.baseframework.base.Result;
 import com.aebiz.baseframework.view.annotation.SJson;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.nutz.dao.Cnd;
+import org.nutz.ioc.impl.PropertiesProxy;
 import org.nutz.json.Json;
+import org.nutz.lang.Strings;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,13 +46,31 @@ public class NianTuIndexController {
     @Autowired
     private ShopAdvMainService shopAdvMainService;
 
+    @Autowired
+    private PropertiesProxy config;
+
+    @Autowired
+    private WxConfigService wxConfigService;
+
 
     /**
      * 进入首页
      * @return
      */
     @RequestMapping("/index.html")
-    public String index() {
+    public String index(String code,HttpServletRequest request) {
+        String appId = config.get("wx.pay.AppID");
+        request.setAttribute("appId",appId);
+        request.setAttribute("code",code);
+        if(!Strings.isEmpty(code)) {
+            String wxJson = wxConfigService.getWxApiAccessToken(false,code);
+            JSONObject jsonObject = JSON.parseObject(wxJson);
+            String access_token = jsonObject.getString("access_token");
+//            if(access_token==null){
+//                wxConfigService.getWxApiAccessToken(true,code);
+//            }
+            log.info("获取到token-openId接口返回："+access_token);
+        }
         return "pages/front/h5/niantu/index";
     }
 

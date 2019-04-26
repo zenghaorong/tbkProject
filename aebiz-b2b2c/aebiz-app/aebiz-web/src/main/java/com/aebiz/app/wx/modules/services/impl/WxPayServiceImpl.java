@@ -19,6 +19,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 /**
  * @Auther: zenghaorong
@@ -46,9 +48,9 @@ public class WxPayServiceImpl implements WxPayService {
             String mchid = config.get("wx.pay.mchid");
             String notify_url = config.get("wx.pay.notify_url");
 
-            Map map = new HashMap();
+            SortedMap<String,String> map =  new TreeMap<String, String>();
             String nonce_str = String.valueOf(System.currentTimeMillis());
-            double total=Double.parseDouble(wxGetPayInfoQO.getTotal_fee())*100;
+            String total=wxGetPayInfoQO.getTotal_fee();
             map.put("appid",appid);
             map.put("mch_id",mchid);
             map.put("nonce_str", nonce_str);
@@ -58,13 +60,13 @@ public class WxPayServiceImpl implements WxPayService {
             map.put("spbill_create_ip", wxGetPayInfoQO.getThisIp());
             map.put("notify_url", notify_url);//通知地址
             map.put("trade_type", "JSAPI");//微信浏览器里支付 必须传openId
-            map.put("product_id", wxGetPayInfoQO.getProductId());
             map.put("openid", wxGetPayInfoQO.getOpenId());
-            String signStr = WXPayUtil.generateSignature(map, key);//签名参数
+            String signStr = WXPayUtil.createSign(map, key);//签名参数
             map.put("sign", signStr);
             log.info("传入map参数:" + JSON.toJSONString(map));
             JSONObject mapNobject = JSONObject.fromObject(map);
             String postXml = json2Xml(mapNobject);
+            log.info("请求xml: "+postXml);
             //3.统一下单
             String wxXml = HttpClientUtil.submitHttpDate("https://api.mch.weixin.qq.com/pay/unifiedorder", postXml);
             log.info("微信下单返回参数" + wxXml);

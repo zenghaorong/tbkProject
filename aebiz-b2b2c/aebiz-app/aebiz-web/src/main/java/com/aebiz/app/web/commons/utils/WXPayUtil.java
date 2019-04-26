@@ -212,6 +212,30 @@ public class WXPayUtil {
 
 
     /**
+     * 创建md5摘要,规则是:按参数名称a-z排序,遇到空值的参数不参加签名。
+     */
+    public static String createSign(SortedMap<String, String> packageParams,String key) {
+        StringBuffer sb = new StringBuffer();
+        Set es = packageParams.entrySet();
+        Iterator it = es.iterator();
+        while (it.hasNext()) {
+            Map.Entry entry = (Map.Entry) it.next();
+            String k = (String) entry.getKey();
+            String v = (String) entry.getValue();
+            if (null != v && !"".equals(v) && !"sign".equals(k)
+                    && !"key".equals(k)) {
+                sb.append(k + "=" + v + "&");
+            }
+        }
+        sb.append("key=" + key);
+        String sign = MD5Util.MD5Encode(sb.toString(), "UTF-8")
+                .toUpperCase();
+        return sign;
+
+    }
+
+
+    /**
      * 获取随机字符串 Nonce Str
      * @return String 随机字符串
      */

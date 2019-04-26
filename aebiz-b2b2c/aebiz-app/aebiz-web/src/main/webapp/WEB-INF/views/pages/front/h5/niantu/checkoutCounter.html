@@ -83,77 +83,191 @@
                 支付方式
             <!--</a>-->
         </div>
-        <div class="mui-input-row mui-checkbox">
-            <label><img src="${base!}/assets/front/h5/img/wxpay_logo.png" width="35px" style="margin-right: 10px;float: left;">
-                <span style="margin-top:10px;float:left;">微信支付</span>
-            </label>
-            <input name="checkbox1" value="Item 3" type="checkbox" checked>
-        </div>
-        <div class="mui-input-row mui-checkbox">
-            <label><img src="${base!}/assets/front/h5/img/zfb.png" width="50px" style="float: left;">
-                <span style="margin-top:10px;float:left;">支付宝</span>
-            </label>
-            <input name="checkbox1" value="Item 3" type="checkbox">
-        </div>
+        <form class="mui-input-group">
+            <div class="mui-input-row mui-radio" style="height: 60px;">
+                <label>
+                    <img src="${base!}/assets/front/h5/img/wxpay_logo.png" width="35px" style="margin-right: 10px;float: left;">
+                    <span style="margin-top:10px;float:left;">微信支付</span>
+                </label>
+                <input class="check" name="checkbox1" value="wx" type="radio" checked="checked" style="top: 16px;">
+            </div>
+            <div class="mui-input-row mui-radio" id="alicheckbox" style="height: 60px;">
+                <label>
+                    <img src="${base!}/assets/front/h5/img/zfb.png" width="50px" style="float: left;">
+                    <span style="margin-top:10px;float:left;">支付宝</span>
+                </label>
+                <input class="check" name="checkbox1" value="ali" type="radio" style="top: 16px;">
+             </div>
+        </form>
     </div>
 
 
 
 
-    <div style="width: 300px;margin: 0 auto;">
-        <button type="button" v-on:click="wxH5Pay" class="mui-btn mui-btn-primary mui-btn-block">立即支付</button>
+        <div style="width: 300px;margin: 0 auto;">
+            <button type="button" v-on:click="buttonPay" class="mui-btn mui-btn-primary mui-btn-block">立即支付</button>
+        </div>
     </div>
-</div>
-<script type="text/javascript" src="${base!}/assets/front/h5/js/mui.js" ></script>
-<script type="text/javascript" src="${base!}/assets/front/h5/js/vue.js" ></script>
-<script type="text/javascript" src="${base!}/assets/front/h5/js/jquery-2.0.0.min.js" ></script>
-<script type="application/javascript">
-    mui.init({
-        swipeBack:true //启用右滑关闭功能
-    });
+    <script type="text/javascript" src="${base!}/assets/front/h5/js/mui.js" ></script>
+    <script type="text/javascript" src="${base!}/assets/front/h5/js/vue.js" ></script>
+    <script type="text/javascript" src="${base!}/assets/front/h5/js/jquery-2.0.0.min.js" ></script>
+    <script type="application/javascript">
+        mui.init({
+            swipeBack:true //启用右滑关闭功能
+        });
 
-    var vue = new Vue({
-        el: '#vue',
-        data: {
-            videoList: [],
-        },
-        created:function () {   //实例初始化创建完成执行
+        //防重
+        var fila = true;
 
+        var vue = new Vue({
+            el: '#vue',
+            data: {
+                payData: "",
+            },
+            created:function () {   //实例初始化创建完成执行
 
-        },
-        methods:{              //定义封装方法
-            //微信H5支付
-            wxH5Pay:function () {
-                var self = this;
-                $.ajax({
-                    type:"POST",
-                    url:"${base!}/open/h5/pay/weiXinH5Pay.html",
-                    dataType:"JSON",
-                    data:{
-                        orderId:'${order.id!}'
-                    },
-                    success:function(data){
-                        if (data.code == 0) {
-                            var d = data.data;
-                            self.videoList = d;
-                        } else {
+                this.isLiuLanqi();
+            },
+            methods:{              //定义封装方法
+                buttonPay:function(){
 
+                    if(!fila){
+                        return;
+                    }
+                    fila = false;
+                    var paytype = "";
+                    $(".check").each(function (e) {
+                        if($(this).is(':checked')){
+                            paytype = $(this).val();
+                        }
+                    })
+                    if("ali" == paytype){
+                        this.aliPay();
+                    }
+                    if("wx" == paytype){
+                        var ua = navigator.userAgent.toLowerCase();//获取判断用的对象
+                        if (ua.match(/MicroMessenger/i) == "micromessenger") {
+                            //在微信中打开
+                            this.wxJsapiPay();
+                            $("#alicheckbox").css("display","none")
+                        }else {
+                            this.wxH5Pay();
                         }
                     }
-                });
+                },
+                //微信H5支付
+                wxH5Pay:function () {
+                    var self = this;
+                    $.ajax({
+                        type:"POST",
+                        url:"${base!}/open/h5/pay/weiXinH5Pay.html",
+                        dataType:"JSON",
+                        data:{
+                            orderId:'${order.id!}'
+                        },
+                        success:function(data){
+                            if (data.code == 0) {
+                                var d = data.data;
+                                self.payData = d;
+                            } else {
 
+                            }
+                            fila =true;
+                        }
+                    });
+
+                },
+                //微信JSAPI支付(也就是公众号支付)
+                wxJsapiPay:function () {
+                    var self = this;
+                    $.ajax({
+                        type:"POST",
+                        url:"${base!}/open/h5/pay/weiXinJsapiPay.html",
+                        dataType:"JSON",
+                        data:{
+                            orderId:'${order.id!}'
+                        },
+                        success:function(data){
+                            if (data.code == 0) {
+                                var d = data.data;
+                                self.payData = d;
+                            } else {
+
+                            }
+                            fila =true;
+                        }
+                    });
+
+                },
+                //支付宝支付
+                aliPay:function () {
+                    // var self = this;
+                    // $.ajax({
+                    //     type:"POST",
+                    //     url:"${base!}/open/h5/pay/weiXinH5Pay.html",
+                    //     dataType:"JSON",
+                    //     data:{
+                    //         orderId:'${order.id!}'
+                    //     },
+                    //     success:function(data){
+                    //         if (data.code == 0) {
+                    //             var d = data.data;
+                    //             self.payData = d;
+                    //         } else {
+                    //
+                    //         }
+                    //         fila =true;
+                    //     }
+                    // });
+                    window.location.href = "${base!}/open/h5/pay/aliPay.html?orderId=${order.id!}";
+
+                },
+                isLiuLanqi:function () {
+                    var ua = navigator.userAgent.toLowerCase();//获取判断用的对象
+                    if (ua.match(/MicroMessenger/i) == "micromessenger") {
+                        $("#alicheckbox").css("display","none")
+                    }
+                }
+            },
+            watch:{     //监听器
+                // carModel:function () {
+                //     this.getProvince();
+                // }
             }
-        },
-        watch:{     //监听器
-            // carModel:function () {
-            //     this.getProvince();
-            // }
+
+        })
+
+
+        function onBridgeReady(){
+            WeixinJSBridge.invoke(
+                'getBrandWCPayRequest', {
+                    "appId":"wx2421b1c4370ec43b",     //公众号名称，由商户传入
+                    "timeStamp":"1395712654",         //时间戳，自1970年以来的秒数
+                    "nonceStr":"e61463f8efa94090b1f366cccfbbb444", //随机串
+                    "package":"prepay_id=u802345jgfjsdfgsdg888",
+                    "signType":"MD5",         //微信签名方式：
+                    "paySign":"70EA570631E4BB79628FBCA90534C63FF7FADD89" //微信签名
+                },
+                function(res){
+                    if(res.err_msg == "get_brand_wcpay_request:ok" ){
+                        // 使用以上方式判断前端返回,微信团队郑重提示：
+                        //res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
+                    }
+                });
+        }
+        if (typeof WeixinJSBridge == "undefined"){
+            if( document.addEventListener ){
+                document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+            }else if (document.attachEvent){
+                document.attachEvent('WeixinJSBridgeReady', onBridgeReady);
+                document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
+            }
+        }else{
+            onBridgeReady();
         }
 
-    })
 
 
-
-</script>
-</body>
-</html>
+    </script>
+    </body>
+    </html>

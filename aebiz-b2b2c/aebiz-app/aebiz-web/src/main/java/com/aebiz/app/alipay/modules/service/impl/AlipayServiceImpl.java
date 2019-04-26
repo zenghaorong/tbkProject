@@ -12,12 +12,14 @@ import org.nutz.ioc.impl.PropertiesProxy;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * @Auther: zenghaorong
  * @Date: 2019/4/19  10:31
  * @Description: 支付宝支付下单接口
  */
+@Service
 public class AlipayServiceImpl implements AlipayService {
 
     @Autowired

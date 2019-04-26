@@ -222,8 +222,6 @@ public class StoreSalesCouponController {
         if (!Strings.isBlank(id)) {
             Sales_coupon coupon=salesCouponService.fetch(id);
             req.setAttribute("obj", coupon);
-            Sales_rule_order rule_order=salesRuleOrderService.fetch(coupon.getRuleId());
-            req.setAttribute("ruleName", rule_order.getName());
         }else{
             req.setAttribute("obj", null);
         }

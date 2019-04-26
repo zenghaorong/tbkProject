@@ -1,5 +1,15 @@
 package com.aebiz.app.dec.commons.utils;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.protocol.HTTP;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.text.MessageFormat;
 
 public class CommonUtil {
@@ -69,5 +79,40 @@ public class CommonUtil {
 		}else{
 			return MessageFormat.format("{0}{1}?contentUuid={2}", new Object[]{contextPath,url,contentUuid});
 		}
+	}
+
+
+	/**
+	 * GET请求
+	 */
+	public static String httpCallGet(String url) {
+		String ret = "";
+
+		CloseableHttpClient client = HttpClientBuilder.create().build();
+
+		HttpGet get = new HttpGet(url);
+		StringBuffer sb = new StringBuffer();
+		try {
+			HttpResponse resp = client.execute(get);
+
+			HttpEntity entity = resp.getEntity();
+			BufferedReader br = new BufferedReader(new InputStreamReader(
+					entity.getContent(), HTTP.UTF_8));
+
+			String result = br.readLine();
+			while (result != null) {
+				sb.append(result);
+				result = br.readLine();
+			}
+
+			String str = "";
+			if(StringUtils.isNotBlank(sb.toString())) {
+				str = sb.toString();
+			}
+			ret = str.trim();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return ret;
 	}
 }

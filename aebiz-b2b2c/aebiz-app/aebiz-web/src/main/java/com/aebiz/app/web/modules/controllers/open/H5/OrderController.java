@@ -97,6 +97,9 @@ public class OrderController {
 //        request.setAttribute("productIds",productIds);
 //        request.setAttribute("num",num);
         request.setAttribute("productList",productList);
+        String freight = sysDictService.getNameByCode("freight");
+        int freightMoney = Integer.parseInt(freight);
+        request.setAttribute("freightMoney",freightMoney);
         return "pages/front/h5/niantu/orderConfirmation";
     }
 

@@ -124,7 +124,7 @@ public class CouponH5Controller {
             cndC.and("accountId", "=", accountUser.getAccountId());
             List<Member_coupon> member_couponList = memberCouponService.query(cndC);
             if(member_couponList!=null) {
-                if (sales_coupon.getLimit_num() >= member_couponList.size()) {
+                if (member_couponList.size()>=sales_coupon.getLimit_num()) {
                     return Result.error(10001,"您已达到当前优惠劵的领取上限");
                 }
             }

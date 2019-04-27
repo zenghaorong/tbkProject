@@ -31,12 +31,13 @@ public class AlipayServiceImpl implements AlipayService {
     public String aliGetPayFrom(AliPayFromQO aliPayFromQO) {
         try {
 
-            String notify_url = config.get("alipay.notify_url");
-
-            String return_url = config.get("alipay.return_url");
-
             // 商户订单号，商户网站订单系统中唯一订单号，必填
             String out_trade_no = aliPayFromQO.getOut_trade_no();
+
+            String notify_url = config.get("alipay.notify_url");
+
+            String return_url = config.get("alipay.return_url")+"?orderId="+out_trade_no;
+
             // 订单名称，必填
             String subject = aliPayFromQO.getSubject();
             log.info(subject);

@@ -82,8 +82,9 @@ public class CmsVideoController {
             cnd.and("delFlag", "=", 0 );
             cnd.desc("sort");
 
-            Pagination pagination = cmsVideoService.listPage(pageNumber,15,cnd,"^(id|videoTitle|imageUrl|price)$");
-            return Result.success("ok",pagination.getList());
+//            Pagination pagination = cmsVideoService.listPage(pageNumber,15,cnd,"^(id|videoTitle|imageUrl|price)$");
+            List<Cms_video> cms_videoList = cmsVideoService.query(cnd,"^(id|videoTitle|imageUrl|price)$");
+            return Result.success("ok",cms_videoList);
         } catch (Exception e) {
             log.error("获取视频列表异常",e);
             return Result.error("fail");
@@ -173,14 +174,30 @@ public class CmsVideoController {
     @RequestMapping("videoBuyPage.html")
     public String videoBuyPage(String id, HttpServletRequest req){
         req.setAttribute("id",id);
-        Subject subject = SecurityUtils.getSubject();
-        Account_user accountUser = (Account_user) subject.getPrincipal();
+        Account_user accountUser = new Account_user();
+        try {
+            Subject subject = SecurityUtils.getSubject();
+            accountUser = (Account_user) subject.getPrincipal();
+        }catch (Exception e){
+            return "pages/front/h5/niantu/login";
+        }
 
         //判断是否购买 从而判断进入购买页还是详情页
-
+        Cnd cnd = Cnd.NEW();
+        cnd.and("payStatus", "=", OrderPayStatusEnum.PAYALL.getKey() );
+        cnd.and("accountId", "=", accountUser.getAccountId());
+        cnd.and("orderType", "=", "2");
+        cnd.and("videoId", "=", id);
+        int orderSize =orderMainService.count(cnd);
+        if(orderSize>0){ //进入播放详情页
+            return "pages/front/h5/niantu/videoDetail";
+        }
 
         Cms_video cms_video = cmsVideoService.fetch(id);
-        int num = cms_video.getLikeNum();
+        Integer num = cms_video.getLikeNum();
+        if(num == null){
+            num = 0;
+        }
         num++;
         cms_video.setLikeNum(num);
         cmsVideoService.update(cms_video);
@@ -196,7 +213,10 @@ public class CmsVideoController {
         req.setAttribute("id",id);
 
         Cms_video cms_video = cmsVideoService.fetch(id);
-        int num = cms_video.getLikeNum();
+        Integer num = cms_video.getLikeNum();
+        if(num == null){
+            num = 0;
+        }
         num++;
         cms_video.setLikeNum(num);
         cmsVideoService.update(cms_video);
@@ -215,10 +235,17 @@ public class CmsVideoController {
 
             Cms_video cms_video = new Cms_video();
 
-            cms_video=cmsVideoService.getField("^(id|videoTitle|videoDetails|imageUrl|price|opAt)$",id);
-
-            //这里做一个判断 如果当前账号有此视频订单就把url地址返回
-            cms_video=cmsVideoService.getField("^(id|videoTitle|videoDetails|imageUrl|price|opAt|videoUrl)$",id);
+            Cnd cnd = Cnd.NEW();
+            cnd.and("payStatus", "=", OrderPayStatusEnum.PAYALL.getKey() );
+            cnd.and("accountId", "=", accountUser.getAccountId());
+            cnd.and("orderType", "=", "2");
+            cnd.and("videoId", "=", id);
+            int orderSize =orderMainService.count(cnd);
+            if(orderSize>0){//这里做一个判断 如果当前账号有此视频订单就把url地址返回
+                cms_video=cmsVideoService.getField("^(id|videoTitle|videoDetails|imageUrl|price|opAt|videoUrl)$",id);
+            }else{
+                cms_video=cmsVideoService.getField("^(id|videoTitle|videoDetails|imageUrl|price|opAt)$",id);
+            }
             return Result.success("ok",cms_video);
         } catch (Exception e) {
             log.error("获取图文详情异常",e);

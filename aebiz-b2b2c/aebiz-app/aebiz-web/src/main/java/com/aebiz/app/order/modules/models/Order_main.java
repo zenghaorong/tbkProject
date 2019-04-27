@@ -84,7 +84,7 @@ public class Order_main extends BaseModel implements Serializable {
 
     @Column
     @Comment("应付金额")
-    @ColDefine(type = ColType.INT)
+    @ColDefine(type = ColType.INT)//单位是分
     @Default("0")
     private Integer payMoney;//payMoney = goodsPayMoney + freightMoney - freeMoney
 
@@ -289,6 +289,12 @@ public class Order_main extends BaseModel implements Serializable {
     @ColDefine(type = ColType.VARCHAR, width = 500)
     private String mark;//商家管理时填写
 
+    @Column
+    @Comment("视频编号")
+    @ColDefine(type = ColType.VARCHAR, width = 32)
+    private String videoId;
+
+
     @Many(field = "orderId")
     private List<Order_goods>  goodsList;
 
@@ -318,6 +324,14 @@ public class Order_main extends BaseModel implements Serializable {
     private Store_main storeMain;
 
     private String expressInfo;
+
+    public String getVideoId() {
+        return videoId;
+    }
+
+    public void setVideoId(String videoId) {
+        this.videoId = videoId;
+    }
 
     public List<Goods_main> getProductList() {
         return productList;

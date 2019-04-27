@@ -20,6 +20,7 @@ import com.aebiz.app.order.modules.models.em.OrderTypeEnum;
 import com.aebiz.app.order.modules.services.OrderGoodsService;
 import com.aebiz.app.order.modules.services.OrderMainService;
 import com.aebiz.app.sys.modules.services.SysDictService;
+import com.aebiz.app.web.commons.utils.CalculateUtils;
 import com.aebiz.baseframework.base.Result;
 import com.aebiz.baseframework.view.annotation.SJson;
 import com.aebiz.commons.utils.DateUtil;
@@ -164,7 +165,8 @@ public class OrderController {
      * 进入订单详情页
      */
     @RequestMapping("/goOrderInfo.html")
-    public String goOrderInfo() {
+    public String goOrderInfo(String orderId,HttpServletRequest request) {
+        request.setAttribute("orderId",orderId);
         return "pages/front/h5/niantu/orderInfo";
     }
 
@@ -270,13 +272,15 @@ public class OrderController {
         order_main.setStoreId(cms_video.getStoreId());
         order_main.setGoodsMoney(cms_video.getPrice().intValue());
         order_main.setGoodsFreeMoney(0);
-        order_main.setPayMoney(cms_video.getPrice().intValue());
+        Double payMoney = CalculateUtils.mul(cms_video.getPrice(),100);;
+        order_main.setPayMoney(payMoney.intValue()); //单位是分
         order_main.setFreightMoney(0);
         order_main.setFreeMoney(0);
         order_main.setPayStatus(0);
         order_main.setOrderStatus(0);
         order_main.setOrderAt(DateUtil.getTime(new Date()));
         order_main.setOrderType(OrderTypeEnum.video_order_type.getKey());
+        order_main.setVideoId(videoId);
         Order_main order = orderMainService.insert(order_main);
         order_goods.setOrderId(order.getId());
         order_goods.setAccountId(order.getAccountId());

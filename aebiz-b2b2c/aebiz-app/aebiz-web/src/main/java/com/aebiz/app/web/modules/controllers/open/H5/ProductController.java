@@ -6,6 +6,7 @@ import com.aebiz.app.goods.modules.models.Goods_product;
 import com.aebiz.app.goods.modules.services.GoodsImageService;
 import com.aebiz.app.goods.modules.services.GoodsProductService;
 import com.aebiz.app.goods.modules.services.GoodsService;
+import com.aebiz.app.web.commons.utils.CalculateUtils;
 import com.aebiz.baseframework.base.Result;
 import com.aebiz.baseframework.page.Pagination;
 import com.aebiz.baseframework.view.annotation.SJson;
@@ -177,9 +178,9 @@ public class ProductController {
                 proCnd.and("goodsId", "=", o.getId());
                 List<Goods_product> gpList = goodsProductService.query(proCnd);
                 if (gpList != null && gpList.size() > 0) {
-                    Integer salePrice = gpList.get(0).getSalePrice();
+                    double salePrice = gpList.get(0).getSalePrice();
                     int marketPrice = gpList.get(0).getCostPrice();
-                    int price = salePrice / 100;
+                    double price = CalculateUtils.div(salePrice,100,2);
                     o.setPrice(price + "");
                     o.setMarketPrice(marketPrice / 100 + "");
                     o.setSaleNumMonth(gpList.get(0).getSaleNumMonth() + "");

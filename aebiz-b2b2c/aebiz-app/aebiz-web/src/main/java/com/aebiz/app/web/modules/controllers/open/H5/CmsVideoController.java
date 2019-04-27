@@ -178,6 +178,9 @@ public class CmsVideoController {
         try {
             Subject subject = SecurityUtils.getSubject();
             accountUser = (Account_user) subject.getPrincipal();
+            if(accountUser==null){
+                return "pages/front/h5/niantu/login";
+            }
         }catch (Exception e){
             return "pages/front/h5/niantu/login";
         }

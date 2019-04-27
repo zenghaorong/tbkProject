@@ -166,7 +166,21 @@ public class OrderController {
      */
     @RequestMapping("/goOrderInfo.html")
     public String goOrderInfo(String orderId,HttpServletRequest request) {
+        Subject subject = SecurityUtils.getSubject();
+        try {
+            Account_user accountUser = (Account_user) subject.getPrincipal();
+            if (accountUser == null) {
+                return "pages/front/h5/niantu/login";
+            }
+        }catch (Exception e){
+            return "pages/front/h5/niantu/login";
+        }
         request.setAttribute("orderId",orderId);
+        Order_main order_main = orderMainService.fetch(orderId);
+        request.setAttribute("order",order_main);
+        double money = order_main.getPayMoney();
+        double payMoney = CalculateUtils.div(money,100,2);
+        request.setAttribute("payMoney",payMoney);
         return "pages/front/h5/niantu/orderInfo";
     }
 
@@ -361,4 +375,40 @@ public class OrderController {
             return Result.error("fail");
         }
     }
+
+    /**
+     * 根据订单编号查询订单组商品列表
+     */
+    @RequestMapping("getOrderProductList.html")
+    @SJson
+    public Result getOrderProductList(String orderId){
+        try {
+
+            Cnd cndOrder = Cnd.NEW();
+            cndOrder.and("orderId","=",orderId);
+            List<Order_goods> order_goods = orderGoodsService.query(cndOrder);
+
+            for(Order_goods o:order_goods) {
+                if("1".equals(o.getOrderType())) {
+                    Cnd imgCnd = Cnd.NEW();
+                    imgCnd.and("goodsId", "=", o.getGoodsId());
+                    List<Goods_image> imgList = goodsImageService.query(imgCnd);
+                    if (imgList != null && imgList.size() > 0) {
+                        o.setImgUrl(imgList.get(0).getImgAlbum());
+                    }
+                }
+                if("2".equals(o.getOrderType())) {
+                    Cms_video cms_video = cmsVideoService.fetch(o.getGoodsId());
+                    o.setImgUrl(cms_video.getImageUrl());
+                }
+            }
+
+
+            return Result.success("ok",order_goods);
+        } catch (Exception e) {
+            log.error("获取视频列表异常",e);
+            return Result.error("fail");
+        }
+    }
+
 }

@@ -92,8 +92,9 @@
 <div class="mui-content-padded">
     可用优惠劵
     <select class="mui-btn mui-btn-block" v-model="couponId">
-        <option v-if="item.sales_coupon!=null" :value="item.couponId" v-for="item in coupons" :key="item.id">{{item.sales_coupon.name}}</option>
-        <option v-else selected="selected">暂无可用优惠劵</option>
+        <option  :value="item.couponId" v-for="item in coupons" :key="item.id">
+            {{item.sales_coupon!=null?item.sales_coupon.name:'暂无可用优惠劵'}}
+        </option>
     </select>
 </div>
 
@@ -127,7 +128,8 @@
             zongPrice:'',
             yunPrice:0,
             coupons:[],
-            couponId:''
+            couponId:'',
+            couponPrice:0
         },
         created:function () {   //实例初始化创建完成执行
 
@@ -200,6 +202,7 @@
                             if(self.coupons.length>0) {
                                 self.couponId = self.coupons[0].couponId; //让select默认选中
                             }
+                            self.zongPrice = self.videoInfo.price - self.couponPrice;
                         } else {
 
                         }

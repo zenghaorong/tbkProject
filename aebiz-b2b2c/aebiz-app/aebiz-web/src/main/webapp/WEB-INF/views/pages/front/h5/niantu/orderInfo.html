@@ -37,69 +37,70 @@
         订单详情页
     </h1>
 </header>
-<div style="margin-top: 60px;overflow: hidden;" >
-    <a style="float: left;">
-        <span class="mui-icon mui-icon-checkmarkempty" style="font-size: 65px;"></span>
-    </a>
-    <span style="float: left;">
-        恭喜您订单提交成功!<br>
-        请尽快完成付款操作。<br>
-        订单号：<span>11125335353153513513</span>
-    </span>
+<div id="vue">
+    <!--#if(order.payStatus == 3){#-->
+    <div style="margin:0 auto;margin-top: 60px;overflow: hidden;width: 76px;" >
+        <img src="${base!}/assets/front/h5/img/ico_success.png">
+    </div>
+    <div style="margin:0 auto;width: 52px;" >
+        <span>已支付</span>
+    </div>
+    <!--#}else{#-->
+    <div style="margin:0 auto;margin-top: 60px;overflow: hidden;width: 76px;" >
+        <img src="${base!}/assets/front/h5/img/ico_wait.png">
+    </div>
+    <div style="margin:0 auto;width: 52px;" >
+        <!--#if(order.payStatus == 0 ||order.payStatus == 1 ||order.payStatus == 2){#-->
+        <span>待支付</span>
+        <!--#}#-->
+        <!--#if(order.payStatus == 4){#-->
+        <span>待退款</span>
+        <!--#}#-->
+        <!--#if(order.payStatus == 6){#-->
+        <span>已退款</span>
+        <!--#}#-->
+    </div>
+    <!--#}#-->
+
+
+    <div class="mui-card" >
+
+        <p style="margin-left: 10px;color: black;margin-top: 10px;">
+            订单详情
+        </p>
+        <div class="mui-card-header">
+            <div>订单编号：${orderId}</div>
+        </div>
+        <div class="mui-card-header">
+            <div>实付款：<span style="color: red;">${payMoney}</span></div>
+        </div>
+        <div class="mui-card-content">
+            <ul class="mui-table-view">
+                <li class="mui-table-view-cell mui-media" v-for="item in orderProductList" :key="item.id">
+                    <a href="#">
+                        <img class="mui-media-object mui-pull-left" :src="item.imgUrl">
+                        <div class="mui-media-body" style="white-space:normal;">
+                            <span>{{item.goodsName}}</span>
+                            <p class='mui-ellipsis'style="margin-top: 35px;margin-left: 110px;">
+                                <!--<span class="jiage-text">￥36.00</span>-->
+                                <span>数量：*{{item.buyNum}}</span>
+                            </p>
+                        </div>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
 </div>
-<div class="mui-card" >
-
-    <p style="margin-left: 10px;color: black;margin-top: 10px;">
-        订单详情
-    </p>
-    <div class="mui-card-header">
-        订单编号：1353546353533
-    </div>
-    <div class="mui-card-content">
-        <ul class="mui-table-view">
-            <li class="mui-table-view-cell mui-media" >
-                <a href="#">
-                    <img class="mui-media-object mui-pull-left" src="${base!}/assets/front/h5/img/商品图片6.JPG">
-                    <div class="mui-media-body" style="white-space:normal;">
-                        <span>超轻粘土24色儿童无毒橡皮泥彩泥太空水晶黏土女孩手工沙玩具套装</span>
-                        <p class='mui-ellipsis'style="margin-top: 35px;margin-left: 110px;">
-                            <span class="jiage-text">￥36.00</span>
-                            <span>*1</span>
-                        </p>
-                    </div>
-                </a>
-            </li>
-        </ul>
-    </div>
-</div>
-
-<div class="mui-card" >
-    <div class="mui-card-header">
-        <!--<a class="mui-navigate-right" href="#">-->
-        支付方式
-        <!--</a>-->
-    </div>
-    <div class="mui-input-row mui-checkbox">
-        <label><img src="${base!}/assets/front/h5/img/zfb.png" width="50px" style="float: left;">
-            <span style="margin-top:10px;float:left;">支付宝</span>
-        </label>
-        <input name="checkbox1" value="Item 3" type="checkbox" checked>
-    </div>
-    <div class="mui-input-row mui-checkbox">
-        <label><img src="${base!}/assets/front/h5/img/wxpay_logo.png" width="35px" style="margin-right: 10px;float: left;">
-            <span style="margin-top:10px;float:left;">微信支付</span>
-        </label>
-        <input name="checkbox1" value="Item 3" type="checkbox">
-    </div>
-</div>
 
 
 
 
+<!--#if(order.payStatus == 0 ||order.payStatus == 1 ||order.payStatus == 2){#-->
 <div style="width: 300px;margin: 0 auto;">
-    <button type="button" class="mui-btn mui-btn-primary mui-btn-block">立即支付</button>
+    <button type="button" onclick="window.location.reload()" class="mui-btn mui-btn-primary mui-btn-block">点击刷新</button>
 </div>
-
+<!--#}#-->
 <script type="text/javascript" src="${base!}/assets/front/h5/js/mui.js" ></script>
 <script type="text/javascript" src="${base!}/assets/front/h5/js/vue.js" ></script>
 <script type="text/javascript" src="${base!}/assets/front/h5/js/jquery-2.0.0.min.js" ></script>
@@ -111,28 +112,28 @@
     var vue = new Vue({
         el: '#vue',
         data: {
-            videoList: [],
+            orderProductList: [],
         },
         created:function () {   //实例初始化创建完成执行
 
-            this.getvideoList()     //调用自身方法
+            this.getOrderProductList()     //调用自身方法
 
         },
         methods:{              //定义封装方法
-            //获取列表
-            getvideoList:function () {
+            //获得订单组商品列表
+            getOrderProductList:function () {
                 var self = this;
                 $.ajax({
                     type:"POST",
-                    url:"${base!}/open/h5/cms/videoList.html",
+                    url:"${base!}/open/h5/order/getOrderProductList.html",
                     dataType:"JSON",
                     data:{
-
+                        orderId:'${orderId}'
                     },
                     success:function(data){
                         if (data.code == 0) {
                             var d = data.data;
-                            self.videoList = d;
+                            self.orderProductList = d;
                         } else {
 
                         }

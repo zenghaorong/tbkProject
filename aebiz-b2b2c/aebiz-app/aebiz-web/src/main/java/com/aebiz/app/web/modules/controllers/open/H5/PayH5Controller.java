@@ -181,6 +181,8 @@ public class PayH5Controller {
             String trade_no = new String(request.getParameter("trade_no").getBytes("ISO-8859-1"),"UTF-8");
             //交易状态
             String trade_status = new String(request.getParameter("trade_status").getBytes("ISO-8859-1"),"UTF-8");
+            //支付金额
+            String total_amount = new String(request.getParameter("total_amount").getBytes("ISO-8859-1"),"UTF-8");
 
             //获取支付宝的通知返回参数，可参考技术文档中页面跳转同步通知参数列表(以上仅供参考)//
             //计算得出通知验证结果
@@ -197,7 +199,8 @@ public class PayH5Controller {
                     return "fail";
                 }
                 //3.校验支付金额
-//                if(){
+//
+//                if(total_amount){
 //
 //                }
                 //4.校验订单状态

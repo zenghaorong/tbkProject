@@ -69,10 +69,12 @@
             </ul>
         </div>
     </div>
-    <div class="mui-content-padded">
+    <div class="mui-content-padded" >
         可用优惠劵
         <select class="mui-btn mui-btn-block" v-model="couponId">
-            <option :value="item.couponId" v-for="item in coupons" :key="item.id">{{item.sales_coupon.name}}</option>
+            <option :value="item.couponId" v-for="item in coupons" :key="item.id">
+                {{item.sales_coupon!=null?item.sales_coupon.name:'暂无可用优惠劵'}}
+            </option>
         </select>
     </div>
 
@@ -82,7 +84,7 @@
             border: 0;background-color:red;" v-on:click="save()">立即支付</button>
             <button type="button" style="width: 70%;top: 0px;line-height:1;border: 0;background-color:white;"
                     class="mui-btn mui-btn-primary" id="review">
-                <span style="color: black;">应付:</span><span style="color: red;padding-left: 10px;">{{zongPrice+yunPrice}}元</span>
+                <span style="color: black;">应付:</span><span style="color: red;padding-left: 10px;">{{zongPrice}}元</span>
             </button>
         </div>
     </nav>
@@ -107,7 +109,7 @@
             yunPrice:0,
             coupons:[],
             couponId:'',
-            couponPrice:5
+            couponPrice:0
         },
         created:function () {   //实例初始化创建完成执行
 
@@ -129,6 +131,7 @@
                     success:function(data){
                         if (data.code == 0) {
                             self.videoInfo = data.data;
+                            self.zongPrice = data.data.price;
                             self.getMyOrderCoupon();
                         } else {
 
@@ -144,7 +147,6 @@
                     url:"${base!}/open/h5/coupon/getMyOrderCoupon.html",
                     dataType:"JSON",
                     data:{
-                        productNum:self.goodsList.length,
                         price:self.zongPrice,
                         productType:"2"
                     },

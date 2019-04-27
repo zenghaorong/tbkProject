@@ -21,6 +21,17 @@ public class AliPayFromQO {
     // 商品描述，可空
     private String productBody;
 
+    //退款记录单号
+    private String out_request_no;
+
+    public String getOut_request_no() {
+        return out_request_no;
+    }
+
+    public void setOut_request_no(String out_request_no) {
+        this.out_request_no = out_request_no;
+    }
+
     public String getOut_trade_no() {
         return out_trade_no;
     }

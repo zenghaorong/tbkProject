@@ -16,5 +16,10 @@ public interface AlipayService {
      */
     public String aliGetPayFrom(AliPayFromQO aliPayFromQO);
 
+    /**
+     * 支付宝退款接口
+     */
+    public boolean aliReturn(AliPayFromQO aliPayFromQO);
+
 
 }

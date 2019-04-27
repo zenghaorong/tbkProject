@@ -15,10 +15,12 @@ import com.aebiz.app.member.modules.services.MemberAddressService;
 import com.aebiz.app.member.modules.services.MemberCartService;
 import com.aebiz.app.order.modules.models.Order_goods;
 import com.aebiz.app.order.modules.models.Order_main;
+import com.aebiz.app.order.modules.models.Order_pay_refunds;
 import com.aebiz.app.order.modules.models.em.OrderPayStatusEnum;
 import com.aebiz.app.order.modules.models.em.OrderTypeEnum;
 import com.aebiz.app.order.modules.services.OrderGoodsService;
 import com.aebiz.app.order.modules.services.OrderMainService;
+import com.aebiz.app.order.modules.services.OrderPayRefundsService;
 import com.aebiz.app.sys.modules.services.SysDictService;
 import com.aebiz.app.web.commons.utils.CalculateUtils;
 import com.aebiz.baseframework.base.Result;
@@ -73,6 +75,9 @@ public class OrderController {
 
     @Autowired
     private MemberCartService memberCartService;
+
+    @Autowired
+    private OrderPayRefundsService orderPayRefundsService;
 
 
     /**
@@ -411,4 +416,39 @@ public class OrderController {
         }
     }
 
+
+    /**
+     * 进入退款申请
+     */
+    @RequestMapping("goRefundApplication.html")
+    public String goRefundApplication(HttpServletRequest request,String orderId) {
+        Subject subject = SecurityUtils.getSubject();
+        Account_user accountUser = (Account_user) subject.getPrincipal();
+        if (accountUser == null) {
+            return "pages/front/h5/niantu/login";
+        }
+        request.setAttribute("orderId",orderId);
+        return "pages/front/h5/niantu/videoOrderConfirmation";
+    }
+
+    /**
+     * 退款申请
+     */
+    @RequestMapping("refundApplication.html")
+    @SJson
+    public Result refundApplication(String orderId,String body){
+        try {
+            Order_main order_main = orderMainService.fetch(orderId);
+            if(order_main!=null && OrderPayStatusEnum.PAYALL.getKey()==order_main.getPayStatus()){
+                Order_pay_refunds order_pay_refunds =new Order_pay_refunds();
+                orderPayRefundsService.insert(order_pay_refunds);
+            }else {
+                return Result.success("fail","订单状态错误");
+            }
+            return Result.success("ok");
+        } catch (Exception e) {
+            log.error("获取视频列表异常",e);
+            return Result.error("fail");
+        }
+    }
 }

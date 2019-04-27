@@ -6,8 +6,11 @@ import com.aebiz.app.alipay.modules.service.AlipayService;
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.AlipayClient;
 import com.alipay.api.DefaultAlipayClient;
+import com.alipay.api.domain.AlipayTradeRefundModel;
 import com.alipay.api.domain.AlipayTradeWapPayModel;
+import com.alipay.api.request.AlipayTradeRefundRequest;
 import com.alipay.api.request.AlipayTradeWapPayRequest;
+import com.alipay.api.response.AlipayTradeRefundResponse;
 import org.nutz.ioc.impl.PropertiesProxy;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
@@ -80,6 +83,45 @@ public class AlipayServiceImpl implements AlipayService {
             log.error("获取支付宝支付表单时异常",e);
             e.printStackTrace();
             return null;
+        }
+    }
+
+
+    @Override
+    public boolean aliReturn(AliPayFromQO aliPayFromQO) {
+        try {
+            //商户订单号和支付宝交易号不能同时为空。 trade_no、  out_trade_no如果同时存在优先取trade_no
+            //商户订单号，和支付宝交易号二选一
+            String out_trade_no = aliPayFromQO.getOut_trade_no();
+            //支付宝交易号，和商户订单号二选一
+    //        String trade_no = new String(request.getParameter("WIDtrade_no").getBytes("ISO-8859-1"),"UTF-8");
+            //退款金额，不能大于订单总金额
+            String refund_amount=aliPayFromQO.getTotal_amount();
+            //退款的原因说明
+            String refund_reason="商城用户退款";
+            //标识一次退款请求，同一笔交易多次退款需要保证唯一，如需部分退款，则此参数必传。
+            String  out_request_no=aliPayFromQO.getOut_request_no();
+            /**********************/
+            // SDK 公共请求类，包含公共请求参数，以及封装了签名与验签，开发者无需关注签名与验签
+            AlipayClient client = new DefaultAlipayClient(AlipayConfig.URL, AlipayConfig.APPID, AlipayConfig.RSA_PRIVATE_KEY, AlipayConfig.FORMAT, AlipayConfig.CHARSET, AlipayConfig.ALIPAY_PUBLIC_KEY,AlipayConfig.SIGNTYPE);
+            AlipayTradeRefundRequest alipay_request = new AlipayTradeRefundRequest();
+
+            AlipayTradeRefundModel model=new AlipayTradeRefundModel();
+            model.setOutTradeNo(out_trade_no);
+    //        model.setTradeNo(trade_no);
+            model.setRefundAmount(refund_amount);
+            model.setRefundReason(refund_reason);
+            model.setOutRequestNo(out_request_no);
+            alipay_request.setBizModel(model);
+
+            AlipayTradeRefundResponse alipay_response =client.execute(alipay_request);
+            System.out.println("支付宝退款返回结果："+alipay_response.getBody());
+            return true;
+        } catch (AlipayApiException e) {
+            // TODO Auto-generated catch block
+            log.error("支付宝退款时异常",e);
+            e.printStackTrace();
+            return false;
         }
     }
 }

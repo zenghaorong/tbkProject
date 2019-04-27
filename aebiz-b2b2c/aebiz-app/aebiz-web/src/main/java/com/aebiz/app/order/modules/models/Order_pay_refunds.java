@@ -76,7 +76,7 @@ public class Order_pay_refunds extends BaseModel implements Serializable {
     private String trade_no;
 
     @Column
-    @Comment("支付备注")
+    @Comment("退款备注")
     @ColDefine(type = ColType.VARCHAR, width = 255)
     private String note;
 

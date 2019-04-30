@@ -14,19 +14,37 @@
 			.productList{
 				width: 50%;
 			}
-
+			.circle{
+				width: 30px;
+				height: 30px;
+				color: white;
+				background-color: #f9850d;
+				-moz-border-radius: 50%;
+				-webkit-border-radius: 50%;
+				position: absolute;
+				left: 59%;
+				top: -7%;
+				text-align: center;
+				line-height: 30px;
+			}
+			.mui-bar .mui-input-row .mui-input-clear~.mui-icon-clear, .mui-bar .mui-input-row .mui-input-speech~.mui-icon-speech {
+				top: 13px;
+				right: 0;
+			}
 		</style>
 		<!--App自定义的css-->
 		<!--<link rel="stylesheet" type="text/css" href="../css/app.css"/>-->
 	</head>
-	<body>
-
+	<body style="background: #FFFFFF">
+		<div  id="productList">
 		
 		<header class="mui-bar mui-bar-nav top-color">
 		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: white;"></a>
 		    <div class="mui-title mui-input-row " >
-                <input type="search" class="mui-input-clear" style="background: white;" placeholder="请输入品牌和名称">
+                <input type="search" id="searchKey" class="mui-input-clear" style="background: white;" placeholder="请输入商品名称">
+
 		    </div>
+			<a id="search" v-on:click="getProductList()" style="color: white ;float: right; margin-right: 45px;margin-top: 10px;" > 搜索</a>
 		</header>
 	
 		<!--底部导航栏-->
@@ -46,7 +64,7 @@
 		<!---->
 		<!--</nav>-->
 		
-		<div class="mui-content" style="background: white;" id="productList">
+		<div class="mui-content" style="background: white;">
 		        <ul class="mui-table-view mui-grid-view mui-grid-9" style="background: white;">
 		            <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-3 productList"  v-for="item in productList" :key="item.id">
 		            	<a v-bind:href="'${base!}/open/h5/product/productDetail.html?id='+item.id" >
@@ -55,7 +73,6 @@
 		                    <div class="mui-media-body" style="height: 19px;">
 		                    	<span class="left1">￥{{item.price}}</span>
 		                    	<span class="left2 text-color-1">月销{{item.saleNumMonth}}笔</span>
-		                    	<img class="pon right1" src="${base!}/assets/front/h5/img/购物车.png" width="20px"/>
 		                    </div>
 		            	</a>
 		            </li>
@@ -63,11 +80,12 @@
 		</div>
 
 		<!--悬浮购物车图标-->
-		<div onclick="window.location.href='#'"
+		<div onclick="window.location.href='${base!}/open/h5/cart/shoppingCart.html'"
 			style="position: fixed;z-index: 999999;top:80%;left: 80%;">
 			<img src="${base!}/assets/front/h5/img/myCar.png" style="width: 50px;">
+			<div class="circle" id="cartNum"></div>
 		</div>
-		
+		</div>
 		<script type="text/javascript" src="${base!}/assets/front/h5/js/mui.js" ></script>
 		<script type="text/javascript" src="${base!}/assets/front/h5/js/vue.js" ></script>
 		<script type="text/javascript" src="${base!}/assets/front/h5/js/jquery-2.0.0.min.js" ></script>
@@ -85,19 +103,20 @@
                 },
                 created:function () {   //实例初始化创建完成执行
 
-                    this.getProductList()     //调用自身方法
-
+                    this.getProductList() ;//调用自身方法
+					this.getCartNum();
                 },
                 methods:{              //定义封装方法
                     //获取列表
                     getProductList:function () {
                         var self = this;
+                        var key = $("#searchKey").val();
                         $.ajax({
                             type:"POST",
                             url:"${base!}/open/h5/product/ProductList.html",
                             dataType:"JSON",
                             data:{
-
+								key:key
                             },
                             success:function(data){
                                 if (data.code == 0) {
@@ -109,8 +128,29 @@
                             }
                         });
 
+                    },
+                    //获取购物车数量
+                    getCartNum:function () {
+                        $.ajax({
+                            type:"POST",
+                            url:"${base!}/open/h5/cart/getCartNum.html",
+                            dataType:"JSON",
+                            data:{
+
+                            },
+                            success:function(data){
+                                if (data.code == 0) {
+                                    $("#cartNum").html(data.msg)
+                                } else {
+
+                                }
+                            }
+                        });
+
                     }
-                },
+                }
+
+                ,
                 watch:{     //监听器
                     // carModel:function () {
                     //     this.getProvince();

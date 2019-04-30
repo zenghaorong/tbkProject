@@ -246,8 +246,9 @@
                             var d = data.data;
                             self.content='';
                             self.getReview();
-                        } else {
-
+                        }  else if(data.code==2){
+                            alert("您没有登录，请登录！");
+                            window.location.href="${base!}/open/H5/login/login.html"
                         }
                     }
                 });
@@ -296,8 +297,9 @@
                             var d = data.data;
                             self.content='';
                             self.getReview();
-                        } else {
-
+                        } else if(data.code==2){
+                            alert("您没有登录，请登录！");
+                            window.location.href="${base!}/open/H5/login/login.html"
                         }
                     }
                 });

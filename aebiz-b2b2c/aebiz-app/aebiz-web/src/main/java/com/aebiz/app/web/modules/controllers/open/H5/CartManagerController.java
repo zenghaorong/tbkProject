@@ -175,4 +175,32 @@ public class CartManagerController {
         }
 
     }
+    //获取购物车商品数量
+    @RequestMapping("/getCartNum")
+    @SJson
+    public Result getCartNum(HttpServletRequest request){
+        Subject subject = SecurityUtils.getSubject();
+        Account_user accountUser = (Account_user) subject.getPrincipal();
+        if(accountUser==null){
+            return Result.error(-1,"未登录，请重新登录！");
+        }
+        try{
+            Cnd cnd = Cnd.NEW();
+            cnd.and("accountId","=",accountUser.getAccountId());
+            cnd.and("delFlag","=",false);
+            List<Member_cart> member_carts =  memberCartService.query(cnd);
+            int num = 0;
+            if(member_carts!=null&&member_carts.size()>0){
+                for (Member_cart cart:member_carts
+                     ) {
+                    num+=cart.getNum();
+                }
+            }
+            return Result.success(num+"");
+        }catch (Exception e){
+            return Result.error();
+        }
+
+    }
+
 }

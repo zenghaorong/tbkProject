@@ -18,6 +18,7 @@ import com.aebiz.baseframework.base.Result;
 import com.aebiz.baseframework.page.Pagination;
 import com.aebiz.baseframework.view.annotation.SJson;
 import com.aebiz.commons.utils.StringUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.nutz.dao.Cnd;
@@ -73,12 +74,17 @@ public class CmsVideoController {
      */
     @RequestMapping("videoList.html")
     @SJson
-    public Result getVideoList(Integer pageNumber){
+    public Result getVideoList(Integer pageNumber,HttpServletRequest request){
         try {
             if(pageNumber == null){
                 pageNumber = 0;
             }
             Cnd cnd = Cnd.NEW();
+            String key = request.getParameter("key");
+            if(StringUtils.isNotEmpty(key)){
+                cnd.and("videoTitle","like","%"+key+"%");
+            }
+
             cnd.and("delFlag", "=", 0 );
             cnd.desc("sort");
 
@@ -117,7 +123,7 @@ public class CmsVideoController {
      */
     @RequestMapping("cmsListByType.html")
     @SJson
-    public Result cmsListByType(Integer pageNumber,String typeName){
+    public Result cmsListByType(Integer pageNumber,String typeName,String key){
         try {
             //根据名称查询对应的栏目编号
             String str="";
@@ -132,6 +138,7 @@ public class CmsVideoController {
             }
             Cnd c = Cnd.NEW();
             c.and("name", "=", str );
+
             Cms_channel cms_channel = cmsChannelService.fetch(c);
 
             if(pageNumber == null){
@@ -141,8 +148,10 @@ public class CmsVideoController {
             cnd.and("delFlag", "=", 0 );
             cnd.and("channelId","=",cms_channel.getId());
             cnd.desc("location");
-
-            Pagination pagination = cmsArticleService.listPage(pageNumber,15,cnd);
+            if(StringUtils.isNotEmpty(key)){
+                cnd.and("title","like","%"+key+"%");
+            }
+            Pagination pagination = cmsArticleService.listPage(pageNumber,1500,cnd);
             return Result.success("ok",pagination.getList());
         } catch (Exception e) {
             log.error("获取图文列表异常",e);

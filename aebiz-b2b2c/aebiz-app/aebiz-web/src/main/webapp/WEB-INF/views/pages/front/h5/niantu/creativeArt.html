@@ -16,16 +16,22 @@
       [v-cloak]{
           display: none !important;
       }
+      .mui-bar .mui-input-row .mui-input-clear~.mui-icon-clear, .mui-bar .mui-input-row .mui-input-speech~.mui-icon-speech {
+          top: 13px;
+          right: 0;
+      }
     </style>
 </head>
 <body style="background: white;">
 
-
+<div id="vue">
 <header class="mui-bar mui-bar-nav top-color">
     <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: white;"></a>
     <div class="mui-title mui-input-row " >
-        <input type="search" class="mui-input-clear" style="background: white;" placeholder="请输入品牌和名称">
+        <input type="search" id="searchKey" class="mui-input-clear" style="background: white;" placeholder="请输入品牌和名称">
     </div>
+    <a id="search" v-on:click="getCmsList()" style="color: white ;float: right; margin-right: 45px;margin-top: 10px;" > 搜索</a>
+
 </header>
 
 <!--底部导航栏-->
@@ -45,7 +51,7 @@
 
 <!--</nav>-->
 
-<div class="mui-content" style="background: white;" id="vue" v-cloak>
+<div class="mui-content" style="background: white;"  v-cloak>
     <ul class="mui-table-view mui-grid-view mui-grid-9" style="background: white;">
         <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-3" style="width: 50%"   v-for="item in cmsList" :key="item.id">
             <a v-bind:href="'${base!}/open/h5/niantu/tutorialDetails.html?id='+item.id">
@@ -69,7 +75,7 @@
 
     </ul>
 </div>
-
+</div>
 <script type="text/javascript" src="${base!}/assets/front/h5/js/mui.js" ></script>
 <script type="text/javascript" src="${base!}/assets/front/h5/js/vue.js" ></script>
 <script type="text/javascript" src="${base!}/assets/front/h5/js/jquery-2.0.0.min.js" ></script>
@@ -92,12 +98,14 @@
             //获取列表
             getCmsList:function () {
                 var self = this;
+                var key = $("#searchKey").val();
                 $.ajax({
                     type:"POST",
                     url:"${base!}/open/h5/cms/cmsListByType.html",
                     dataType:"JSON",
                     data:{
                         typeName:'cyms',
+                        key:key
                     },
                     success:function(data){
                         if (data.code == 0) {

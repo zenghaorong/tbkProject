@@ -11,6 +11,7 @@ import com.aebiz.baseframework.base.Result;
 import com.aebiz.baseframework.page.Pagination;
 import com.aebiz.baseframework.view.annotation.SJson;
 import com.alibaba.fastjson.JSON;
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Sqls;
@@ -74,14 +75,19 @@ public class ProductController {
      */
     @RequestMapping("ProductList.html")
     @SJson
-    public Result getProductList(Integer pageNumber){
+    public Result getProductList(Integer pageNumber,HttpServletRequest request){
         try {
             if(pageNumber == null){
                 pageNumber = 0;
             }
+            String key = request.getParameter("key");
+
             Cnd cnd = Cnd.NEW();
+            if(StringUtils.isNotEmpty(key)){
+                cnd.and("name","like","%"+key+"%");
+            }
             cnd.and("delFlag", "=", 0 );
-            Pagination res = goodsService.listPage(pageNumber, 20, cnd);
+            Pagination res = goodsService.listPage(pageNumber, 2000, cnd);
             List<?> resList = res.getList();
             List<Goods_main> productList = new ArrayList<>();
             if(resList!=null&&resList.size()>0){

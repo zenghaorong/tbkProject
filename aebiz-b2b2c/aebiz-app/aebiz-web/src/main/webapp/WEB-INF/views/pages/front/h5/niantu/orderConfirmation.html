@@ -93,7 +93,7 @@
     可用优惠劵
     <select class="mui-btn mui-btn-block" v-model="couponId">
         <option  :value="item.couponId" v-for="item in coupons" :key="item.id">
-            {{item.sales_coupon!=null?item.sales_coupon.name:'暂无可用优惠劵'}}
+            {{item.sales_coupon!=''?item.sales_coupon.name:'暂无可用优惠劵'}}
         </option>
     </select>
 </div>
@@ -104,7 +104,7 @@
             border: 0;background-color:red;" v-on:click="save()">立即支付</button>
         <button type="button" style="width: 70%;top: 0px;line-height:1;border: 0;background-color:white;"
                 class="mui-btn mui-btn-primary" id="review">
-            <span style="color: black;">应付:</span><span style="color: red;padding-left: 10px;">{{zongPrice+yunPrice}}元</span>
+            <span style="color: black;">应付:</span><span style="color: red;padding-left: 10px;">{{zongPrice}}元</span>
         </button>
     </div>
 </nav>
@@ -129,7 +129,8 @@
             yunPrice:0,
             coupons:[],
             couponId:'',
-            couponPrice:0
+            couponPrice:0,
+            sales_coupon:''
         },
         created:function () {   //实例初始化创建完成执行
 
@@ -201,24 +202,53 @@
                            self.coupons = data.data;
                             if(self.coupons.length>0) {
                                 self.couponId = self.coupons[0].couponId; //让select默认选中
+                                self.sales_coupon = self.coupons[0].sales_coupon;
+                                // self.priceCalculator();
                             }
-                            self.zongPrice = self.videoInfo.price - self.couponPrice;
+                            // self.zongPrice = self.zongPrice - self.couponPrice;
                         } else {
 
                         }
                     }
                 });
             },
+            //价格计算器
+            priceCalculator:function(){
+                var self=this;
+                var j = self.sales_coupon;
+                //满减劵
+                if(j.type == '1'){
+                    self.zongPrice = self.zongPrice - j.conditionAmount;
+                }
+                //免运费劵
+                if(j.type == '2'){
+                    self.yunPrice = 0;
+                }
+                //折扣劵
+                if(j.type == '3'){
+                    self.zongPrice = self.zongPrice * j.discount;
+                }
+
+                self.zongPrice = self.zongPrice + self.yunPrice;
+
+            },
             save:function () {
                 var json = '${productList}';
                 var addressId = this.address.id;
-                window.location.href="${base!}/open/h5/order/checkoutCounter.html?productList="+json+"&addressId="+addressId;
+                window.location.href="${base!}/open/h5/order/checkoutCounter.html?productList="+json+"&addressId="+addressId+"&couponId="+this.couponId;
             }
         },
         watch:{     //监听器
-            // carModel:function () {
-            //     this.getProvince();
-            // }
+            couponId:function () {
+                console.log("监听器开始执行：couponId")
+                for(var i=0;i++;i<this.coupons.length){
+                    var id = this.coupons[i].sales_coupon.id;
+                    if(id == this.couponId){
+                       this.sales_coupon = this.coupons[i].sales_coupon;
+                    }
+                }
+                this.priceCalculator();
+            }
         }
 
     });

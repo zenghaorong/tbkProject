@@ -5,6 +5,7 @@ import com.aebiz.app.web.commons.utils.WXPayUtil;
 import com.aebiz.app.wx.modules.models.WxGetPayInfoQO;
 import com.aebiz.app.wx.modules.services.WxConfigService;
 import com.aebiz.app.wx.modules.services.WxPayService;
+import com.aebiz.commons.utils.DateUtil;
 import com.alibaba.fastjson.JSON;
 import net.sf.json.JSONObject;
 import net.sf.json.xml.XMLSerializer;
@@ -17,10 +18,7 @@ import org.nutz.log.Logs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * @Auther: zenghaorong
@@ -49,7 +47,7 @@ public class WxPayServiceImpl implements WxPayService {
             String notify_url = config.get("wx.pay.notify_url");
 
             SortedMap<String,String> map =  new TreeMap<String, String>();
-            String nonce_str = String.valueOf(System.currentTimeMillis());
+            String nonce_str = WXPayUtil.generateNonceStr();
             String total=wxGetPayInfoQO.getTotal_fee();
             map.put("appid",appid);
             map.put("mch_id",mchid);
@@ -77,7 +75,20 @@ public class WxPayServiceImpl implements WxPayService {
                  log.error("微信下单失败："+xmlJson.get("return_msg"));
                  return null;
              }else {
-                 return xmlJson.toString();
+                 //统一下单成功后拿到微信返回的参数 进行签名返回给H5端jspai唤起支付
+                 String timeStamp = WXPayUtil.getCurrentTimestamp()+""; //时间戳
+                 String nonceStr = WXPayUtil.generateNonceStr(); //随机串
+                 String prepay_id = "prepay_id="+xmlJson.getString("prepay_id");
+                 SortedMap<String,String> jsapiMap =  new TreeMap<String, String>();
+                 jsapiMap.put("appId",appid);
+                 jsapiMap.put("timeStamp",timeStamp);
+                 jsapiMap.put("nonceStr",nonceStr);
+                 jsapiMap.put("package",prepay_id);
+                 jsapiMap.put("signType","MD5");
+                 String jsapiSign = WXPayUtil.createSign(map, key);//签名参数
+                 jsapiMap.put("paySign",jsapiSign);
+                 log.info("返回jsapi签名参数："+JSON.toJSONString(jsapiMap));
+                 return JSON.toJSONString(jsapiMap);
              }
         }catch (Exception e){
             log.error("请求微信支付二维码异常",e);
@@ -117,6 +128,7 @@ public class WxPayServiceImpl implements WxPayService {
             String wxXml = HttpClientUtil.submitHttpDate("https://api.mch.weixin.qq.com/pay/unifiedorder", postXml);
             log.info("微信下单返回参数" + wxXml);
             JSONObject xmlJson =  xml2Json(wxXml);
+            xmlJson.put("timeStamp", DateUtil.getTime(new Date())+"");
             log.info("微信下单返回参数信息："+xmlJson.toString());
             //判断下单是否成功
             if(!"SUCCESS".equals(xmlJson.get("return_code"))){

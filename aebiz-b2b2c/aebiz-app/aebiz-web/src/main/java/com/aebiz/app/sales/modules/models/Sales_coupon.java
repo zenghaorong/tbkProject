@@ -114,6 +114,14 @@ public class Sales_coupon extends BaseModel implements Serializable {
     @ColDefine(type = ColType.FLOAT)
     private Double discount;
 
+    public Double getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(Double discount) {
+        this.discount = discount;
+    }
+
     public Integer getStartTime() {
         return startTime;
     }

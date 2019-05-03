@@ -127,16 +127,17 @@ public class StoreSalesCouponController {
 		try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             if (Strings.isNotBlank(sartAt)) {
-                salesCoupon.getSalesRuleOrder().setSartAt((int) (sdf.parse(sartAt).getTime() / 1000));
+                salesCoupon.setStartTime((int) (sdf.parse(sartAt).getTime() / 1000));
             }
             if (Strings.isNotBlank(endAt)) {
-                salesCoupon.getSalesRuleOrder().setEndAt((int) (sdf.parse(endAt).getTime() / 1000));
+                salesCoupon.setEndTime((int) (sdf.parse(endAt).getTime() / 1000));
             }
             salesCoupon.setStoreId(StringUtil.getStoreId());
-            salesCoupon.getSalesRuleOrder().setStoreId(salesCoupon.getStoreId());
+//            salesCoupon.getSalesRuleOrder().setStoreId(salesCoupon.getStoreId());
 			salesCouponService.save(salesCoupon);
 			return Result.success("globals.result.success", salesCoupon.getId());
 		} catch (Exception e) {
+		    e.printStackTrace();
 			return Result.error("globals.result.error");
 		}
     }

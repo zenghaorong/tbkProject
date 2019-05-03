@@ -11,8 +11,10 @@ import com.aebiz.app.goods.modules.services.GoodsProductService;
 import com.aebiz.app.goods.modules.services.GoodsService;
 import com.aebiz.app.member.modules.models.Member_address;
 import com.aebiz.app.member.modules.models.Member_cart;
+import com.aebiz.app.member.modules.models.Member_coupon;
 import com.aebiz.app.member.modules.services.MemberAddressService;
 import com.aebiz.app.member.modules.services.MemberCartService;
+import com.aebiz.app.member.modules.services.MemberCouponService;
 import com.aebiz.app.order.modules.models.Order_goods;
 import com.aebiz.app.order.modules.models.Order_main;
 import com.aebiz.app.order.modules.models.Order_pay_refunds;
@@ -21,8 +23,11 @@ import com.aebiz.app.order.modules.models.em.OrderTypeEnum;
 import com.aebiz.app.order.modules.services.OrderGoodsService;
 import com.aebiz.app.order.modules.services.OrderMainService;
 import com.aebiz.app.order.modules.services.OrderPayRefundsService;
+import com.aebiz.app.sales.modules.models.Sales_coupon;
+import com.aebiz.app.sales.modules.services.SalesCouponService;
 import com.aebiz.app.sys.modules.services.SysDictService;
 import com.aebiz.app.web.commons.utils.CalculateUtils;
+import com.aebiz.app.web.commons.utils.WXPayUtil;
 import com.aebiz.baseframework.base.Result;
 import com.aebiz.baseframework.view.annotation.SJson;
 import com.aebiz.commons.utils.DateUtil;
@@ -78,6 +83,12 @@ public class OrderController {
 
     @Autowired
     private OrderPayRefundsService orderPayRefundsService;
+
+    @Autowired
+    private MemberCouponService memberCouponService;
+
+    @Autowired
+    private SalesCouponService salesCouponService;
 
 
     /**
@@ -194,7 +205,7 @@ public class OrderController {
      * 进入收银台
      */
     @RequestMapping("/checkoutCounter.html")
-    public String checkoutCounter(HttpServletRequest request,String productList,String addressId) {
+    public String checkoutCounter(HttpServletRequest request,String productList,String addressId,String couponId) {
 
         List<Map<String,Object>> list = (List<Map<String, Object>>) JSON.parse(productList);
 
@@ -221,15 +232,64 @@ public class OrderController {
             List<Goods_product> gpList = goodsProductService.query(proCnd);
             if (gpList != null && gpList.size() > 0) {
                 Goods_product goods_product = gpList.get(0);
-                Integer salePrice = goods_product.getSalePrice();
+                Integer salePrice = goods_product.getSalePrice(); //单位是分
                 int n = Integer.parseInt(num);
-                int totalMoney = salePrice * n;
+                int totalMoney = salePrice * n; //单位是分
                 order_main.setGoodsMoney(totalMoney);
                 order_main.setGoodsFreeMoney(0);
                 String freight = sysDictService.getNameByCode("freight");
-                int freightMoney = Integer.parseInt(freight) * 100;
+                int freightMoney = Integer.parseInt(freight) * 100; //运费
                 int freeMoney = 0;
+                /**
+                 * 计算优惠劵抵扣金额
+                 */
+                if(couponId!=null) {
+                    Cnd cndCoupon = Cnd.NEW();
+                    cndCoupon.and("accountId", "=", accountUser.getAccountId());
+                    cndCoupon.and("status", "=", 0);//未使用
+                    cndCoupon.and("couponId", "=", couponId);//未使用
+                    List<Member_coupon> member_couponList = memberCouponService.query(cndCoupon);
+                    if (member_couponList != null && member_couponList.size() > 0) {
+                        Member_coupon member_coupon = member_couponList.get(0);
+                        Sales_coupon sales_coupon = salesCouponService.fetch(member_coupon.getCouponId());
+                        //判断优惠劵状态
+                        if (!sales_coupon.isDisabled()) {
+                            int time = (int) WXPayUtil.getCurrentTimestamp();
+                            //判断是否过期
+                            if (sales_coupon.getStartTime() < time || sales_coupon.getEndTime() > time) {
+                                double payMoney = CalculateUtils.div(totalMoney,100,2);//转换为元
+                                if ("1".equals(sales_coupon.getType())) { //满减
+                                    if (sales_coupon.getConditionAmount() != null) {
+                                        if (payMoney >= sales_coupon.getConditionAmount()) {
+                                            payMoney = CalculateUtils.sub(payMoney,sales_coupon.getConditionAmount());
+                                            totalMoney = (int)CalculateUtils.mul(payMoney,100); //转化回分
+                                        }
+                                    }
+                                }
+                                if ("2".equals(sales_coupon.getType())) { //免运费劵
+                                    if(sales_coupon.getProductQuantityRule()!=null) {
+                                        if (gpList.size() >= sales_coupon.getProductQuantityRule()) {
+                                            freightMoney = 0;
+                                        }
+                                    }
+                                }
+                                if("3".equals(sales_coupon.getType())){ //折扣劵
+                                    if(sales_coupon.getProductQuantityRule()!=null) {
+                                        if (gpList.size() >= sales_coupon.getProductQuantityRule()) {
+                                            payMoney = CalculateUtils.mul(payMoney,sales_coupon.getDiscount());
+                                            totalMoney = (int)CalculateUtils.mul(payMoney,100); //转化回分
+                                        }
+                                    }
+                                }
+                            }
+
+                        }
+                    }
+                }
+
+
                 order_main.setPayMoney(totalMoney + freightMoney);
+
                 order_main.setFreightMoney(freightMoney);
                 order_main.setFreeMoney(0);
                 order_main.setPayStatus(0);

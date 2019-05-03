@@ -8,6 +8,7 @@ import com.aebiz.app.sales.modules.models.Sales_coupon;
 import com.aebiz.app.sales.modules.services.SalesCouponService;
 import com.aebiz.baseframework.base.Result;
 import com.aebiz.baseframework.view.annotation.SJson;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.nutz.dao.Cnd;
@@ -17,9 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 /**
  * @Auther: zenghaorong
@@ -53,14 +52,24 @@ public class CouponH5Controller {
             Cnd cnd = Cnd.NEW();
             cnd.and("delFlag", "=", 0 );
             cnd.and("accountId", "=", accountUser.getAccountId() );
+            cnd.and("status","=", 0); //未使用
             List<Member_coupon> member_couponList = memberCouponService.query(cnd);
+            List<Member_coupon> member_couponList2 = new ArrayList<>();
+            Map<String,Integer> map = new HashedMap();
             for(Member_coupon member_coupon : member_couponList){
                 Sales_coupon sales_coupon = salesCouponService.fetch(member_coupon.getCouponId());
+                int time = getSecondTimestamp(new Date());
+                //判断是否过期
+                if(sales_coupon.getStartTime()>time || sales_coupon.getEndTime()<time){
+                    break;
+                }
+                boolean isYou = false;
                 //判断优惠劵类型
                 if("1".equals(sales_coupon.getType())){ //满减劵
                     if(sales_coupon.getConditionAmount()!=null) {
                         if (price >= sales_coupon.getConditionAmount()) {
                             member_coupon.setSales_coupon(sales_coupon);
+                            isYou = true;
                         }
                     }
                 }
@@ -71,6 +80,7 @@ public class CouponH5Controller {
                         if(sales_coupon.getProductQuantityRule()!=null) {
                             if (productNum >= sales_coupon.getProductQuantityRule()) {
                                 member_coupon.setSales_coupon(sales_coupon);
+                                isYou = true;
                             }
                         }
                     }
@@ -78,14 +88,28 @@ public class CouponH5Controller {
                         if(sales_coupon.getProductQuantityRule()!=null) {
                             if (productNum >= sales_coupon.getProductQuantityRule()) {
                                 member_coupon.setSales_coupon(sales_coupon);
+                                isYou = true;
                             }
                         }
                     }
                 }
 
+                if(isYou) {
+                    //去除重复优惠劵
+                    if (map.get(sales_coupon.getCodeprefix()) == null) {
+                        map.put(sales_coupon.getCodeprefix(), 1);
+                    } else {
+                        Integer i = map.get(sales_coupon.getCodeprefix()) + 1;
+                        map.put(sales_coupon.getCodeprefix(), i);
+                    }
+
+                    if (map.get(sales_coupon.getCodeprefix()) <= 1) {
+                        member_couponList2.add(member_coupon);
+                    }
+                }
 
             }
-            return Result.success("ok",member_couponList);
+            return Result.success("ok",member_couponList2);
         } catch (Exception e) {
             log.error("获取订单可用优惠劵异常",e);
             return Result.error("fail");
@@ -178,6 +202,7 @@ public class CouponH5Controller {
             Account_user accountUser = (Account_user) subject.getPrincipal();
             Cnd cnd = Cnd.NEW();
             cnd.and("accountId", "=", accountUser.getAccountId() );
+            cnd.and("status","=", 0); //未使用
             List<Member_coupon> member_couponList = memberCouponService.query(cnd);
             for(Member_coupon member_coupon : member_couponList) {
                 Sales_coupon sales_coupon = salesCouponService.fetch(member_coupon.getCouponId());

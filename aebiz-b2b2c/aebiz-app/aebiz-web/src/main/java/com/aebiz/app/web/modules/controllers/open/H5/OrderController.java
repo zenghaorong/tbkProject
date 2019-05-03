@@ -338,21 +338,54 @@ public class OrderController {
      * 视频下单进入收银台
      */
     @RequestMapping("/videoCheckoutCounter.html")
-    public String videoCheckoutCounter(HttpServletRequest request,String videoId) {
+    public String videoCheckoutCounter(HttpServletRequest request,String videoId,String couponId) {
         Subject subject = SecurityUtils.getSubject();
         Account_user accountUser = (Account_user) subject.getPrincipal();
         if(accountUser==null){
             return "pages/front/h5/niantu/login";
         }
         Cms_video cms_video=cmsVideoService.fetch(videoId);
+        int totalMoney = (int)CalculateUtils.mul(cms_video.getPrice(),100); //转为分
+        /**
+         * 计算优惠劵抵扣金额
+         */
+        if(couponId!=null) {
+            Cnd cndCoupon = Cnd.NEW();
+            cndCoupon.and("accountId", "=", accountUser.getAccountId());
+            cndCoupon.and("status", "=", 0);//未使用
+            cndCoupon.and("couponId", "=", couponId);//未使用
+            List<Member_coupon> member_couponList = memberCouponService.query(cndCoupon);
+            if (member_couponList != null && member_couponList.size() > 0) {
+                Member_coupon member_coupon = member_couponList.get(0);
+                Sales_coupon sales_coupon = salesCouponService.fetch(member_coupon.getCouponId());
+                //判断优惠劵状态
+                if (!sales_coupon.isDisabled()) {
+                    int time = (int) WXPayUtil.getCurrentTimestamp();
+                    //判断是否过期
+                    if (sales_coupon.getStartTime() < time || sales_coupon.getEndTime() > time) {
+                        double payMoney = CalculateUtils.div(totalMoney,100,2);//转换为元
+                        if ("1".equals(sales_coupon.getType())) { //满减
+                            if (sales_coupon.getConditionAmount() != null) {
+                                if (payMoney >= sales_coupon.getConditionAmount()) {
+                                    payMoney = CalculateUtils.sub(payMoney,sales_coupon.getConditionAmount());
+                                    totalMoney = (int)CalculateUtils.mul(payMoney,100); //转化为分
+                                }
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
+
         Order_main order_main = new Order_main();
         Order_goods order_goods = new Order_goods();
         order_main.setAccountId(accountUser.getAccountId());
         order_main.setStoreId(cms_video.getStoreId());
         order_main.setGoodsMoney(cms_video.getPrice().intValue());
         order_main.setGoodsFreeMoney(0);
-        Double payMoney = CalculateUtils.mul(cms_video.getPrice(),100);;
-        order_main.setPayMoney(payMoney.intValue()); //单位是分
+
+        order_main.setPayMoney(totalMoney); //单位是分
         order_main.setFreightMoney(0);
         order_main.setFreeMoney(0);
         order_main.setPayStatus(0);

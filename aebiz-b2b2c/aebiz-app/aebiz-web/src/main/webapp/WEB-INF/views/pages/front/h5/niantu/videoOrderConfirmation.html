@@ -109,7 +109,8 @@
             yunPrice:0,
             coupons:[],
             couponId:'',
-            couponPrice:0
+            couponPrice:0,
+            sales_coupon:''
         },
         created:function () {   //实例初始化创建完成执行
 
@@ -155,22 +156,39 @@
                             self.coupons = data.data;
                             if(self.coupons.length>0) {
                                 self.couponId = self.coupons[0].couponId; //让select默认选中
+                                self.sales_coupon = self.coupons[0].sales_coupon;
                             }
-                            self.zongPrice = self.videoInfo.price - self.couponPrice;
+
                         } else {
 
                         }
                     }
                 });
             },
+            //价格计算器
+            priceCalculator:function(){
+                var self=this;
+                var j = self.sales_coupon;
+                //满减劵
+                if(j.type == '1'){
+                    self.zongPrice = self.zongPrice - j.conditionAmount;
+                }
+            },
             save:function () {
-                window.location.href="${base!}/open/h5/order/videoCheckoutCounter.html?videoId="+videoId;
+                window.location.href="${base!}/open/h5/order/videoCheckoutCounter.html?videoId="+videoId+"&couponId="+this.couponId;
             }
         },
         watch:{     //监听器
-            // carModel:function () {
-            //     this.getProvince();
-            // }
+            couponId:function () {
+                console.log("监听器开始执行：couponId")
+                for(var i=0;i++;i<this.coupons.length){
+                    var id = this.coupons[i].sales_coupon.id;
+                    if(id == this.couponId){
+                        this.sales_coupon = this.coupons[i].sales_coupon;
+                    }
+                }
+                this.priceCalculator();
+            }
         }
 
     });

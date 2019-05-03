@@ -4,6 +4,7 @@ import com.aebiz.app.acc.modules.models.Account_info;
 import com.aebiz.app.acc.modules.models.Account_user;
 import com.aebiz.app.acc.modules.services.AccountInfoService;
 import com.aebiz.app.acc.modules.services.AccountUserService;
+import com.aebiz.app.alipay.modules.models.AlipayConfig;
 import com.aebiz.app.goods.modules.models.Goods_main;
 import com.aebiz.app.goods.modules.models.Goods_product;
 import com.aebiz.app.goods.modules.services.GoodsProductService;
@@ -28,13 +29,22 @@ import com.aebiz.app.shop.modules.services.ShopExpressService;
 import com.aebiz.app.sys.modules.models.Sys_dict;
 import com.aebiz.app.sys.modules.services.SysDictService;
 import com.aebiz.app.web.commons.log.annotation.SLog;
+import com.aebiz.app.web.commons.utils.CalculateUtils;
 import com.aebiz.baseframework.base.Result;
 import com.aebiz.baseframework.page.OffsetPager;
 import com.aebiz.baseframework.page.datatable.DataTableColumn;
 import com.aebiz.baseframework.page.datatable.DataTableOrder;
 import com.aebiz.baseframework.view.annotation.SJson;
 import com.aebiz.commons.utils.StringUtil;
+import com.alibaba.fastjson.JSONObject;
+import com.alipay.api.AlipayClient;
+import com.alipay.api.DefaultAlipayClient;
+import com.alipay.api.domain.AlipayTradeRefundModel;
+import com.alipay.api.request.AlipayTradeRefundRequest;
+import com.alipay.api.response.AlipayTradeRefundResponse;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.subject.Subject;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Sqls;
 import org.nutz.dao.pager.Pager;
@@ -136,6 +146,8 @@ public class StoreOrderMainController {
         Integer waitPayNum = orderMainService.count(Cnd.where("payStatus","<",OrderPayStatusEnum.PAYALL.getKey()).and("payType"," in",OrderPayTypeEnum.ONLINE.getKey()+","+OrderPayTypeEnum.TRANSFER.getKey()).and("orderStatus","=",OrderStatusEnum.ACTIVE.getKey()).and("delFlag","=",false).and("storeId","=",storeId));
         //货到付款的订单数量
         Integer deliveryPayNum = orderMainService.count(Cnd.where("payType","in", OrderPayTypeEnum.CASH.getKey()+","+OrderPayTypeEnum.POS.getKey()+","+OrderPayTypeEnum.ALIQRCODE.getKey()).and("orderStatus","=",OrderStatusEnum.ACTIVE.getKey()).and("delFlag","=",false).and("storeId","=",storeId));
+        //查询待退款的数量
+        Integer refundsNum = orderMainService.count(Cnd.where("payStatus","=",OrderPayStatusEnum.REFUNDWAIT.getKey()));
         //关闭订单原因
         List<Sys_dict> sysDictList = sysDictService.query(Cnd.where("delFlag","=",false).and("code","=","order_close_reason"));
         if(sysDictList != null && sysDictList.size() > 0){
@@ -147,6 +159,7 @@ public class StoreOrderMainController {
         map.put("waitVerifyNum",waitVerifyNum);
         map.put("waitPayNum",waitPayNum);
         map.put("deliveryPayNum",deliveryPayNum);
+        map.put("refundsNum",refundsNum);
         // TODO: 2017/5/25 超时订单和预售订单未知
         req.setAttribute("obj",map);
         return "pages/store/order/main/index";
@@ -312,6 +325,9 @@ public class StoreOrderMainController {
                 break;
             case 4:
                 cnd.and("payType","in", OrderPayTypeEnum.CASH.getKey()+","+OrderPayTypeEnum.POS.getKey()+","+OrderPayTypeEnum.ALIQRCODE.getKey()).and("orderStatus","=",OrderStatusEnum.ACTIVE.getKey());
+                break;
+            case 5:
+                cnd.and("payStatus","in",OrderPayStatusEnum.REFUNDWAIT.getKey()+","+OrderPayStatusEnum.REFUNDALL.getKey());
                 break;
             default:
         }
@@ -963,6 +979,75 @@ public class StoreOrderMainController {
         }
         req.setAttribute("orderList", newOrderList);
         return  "pages/store/order/main/createDelivery";
+    }
+
+
+    /**
+     * 订单退款接口
+     */
+    @RequestMapping("orderRefunds.html")
+    @SJson
+    public Result orderRefunds(String orderId){
+        try {
+            Order_main order_main = orderMainService.fetch(orderId);
+            //判断订单状态
+            if(OrderPayStatusEnum.REFUNDWAIT.getKey() == order_main.getPayStatus()){
+               //判断订单返回平台
+                if(OrderPayTypeEnum.ALIPAY.getKey()==order_main.getPayType()) {
+
+                    //商户订单号和支付宝交易号不能同时为空。 trade_no、  out_trade_no如果同时存在优先取trade_no
+                    //商户订单号，和支付宝交易号二选一
+                    String out_trade_no = orderId;
+                    //支付宝交易号，和商户订单号二选一
+//                String trade_no = new String(request.getParameter("WIDtrade_no").getBytes("ISO-8859-1"),"UTF-8");
+                    //退款金额，不能大于订单总金额 单位：元
+                    double orderPayMoney = order_main.getPayMoney();
+                    double payMoney = CalculateUtils.div(orderPayMoney, 100, 2);
+                    String refund_amount = payMoney + "";
+                    //退款的原因说明
+                    String refund_reason = "用户退款";
+                    //标识一次退款请求，同一笔交易多次退款需要保证唯一，如需部分退款，则此参数必传。
+                    String out_request_no = orderId;
+                    /**********************/
+                    // SDK 公共请求类，包含公共请求参数，以及封装了签名与验签，开发者无需关注签名与验签
+                    AlipayClient client = new DefaultAlipayClient(AlipayConfig.URL, AlipayConfig.APPID, AlipayConfig.RSA_PRIVATE_KEY, AlipayConfig.FORMAT, AlipayConfig.CHARSET, AlipayConfig.ALIPAY_PUBLIC_KEY, AlipayConfig.SIGNTYPE);
+                    AlipayTradeRefundRequest alipay_request = new AlipayTradeRefundRequest();
+
+                    AlipayTradeRefundModel model = new AlipayTradeRefundModel();
+                    model.setOutTradeNo(out_trade_no);
+//                model.setTradeNo(trade_no);
+                    model.setRefundAmount(refund_amount);
+                    model.setRefundReason(refund_reason);
+                    model.setOutRequestNo(out_request_no);
+                    alipay_request.setBizModel(model);
+
+                    AlipayTradeRefundResponse alipay_response = client.execute(alipay_request);
+                    String jsonStr = alipay_response.getBody();
+                    log.info("支付宝退款返回结果：" + jsonStr);
+                    JSONObject jsonObject = JSONObject.parseObject(jsonStr);
+                    JSONObject vo = jsonObject.getJSONObject("alipay_trade_refund_response");
+                    String code = vo.getString("code");
+                    if ("10000".equals(code)) {
+                        order_main.setPayStatus(OrderPayStatusEnum.REFUNDALL.getKey());
+                        orderMainService.update(order_main);
+                        return Result.success("globals.result.success");
+                    } else {
+                        return Result.error("支付宝接口调用失败" + vo.getString("msg"));
+                    }
+                }else{
+                    //微信退款
+                    return Result.error("订单状态不正确");
+                }
+
+
+            }else {
+                return Result.error("订单状态不正确");
+            }
+
+        } catch (Exception e) {
+            log.error("订单退款发生异常",e);
+            return Result.error("fail");
+        }
     }
 
 }

@@ -15,6 +15,7 @@ layout("/layouts/store.html"){
                 <li><a href="#orderInfo" onclick="orderQuery(2)" data-toggle="tab"> <!--# if(obj.waitVerifyNum > 0 ) { #--><span class="badge pull-right" style="background-color: #ff2e1d">${obj.waitVerifyNum}</span><!--# } #-->待审核&nbsp;</a> </li>
                 <li><a href="#orderInfo" onclick="orderQuery(3)" data-toggle="tab"> <!--# if(obj.waitPayNum > 0 ) {  #--><span class="badge pull-right" style="background-color: #ff2e1d">${obj.waitPayNum}</span><!--# } #-->待支付&nbsp;</a> </li>
                 <li><a href="#orderInfo" onclick="orderQuery(4)" data-toggle="tab"> <!--# if(obj.deliveryPayNum > 0 ) {  #--><span class="badge pull-right" style="background-color: #ff2e1d">${obj.deliveryPayNum}</span><!--# } #-->货到付款&nbsp;</a> </li>
+                <li><a href="#orderInfo" onclick="orderQuery(5)" data-toggle="tab"> <!--# if(obj.refundsNum > 0 ) {  #--><span class="badge pull-right" style="background-color: #ff2e1d">${obj.refundsNum}</span><!--# } #-->待退款&nbsp;</a> </li>
                 <li><a href="#orderInfo" onclick="orderQuery(0)"  data-toggle="tab">全部订单</a></li>
             </ul>
             <div class="tab-content">
@@ -38,7 +39,7 @@ layout("/layouts/store.html"){
                                 <th width="10%">商品总金额</th>
                                 <th width="11%">订单应付金额</th>
                                 <th width="8%">支付方式</th>
-                                <th width="8%">订单来源</th>
+                                <th width="8%">支付状态</th>
                                 <th width="10%">订单状态</th>
                                 <th width="6%">操作</th>
                             </tr>
@@ -190,6 +191,7 @@ layout("/layouts/store.html"){
         margin: 5px 0;
     }
 </style>
+<script type="text/javascript" src="${base!}/assets/decorate/pc/decoratecommon/js/layer/layer.js" ></script>
 <script language="JavaScript">
     var datatable;
     var status=1;//默认查询待发货订单
@@ -264,7 +266,7 @@ layout("/layouts/store.html"){
                                 trView.push('<td  rowspan='+goodsList.length+'>' +'<p style="color: #ff4336">¥'+setPrice(data[i]['goodsPayMoney'])+'</p></td>' +
                                             '<td  rowspan='+goodsList.length+'>' +'<p style="color: #ff4336">¥'+setPrice(data[i]['payMoney'])+'</p>'+'<p>(含运费：¥'+setPrice(data[i]['freightMoney'])+')'+'</p></td>' +
                                             '<td  rowspan='+goodsList.length+'>' +'<p>'+payTypeRender(data[i]["payType"])+'</p></td>' +
-                                            '<td  rowspan='+goodsList.length+'>' +'<p>'+orderSrcRender(data[i]["orderSrc"])+'</p></td>' +
+                                            '<td  rowspan='+goodsList.length+'>' +'<p>'+orderSrcRender(data[i]["payStatus"])+'</p></td>' +
                                             '<td rowspan='+goodsList.length+'>' + orderStatusRender(data[i]["orderStatus"],data[i]["payStatus"],data[i]["deliveryStatus"]) + '</td>' +
                                             '<td rowspan='+goodsList.length+'>' +buttonRender(data[i]) + '</td>');
                             }
@@ -526,6 +528,31 @@ layout("/layouts/store.html"){
         });
     }
 
+    //订单退款
+    function orderRefunds(id){
+        $.ajax({
+            type:"POST",
+            url:"${base!}/store/order/main/orderRefunds.html",
+            dataType:"JSON",
+            data:{
+                orderId:id,
+            },
+            success:function(data){
+                if (data.code == 0) {
+                    var d = data.data;
+                    layer.alert('退款成功', {
+                        skin: 'layui-layer-molv' //样式类名
+                        ,closeBtn: 0
+                    }, function(){
+                        orderQuery(5);
+                    });
+                } else {
+                    layer.alert(data.msg)
+                }
+            }
+        });
+    }
+
     //支付方式渲染
     function payTypeRender(data) {
         var result='';
@@ -545,6 +572,12 @@ layout("/layouts/store.html"){
             case 4:
                 result = "<span>${msg['order.enum.paytype.transfer']}</span>";
                 break;
+            case 5:
+                result = "<span>支付宝支付</span>";
+                break;
+            case 6:
+                result = "<span>微信支付</span>";
+                break;
             default:
 
         }
@@ -556,7 +589,7 @@ layout("/layouts/store.html"){
         var result='';
         switch (data){
             case 0:
-                result = "<span>${msg['order.enum.source.pc']}</span>";
+                result = "<span>待支付</span>";
                 break;
             case 1:
                 result = "<span>${msg['order.enum.source.wap']}</span>";
@@ -565,16 +598,16 @@ layout("/layouts/store.html"){
                 result = "<span>${msg['order.enum.source.wechat']}</span>";
                 break;
             case 3:
-                result = "<span>${msg['order.enum.source.ios']}</span>";
+                result = "<span>已支付</span>";
                 break;
             case 4:
-                result = "<span>${msg['order.enum.source.android']}</span>";
+                result = "<span>待退款</span>";
                 break;
             case 5:
                 result = "<span>${msg['order.enum.source.tv']}</span>";
                 break;
             case 6:
-                result = "<span>${msg['order.enum.source.hand']}</span>";
+                result = "<span>已退款</span>";
                 break;
             default:
 
@@ -616,6 +649,12 @@ layout("/layouts/store.html"){
                                 result = "已发货";
                                 break;
                         }
+                        break;
+                    case 4:
+                        result = "待退款";
+                        break;
+                    case 6:
+                        result = "已退款";
                         break;
                     default:
                 }
@@ -663,6 +702,9 @@ layout("/layouts/store.html"){
 
         if(row.payStatus <= 1 &&  row.orderStatus == 1){
             buttonList.push('<div class="order_button"><a class="btn btn-info btn-xs" href="javascript:;" onclick="closeOrder(\'' + row.id + '\')">${msg["order.button.closeOrder"]}</a></div>')
+        }
+        if(row.payStatus == 4){
+            buttonList.push('<div class="order_button"><a class="btn btn-info btn-xs" href="javascript:;" onclick="orderRefunds(\'' + row.id + '\')">退款</a></div>')
         }
 
         if(row.orderStatus == 2 || row.orderStatus == 3 || row.orderStatus == 4 ){

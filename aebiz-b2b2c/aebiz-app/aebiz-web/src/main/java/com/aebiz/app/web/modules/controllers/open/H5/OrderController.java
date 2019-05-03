@@ -424,6 +424,7 @@ public class OrderController {
             Cnd cndMain = Cnd.NEW();
             cndMain.and("orderType", "=", OrderTypeEnum.product_order_type.getKey());
             cndMain.and("accountId", "=", accountUser.getAccountId());
+            cndMain.orderBy("orderAt","desc");
             List<Order_main> order_mainList = orderMainService.query(cndMain);
 
             List<Order_goods> order_goodsList = new ArrayList<>();

@@ -46,8 +46,9 @@ public class AddressH5Controller{
      * 进入收货地址编辑页
      */
     @RequestMapping("goAddressUp.html")
-    public String goAddressUp(String id, HttpServletRequest request){
+    public String goAddressUp(String id,String productList, HttpServletRequest request){
         request.setAttribute("id",id);
+        request.setAttribute("productList",productList);
         return "pages/front/h5/niantu/addressUp";
     }
 
@@ -56,7 +57,8 @@ public class AddressH5Controller{
      * 进入收货地址添加页
      */
     @RequestMapping("goAddressAdd.html")
-    public String goAddressAdd(){
+    public String goAddressAdd(String productList,HttpServletRequest request){
+        request.setAttribute("productList",productList);
         return "pages/front/h5/niantu/addressAdd";
     }
 

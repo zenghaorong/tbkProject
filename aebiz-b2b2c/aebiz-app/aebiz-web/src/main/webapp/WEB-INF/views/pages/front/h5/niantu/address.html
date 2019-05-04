@@ -55,12 +55,12 @@
             </button>
         </div>
     </div>
-</div>
 
-<div style="width: 300px;margin: 0 auto;">
-  <button type="button" class="mui-btn mui-btn-primary mui-btn-block" onclick="location.href='${base!}/open/h5/address/goAddressAdd.html'">新增地址</button>
-</div>
 
+    <div style="width: 300px;margin: 0 auto;">
+      <button type="button" class="mui-btn mui-btn-primary mui-btn-block" v-on:click="goAdd()">新增地址</button>
+    </div>
+</div>
 
 
 <script type="text/javascript" src="${base!}/assets/front/h5/js/mui.js" ></script>
@@ -105,7 +105,8 @@
 
             },
             goUpd:function (id) {
-                window.location.href='${base!}/open/h5/address/goAddressUp.html?id='+id;
+                var json = '${productList!}';
+                window.location.href='${base!}/open/h5/address/goAddressUp.html?id='+id+'&productList='+json;
             },
             del:function (id) {
                 var self = this;
@@ -152,6 +153,10 @@
                         }
                     }
                 });
+            },
+            goAdd:function () {
+                var json = '${productList!}';
+                window.location.href='${base!}/open/h5/address/goAddressAdd.html?productList='+json;
             }
         },
         watch:{     //监听器

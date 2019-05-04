@@ -100,7 +100,8 @@
                     success:function(data){
                         if (data.code == 0) {
                             var d = data.data;
-                            window.location.href='${base!}/open/h5/address/goAddress.html';
+                            var json = '${productList!}';
+                            window.location.href='${base!}/open/h5/address/goAddress.html?productList='+json;
                         } else {
 
                         }

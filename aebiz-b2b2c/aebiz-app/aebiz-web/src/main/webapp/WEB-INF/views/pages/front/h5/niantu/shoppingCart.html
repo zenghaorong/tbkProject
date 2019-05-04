@@ -232,7 +232,19 @@
                 cartIds=cartIds+";"+id;
             }
         });
-        window.location.href="${base!}/open/h5/order/submitOrder.html?cartIds="+cartIds;
+        $.ajax({
+            type:"POST",
+            url:"${base!}/open/h5/order/submitOrder.html",
+            dataType:"JSON",
+            data:{
+                cartIds:cartIds
+            },
+            success:function(data){
+                if (data.code == 0) {
+                    window.location.href="${base!}/open/h5/order/orderConfirmation.html?productList="+data.data;
+                }
+            }
+        });
     }
     //          $(".carLi").click(function (event) {
     //              event.preventDefault();

@@ -33,6 +33,7 @@ import com.aebiz.baseframework.view.annotation.SJson;
 import com.aebiz.commons.utils.DateUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
@@ -412,15 +413,16 @@ public class OrderController {
     }
 
     @RequestMapping("/submitOrder.html")
-    public String submitOrder(HttpServletRequest request){
+    @SJson
+    public Result submitOrder(HttpServletRequest request){
         Subject subject = SecurityUtils.getSubject();
         try {
             Account_user accountUser = (Account_user) subject.getPrincipal();
             if (accountUser == null) {
-                return "pages/front/h5/niantu/login";
+                return Result.error("请登录！");
             }
         }catch (Exception e){
-            return "pages/front/h5/niantu/login";
+            return Result.error("系统异常！");
         }
         List<Map<String,Object>> pList = new ArrayList<>();
         String cartIds = request.getParameter("cartIds");
@@ -438,8 +440,7 @@ public class OrderController {
         }catch (Exception e){
 
         }
-        request.setAttribute("productList",JSON.toJSONString(pList));
-        return "pages/front/h5/niantu/orderConfirmation";
+        return Result.success("ok",JSONArray.toJSONString(pList));
     }
 
 
@@ -449,12 +450,31 @@ public class OrderController {
      */
     @RequestMapping("getMyOrderList.html")
     @SJson
-    public Result getMyOrderList(){
+    public Result getMyOrderList(HttpServletRequest request){
         try {
             Subject subject = SecurityUtils.getSubject();
             Account_user accountUser = (Account_user) subject.getPrincipal();
-
             Cnd cndMain = Cnd.NEW();
+            String status = request.getParameter("status");
+            if("1".equals(status)){
+                cndMain.and("payStatus","=",0);
+            }
+            if("2".equals(status)){
+                cndMain.and("payStatus","=",3);
+                cndMain.and("deliveryStatus","=",0);
+            }
+            if("3".equals(status)){
+                cndMain.and("payStatus","=",3);
+                cndMain.and("deliveryStatus","=",3);
+            }
+            if("4".equals(status)){
+                cndMain.and("payStatus","=",3);
+                cndMain.and("getStatus","=",1);
+
+            }
+            if("5".equals(status)){
+                cndMain.and("payStatus","in",OrderPayStatusEnum.REFUNDWAIT.getKey()+","+OrderPayStatusEnum.REFUNDALL.getKey());
+            }
             cndMain.and("orderType", "=", OrderTypeEnum.product_order_type.getKey());
             cndMain.and("accountId", "=", accountUser.getAccountId());
             cndMain.orderBy("orderAt","desc");
@@ -465,7 +485,21 @@ public class OrderController {
                 Cnd cndOrder = Cnd.NEW();
                 cndOrder.and("orderId","=",o.getId());
                 List<Order_goods> order_goods = orderGoodsService.query(cndOrder);
+                if(order_goods!=null&&order_goods.size()>0){
+                    for (int i =0 ; i<order_goods.size();i++){
+                        Cnd imgCnd = Cnd.NEW();
+                        Order_goods good = order_goods.get(i);
+                        imgCnd.and("goodsId","=",good.getGoodsId());
+                        List<Goods_image> imgList = goodsImageService.query(imgCnd);
+                        if(imgList!=null&&imgList.size()>0){
+                            good.setImgUrl(imgList.get(0).getImgAlbum());
+                        }
+                    }
+                }
                 o.setGoodsList(order_goods);
+                String date = DateUtil.getDate(o.getOrderAt());
+                o.setOrderTime(date);
+
             }
 
             return Result.success("ok",order_mainList);
@@ -488,7 +522,7 @@ public class OrderController {
             List<Order_goods> order_goods = orderGoodsService.query(cndOrder);
 
             for(Order_goods o:order_goods) {
-                if("1".equals(o.getOrderType())) {
+                if("1".equals(o.getOrderType())||o.getOrderType()==null) {
                     Cnd imgCnd = Cnd.NEW();
                     imgCnd.and("goodsId", "=", o.getGoodsId());
                     List<Goods_image> imgList = goodsImageService.query(imgCnd);
@@ -524,6 +558,27 @@ public class OrderController {
         request.setAttribute("orderId",orderId);
         return "pages/front/h5/niantu/videoOrderConfirmation";
     }
+
+    /**
+     * 确认收货
+     * @param request
+     * @param orderId
+     * @return
+     */
+    @RequestMapping("confirmReceipt.html")
+    @SJson
+    public Result confirmReceipt(HttpServletRequest request,String orderId) {
+        Subject subject = SecurityUtils.getSubject();
+        Account_user accountUser = (Account_user) subject.getPrincipal();
+        if (accountUser == null) {
+            return Result.success("fail","未登录！");
+        }
+        Order_main order_main = orderMainService.fetch(orderId);
+        order_main.setGetStatus(1);
+        orderMainService.update(order_main);
+        return Result.success("ok");
+    }
+
 
     /**
      * 退款申请

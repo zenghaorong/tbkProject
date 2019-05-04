@@ -5,6 +5,7 @@ import com.aebiz.app.acc.modules.models.Account_login;
 import com.aebiz.app.acc.modules.models.Account_user;
 import com.aebiz.app.acc.modules.services.AccountLoginService;
 import com.aebiz.app.acc.modules.services.AccountUserService;
+import com.aebiz.app.integral.modules.services.MemberIntegralService;
 import com.aebiz.app.member.modules.models.Member_user;
 import com.aebiz.app.member.modules.services.MemberRegisterService;
 import com.aebiz.app.member.modules.services.MemberUserService;
@@ -58,6 +59,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.security.interfaces.RSAPrivateKey;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @Auther: zenghaorong
@@ -81,6 +83,9 @@ public class LoginController {
 
     @Autowired
     private RedisService redisService;
+
+    @Autowired
+    private MemberIntegralService memberIntegralService;
 
     @Autowired
     private SysApiService apiService;
@@ -327,12 +332,25 @@ public class LoginController {
             if (isExist(accountUserService, cnd)) {
                 return Result.error("手机号已存在");
             }
-            if (!captcha.equals(jedis.get(MOBILE_CAPTCHA + mobile))) {
-                return Result.error("验证码不正确");
-            }
+//            if (!captcha.equals(jedis.get(MOBILE_CAPTCHA + mobile))) {
+//                return Result.error("验证码不正确");
+//            }
 
             //注册
             memberRegisterService.memberRegister(mobile, password, mobile, CheckPasswordUtil.checkPassword(password).toString());
+            Cnd mCnd = Cnd.NEW();
+            mCnd.and("mobile","=",mobile);
+            List<Account_user> userList = accountUserService.query(mCnd);
+            if(userList!=null&&userList.size()>0){
+                try {
+                    memberIntegralService.addMemberIntegral(userList.get(0).getAccountId(),"2","1",null);
+                    return Result.error();
+                }catch (Exception e){
+
+                }
+
+            }
+
             return Result.success();
         } catch (Exception e) {
             e.printStackTrace();

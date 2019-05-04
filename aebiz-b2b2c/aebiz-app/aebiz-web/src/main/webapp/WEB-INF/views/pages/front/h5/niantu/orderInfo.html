@@ -81,7 +81,7 @@
                         <img class="mui-media-object mui-pull-left" :src="item.imgUrl">
                         <div class="mui-media-body" style="white-space:normal;">
                             <span>{{item.goodsName}}</span>
-                            <p class='mui-ellipsis'style="margin-top: 35px;margin-left: 110px;">
+                            <p class='mui-ellipsis'style="margin-top: 35px;margin-left: 0px;">
                                 <!--<span class="jiage-text">￥36.00</span>-->
                                 <span>数量：*{{item.buyNum}}</span>
                             </p>
@@ -101,7 +101,11 @@
     <button type="button" onclick="window.location.reload()" class="mui-btn mui-btn-primary mui-btn-block">点击刷新</button>
 </div>
 <!--#}#-->
-
+<!--#if(order.payStatus == 3 && order.deliveryStatus==3 && order.getStatus==0){#-->
+<div style="width: 300px;margin: 0 auto;">
+    <button type="button" onclick="confirmReceipt()" class="mui-btn mui-btn-primary mui-btn-block">确认收货</button>
+</div>
+<!--#}#-->
 <!--#if(order.payStatus == 3){#-->
 <div style="width: 300px;margin: 0 auto;">
     <button type="button" onclick="window.location.href='${base!}/open/h5/refunds/orderRefunds.html?orderId=${orderId!}'" class="mui-btn mui-btn-primary mui-btn-block">申请售后</button>
@@ -155,7 +159,23 @@
         }
 
     })
+    function confirmReceipt() {
+        $.ajax({
+            type:"POST",
+            url:"${base!}/open/h5/order/confirmReceipt.html",
+            dataType:"JSON",
+            data:{
+                orderId:'${orderId}'
+            },
+            success:function(data){
+                if (data.code == 0) {
+                    window.location.reload();
+                } else {
 
+                }
+            }
+        });
+    }
 </script>
 </body>
 </html>

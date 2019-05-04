@@ -2,20 +2,20 @@
 layout("/layouts/store.html"){
 #-->
 <header class="header navbar bg-white shadow">
-    <div class="btn-group tool-button">
-        <a id="add" class="btn btn-primary navbar-btn" href="${base}/store/order/main/add" data-pjax><i class="ti-plus"></i>手工录单</a>
-       <!-- <button class="btn btn-danger navbar-btn" onclick="delCheck()"><i class="ti-close"></i> ${msg['globals.button.delete.more']}</button>-->
-    </div>
+    <!--<div class="btn-group tool-button">-->
+        <!--<a id="add" class="btn btn-primary navbar-btn" href="${base}/store/order/main/add" data-pjax><i class="ti-plus"></i>手工录单</a>-->
+       <!--&lt;!&ndash; <button class="btn btn-danger navbar-btn" onclick="delCheck()"><i class="ti-close"></i> ${msg['globals.button.delete.more']}</button>&ndash;&gt;-->
+    <!--</div>-->
 </header>
 <div class="content-wrap">
     <div class="wrapper" style="min-height:500px;">
         <div class="box-tab">
             <ul class="nav nav-tabs ">
                 <li class="active"><a href="#orderInfo" onclick="orderQuery(1)" data-toggle="tab"> <!--# if(obj.waitDeliveryNum > 0 ) {  #--><span class="badge pull-right" style="background-color: #ff2e1d">${obj.waitDeliveryNum}</span><!--# } #-->待发货&nbsp;</a> </li>
-                <li><a href="#orderInfo" onclick="orderQuery(2)" data-toggle="tab"> <!--# if(obj.waitVerifyNum > 0 ) { #--><span class="badge pull-right" style="background-color: #ff2e1d">${obj.waitVerifyNum}</span><!--# } #-->待审核&nbsp;</a> </li>
+                <!--<li><a href="#orderInfo" onclick="orderQuery(2)" data-toggle="tab"> &lt;!&ndash;# if(obj.waitVerifyNum > 0 ) { #&ndash;&gt;<span class="badge pull-right" style="background-color: #ff2e1d">${obj.waitVerifyNum}</span>&lt;!&ndash;# } #&ndash;&gt;待审核&nbsp;</a> </li>-->
                 <li><a href="#orderInfo" onclick="orderQuery(3)" data-toggle="tab"> <!--# if(obj.waitPayNum > 0 ) {  #--><span class="badge pull-right" style="background-color: #ff2e1d">${obj.waitPayNum}</span><!--# } #-->待支付&nbsp;</a> </li>
-                <li><a href="#orderInfo" onclick="orderQuery(4)" data-toggle="tab"> <!--# if(obj.deliveryPayNum > 0 ) {  #--><span class="badge pull-right" style="background-color: #ff2e1d">${obj.deliveryPayNum}</span><!--# } #-->货到付款&nbsp;</a> </li>
-                <li><a href="#orderInfo" onclick="orderQuery(5)" data-toggle="tab"> <!--# if(obj.refundsNum > 0 ) {  #--><span class="badge pull-right" style="background-color: #ff2e1d">${obj.refundsNum}</span><!--# } #-->待退款&nbsp;</a> </li>
+                <!--<li><a href="#orderInfo" onclick="orderQuery(4)" data-toggle="tab"> &lt;!&ndash;# if(obj.deliveryPayNum > 0 ) {  #&ndash;&gt;<span class="badge pull-right" style="background-color: #ff2e1d">${obj.deliveryPayNum}</span>&lt;!&ndash;# } #&ndash;&gt;货到付款&nbsp;</a> </li>-->
+                <li><a href="#orderInfo" onclick="orderQuery(5)" data-toggle="tab"> <!--# if(obj.refundsNum > 0 ) {  #--><span class="badge pull-right" style="background-color: #ff2e1d">${obj.refundsNum}</span><!--# } #-->退款订单&nbsp;</a> </li>
                 <li><a href="#orderInfo" onclick="orderQuery(0)"  data-toggle="tab">全部订单</a></li>
             </ul>
             <div class="tab-content">
@@ -40,7 +40,7 @@ layout("/layouts/store.html"){
                                 <th width="11%">订单应付金额</th>
                                 <th width="8%">支付方式</th>
                                 <th width="8%">支付状态</th>
-                                <th width="10%">订单状态</th>
+                                <!--<th width="10%">订单状态</th>-->
                                 <th width="6%">操作</th>
                             </tr>
                             </thead>
@@ -151,7 +151,7 @@ layout("/layouts/store.html"){
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">${msg["globals.button.cancel"]}</button>
-                <button id="btn_ok_audit" type="button" onclick="audit();" class="btn btn-primary" data-loading-text="${msg['order.main.modal.dialogAudit.ok.loading']}">${msg["globals.button.confirm"]}</button>
+                <!--<button id="btn_ok_audit" type="button" onclick="audit();" class="btn btn-primary" data-loading-text="${msg['order.main.modal.dialogAudit.ok.loading']}">${msg["globals.button.confirm"]}</button>-->
             </div>
         </div>
     </div>
@@ -267,7 +267,7 @@ layout("/layouts/store.html"){
                                             '<td  rowspan='+goodsList.length+'>' +'<p style="color: #ff4336">¥'+setPrice(data[i]['payMoney'])+'</p>'+'<p>(含运费：¥'+setPrice(data[i]['freightMoney'])+')'+'</p></td>' +
                                             '<td  rowspan='+goodsList.length+'>' +'<p>'+payTypeRender(data[i]["payType"])+'</p></td>' +
                                             '<td  rowspan='+goodsList.length+'>' +'<p>'+orderSrcRender(data[i]["payStatus"])+'</p></td>' +
-                                            '<td rowspan='+goodsList.length+'>' + orderStatusRender(data[i]["orderStatus"],data[i]["payStatus"],data[i]["deliveryStatus"]) + '</td>' +
+                                            // '<td rowspan='+goodsList.length+'>' + orderStatusRender(data[i]["orderStatus"],data[i]["payStatus"],data[i]["deliveryStatus"]) + '</td>' +
                                             '<td rowspan='+goodsList.length+'>' +buttonRender(data[i]) + '</td>');
                             }
                             trView.push('</tr>');
@@ -305,18 +305,18 @@ layout("/layouts/store.html"){
                     {"data": "payMoney", "sDefaultContent" : "","bSortable": true},
                     {"data": "payType","sDefaultContent" : "", "bSortable": true},
                     {"data": "orderSrc","sDefaultContent" : "", "bSortable": true},
-                    {"data": "orderStatus","sDefaultContent" : "", "bSortable": true},
+                    // {"data": "orderStatus","sDefaultContent" : "", "bSortable": true},
                     {"data": "payStatus","sDefaultContent" : "", "bSortable": true},
                     {"data": "deliveryStatus","sDefaultContent" : "","bSortable": true}
                     /*{"data": "orderAt","sDefaultContent" : "", "bSortable": true}*/
             ],
             "columnDefs": [
                 {
-                    "targets": 8
+                    "targets": 7
                 }
             ]
         });
-        bindStatus(Number(status));
+        // bindStatus(Number(status));
         /*datatable.on('click', 'tr', function () {
             $(this).toggleClass('selected');
         });*/
@@ -328,7 +328,7 @@ layout("/layouts/store.html"){
 
     //订单查询
     function orderQuery(val) {
-        bindStatus(val);
+        // bindStatus(val);
         status = val;
         datatable.ajax.reload();
     }
@@ -472,6 +472,17 @@ layout("/layouts/store.html"){
                 dialog.modal("hide");
             }, "json");
         });
+    }
+    //发货
+    function sendProduct(id) {
+            var btn = $(this);
+            $.post("${base}/store/order/main/sendProduct/" + id, {}, function (data) {
+                if (data.code == 0) {
+                    datatable.ajax.reload(null,false);
+                } else {
+                    Toast.error(data.msg);
+                }
+            }, "json");
     }
 
     //批量删除订单
@@ -681,24 +692,24 @@ layout("/layouts/store.html"){
         var buttonList = [];
         buttonList.push('<div class="order_button"><a class="btn btn-primary btn-xs" href="${base}/store/order/main/detail/' + row.id + '" data-pjax>${msg["globals.button.detail"]}</a></div>');
         //如果是待审核的订单，则有审核按钮
-        if(row.orderStatus == 0){
-            buttonList.push('<div class="order_button"><a class="btn btn-danger btn-xs" href="javascript:;" onclick="auditModal(\'' + row.id + '\')">${msg["order.button.audit"]}</a></div>');
-        }
+        // if(row.orderStatus == 0){
+        //     buttonList.push('<div class="order_button"><a class="btn btn-danger btn-xs" href="javascript:;" onclick="auditModal(\'' + row.id + '\')">${msg["order.button.audit"]}</a></div>');
+        // }
         //订单在支付之前并且是活动订单,可以改价
-        if(row.payStatus < 2 && row.orderStatus == 1){
-            buttonList.push("<div class='order_button'><a class='btn btn-info btn-xs' onclick='operation(\"改价\",\"${base}/store/order/main/changePrice/" + row.id +"\")'>${msg['order.button.changePrice']}</a></div>");
-        }
+        // if(row.payStatus < 2 && row.orderStatus == 1){
+        //     buttonList.push("<div class='order_button'><a class='btn btn-info btn-xs' onclick='operation(\"改价\",\"${base}/store/order/main/changePrice/" + row.id +"\")'>${msg['order.button.changePrice']}</a></div>");
+        // }
         //订单在物品发货之前可以改地址
-        if(row.deliveryStatus == 0 && row.orderStatus == 1){
-            buttonList.push("<div class='order_button'><a class='btn btn-info btn-xs' onclick='operation(\"改地址\",\"${base}/store/order/main/changeAddress/" + row.id +"\")'>${msg['order.button.changeAddress']}</a></div>");
-        }
-        if(row.payStatus < 3 && row.orderStatus == 1 && (row.payType == 0 || row.payType == 4)){
-            buttonList.push("<div class='order_button'><a class='btn btn-info btn-xs'  onclick='operation(\"上传支付凭证\",\"${base}/store/order/main/upload/" + row.id +"\")'>上传支付凭证</a></div>");
-        }
+        // if(row.deliveryStatus == 0 && row.orderStatus == 1){
+        //     buttonList.push("<div class='order_button'><a class='btn btn-info btn-xs' onclick='operation(\"改地址\",\"${base}/store/order/main/changeAddress/" + row.id +"\")'>${msg['order.button.changeAddress']}</a></div>");
+        // }
+        // if(row.payStatus < 3 && row.orderStatus == 1 && (row.payType == 0 || row.payType == 4)){
+        //     buttonList.push("<div class='order_button'><a class='btn btn-info btn-xs'  onclick='operation(\"上传支付凭证\",\"${base}/store/order/main/upload/" + row.id +"\")'>上传支付凭证</a></div>");
+        // }
 
-        if(((row.payStatus == 1 || row.payStatus == 2) || (row.payType == 1 || row.payType == 2 || row.payType == 3)) && row.payStatus != 3 && row.orderStatus == 1 ){
-            buttonList.push("<div class='order_button'><a class='btn btn-info btn-xs' onclick='operation(\"确认收款\",\"${base}/store/order/main/receipt/" + row.id +"\")'>确认收款</a></div>");
-        }
+        // if(((row.payStatus == 1 || row.payStatus == 2) || (row.payType == 1 || row.payType == 2 || row.payType == 3)) && row.payStatus != 3 && row.orderStatus == 1 ){
+        //     buttonList.push("<div class='order_button'><a class='btn btn-info btn-xs' onclick='operation(\"确认收款\",\"${base}/store/order/main/receipt/" + row.id +"\")'>确认收款</a></div>");
+        // }
 
         if(row.payStatus <= 1 &&  row.orderStatus == 1){
             buttonList.push('<div class="order_button"><a class="btn btn-info btn-xs" href="javascript:;" onclick="closeOrder(\'' + row.id + '\')">${msg["order.button.closeOrder"]}</a></div>')
@@ -710,15 +721,17 @@ layout("/layouts/store.html"){
         if(row.orderStatus == 2 || row.orderStatus == 3 || row.orderStatus == 4 ){
             buttonList.push('<div class="order_button"><a class="btn btn-info btn-xs" href="javascript:;" onclick="del(\'' + row.id + '\')">${msg["globals.button.delete"]}</a></div>');
         }
-
-        if(row.orderStatus == 2){
-            buttonList.push('<div class="order_button"><a class="btn btn-info btn-xs" href="${base!}/store/order/main/currentPrice/' + row.id + '" data-pjax>现价恢复</a></div>');
-            buttonList.push('<div class="order_button"><a class="btn btn-info btn-xs" href="${base!}/store/order/main/costPrice/' + row.id + '" data-pjax>原价恢复</a></div>');
+        if(row.payStatus == 3 &&  row.deliveryStatus == 0){
+            buttonList.push('<div class="order_button"><a class="btn btn-info btn-xs" href="javascript:;" onclick="sendProduct(\'' + row.id + '\')">发货</a></div>');
         }
+        // if(row.orderStatus == 2){
+        //     buttonList.push('<div class="order_button"><a class="btn btn-info btn-xs" href="${base!}/store/order/main/currentPrice/' + row.id + '" data-pjax>现价恢复</a></div>');
+        //     buttonList.push('<div class="order_button"><a class="btn btn-info btn-xs" href="${base!}/store/order/main/costPrice/' + row.id + '" data-pjax>原价恢复</a></div>');
+        // }
 
-        if((row.payStatus == 3 || (row.payType == 1 || row.payType == 2 || row.payType == 3))  && row.orderStatus == 1 && (row.deliveryStatus == 0 || row.deliveryStatus == 2)){
-            buttonList.push("<div class='order_button' ><a class='btn btn-info btn-xs' onclick='operation(\"创建配货单\",\"${base}/store/order/main/createDelivery/" + row.id +"\")'>创建配货单</a></div>");
-        }
+        // if((row.payStatus == 3 || (row.payType == 1 || row.payType == 2 || row.payType == 3))  && row.orderStatus == 1 && (row.deliveryStatus == 0 || row.deliveryStatus == 2)){
+        //     buttonList.push("<div class='order_button' ><a class='btn btn-info btn-xs' onclick='operation(\"创建配货单\",\"${base}/store/order/main/createDelivery/" + row.id +"\")'>创建配货单</a></div>");
+        // }
         return buttonList.join('');
     }
 

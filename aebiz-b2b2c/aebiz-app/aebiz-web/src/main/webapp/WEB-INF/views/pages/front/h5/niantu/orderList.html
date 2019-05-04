@@ -54,11 +54,11 @@
                             <img class="mui-media-object mui-pull-left" :src="good.imgUrl">
                             <div class="mui-media-body" style="white-space:normal;" >
                                 <span>{{good.goodsName}}</span>
-                                <p class='mui-ellipsis'style="margin-top: 35px;margin-left: 110px;" >
+                                <p class='mui-ellipsis'style="margin-top: 35px;margin-left: 0px;" >
                                     <span class="jiage-text">￥{{good.salePrice/100}}</span>
                                     <span>*{{good.buyNum}}</span>
                                 </p>
-                                <span>{{item.orderAt | formatDate}}</span>
+                                <span>{{item.orderTime}}</span>
                             </div>
                         </a>
                     </li>
@@ -98,12 +98,13 @@
             //获取列表
             getMyOrderList:function () {
                 var self = this;
+                var status = "${status}";
                 $.ajax({
                     type:"POST",
                     url:"${base!}/open/h5/order/getMyOrderList.html",
                     dataType:"JSON",
                     data:{
-
+                        status:status
                     },
                     success:function(data){
                         if (data.code == 0) {

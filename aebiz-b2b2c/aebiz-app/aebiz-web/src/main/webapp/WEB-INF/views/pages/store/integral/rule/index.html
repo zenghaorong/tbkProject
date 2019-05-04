@@ -1,5 +1,5 @@
 <!--#
-layout("/layouts/platform.html"){
+layout("/layouts/store.html"){
 #-->
 <section class="content-wrap bg-white">
     <header class="header navbar bg-white shadow">
@@ -13,10 +13,9 @@ layout("/layouts/platform.html"){
             <table class="table table-bordered table-striped mg-t datatable">
                 <thead>
                     <tr>
-                            <th>${msg['integral.rule.column.customerUuid']}</th>
-                            <th>${msg['integral.rule.column.storeUuid']}</th>
-                            <th>${msg['integral.rule.column.useAbleIntegral']}</th>
-                            <th>${msg['integral.rule.column.totalIntegral']}</th>
+                            <th>积分规则名称</th>
+                            <th>积分规则编码</th>
+                            <th>赠送积分数量</th>
                             <th>${msg['globals.table.column.operation']}</th>
                     </tr>
                 </thead>
@@ -79,23 +78,22 @@ layout("/layouts/platform.html"){
             },
             "order": [[0, "desc"]],
             "columns": [
-                    {"data": "customerUuid", "bSortable": true},
-                    {"data": "storeUuid", "bSortable": true},
-                    {"data": "useAbleIntegral", "bSortable": true},
-                    {"data": "totalIntegral", "bSortable": true},
+                    {"data": "ruleName", "bSortable": true},
+                    {"data": "ruleCode", "bSortable": true},
+                    {"data": "integralCount", "bSortable": true},
             ],
             "columnDefs": [
                 {
                     "render": function (data, type, row) {
                         return '<div class="btn-group"><button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">' +
                                 ' <i class="ti-settings"></i> <span class="ti-angle-down"></span></button><ul class="dropdown-menu" role="menu">' +
-                                '<li><a href="${base}/store/integral/rule/detail/' + row.id + '" data-toggle="modal" data-target="#dialogDetail">${msg["globals.button.detail"]}</a></li>' +
+                                // '<li><a href="${base}/store/integral/rule/detail/' + row.id + '" data-toggle="modal" data-target="#dialogDetail">${msg["globals.button.detail"]}</a></li>' +
                                 '<li><a href="${base}/store/integral/rule/edit/' + row.id + '" data-pjax>${msg["globals.button.update"]}</a></li>' +
                                 '<li class="divider"></li>' +
-                                '<li><a href="javascript:;" onclick="del(\'' + row.id + '\')">${msg["globals.button.delete"]}</a></li>' +
+                                // '<li><a href="javascript:;" onclick="del(\'' + row.id + '\')">${msg["globals.button.delete"]}</a></li>' +
                                 '</ul></div>';
                     },
-                    "targets": 4
+                    "targets": 3
                 }
             ]
         });

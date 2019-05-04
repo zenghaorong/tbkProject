@@ -325,6 +325,16 @@ public class Order_main extends BaseModel implements Serializable {
 
     private String expressInfo;
 
+    private String orderTime;
+
+    public String getOrderTime() {
+        return orderTime;
+    }
+
+    public void setOrderTime(String orderTime) {
+        this.orderTime = orderTime;
+    }
+
     public String getVideoId() {
         return videoId;
     }

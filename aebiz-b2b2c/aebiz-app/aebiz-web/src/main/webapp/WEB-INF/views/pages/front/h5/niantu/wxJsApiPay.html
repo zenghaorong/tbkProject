@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>收银台</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="${base!}/assets/front/h5/css/mui.min.css" />
+    <link rel="stylesheet" href="${base!}/assets/front/h5/css/hryc.css" />
+    <!--App自定义的css-->
+    <!--<link rel="stylesheet" type="text/css" href="../css/app.css"/>-->
+    <style>
+        .mui-table-view .mui-media-object {
+            line-height: 42px;
+            max-width: 145px;
+            height: 100px;
+        }
+        .jiage-text{
+            font-size: 18px;
+            color: red;
+            margin-right:10px ;
+        }
+        [v-cloak]{
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+
+
+<header class="mui-bar mui-bar-nav top-color">
+    <!--<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: white;"></a>-->
+    <h1 class="mui-title" style="color: white;">
+        支付中...
+    </h1>
+</header>
+<div id="vue">
+    <div style="margin-top: 260px;overflow: hidden;" >
+        <!--<a style="float: left;">-->
+            <!--<span class="mui-icon mui-icon-checkmarkempty" style="font-size: 65px;"></span>-->
+        <!--</a>-->
+        <span style="float: left;">
+            正在支付中请勿返回....
+        </span>
+    </div>
+</div>
+<script type="text/javascript" src="${base!}/assets/front/h5/js/mui.js" ></script>
+<script type="text/javascript" src="${base!}/assets/front/h5/js/vue.js" ></script>
+<script type="text/javascript" src="${base!}/assets/front/h5/js/jquery-2.0.0.min.js" ></script>
+<script type="application/javascript">
+    mui.init({
+        swipeBack:true //启用右滑关闭功能
+    });
+
+    //防重
+    var fila = true;
+
+    var weiXinData = {};
+
+    var vue = new Vue({
+        el: '#vue',
+        data: {
+            payData: "",
+        },
+        created:function () {   //实例初始化创建完成执行
+
+            var appid = "${appId!}";
+            var code = "${code!}";
+            var baseUrl = window.location.origin;
+            var redirect_uri = baseUrl+"/open/h5/pay/index.html?orderId=${orderId!}";
+            redirect_uri = encodeURI(redirect_uri);
+
+            var ua = navigator.userAgent.toLowerCase();//获取判断用的对象
+            if (ua.match(/MicroMessenger/i) == "micromessenger") {
+                //在微信中打开
+                if(code==null || code== "") {
+                    //1.重定向跳转获取code
+                    window.location.href = "https://open.weixin.qq.com/connect/oauth2/authorize?" +
+                        "appid=" + appid + "&" +
+                        "redirect_uri="+redirect_uri+"&" +
+                        "response_type=code&" +
+                        "scope=snsapi_base&" +
+                        "state=11001#wechat_redirect";
+                }else {
+                    this.wxJsapiPay();
+                }
+            }
+
+        },
+        methods:{              //定义封装方法
+            //微信JSAPI支付(也就是公众号支付)
+            wxJsapiPay:function () {
+                var self = this;
+                $.ajax({
+                    type:"POST",
+                    url:"${base!}/open/h5/pay/weiXinJsapiPay.html",
+                    dataType:"JSON",
+                    data:{
+                        orderId:'${orderId}'
+                    },
+                    success:function(data){
+                        if (data.code == 0) {
+                            weiXinData = data.data;
+                            // alert(weiXinData)
+                            if (typeof WeixinJSBridge == "undefined"){
+                                if( document.addEventListener ){
+                                    document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+                                }else if (document.attachEvent){
+                                    document.attachEvent('WeixinJSBridgeReady', onBridgeReady);
+                                    document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
+                                }
+                            }else{
+                                onBridgeReady();
+                            }
+                        } else {
+
+                        }
+                        fila =true;
+                    }
+                });
+
+            }
+        },
+        watch:{     //监听器
+
+        }
+
+    })
+
+
+    function onBridgeReady(){
+        console.log("微信jsapi唤起请求数据："+JSON.stringify(weiXinData));
+        weiXinData = JSON.parse(weiXinData);
+        var appid = weiXinData.appId;
+        var timeStamp = weiXinData.timeStamp;
+        var nonce_str = weiXinData.nonceStr;
+        var prepay_id = weiXinData.package;
+        var sign = weiXinData.paySign;
+        var signType = weiXinData.signType;
+
+        WeixinJSBridge.invoke(
+            'getBrandWCPayRequest',{
+                "appId":appid,
+                "timeStamp":timeStamp,
+                "nonceStr":nonce_str,
+                "package":prepay_id,
+                "signType":signType,
+                "paySign":sign
+            },
+            function(res){
+                console.log("jsapi支付返回结果："+JSON.stringify(res))
+
+                if(res.err_msg == "get_brand_wcpay_request:ok" ){
+                    // 使用以上方式判断前端返回,微信团队郑重提示：
+                    //res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
+                    window.location.href = "${base!}/open/h5/order/goOrderInfo.html?orderId=${orderId}";
+                }else {
+                    alert(JSON.stringify(res))
+                }
+            });
+
+    }
+
+
+
+
+</script>
+</body>
+</html>

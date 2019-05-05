@@ -59,6 +59,7 @@ public class WxPayServiceImpl implements WxPayService {
             map.put("notify_url", notify_url);//通知地址
             map.put("trade_type", "JSAPI");//微信浏览器里支付 必须传openId
             map.put("openid", wxGetPayInfoQO.getOpenId());
+            map.put("sign_type","MD5");
             String signStr = WXPayUtil.createSign(map, key);//签名参数
             map.put("sign", signStr);
             log.info("传入map参数:" + JSON.toJSONString(map));
@@ -76,16 +77,16 @@ public class WxPayServiceImpl implements WxPayService {
                  return null;
              }else {
                  //统一下单成功后拿到微信返回的参数 进行签名返回给H5端jspai唤起支付
-                 String timeStamp = WXPayUtil.getCurrentTimestamp()+""; //时间戳
+                 String timeStamp = Calendar.getInstance().getTimeInMillis()+""; //时间戳
                  String nonceStr = WXPayUtil.generateNonceStr(); //随机串
                  String prepay_id = "prepay_id="+xmlJson.getString("prepay_id");
                  SortedMap<String,String> jsapiMap =  new TreeMap<String, String>();
                  jsapiMap.put("appId",appid);
-                 jsapiMap.put("timeStamp",timeStamp);
+                 jsapiMap.put("timeStamp",timeStamp.substring(0,timeStamp.length()-3));
                  jsapiMap.put("nonceStr",nonceStr);
                  jsapiMap.put("package",prepay_id);
                  jsapiMap.put("signType","MD5");
-                 String jsapiSign = WXPayUtil.createSign(map, key);//签名参数
+                 String jsapiSign = WXPayUtil.createSign(jsapiMap, key);//签名参数
                  jsapiMap.put("paySign",jsapiSign);
                  log.info("返回jsapi签名参数："+JSON.toJSONString(jsapiMap));
                  return JSON.toJSONString(jsapiMap);
@@ -149,8 +150,47 @@ public class WxPayServiceImpl implements WxPayService {
      * @return
      */
     @Override
-    public boolean wxRefund() {
+    public boolean wxRefund(WxGetPayInfoQO wxGetPayInfoQO) {
+        try {
 
+            String key = config.get("wx.pay.sign.key");
+            String appid = config.get("wx.pay.AppID");
+            String appSecret = config.get("wx.pay.AppSecret");
+            String mchid = config.get("wx.pay.mchid");
+            String notify_url = config.get("wx.pay.notify_url");
+
+            SortedMap<String,String> map =  new TreeMap<String, String>();
+            String nonce_str = WXPayUtil.generateNonceStr();
+            String total=wxGetPayInfoQO.getTotal_fee();
+            map.put("appid",appid);
+            map.put("mch_id",mchid);
+            map.put("nonce_str", nonce_str);
+            map.put("out_trade_no", wxGetPayInfoQO.getOut_trade_no());
+            map.put("out_refund_no", wxGetPayInfoQO.getOut_trade_no());
+            map.put("total_fee",total); //金额(分)
+            map.put("refund_fee",total); //退款金额(分)
+            map.put("sign_type","MD5");
+            String signStr = WXPayUtil.createSign(map, key);//签名参数
+            map.put("sign", signStr);
+            log.info("传入map参数:" + JSON.toJSONString(map));
+            JSONObject mapNobject = JSONObject.fromObject(map);
+            String postXml = json2Xml(mapNobject);
+            log.info("请求xml: "+postXml);
+            //3.退款接口
+            String wxXml = HttpClientUtil.submitHttpDate("https://api.mch.weixin.qq.com/secapi/pay/refund", postXml);
+            log.info("微信退款返回参数" + wxXml);
+            JSONObject xmlJson =  xml2Json(wxXml);
+            log.info("微信退款返回参数信息："+xmlJson.toString());
+            //判断下单是否成功
+            if(!"SUCCESS".equals(xmlJson.get("return_code"))){
+                log.error("微信退款失败："+xmlJson.get("return_msg"));
+                return false;
+            }else {
+                return true;
+            }
+        }catch (Exception e) {
+            log.error("请求微信支付二维码异常", e);
+        }
         return false;
     }
 

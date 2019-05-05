@@ -1,5 +1,12 @@
 package com.aebiz.app.web.commons.utils;
 
+import net.sf.json.JSONObject;
+import net.sf.json.xml.XMLSerializer;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.DocumentHelper;
+import org.nutz.log.Log;
+import org.nutz.log.Logs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
@@ -13,9 +20,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.io.StringWriter;
+import java.io.*;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.util.*;
@@ -26,6 +31,8 @@ public class WXPayUtil {
     private static final String SYMBOLS = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
     private static final Random RANDOM = new SecureRandom();
+
+    private static final Log log = Logs.get();
 
     /**
      * XML格式字符串转换为Map
@@ -326,4 +333,72 @@ public class WXPayUtil {
     		WXPayConstants.TRADE_TYPE_APP.equals(tradeType) ? "2" :
     		WXPayConstants.TRADE_TYPE_JSAPI.equals(tradeType) ? "4" : "3";
     }
+
+
+    /**
+     * xml转json
+     * @param xml
+     * @return
+     */
+    public static JSONObject xml2Json(String xml){
+        XMLSerializer xmlSerializer = new XMLSerializer();
+        //将xml转为json（注：如果是元素的属性，会在json里的key前加一个@标识）
+        String  json =  xmlSerializer.read(xml).toString();
+        return JSONObject.fromObject(json);
+    }
+
+    /**
+     * json转xml
+     * @param json
+     * @return
+     * @throws DocumentException
+     */
+    public static String json2Xml(JSONObject json) throws DocumentException {
+        String sXml = "";
+        XMLSerializer xmlSerializer = new XMLSerializer();
+        xmlSerializer.setTypeHintsEnabled(false);
+        xmlSerializer.setRootName("xml");
+        String sContent = xmlSerializer.write(json,"utf-8");
+        try {
+            Document docCon = DocumentHelper.parseText(sContent);
+            sXml = docCon.getRootElement().asXML();
+        } catch (DocumentException e) {
+            e.printStackTrace();
+        }
+        return sXml;
+    }
+
+    public InputStream getCertStream() {
+        String certPath = "/Server/cer/wx/apiclient_cert.p12";
+        File file = new File(certPath);
+        InputStream certStream = null;
+        ByteArrayInputStream certBis = null;
+        if(!file.exists()){
+            return null;
+        }
+        try {
+            certStream = new FileInputStream(file);
+            byte[] certData = new byte[(int) file.length()];
+            certStream.read(certData);
+            certBis = new ByteArrayInputStream(certData);
+            certStream.close();
+        } catch (FileNotFoundException e) {
+            log.error("加载微信证书异常1:", e);
+        } catch (IOException e) {
+            log.error("加载微信证书异常2:", e);
+        } finally{
+            try {
+                if(certStream != null){
+                    certStream.close();
+                }
+                if(certBis != null){
+                    certBis.close();
+                }
+            } catch (IOException e) {
+                log.error("加载微信证书异常3:", e);
+            }
+        }
+        return certBis;
+    }
+
 }

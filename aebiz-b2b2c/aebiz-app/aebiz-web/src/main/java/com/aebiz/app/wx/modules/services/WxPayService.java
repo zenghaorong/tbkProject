@@ -24,6 +24,6 @@ public interface WxPayService {
     /**
      * 微信退款接口
      */
-    public boolean wxRefund();
+    public boolean wxRefund(WxGetPayInfoQO wxGetPayInfoQO);
 
 }

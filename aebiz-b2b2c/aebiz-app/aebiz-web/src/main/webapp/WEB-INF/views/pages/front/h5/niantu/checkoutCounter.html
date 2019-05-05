@@ -181,34 +181,35 @@
                 },
                 //微信JSAPI支付(也就是公众号支付)
                 wxJsapiPay:function () {
-                    var self = this;
-                    $.ajax({
-                        type:"POST",
-                        url:"${base!}/open/h5/pay/weiXinJsapiPay.html",
-                        dataType:"JSON",
-                        data:{
-                            orderId:'${order.id!}'
-                        },
-                        success:function(data){
-                            if (data.code == 0) {
-                                weiXinData = data.data;
-                                // alert(weiXinData)
-                                if (typeof WeixinJSBridge == "undefined"){
-                                    if( document.addEventListener ){
-                                        document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
-                                    }else if (document.attachEvent){
-                                        document.attachEvent('WeixinJSBridgeReady', onBridgeReady);
-                                        document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
-                                    }
-                                }else{
-                                    onBridgeReady();
-                                }
-                            } else {
-
-                            }
-                            fila =true;
-                        }
-                    });
+                    // var self = this;
+                    // $.ajax({
+                    //     type:"POST",
+                    //     url:"${base!}/open/h5/pay/weiXinJsapiPay.html",
+                    //     dataType:"JSON",
+                    //     data:{
+                    //         orderId:'${order.id!}'
+                    //     },
+                    //     success:function(data){
+                    //         if (data.code == 0) {
+                    //             weiXinData = data.data;
+                    //             // alert(weiXinData)
+                    //             if (typeof WeixinJSBridge == "undefined"){
+                    //                 if( document.addEventListener ){
+                    //                     document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+                    //                 }else if (document.attachEvent){
+                    //                     document.attachEvent('WeixinJSBridgeReady', onBridgeReady);
+                    //                     document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
+                    //                 }
+                    //             }else{
+                    //                 onBridgeReady();
+                    //             }
+                    //         } else {
+                    //
+                    //         }
+                    //         fila =true;
+                    //     }
+                    // });
+                    window.location.href="${base!}/open/h5/pay/index.html?orderId=${order.id!}";
 
                 },
                 //支付宝支付
@@ -258,22 +259,30 @@
             var nonce_str = weiXinData.nonceStr;
             var prepay_id = weiXinData.package;
             var sign = weiXinData.paySign;
+            var signType = weiXinData.signType;
 
-            payData = {};
-            payData.appId=appid;
-            payData.timeStamp=timeStamp;
-            payData.nonceStr=nonce_str;
-            payData.package=prepay_id;
-            payData.signType = "MD5";
-            payData.paySign=sign;
+            // payData = {};
+            // payData.appId=appid;
+            // payData.timeStamp=timeStamp;
+            // payData.nonceStr=nonce_str;
+            // payData.package=prepay_id;
+            // payData.signType = signType;
+            // payData.paySign=sign;
 
-            alert("对象:"+JSON.stringify(payData));
+            // alert("对象:"+JSON.stringify(weiXinData));
 
             WeixinJSBridge.invoke(
-                'getBrandWCPayRequest',payData,
+                'getBrandWCPayRequest',{
+                    "appId":appid,
+                    "timeStamp":timeStamp,
+                    "nonceStr":nonce_str,
+                    "package":prepay_id,
+                    "signType":signType,
+                    "paySign":sign
+                },
                 function(res){
                     console.log("jsapi支付返回结果："+JSON.stringify(res))
-                    alert(JSON.stringify(res))
+                    // alert(JSON.stringify(res))
                     if(res.err_msg == "get_brand_wcpay_request:ok" ){
                         // 使用以上方式判断前端返回,微信团队郑重提示：
                         //res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。

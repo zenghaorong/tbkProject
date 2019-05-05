@@ -4,6 +4,7 @@ import com.aebiz.app.acc.modules.models.Account_info;
 import com.aebiz.app.acc.modules.models.Account_user;
 import com.aebiz.app.acc.modules.services.AccountInfoService;
 import com.aebiz.app.acc.modules.services.AccountUserService;
+import com.aebiz.app.alipay.modules.models.AlipayConfig;
 import com.aebiz.app.goods.modules.models.Goods_main;
 import com.aebiz.app.goods.modules.models.Goods_product;
 import com.aebiz.app.goods.modules.services.GoodsProductService;
@@ -29,6 +30,8 @@ import com.aebiz.app.sys.modules.models.Sys_dict;
 import com.aebiz.app.sys.modules.services.SysDictService;
 import com.aebiz.app.web.commons.log.annotation.SLog;
 import com.aebiz.app.web.commons.utils.CalculateUtils;
+import com.aebiz.app.wx.modules.models.WxGetPayInfoQO;
+import com.aebiz.app.wx.modules.services.WxPayService;
 import com.aebiz.baseframework.base.Result;
 import com.aebiz.baseframework.page.OffsetPager;
 import com.aebiz.baseframework.page.datatable.DataTableColumn;
@@ -36,6 +39,11 @@ import com.aebiz.baseframework.page.datatable.DataTableOrder;
 import com.aebiz.baseframework.view.annotation.SJson;
 import com.aebiz.commons.utils.StringUtil;
 import com.alibaba.fastjson.JSONObject;
+import com.alipay.api.AlipayClient;
+import com.alipay.api.DefaultAlipayClient;
+import com.alipay.api.domain.AlipayTradeRefundModel;
+import com.alipay.api.request.AlipayTradeRefundRequest;
+import com.alipay.api.response.AlipayTradeRefundResponse;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Sqls;
@@ -122,6 +130,9 @@ public class StoreOrderMainController {
 
     @Autowired
     private AccountInfoService accountInfoService;
+
+    @Autowired
+    private WxPayService wxPayService;
 
     @RequestMapping("")
     @RequiresPermissions("store.order.manager.list")
@@ -1030,34 +1041,45 @@ public class StoreOrderMainController {
                     String out_request_no = orderId;
                     /**********************/
                     // SDK 公共请求类，包含公共请求参数，以及封装了签名与验签，开发者无需关注签名与验签
-//                    AlipayClient client = new DefaultAlipayClient(AlipayConfig.URL, AlipayConfig.APPID, AlipayConfig.RSA_PRIVATE_KEY, AlipayConfig.FORMAT, AlipayConfig.CHARSET, AlipayConfig.ALIPAY_PUBLIC_KEY, AlipayConfig.SIGNTYPE);
-//                    AlipayTradeRefundRequest alipay_request = new AlipayTradeRefundRequest();
-//
-//                    AlipayTradeRefundModel model = new AlipayTradeRefundModel();
-//                    model.setOutTradeNo(out_trade_no);
-////                model.setTradeNo(trade_no);
-//                    model.setRefundAmount(refund_amount);
-//                    model.setRefundReason(refund_reason);
-//                    model.setOutRequestNo(out_request_no);
-//                    alipay_request.setBizModel(model);
-//
-//                    AlipayTradeRefundResponse alipay_response = client.execute(alipay_request);
-//                    String jsonStr = alipay_response.getBody();
-//                    log.info("支付宝退款返回结果：" + jsonStr);
-//                    JSONObject jsonObject = JSONObject.parseObject(jsonStr);
-//                    JSONObject vo = jsonObject.getJSONObject("alipay_trade_refund_response");
-//                    String code = vo.getString("code");
-//                    if ("10000".equals(code)) {
-//                        order_main.setPayStatus(OrderPayStatusEnum.REFUNDALL.getKey());
-//                        orderMainService.update(order_main);
-//                        return Result.success("globals.result.success");
-//                    } else {
-//                        return Result.error("支付宝接口调用失败" + vo.getString("msg"));
-//                    }
-                    return Result.error("订单状态不正确");
+                    AlipayClient client = new DefaultAlipayClient(AlipayConfig.URL, AlipayConfig.APPID, AlipayConfig.RSA_PRIVATE_KEY, AlipayConfig.FORMAT, AlipayConfig.CHARSET, AlipayConfig.ALIPAY_PUBLIC_KEY, AlipayConfig.SIGNTYPE);
+                    AlipayTradeRefundRequest alipay_request = new AlipayTradeRefundRequest();
+
+                    AlipayTradeRefundModel model = new AlipayTradeRefundModel();
+                    model.setOutTradeNo(out_trade_no);
+//                model.setTradeNo(trade_no);
+                    model.setRefundAmount(refund_amount);
+                    model.setRefundReason(refund_reason);
+                    model.setOutRequestNo(out_request_no);
+                    alipay_request.setBizModel(model);
+
+                    AlipayTradeRefundResponse alipay_response = client.execute(alipay_request);
+                    String jsonStr = alipay_response.getBody();
+                    log.info("支付宝退款返回结果：" + jsonStr);
+                    JSONObject jsonObject = JSONObject.parseObject(jsonStr);
+                    JSONObject vo = jsonObject.getJSONObject("alipay_trade_refund_response");
+                    String code = vo.getString("code");
+                    if ("10000".equals(code)) {
+                        order_main.setPayStatus(OrderPayStatusEnum.REFUNDALL.getKey());
+                        orderMainService.update(order_main);
+                        return Result.success("globals.result.success");
+                    } else {
+                        return Result.error("支付宝接口调用失败" + vo.getString("msg"));
+                    }
+//                    return Result.error("订单状态不正确");
                 }else{
-                    //微信退款
-                    return Result.error("订单状态不正确");
+                    WxGetPayInfoQO wxGetPayInfoQO = new WxGetPayInfoQO();
+                    wxGetPayInfoQO.setTotal_fee(order_main.getPayMoney().toString());
+                    wxGetPayInfoQO.setOut_trade_no(orderId);
+                    boolean b = wxPayService.wxRefund(wxGetPayInfoQO);
+                    if(b){
+                        order_main.setPayStatus(OrderPayStatusEnum.REFUNDALL.getKey());
+                        orderMainService.update(order_main);
+                        return Result.success("globals.result.success");
+                    }else {
+                        //微信退款
+                        return Result.error("订单状态不正确");
+                    }
+
                 }
 
 

@@ -13,17 +13,22 @@ import com.aebiz.app.order.modules.services.OrderMainService;
 import com.aebiz.app.web.commons.utils.CalculateUtils;
 import com.aebiz.app.web.commons.utils.HttpRequestUtil;
 import com.aebiz.app.web.commons.utils.TcpipUtil;
+import com.aebiz.app.web.commons.utils.WXPayUtil;
 import com.aebiz.app.wx.modules.models.WxGetPayInfoQO;
+import com.aebiz.app.wx.modules.services.WxConfigService;
 import com.aebiz.app.wx.modules.services.WxPayService;
 import com.aebiz.baseframework.base.Result;
 import com.aebiz.baseframework.redis.RedisService;
 import com.aebiz.baseframework.view.annotation.SJson;
 import com.alibaba.fastjson.JSON;
 import com.alipay.api.internal.util.AlipaySignature;
+import net.sf.json.JSONObject;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.nutz.dao.Cnd;
+import org.nutz.ioc.impl.PropertiesProxy;
+import org.nutz.lang.Strings;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +39,8 @@ import redis.clients.jedis.Jedis;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.ws.Action;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.util.*;
 
 /**
@@ -60,6 +67,12 @@ public class PayH5Controller {
     private RedisService redisService;
 
     private static final String WexinAccessToken="WexinAccessToken_key";
+
+    @Autowired
+    private PropertiesProxy config;
+
+    @Autowired
+    private WxConfigService wxConfigService;
 
 
 
@@ -102,20 +115,42 @@ public class PayH5Controller {
             wxGetPayInfoQO.setTotal_fee(order_main.getPayMoney().toString());
             wxGetPayInfoQO.setThisIp(TcpipUtil.getClientRealIp(request));
 
-            Jedis jedis = redisService.jedis();
-            String accessToken = jedis.get(WexinAccessToken);
-            if(accessToken == null){
-               log.error("accessToken已失效");
-            }else {
-                String wx_openId = jedis.get(accessToken);
-                wxGetPayInfoQO.setOpenId(wx_openId);
-            }
+            String wx_openId = (String) request.getSession().getAttribute("user_openId");
+            wxGetPayInfoQO.setOpenId(wx_openId);
+
             String json = wxPayService.wxGetPayInfo(wxGetPayInfoQO);
             return Result.success("ok",json);
         } catch (Exception e) {
             log.error("获取支付信息失败",e);
             return Result.error("fail");
         }
+    }
+
+    /**
+     * 进入微信jsapi获取code页；
+     * @return
+     */
+    @RequestMapping("/index.html")
+    public String index(String code,String orderId,HttpServletRequest request) {
+        String appId = config.get("wx.pay.AppID");
+        request.setAttribute("appId",appId);
+        request.setAttribute("code",code);
+        request.setAttribute("orderId",orderId);
+        if(!Strings.isEmpty(code)) {
+            String user_openId=(String) request.getSession().getAttribute("user_openId");
+            if(user_openId==null) {
+                String wxJson = wxConfigService.getWxApiAccessToken(true, code);
+                com.alibaba.fastjson.JSONObject jsonObject = JSON.parseObject(wxJson);
+                String access_token = jsonObject.getString("access_token");
+                String openId = jsonObject.getString("openid");
+//            if(access_token==null){
+//                wxConfigService.getWxApiAccessToken(true,code);
+//            }
+                log.info("获取到token-openId接口返回：" + access_token + "openId:" + openId);
+                request.getSession().setAttribute("user_openId", openId);
+            }
+        }
+        return "pages/front/h5/niantu/wxJsApiPay";
     }
 
     /***
@@ -233,13 +268,55 @@ public class PayH5Controller {
     public String wxNotify(HttpServletRequest request){
         try {
             //查询订单信息
-            Map<String,String> params = HttpRequestUtil.getRequestParameters(request.getParameterMap(),false);
-            log.info("微信支付回调请求参数："+JSON.toJSONString(params));
-            return "<xml>\n" +
-                    "\n" +
-                    "  <return_code><![CDATA[SUCCESS]]></return_code>\n" +
-                    "  <return_msg><![CDATA[OK]]></return_msg>\n" +
-                    "</xml>";
+            InputStream inStream = request.getInputStream();
+            ByteArrayOutputStream outSteam = new ByteArrayOutputStream();
+            byte[] buffer = new byte[1024];
+            int len = 0;
+            while ((len = inStream.read(buffer)) != -1) {
+                outSteam.write(buffer, 0, len);
+            }
+            String resultxml = new String(outSteam.toByteArray(), "utf-8");
+
+            log.info("微信支付回调请求参数："+resultxml);
+            JSONObject jsonObject = WXPayUtil.xml2Json(resultxml);
+            outSteam.close();
+            inStream.close();
+
+            String result_code = jsonObject.getString("result_code");
+            String out_trade_no = jsonObject.getString("out_trade_no");
+
+            String success = "<xml>\n" +
+                            "\n" +
+                            "  <return_code><![CDATA[SUCCESS]]></return_code>\n" +
+                            "  <return_msg><![CDATA[OK]]></return_msg>\n" +
+                            "</xml>";
+            String fail = "<xml>\n" +
+                            "\n" +
+                            "  <return_code><![CDATA[FAIL]]></return_code>\n" +
+                            "  <return_msg><![CDATA[NO]]></return_msg>\n" +
+                            "</xml>";
+
+            if("SUCCESS".equals(result_code)){
+                //2.查询订单明细
+                Order_main order_main = orderMainService.fetch(out_trade_no);
+                if(order_main==null){
+                    log.error("订单不存在："+out_trade_no);
+                    return fail;
+                }
+                //4.校验订单状态
+                if(OrderPayStatusEnum.NO.getKey()!=order_main.getPayStatus()){
+                    log.error("当前订单状态非待支付状态："+out_trade_no);
+                    return fail;
+                }
+                //5.更新订单数据
+                order_main.setPayType(OrderPayTypeEnum.WEIXINPAY.getKey());
+                order_main.setPayStatus(OrderPayStatusEnum.PAYALL.getKey());
+                orderMainService.update(order_main);
+                return success;
+            }else {
+                return fail;
+            }
+
         } catch (Exception e) {
             log.error("获取支付信息失败",e);
             return Result.error("fail").toString();

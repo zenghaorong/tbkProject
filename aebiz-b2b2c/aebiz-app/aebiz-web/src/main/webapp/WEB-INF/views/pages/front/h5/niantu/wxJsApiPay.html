@@ -42,9 +42,9 @@
         <!--<a style="float: left;">-->
             <!--<span class="mui-icon mui-icon-checkmarkempty" style="font-size: 65px;"></span>-->
         <!--</a>-->
-        <span style="float: left;">
+        <div style="width: 200px;margin: 0 auto;">
             正在支付中请勿返回....
-        </span>
+        </div>
     </div>
 </div>
 <script type="text/javascript" src="${base!}/assets/front/h5/js/mui.js" ></script>
@@ -156,7 +156,7 @@
                 if(res.err_msg == "get_brand_wcpay_request:ok" ){
                     // 使用以上方式判断前端返回,微信团队郑重提示：
                     //res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
-                    window.location.href = "${base!}/open/h5/order/goOrderInfo.html?orderId=${orderId}";
+                    window.location.href = "${base!}/open/h5/order/goOrderPayInfo.html?orderId=${orderId}";
                 }else {
                     alert(JSON.stringify(res))
                 }

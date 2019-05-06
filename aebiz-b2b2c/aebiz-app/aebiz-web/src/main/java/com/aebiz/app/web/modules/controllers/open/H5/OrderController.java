@@ -201,6 +201,29 @@ public class OrderController {
         return "pages/front/h5/niantu/orderInfo";
     }
 
+    /**
+     * 进入订单详情页
+     */
+    @RequestMapping("/goOrderPayInfo.html")
+    public String goOrderPayInfo(String orderId,HttpServletRequest request) {
+        Subject subject = SecurityUtils.getSubject();
+        try {
+            Account_user accountUser = (Account_user) subject.getPrincipal();
+            if (accountUser == null) {
+                return "pages/front/h5/niantu/login";
+            }
+        }catch (Exception e){
+            return "pages/front/h5/niantu/login";
+        }
+        request.setAttribute("orderId",orderId);
+        Order_main order_main = orderMainService.fetch(orderId);
+        request.setAttribute("order",order_main);
+        double money = order_main.getPayMoney();
+        double payMoney = CalculateUtils.div(money,100,2);
+        request.setAttribute("payMoney",payMoney);
+        return "pages/front/h5/niantu/orderPayInfo";
+    }
+
 
     /**
      * 进入收银台
@@ -456,24 +479,26 @@ public class OrderController {
             Account_user accountUser = (Account_user) subject.getPrincipal();
             Cnd cndMain = Cnd.NEW();
             String status = request.getParameter("status");
-            if("1".equals(status)){
-                cndMain.and("payStatus","=",0);
-            }
-            if("2".equals(status)){
-                cndMain.and("payStatus","=",3);
-                cndMain.and("deliveryStatus","=",0);
-            }
-            if("3".equals(status)){
-                cndMain.and("payStatus","=",3);
-                cndMain.and("deliveryStatus","=",3);
-            }
-            if("4".equals(status)){
-                cndMain.and("payStatus","=",3);
-                cndMain.and("getStatus","=",1);
+            if(status!=null) {
+                if ("1".equals(status)) {
+                    cndMain.and("payStatus", "=", 0);
+                }
+                if ("2".equals(status)) {
+                    cndMain.and("payStatus", "=", 3);
+                    cndMain.and("deliveryStatus", "=", 0);
+                }
+                if ("3".equals(status)) {
+                    cndMain.and("payStatus", "=", 3);
+                    cndMain.and("deliveryStatus", "=", 3);
+                }
+                if ("4".equals(status)) {
+                    cndMain.and("payStatus", "=", 3);
+                    cndMain.and("getStatus", "=", 1);
 
-            }
-            if("5".equals(status)){
-                cndMain.and("payStatus","in",OrderPayStatusEnum.REFUNDWAIT.getKey()+","+OrderPayStatusEnum.REFUNDALL.getKey());
+                }
+                if ("5".equals(status)) {
+                    cndMain.and("payStatus", "in", OrderPayStatusEnum.REFUNDWAIT.getKey() + "," + OrderPayStatusEnum.REFUNDALL.getKey());
+                }
             }
             cndMain.and("orderType", "=", OrderTypeEnum.product_order_type.getKey());
             cndMain.and("accountId", "=", accountUser.getAccountId());

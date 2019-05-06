@@ -541,27 +541,37 @@ layout("/layouts/store.html"){
 
     //订单退款
     function orderRefunds(id){
-        $.ajax({
-            type:"POST",
-            url:"${base!}/store/order/main/orderRefunds.html",
-            dataType:"JSON",
-            data:{
-                orderId:id,
-            },
-            success:function(data){
-                if (data.code == 0) {
-                    var d = data.data;
-                    layer.alert('退款成功', {
-                        skin: 'layui-layer-molv' //样式类名
-                        ,closeBtn: 0
-                    }, function(){
-                        orderQuery(5);
-                    });
-                } else {
-                    layer.alert(data.msg)
+        //询问框
+        var index2 = layer.confirm('您确定给当前订单退款吗', {
+            btn: ['是','否'] //按钮
+        }, function(){
+            $.ajax({
+                type:"POST",
+                url:"${base!}/store/order/main/orderRefunds.html",
+                dataType:"JSON",
+                data:{
+                    orderId:id,
+                },
+                success:function(data){
+                    if (data.code == 0) {
+                        var d = data.data;
+                        var index = layer.alert('退款成功', {
+                            skin: 'layui-layer-molv' //样式类名
+                            ,closeBtn: 0
+                        }, function(){
+                            layer.close(index2);
+                            layer.close(index);
+                            orderQuery(5);
+                        });
+                    } else {
+                        layer.alert(data.msg)
+                    }
                 }
-            }
+            });
+        }, function(){
+
         });
+
     }
 
     //支付方式渲染

@@ -368,7 +368,7 @@ public class WXPayUtil {
         return sXml;
     }
 
-    public InputStream getCertStream() {
+    public static InputStream getCertStream() {
         String certPath = "/Server/cer/wx/apiclient_cert.p12";
         File file = new File(certPath);
         InputStream certStream = null;

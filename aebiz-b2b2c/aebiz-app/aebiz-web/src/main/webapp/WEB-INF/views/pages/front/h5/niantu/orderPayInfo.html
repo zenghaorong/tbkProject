@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>订单详情页</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="${base!}/assets/front/h5/css/mui.min.css" />
+    <link rel="stylesheet" href="${base!}/assets/front/h5/css/hryc.css" />
+    <!--App自定义的css-->
+    <!--<link rel="stylesheet" type="text/css" href="../css/app.css"/>-->
+    <style>
+        .mui-table-view .mui-media-object {
+            line-height: 42px;
+            max-width: 145px;
+            height: 100px;
+        }
+        .jiage-text{
+            font-size: 18px;
+            color: red;
+            margin-right:10px ;
+        }
+        [v-cloak]{
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+
+
+<header class="mui-bar mui-bar-nav top-color">
+    <a class=" mui-icon mui-icon-left-nav mui-pull-left"
+       onclick="window.location.href='${base!}/open/h5/order/goOrderList.html'"
+       style="color: white;"></a>
+    <h1 class="mui-title" style="color: white;">
+        订单详情页
+    </h1>
+</header>
+<div id="vue">
+    <!--#if(order.payStatus == 3){#-->
+    <div style="margin:0 auto;margin-top: 60px;overflow: hidden;width: 76px;" >
+        <img src="${base!}/assets/front/h5/img/ico_success.png">
+    </div>
+    <div style="margin:0 auto;width: 52px;" >
+        <span>已支付</span>
+    </div>
+    <!--#}else{#-->
+    <div style="margin:0 auto;margin-top: 60px;overflow: hidden;width: 76px;" >
+        <img src="${base!}/assets/front/h5/img/ico_wait.png">
+    </div>
+    <div style="margin:0 auto;width: 52px;" >
+        <!--#if(order.payStatus == 0 ||order.payStatus == 1 ||order.payStatus == 2){#-->
+        <span>待支付</span>
+        <!--#}#-->
+        <!--#if(order.payStatus == 4){#-->
+        <span>待退款</span>
+        <!--#}#-->
+        <!--#if(order.payStatus == 6){#-->
+        <span>已退款</span>
+        <!--#}#-->
+    </div>
+    <!--#}#-->
+
+
+    <div class="mui-card" >
+
+        <p style="margin-left: 10px;color: black;margin-top: 10px;">
+            订单详情
+        </p>
+        <div class="mui-card-header">
+            <div>订单编号：${orderId}</div>
+        </div>
+        <div class="mui-card-header">
+            <div>实付款：<span style="color: red;">${payMoney}</span></div>
+        </div>
+        <div class="mui-card-content">
+            <ul class="mui-table-view">
+                <li class="mui-table-view-cell mui-media" v-for="item in orderProductList" :key="item.id">
+                    <a href="#">
+                        <img class="mui-media-object mui-pull-left" :src="item.imgUrl">
+                        <div class="mui-media-body" style="white-space:normal;">
+                            <span>{{item.goodsName}}</span>
+                            <p class='mui-ellipsis'style="margin-top: 35px;margin-left: 0px;">
+                                <!--<span class="jiage-text">￥36.00</span>-->
+                                <span>数量：*{{item.buyNum}}</span>
+                            </p>
+                        </div>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+
+
+<!--#if(order.payStatus == 0 ||order.payStatus == 1 ||order.payStatus == 2){#-->
+<div style="width: 300px;margin: 0 auto;">
+    <button type="button" onclick="window.location.reload()" class="mui-btn mui-btn-primary mui-btn-block">点击刷新</button>
+</div>
+<!--#}#-->
+<!--#if(order.payStatus == 3 && order.deliveryStatus==3 && order.getStatus==0){#-->
+<div style="width: 300px;margin: 0 auto;">
+    <button type="button" onclick="confirmReceipt()" class="mui-btn mui-btn-primary mui-btn-block">确认收货</button>
+</div>
+<!--#}#-->
+<!--#if(order.payStatus == 3){#-->
+<div style="width: 300px;margin: 0 auto;">
+    <button type="button" onclick="window.location.href='${base!}/open/h5/refunds/orderRefunds.html?orderId=${orderId!}'" class="mui-btn mui-btn-primary mui-btn-block">申请售后</button>
+</div>
+<!--#}#-->
+<script type="text/javascript" src="${base!}/assets/front/h5/js/mui.js" ></script>
+<script type="text/javascript" src="${base!}/assets/front/h5/js/vue.js" ></script>
+<script type="text/javascript" src="${base!}/assets/front/h5/js/jquery-2.0.0.min.js" ></script>
+<script type="application/javascript">
+    mui.init({
+        swipeBack:true //启用右滑关闭功能
+    });
+
+    var vue = new Vue({
+        el: '#vue',
+        data: {
+            orderProductList: [],
+        },
+        created:function () {   //实例初始化创建完成执行
+
+            this.getOrderProductList()     //调用自身方法
+
+        },
+        methods:{              //定义封装方法
+            //获得订单组商品列表
+            getOrderProductList:function () {
+                var self = this;
+                $.ajax({
+                    type:"POST",
+                    url:"${base!}/open/h5/order/getOrderProductList.html",
+                    dataType:"JSON",
+                    data:{
+                        orderId:'${orderId}'
+                    },
+                    success:function(data){
+                        if (data.code == 0) {
+                            var d = data.data;
+                            self.orderProductList = d;
+                        } else {
+
+                        }
+                    }
+                });
+
+            }
+        },
+        watch:{     //监听器
+            // carModel:function () {
+            //     this.getProvince();
+            // }
+        }
+
+    })
+    function confirmReceipt() {
+        $.ajax({
+            type:"POST",
+            url:"${base!}/open/h5/order/confirmReceipt.html",
+            dataType:"JSON",
+            data:{
+                orderId:'${orderId}'
+            },
+            success:function(data){
+                if (data.code == 0) {
+                    window.location.reload();
+                } else {
+
+                }
+            }
+        });
+    }
+
+    window.addEventListener("popstate", function(e) {
+        window.location = '${base!}/open/h5/order/goOrderList.html';
+    }, false);
+</script>
+</body>
+</html>

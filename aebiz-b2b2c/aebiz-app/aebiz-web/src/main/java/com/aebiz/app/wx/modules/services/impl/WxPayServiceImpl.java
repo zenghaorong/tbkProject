@@ -157,7 +157,7 @@ public class WxPayServiceImpl implements WxPayService {
             String appid = config.get("wx.pay.AppID");
             String appSecret = config.get("wx.pay.AppSecret");
             String mchid = config.get("wx.pay.mchid");
-            String notify_url = config.get("wx.pay.notify_url");
+            String path = config.get("wx.certificate.p12.path");
 
             SortedMap<String,String> map =  new TreeMap<String, String>();
             String nonce_str = WXPayUtil.generateNonceStr();
@@ -177,7 +177,8 @@ public class WxPayServiceImpl implements WxPayService {
             String postXml = json2Xml(mapNobject);
             log.info("请求xml: "+postXml);
             //3.退款接口
-            String wxXml = HttpClientUtil.submitHttpDate("https://api.mch.weixin.qq.com/secapi/pay/refund", postXml);
+            String wxXml = HttpClientUtil.payHttps("https://api.mch.weixin.qq.com/secapi/pay/refund",mchid,
+                    path,postXml);
             log.info("微信退款返回参数" + wxXml);
             JSONObject xmlJson =  xml2Json(wxXml);
             log.info("微信退款返回参数信息："+xmlJson.toString());

@@ -88,7 +88,7 @@
                 var self = this;
                 $.ajax({
                     type:"POST",
-                    url:"${base!}/open/h5/address/addressList.html?productList="+json,
+                    url:"${base!}/open/h5/address/addressList.html?productList="+encodeURIComponent(json),
                     dataType:"JSON",
                     data:{
 
@@ -106,7 +106,7 @@
             },
             goUpd:function (id) {
                 var json = '${productList!}';
-                window.location.href='${base!}/open/h5/address/goAddressUp.html?id='+id+'&productList='+json;
+                window.location.href='${base!}/open/h5/address/goAddressUp.html?id='+id+'&productList='+encodeURIComponent(json);
             },
             del:function (id) {
                 var self = this;
@@ -147,7 +147,7 @@
                     success:function(data){
                         if (data.code == 0) {
                             var json = '${productList!}';
-                            window.location.href = '${base!}/open/h5/order/orderConfirmation.html?productList='+json;
+                            window.location.href = '${base!}/open/h5/order/orderConfirmation.html?productList='+encodeURIComponent(json);
                         } else {
 
                         }
@@ -156,7 +156,7 @@
             },
             goAdd:function () {
                 var json = '${productList!}';
-                window.location.href='${base!}/open/h5/address/goAddressAdd.html?productList='+json;
+                window.location.href='${base!}/open/h5/address/goAddressAdd.html?productList='+encodeURIComponent(json);
             }
         },
         watch:{     //监听器

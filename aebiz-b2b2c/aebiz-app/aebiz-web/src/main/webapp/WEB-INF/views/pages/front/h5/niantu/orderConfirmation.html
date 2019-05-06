@@ -235,7 +235,7 @@
             save:function () {
                 var json = '${productList}';
                 var addressId = this.address.id;
-                window.location.href="${base!}/open/h5/order/checkoutCounter.html?productList="+json+"&addressId="+addressId+"&couponId="+this.couponId;
+                window.location.href="${base!}/open/h5/order/checkoutCounter.html?productList="+encodeURIComponent(json)+"&addressId="+addressId+"&couponId="+this.couponId;
             }
         },
         watch:{     //监听器
@@ -255,7 +255,7 @@
 
     function goAddress() {
         var json = '${productList}';
-        window.location.href="${base!}/open/h5/address/goAddress.html?productList="+json
+        window.location.href="${base!}/open/h5/address/goAddress.html?productList="+encodeURIComponent(json)
     }
 
 </script>

@@ -100,7 +100,7 @@
                         if (data.code == 0) {
                             var d = data.data;
                             var json = '${productList!}';
-                            window.location.href='${base!}/open/h5/address/goAddress.html?productList='+json;
+                            window.location.href='${base!}/open/h5/address/goAddress.html?productList='+encodeURIComponent(json);
                         } else {
 
                         }

@@ -1,0 +1,53 @@
+<div class="modal-body no-p">
+    <div class="row">
+        <div class="col-xs-12">
+            <section class="panel panel-primary no-b">
+                <header class="panel-heading clearfix brtl brtr">
+                    <div class="overflow-hidden">
+                        <a href="javascript:;" class="h4 show no-m pt5">客户详情</a>
+                    </div>
+                </header>
+                <div class="list-group">
+                    <table class="table table-bordered table-striped mg-t datatable">
+                        <tbody>
+                        <tr>
+                            <td >${msg['store.customer.column.name']}</td>
+                            <td >${obj.name}</td>
+                        </tr>
+                        <tr>
+                            <td>${msg['store.customer.column.imageUrl']}</td>
+                            <td> <a style="height: 36px;width: 45px;display: inline-block" href="${obj.imageUrl}" target="_blank">
+                                <img src="${obj.imageUrl}" style="max-height: 100%;max-width: 100%;">
+                            </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>${msg['store.customer.column.gender']}</td>
+                            <td>${obj.gender}</td>
+                        </tr>
+                        <tr>
+                            <td>${msg['store.customer.column.mobile']}</td>
+                            <td>${obj.mobile}</td>
+                        </tr>
+                        <tr>
+                            <td>${msg['store.customer.column.emial']}</td>
+                            <td>${obj.emial}</td>
+                        </tr>
+                        <!--<tr>
+                            <td>${msg['store.customer.column.accStatus']}</td>
+                            <td>${obj.accStatus}</td>
+                        </tr>-->
+                        <tr>
+                            <td>${msg['store.customer.column.type']}</td>
+                            <td>${obj.type}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary btn-block" data-dismiss="modal">${msg['globals.button.ok']}</button>
+</div>

@@ -81,8 +81,11 @@ public class ProductController {
                 pageNumber = 0;
             }
             String key = request.getParameter("key");
-
+            String isRecommend = request.getParameter("isRecommend");
             Cnd cnd = Cnd.NEW();
+            if(StringUtils.isNotEmpty(isRecommend)){
+                cnd.and("recommend","=",Integer.parseInt(isRecommend));
+            }
             if(StringUtils.isNotEmpty(key)){
                 cnd.and("name","like","%"+key+"%");
             }

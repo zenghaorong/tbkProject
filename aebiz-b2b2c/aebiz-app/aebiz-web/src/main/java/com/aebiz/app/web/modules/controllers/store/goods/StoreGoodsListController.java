@@ -584,4 +584,23 @@ public class StoreGoodsListController {
         return Result.success("", goodsService.getStatisticMap(StringUtil.getStoreId()));
     }
 
+    /**
+     * 获取商品统计数据
+     *
+     * @return
+     */
+    @RequestMapping("setRecommend")
+    @SJson
+    @RequiresPermissions("store.goods.manager.goods")
+    public Object setRecommend(@RequestParam("id") String id,@RequestParam("isRecommend") Integer isRecommend) {
+        try {
+            Goods_main goods_main = goodsService.fetch(id);
+            goods_main.setRecommend(isRecommend);
+            goodsService.update(goods_main);
+        }catch (Exception e){
+            return Result.error();
+        }
+        return Result.success();
+    }
+
 }

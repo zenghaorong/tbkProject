@@ -1,0 +1,338 @@
+<!--#
+layout("/layouts/store.html"){
+#-->
+<section class="content-wrap bg-white">
+    <header class="header navbar bg-white shadow">
+        <form class="form-horizontal js-search-form" id="search_form">
+            <div class="row mt10">
+                <div class="col-sm-11">
+                    <div class="form-group">
+
+                        <label class="col-sm-1 control-label">客户名称:</label>
+                        <div class="col-sm-2">
+                            <input type="text" class="form-control" id="name" name="name">
+                        </div>
+
+                        <label class="col-sm-1 control-label">手机号码:</label>
+                        <div class="col-sm-2">
+                            <input type="text" class="form-control " id="mobile" name="mobile">
+                        </div>
+                        <input type="hidden" id="culesState" name="culesState" data-parsley-phone maxlength="11">
+                        <div class="col-sm-2">
+                            <label class="col-sm-2 control-label"></label>
+                            <div class="col-sm-5">
+                                <button type="button" class="btn btn-primary" id="searchBtn">查询</button>
+                            </div>
+                            <div class="col-sm-5">
+                                <button type="reset" class="btn btn-default" id="btn_search_reset">重置</button>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <label class="col-sm-2 control-label"></label>
+                            <div class="col-sm-3">
+                                <button type="button" class="btn btn-primary " data-toggle="modal" data-target="#dialogImport">导入</button>
+                            </div>
+                            <div class="col-sm-3">
+                                <button class="btn btn-primary js-export" type="button">导出</button>
+                            </div>
+                            <div class="col-sm-3">
+                                <a id="add" class="btn btn-primary pull-right" href="${base}/store/customer/add" data-pjax><i class="ti-plus"></i> ${msg['globals.button.add']}</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </header>
+    <div class=panel-body style="padding-top: 50px;">
+        <div class="table-responsive no-border"  style="min-height: 500px;">
+            <table class="table table-bordered table-striped mg-t datatable">
+                <thead>
+                    <tr>
+                        <!--<th>序号</th>-->
+                        <th>${msg['store.customer.column.name']}</th>
+                        <th>${msg['store.customer.column.gender']}</th>
+                        <th>${msg['store.customer.column.mobile']}</th>
+                        <th>${msg['store.customer.column.emial']}</th>
+                       <!-- <th>${msg['store.customer.column.accStatus']}</th>-->
+                        <th>${msg['globals.table.column.operation']}</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</section>
+<div id="dialogDelete" class="modal fade bs-modal-sm" tabindex="-2" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-12">
+
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">${msg['globals.button.cancel']}</button>
+                <button id="okDel" type="button" class="btn btn-primary" data-loading-text="${msg['globals.button.delete.tip']}">${msg['globals.button.confirm']}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="dialogDetail" class="modal fade bs-modal-sm" tabindex="-3" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>
+
+<!--导入的模板-->
+<div id="dialogImport" class="modal fade bs-modal-sm" tabindex="-2" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">导入</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <form class="form-horizontal" id="importForm" action="${base}/store/customer/import"
+                              method="post" enctype="multipart/form-data" class="form-search" style="padding-left:20px;text-align:center;" >
+                            <input type="file" class="file js-upload" name="file" class="file-loading">　　
+                        </form>
+                        <div class="js-upload-result">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="${base}/store/customer/import/template" style="color: #00a0e9;float: left">下载模板</a>
+                <button type="button" class="btn btn-default" data-dismiss="modal">${msg['globals.button.cancel']}</button>
+                <button type="button" class="btn btn-primary js-ok-upload" data-loading-text="正在导入，请稍等...">导入</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+
+    $(function () {
+        $("#importForm").ajaxForm({
+            dataType: 'json',
+            beforeSubmit: function (arr, form, options) {
+                form.closest(".modal-body").next(".modal-footer").find(".js-ok-upload").button("loading");
+            },
+            success: function (data, statusText, xhr, form) {
+                if (data.code==0) {
+                    $(".js-upload-result").html(function () {
+                        return template("tpl_file_upload_result", data.data);
+                    });
+                    $("#dialogImport").modal('hide');
+                    Toast.success(data.msg);
+                } else {
+                    Toast.error(data.msg);
+                }
+            }
+        });
+        $(".js-ok-upload").click(function () {
+            $("#importForm").submit();
+        });
+        $("#dialogImport").on("hidden.bs.modal", function () {
+            $(this).removeData("bs.modal");
+            $("#importForm").resetForm();
+            $(".js-ok-upload").button("reset");
+            $(".js-upload-result").empty();
+            $('.datatable').DataTable().ajax.reload();
+        });
+    });
+</script>
+
+<script src="${base}/assets/platform/vendor/fileupload/bootstrap-fileupload.min.js" ></script>
+
+<script id="tpl_file_upload_result" type="text/html">
+    <div>
+        {{each data as value i}}
+        <span>{{i}}:
+            {{each value as msg}}
+                {{msg}};
+            {{/each}}
+        </span><br>
+        {{/each}}
+    </div>
+</script>
+
+<script language="JavaScript">
+    var datatable;
+    function initDatatable() {
+        datatable = $('.datatable').DataTable({
+            "dom": '<"toolbar">frtip',
+            "searching":false,
+            "processing": false,
+            "serverSide": true,
+            "select": true,
+            "ordering": true,
+            "language": {
+                "url": "${base}/assets/platform/vendor/datatables/locale/${lang}.json"
+            },
+            "preDrawCallback": function () {
+                sublime.showLoadingbar($(".main-content"));
+            },
+            "drawCallback": function () {
+                sublime.closeLoadingbar($(".main-content"));
+            },
+            "ajax": {
+                "url": "${base}/store/customer/data",
+                "type": "post",
+                "data": function (d) {
+                    var $search=$("#search_form");
+                    d.name=$("#name").val();
+                    d.mobile=$("#mobile").val();
+                }
+            },
+            "order": [[0, "asc"]],
+            "columns": [
+                /*{"data": "location", "bSortable": true},*/
+                {"data": "name", "bSortable": true},
+                {"data": "gender", "bSortable": true},
+                {"data": "mobile", "bSortable": true},
+                {"data": "emial", "bSortable": true},
+                /*{"data": "accStatus", "bSortable": true},*/
+            ],
+            "columnDefs": [
+                {
+                    "render": function (data, type, row) {
+                        var str =  '<div class="btn-group"><button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">' +
+                                ' <i class="ti-settings"></i> <span class="ti-angle-down"></span></button><ul class="dropdown-menu" role="menu">' +
+                                '<li><a href="${base}/store/customer/detail/' + row.id + '" data-toggle="modal" data-target="#dialogDetail">${msg["globals.button.detail"]}</a></li>' +
+                                '<li><a href="${base}/store/customer/edit/' + row.id + '" data-pjax>${msg["globals.button.update"]}</a></li>' +
+                                '<li class="divider"></li>';
+
+                         if (row.accStatus=="正常") {
+                            //str += '<li><a href="javascript:;" onclick="changeState(\'' + row.id + '\',\'冻结\',\''+row.name +'\',\''+row.mobile
+                             //   +'\')">冻 结</a></li>';
+                             str +='<li><a href="javascript:;" onclick="del(\'' + row.id +'\',\''+row.name +'\',\''+row.mobile
+                                 +'\')">${msg["globals.button.delete"]}</a></li>'
+                        } else if(row.accStatus=="冻结")  {
+                            //str += '<li><a href="javascript:;" onclick="changeState(\'' + row.id + '\',\'正常\',\''+row.name +'\',\''+row.mobile
+                            //    +'\')">解 冻</a></li>';
+                             str +='<li><a href="javascript:;" onclick="del(\'' + row.id +'\',\''+row.name +'\',\''+row.mobile
+                                 +'\')">${msg["globals.button.delete"]}</a></li>'
+                        }
+                        str += '</ul></div>';
+                        return str;
+                    },
+                    "targets": 4
+                }
+            ]
+        });
+        datatable.on('click', 'tr', function () {
+            $(this).toggleClass('selected');
+        });
+        $("#searchBtn").on('click', function () {
+            datatable.ajax.reload();
+        });
+    }
+    function del(id,name,mobile) {
+        $(".modal-title").text("删 除");
+        $(".col-xs-12").text("你确定删除名为："+name+"("+mobile+")"+"的用户吗?");
+        var dialog = $("#dialogDelete");
+        dialog.modal("show");
+        dialog.find("#okDel").unbind("click");
+        dialog.find("#okDel").bind("click", function (event) {
+            var btn = $(this);
+            btn.button("loading");
+            $.post("${base}/store/customer/delete", {id:id}, function (data) {
+                if (data.code == 0) {
+                    datatable.ajax.reload(null,false);
+                } else {
+                    Toast.error(data.msg);
+                }
+                btn.button("reset");
+                dialog.modal("hide");
+            }, "json");
+        });
+    }
+    function delCheck() {
+        var chks = datatable.rows('.selected').data();
+        if (chks.length > 0) {
+            var ids = [];
+            $.each(datatable.rows('.selected').data(), function (i, n) {
+                ids.push(n.id);
+            });
+            var dialog = $("#dialogDelete");
+            dialog.modal("show");
+            dialog.find("#okDel").unbind("click");
+            dialog.find("#okDel").bind("click", function (event) {
+                var btn = $(this);
+                btn.button("loading");
+                $.post("${base}/store/customer/delete", {ids: ids.toString()}, function (data) {
+                    if (data.code == 0) {
+                        datatable.ajax.reload(null,false);
+                    } else {
+                        Toast.error(data.msg);
+                    }
+                    btn.button("reset");
+                    dialog.modal("hide");
+                }, "json");
+            });
+        } else {
+            Toast.warning("${msg['globals.button.delete.select']}");
+        }
+    }
+
+    function changeState(id, state,name,mobile) {
+        var dialog = $("#dialogDelete");
+        dialog.modal("show");
+        dialog.find("#okDel").unbind("click");
+        if(state=="冻结"){
+         $(".modal-title").text("冻 结");
+        $(".col-xs-12").text("你确定冻结名为："+name+"("+mobile+")"+"的用户吗?");
+        }else{
+            $(".modal-title").text("解 冻");
+            $(".col-xs-12").text("你确定解冻名为："+name+"("+mobile+")"+"的用户吗?");
+        }
+        dialog.find("#okDel").bind("click", function (event) {
+            var btn = $(this);
+
+        $.post("${base}/store/customer/changeState", {id: id, state: state}, function (data) {
+            if (data.code == 0) {
+                Toast.success(data.msg);
+                datatable.ajax.reload();
+            } else {
+                Toast.error(data.msg);
+            }
+            btn.button("reset");
+            dialog.modal("hide");
+        }, "json");
+        });
+    }
+
+    $(function () {
+        initDatatable();
+        $("#dialogDetail").on("hidden.bs.modal", function () {
+            $(this).removeData("bs.modal");
+        });
+
+        setTimeout(function () {
+            $(".js-upload").fileinput({
+                showUpload: false,
+                maxFileCount: 10,
+                mainClass: "input-group-lg"
+            });
+        }, 500);
+
+        $(".js-export").click(function () {
+
+            $(".js-search-form").attr({"action": "${base}/store/customer/export", "method": "post"}).submit();
+            $(".js-search-form").attr({"action": "", "method": "post"})
+        });
+
+    });
+</script>
+<!--#}#-->

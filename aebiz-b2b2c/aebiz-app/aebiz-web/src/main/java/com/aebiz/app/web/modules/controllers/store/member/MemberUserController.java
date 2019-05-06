@@ -1,4 +1,4 @@
-package com.aebiz.app.web.modules.controllers.platform.member;
+package com.aebiz.app.web.modules.controllers.store.member;
 
 import com.aebiz.app.acc.modules.models.Account_info;
 import com.aebiz.app.acc.modules.models.Account_login;
@@ -7,9 +7,10 @@ import com.aebiz.app.acc.modules.services.AccountInfoService;
 import com.aebiz.app.acc.modules.services.AccountLoginService;
 import com.aebiz.app.acc.modules.services.AccountUserService;
 import com.aebiz.app.member.modules.commons.vo.Member;
-import com.aebiz.app.member.modules.models.Member_account;
 import com.aebiz.app.member.modules.models.Member_user;
-import com.aebiz.app.member.modules.services.*;
+import com.aebiz.app.member.modules.services.MemberAccountService;
+import com.aebiz.app.member.modules.services.MemberTypeService;
+import com.aebiz.app.member.modules.services.MemberUserService;
 import com.aebiz.app.order.modules.models.Order_main;
 import com.aebiz.app.order.modules.services.OrderMainService;
 import com.aebiz.app.shop.modules.services.ShopAreaService;
@@ -43,12 +44,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
-
 import java.util.Calendar;
 import java.util.List;
 
 @Controller
-@RequestMapping("/platform/member/user")
+@RequestMapping("/store/member/user")
 public class MemberUserController {
     private static final Log log = Logs.get();
 
@@ -77,16 +77,16 @@ public class MemberUserController {
     private OrderMainService orderMainService;
 
     @RequestMapping("")
-    @RequiresPermissions("platform.member.user")
+    @RequiresPermissions("store.member.user")
     public String index(HttpServletRequest req) {
         //初始化会员类型
         req.setAttribute("typeList", memberTypeService.query(Cnd.NEW()));
-        return "pages/platform/member/user/index";
+        return "pages/store/member/user/index";
     }
 
     @RequestMapping("/data")
     @SJson("full")
-    @RequiresPermissions("platform.member.user")
+    @RequiresPermissions("store.member.user")
     public Object data(@RequestParam(value = "typeId", required = false) String typeId,
                        @RequestParam(value = "levelId", required = false) String levelId,
                        @RequestParam(value = "queryStr", required = false) String queryStr,
@@ -138,17 +138,17 @@ public class MemberUserController {
     }
 
     @RequestMapping("/add")
-    @RequiresPermissions("platform.member.user")
+    @RequiresPermissions("store.member.user")
     public String add(HttpServletRequest req) {
         //初始化会员类型
         req.setAttribute("typeList", memberTypeService.query(Cnd.NEW()));
-        return "pages/platform/member/user/add";
+        return "pages/store/member/user/add";
     }
 
     @RequestMapping("/addDo")
     @SJson
     @SLog(description = "Member_user")
-    @RequiresPermissions("platform.member.user.add")
+    @RequiresPermissions("store.member.user.add")
     public Object addDo(Member_user memberUser, Account_user accountUser, Account_info accountInfo) {
         try {
             memberUserService.addMemberUser(memberUser, accountUser, accountInfo);
@@ -159,20 +159,20 @@ public class MemberUserController {
     }
 
     @RequestMapping("/edit/{id}")
-    @RequiresPermissions("platform.member.user")
+    @RequiresPermissions("store.member.user")
     public String edit(@PathVariable String id, HttpServletRequest req) {
         // 初始化数据
         Member_user memberUser = memberUserService.fetchLinks(memberUserService.fetch(id), "^(memberType|memberLevel|memberAccount|accountInfo|accountUser)$");
         req.setAttribute("obj", memberUser);
         //初始化会员类型
         req.setAttribute("typeList", memberTypeService.query(Cnd.NEW()));
-        return "pages/platform/member/user/edit";
+        return "pages/store/member/user/edit";
     }
 
     @RequestMapping("/editDo")
     @SJson
     @SLog(description = "Member_user")
-    @RequiresPermissions("platform.member.user.edit")
+    @RequiresPermissions("store.member.user.edit")
     public Object editDo(Member_user memberUser, Account_user accountUser, Account_info accountInfo, @RequestParam("memberUserId") String memberUserId, @RequestParam("accountUserId") String accountUserId, @RequestParam("accountId") String accountId) {
         try {
             memberUser.setId(memberUserId);
@@ -186,7 +186,7 @@ public class MemberUserController {
     }
 
     @RequestMapping("/detail/{id}")
-    @RequiresPermissions("platform.member.user")
+    @RequiresPermissions("store.member.user")
     public String detail(@PathVariable String id, HttpServletRequest req) {
         Member_user user = memberUserService.fetchLinks(memberUserService.fetch(id), "^(memberType|memberLevel|memberAccount|accountUser|accountInfo)$");
         if (user != null && !Strings.isEmpty(user.getAccountId())) {
@@ -198,12 +198,12 @@ public class MemberUserController {
             req.setAttribute("lastRecord", getLastRecord(user.getAccountId()));
             req.setAttribute("area",shopAreaService);
         }
-        return "pages/platform/member/user/detail";
+        return "pages/store/member/user/detail";
     }
 
     @RequestMapping("/resetPwd/{id}")
     @SJson
-    @RequiresPermissions("platform.member.user.resetPwd")
+    @RequiresPermissions("store.member.user.resetPwd")
     @SLog(description = "重置店铺密码")
     public Object resetPwd(@PathVariable(required = false) String id, HttpServletRequest req) {
         try {
@@ -227,7 +227,7 @@ public class MemberUserController {
     @RequestMapping("/check")
     @SJson
     @SLog(description = "Member_user")
-    @RequiresPermissions("platform.member.user")
+    @RequiresPermissions("store.member.user")
     public Object checkUnique(@RequestParam("fieldName") String fn, @RequestParam("fieldValue") String fv) {
         try {
             return Result.success("globals.result.success", memberUserService.checkUnique(fn, fv));

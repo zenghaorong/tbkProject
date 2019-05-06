@@ -23,6 +23,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -107,7 +108,7 @@ public class ProductController {
                     List<Goods_product> gpList = goodsProductService.query(proCnd);
                     if(gpList!=null&&gpList.size()>0){
                         Integer salePrice = gpList.get(0).getSalePrice();
-                        double price = salePrice / 100;
+                        double price = salePrice.doubleValue()/100;
                         o.setPrice(price+"");
                         o.setSaleNumMonth(gpList.get(0).getSaleNumMonth()+"");
                     }
@@ -122,7 +123,7 @@ public class ProductController {
     }
 
     /**
-     * 获得商品列表
+     * 获得商品详情
      * @param id
      * @return
      */
@@ -146,10 +147,11 @@ public class ProductController {
                     List<Goods_product> gpList = goodsProductService.query(proCnd);
                     if(gpList!=null&&gpList.size()>0){
                         Integer salePrice = gpList.get(0).getSalePrice();
-                        int marketPrice = gpList.get(0).getCostPrice();
-                        double price = salePrice / 100;
+                        Integer marketPrice = gpList.get(0).getCostPrice();
+                        double price = salePrice.doubleValue()/100;
+                        double marketPrice2 = marketPrice.doubleValue()/100;
                         o.setPrice(price+"");
-                        o.setMarketPrice(marketPrice/100+"");
+                        o.setMarketPrice(marketPrice2/100+"");
                         o.setSaleNumMonth(gpList.get(0).getSaleNumMonth()+"");
                     }
             return Result.success("ok",o);

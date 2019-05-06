@@ -60,7 +60,7 @@
                     <span style="display: none" name="goodPrice">{{item.price/100}}</span>
                 </div>
                 <div>
-                    <a :href="'${base!}/open/h5/cms/videoBuyPage.html?id='+item.id" style="padding-left: 0px;margin-left: 0px;">
+                    <a :href="'${base!}/open/h5/product/productDetail.html?id='+item.goodsId" style="padding-left: 0px;margin-left: 0px;">
                         <img class="mui-media-object mui-pull-left" :src="item.imgurl">
                     </a>
                 </div>
@@ -241,7 +241,7 @@
             },
             success:function(data){
                 if (data.code == 0) {
-                    window.location.href="${base!}/open/h5/order/orderConfirmation.html?productList="+data.data;
+                    window.location.href="${base!}/open/h5/order/orderConfirmation.html?productList="+encodeURIComponent(data.data);
                 }
             }
         });
@@ -283,8 +283,13 @@
                             }
                             $("#totalMoney").html(total/100+"元");
                         } else if(data.code == -1){
-                            alert("您没有登录，请登录！");
-                            window.location.href="${base!}/open/H5/login/login.html"
+                            layer.open({
+                                content: '您没有登录，请登录！'
+                                ,btn: '去登录',
+                                end:function(){
+                                    window.location.href="${base!}/open/H5/login/login.html"
+                                }
+                            });
                         }
                     }
                 });

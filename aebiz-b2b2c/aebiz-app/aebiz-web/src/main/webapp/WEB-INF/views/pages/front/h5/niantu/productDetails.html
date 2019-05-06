@@ -214,6 +214,7 @@
 <script type="text/javascript" src="${base!}/assets/front/h5/js/mui.js" ></script>
 <script type="text/javascript" src="${base!}/assets/front/h5/js/vue.js" ></script>
 <script type="text/javascript" src="${base!}/assets/front/h5/js/jquery-2.0.0.min.js" ></script>
+<script type="text/javascript" src="${base!}/assets/decorate/pc/decoratecommon/js/layer/mobile/layer.js" ></script>
 <script type="text/javascript" charset="utf-8">
     mui.init({
         swipeBack:true //启用右滑关闭功能
@@ -269,7 +270,7 @@
         pdata.num = num;
         pdata.productId = '${id!}';
         array[0]=pdata;
-        window.location.href="${base!}/open/h5/order/orderConfirmation.html?productList="+JSON.stringify(array);
+        window.location.href="${base!}/open/h5/order/orderConfirmation.html?productList="+encodeURIComponent(JSON.stringify(array));
     }
     //添加购物车
     function addCart() {
@@ -283,12 +284,26 @@
             },
             success:function(data){
                 if (data.code == 0) {
-                    alert("添加成功！")
+                    layer.open({
+                        content: "添加成功!"
+                        ,skin: 'msg'
+                        ,time: 2 //2秒后自动关闭
+                    });
                 } else if(data.code == -1){
-                    alert("您没有登录，请登录！");
-                    window.location.href="${base!}/open/H5/login/login.html"
+
+                    layer.open({
+                        content: '您没有登录，请登录！'
+                        ,btn: '去登录',
+                        end:function(){
+                            window.location.href="${base!}/open/H5/login/login.html"
+                        }
+                    });
                 }else {
-                    alert("商品不存在！");
+                    layer.open({
+                        content: "商品不存在!"
+                        ,skin: 'msg'
+                        ,time: 1 //2秒后自动关闭
+                    });
                 }
             }
         });

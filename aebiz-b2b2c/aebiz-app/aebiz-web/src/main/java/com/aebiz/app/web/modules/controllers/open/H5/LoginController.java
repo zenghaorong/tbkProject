@@ -332,9 +332,9 @@ public class LoginController {
             if (isExist(accountUserService, cnd)) {
                 return Result.error("手机号已存在");
             }
-//            if (!captcha.equals(jedis.get(MOBILE_CAPTCHA + mobile))) {
-//                return Result.error("验证码不正确");
-//            }
+            if (!captcha.equals(jedis.get(MOBILE_CAPTCHA + mobile))) {
+                return Result.error("验证码不正确");
+            }
 
             //注册
             memberRegisterService.memberRegister(mobile, password, mobile, CheckPasswordUtil.checkPassword(password).toString());

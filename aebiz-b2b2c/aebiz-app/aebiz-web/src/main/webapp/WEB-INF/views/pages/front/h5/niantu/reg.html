@@ -139,10 +139,26 @@
 
             },
             getCode:function () {
-
+                if(!isPoneAvailable(this.mobile)){
+                    layerAlert("请输入正确手机号");
+                    return false;
+                }
+                if(this.password=='' || this.password==null){
+                    layerAlert("密码不能为空");
+                    return false;
+                }
+                if(this.password2=='' || this.password2==null){
+                    layerAlert("确认密码不能为空");
+                    return false;
+                }
+                if(this.password2!=this.password){
+                    layerAlert("两次密码不一致");
+                    return false;
+                }
                 if(!s){
                     return;
                 }
+
                 s=false;
                 var num = 60;
                 function settime() {

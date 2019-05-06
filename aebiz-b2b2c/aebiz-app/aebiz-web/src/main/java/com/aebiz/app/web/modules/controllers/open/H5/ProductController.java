@@ -107,7 +107,7 @@ public class ProductController {
                     List<Goods_product> gpList = goodsProductService.query(proCnd);
                     if(gpList!=null&&gpList.size()>0){
                         Integer salePrice = gpList.get(0).getSalePrice();
-                        int price = salePrice / 100;
+                        double price = salePrice / 100;
                         o.setPrice(price+"");
                         o.setSaleNumMonth(gpList.get(0).getSaleNumMonth()+"");
                     }
@@ -147,7 +147,7 @@ public class ProductController {
                     if(gpList!=null&&gpList.size()>0){
                         Integer salePrice = gpList.get(0).getSalePrice();
                         int marketPrice = gpList.get(0).getCostPrice();
-                        int price = salePrice / 100;
+                        double price = salePrice / 100;
                         o.setPrice(price+"");
                         o.setMarketPrice(marketPrice/100+"");
                         o.setSaleNumMonth(gpList.get(0).getSaleNumMonth()+"");

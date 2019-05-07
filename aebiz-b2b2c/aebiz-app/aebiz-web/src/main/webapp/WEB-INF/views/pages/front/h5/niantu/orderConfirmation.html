@@ -39,14 +39,15 @@
 </header>
 
 <div class="mui-card" style="margin-top: 60px;">
-    <div class="mui-card-header">
-        <a class="mui-navigate-right" onclick="goAddress()">
+    <div class="mui-card-header" onclick="goAddress()">
+        <a class="mui-navigate-right" >
         收货地址
        </a>
     </div>
     <div class="mui-card-header"  v-if ='address!=null'>
         <span>{{address.fullName}}</span><span>{{address.mobile}}</span>
     </div>
+
     <div class="mui-card-content" v-if ='address!=null'>
         <div class="mui-card-content-inner" >
             {{address.address}}
@@ -112,6 +113,7 @@
 <script type="text/javascript" src="${base!}/assets/front/h5/js/mui.js" ></script>
 <script type="text/javascript" src="${base!}/assets/front/h5/js/vue.js" ></script>
 <script type="text/javascript" src="${base!}/assets/front/h5/js/jquery-2.0.0.min.js" ></script>
+<script type="text/javascript" src="${base!}/assets/decorate/pc/decoratecommon/js/layer/mobile/layer.js" ></script>
 <script type="application/javascript">
     mui.init({
         swipeBack:true //启用右滑关闭功能
@@ -235,6 +237,14 @@
             save:function () {
                 var json = '${productList}';
                 var addressId = this.address.id;
+                if(addressId==""||addressId==undefined||addressId==null){
+                    layer.open({
+                        content: "请先填写收货地址!"
+                        ,skin: 'msg'
+                        ,time: 2 //2秒后自动关闭
+                    });
+                    return;
+                }
                 window.location.href="${base!}/open/h5/order/checkoutCounter.html?productList="+encodeURIComponent(json)+"&addressId="+addressId+"&couponId="+this.couponId;
             }
         },

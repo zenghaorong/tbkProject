@@ -32,6 +32,101 @@
 				top: 13px;
 				right: 0;
 			}
+			 .mui-card .mui-control-content {
+				 padding: 10px;
+			 }
+
+			.mui-control-content {
+				height: 0px;
+			}
+			.mui-segmented-control {
+				font-size: 15px;
+				font-weight: 400;
+				position: relative;
+				display: table;
+				overflow: hidden;
+				width: 100%;
+				table-layout: fixed;
+				border: 0px solid #007aff;
+				border-radius: 3px;
+				background-color: transparent;
+				-webkit-touch-callout: none;
+			}
+			.mui-segmented-control .mui-control-item {
+				line-height: 38px;
+				display: table-cell;
+				overflow: hidden;
+				width: 0%;
+				-webkit-transition: background-color .1s linear;
+				transition: background-color .1s linear;
+				text-align: center;
+				white-space: nowrap;
+				text-overflow: ellipsis;
+				color: black;
+				border-color: #007aff;
+				border-left: 0px solid #007aff;
+			}
+			.mui-segmented-control .mui-control-item.mui-active {
+				color: #fff;
+				background-color: #38cecc;
+			}
+			.mui-table-view-cell.mui-active {
+				color: #fff;
+				background-color: #38cecc;
+			}
+
+			.price-active{
+				background-color: #38cecc;
+			}
+			.mui-control-content.mui-active {
+				display: block;
+				height: 120px;
+			}
+			.priceSpan{
+				border:1px solid #d8d8d8;;
+				margin-left: 7%;
+				display:inline-block;
+				width: 80px;
+				height: 35px;
+				text-align: center;
+				line-height:33px;
+			}
+			.priceLi:after {
+				position: absolute;
+				right: 0;
+				bottom: 0;
+				left: 15px;
+				height: 1px;
+				content: '';
+				-webkit-transform: scaleY(.5);
+				transform: scaleY(.5);
+				background-color: #ffffff !important;
+			}
+			.priceUl:after {
+				position: absolute;
+				right: 0;
+				bottom: 0;
+				left: 0;
+				height: 1px;
+				content: '';
+				-webkit-transform: scaleY(.5);
+				transform: scaleY(.5);
+				background-color: #ffffff;
+			}
+			.mui-table-view-cell:after {
+				position: absolute;
+				right: 0px;
+				bottom: 0px;
+				left: 0px;
+				height: 1px;
+				content: '';
+				-webkit-transform: scaleY(.5);
+				transform: scaleY(.5);
+				background-color: #c8c7cc;
+			}
+			.priceUl .mui-active{
+				background: white !important;
+			}
 		</style>
 		<!--App自定义的css-->
 		<!--<link rel="stylesheet" type="text/css" href="../css/app.css"/>-->
@@ -41,11 +136,11 @@
 		
 		<header class="mui-bar mui-bar-nav top-color">
 		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: white;"></a>
-		    <div class="mui-title mui-input-row " >
+		    <div class="mui-title mui-input-row " style="width: 50%">
                 <input type="search" id="searchKey" class="mui-input-clear" style="background: white;" placeholder="请输入商品名称">
 
 		    </div>
-			<a id="search" v-on:click="getProductList()" style="color: white ;float: right; margin-right: 45px;margin-top: 10px;" > 搜索</a>
+			<a id="search" v-on:click="getProductList()" style="color: white ;float: right; margin-right: 45px;margin-top: 12px;" > 搜索</a>
 		</header>
 
 			<!--底部导航栏-->
@@ -67,9 +162,53 @@
 					<span class="mui-tab-label">个人中心</span>
 				</a>
 			</nav>
-		
-		<div class="mui-content" style="background: white;">
-		        <ul class="mui-table-view mui-grid-view mui-grid-9" style="background: white;">
+			<div class="mui-content" style="padding-bottom:0px;background: #FFFFFF">
+				<div style="padding: 10px 10px;">
+					<div id="segmentedControl" class="mui-segmented-control">
+						<a class="mui-control-item " style="touch-action: none" href="#item1">销量</a>
+						<a class="mui-control-item" style="touch-action: none" href="#item2">价格</a>
+						<a class="mui-control-item" style="touch-action: none" href="#item3">筛选</a>
+					</div>
+				</div>
+				<div id="selectDiv">
+					<div id="item1" class="mui-control-content">
+						<ul class="mui-table-view" >
+							<li class="mui-table-view-cell cell-width" sortType="numDesc" v-on:click="productSort($event)">
+								销量从高到低
+							</li>
+							<li class="mui-table-view-cell" sortType="numAsc" v-on:click="productSort($event)">
+								销量从低到高
+							</li>
+						</ul>
+					</div>
+					<div id="item2" class="mui-control-content">
+						<ul class="mui-table-view ">
+							<li class="mui-table-view-cell cell-width" sortType="priceDesc" v-on:click="productSort($event)">
+								价格从高到低
+							</li>
+							<li class="mui-table-view-cell" sortType="priceAsc" v-on:click="productSort($event)">
+								价格从低到高
+							</li>
+						</ul>
+					</div>
+					<div id="item3" class="mui-control-content ">
+						<ul class="mui-table-view priceUl">
+							<div class="mui-table-view-cell priceLi">
+								<div class="priceSpan" priceArea="0_20" v-on:click="priceSelect($event)" >0-20</div>
+								<div class="priceSpan" priceArea="20_40" v-on:click="priceSelect($event)">20-40</div>
+								<div class="priceSpan" priceArea="40_60" v-on:click="priceSelect($event)">40-60</div>
+							</div>
+							<div class="mui-table-view-cell priceLi">
+								<span class="priceSpan" priceArea="60_80" v-on:click="priceSelect($event)">60 - 80</span>
+								<span class="priceSpan" priceArea="80_100" v-on:click="priceSelect($event)">80-100</span>
+								<span class="priceSpan" priceArea="100_1000000" v-on:click="priceSelect($event)">100 以上</span>
+							</div>
+						</ul>
+					</div>
+				</div>
+			</div>
+		<div class="mui-content" style="background: white;padding-top: 0px">
+		        <ul class="mui-table-view mui-grid-view mui-grid-9" style="background: white;margin-top: 0px">
 		            <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-3 productList"  v-for="item in productList" :key="item.id">
 		            	<a v-bind:href="'${base!}/open/h5/product/productDetail.html?id='+item.id" >
 		            		<img  :src="item.imgList"  style="width: 150px;height: 150px"/>
@@ -93,13 +232,30 @@
 		<script type="text/javascript" src="${base!}/assets/front/h5/js/mui.js" ></script>
 		<script type="text/javascript" src="${base!}/assets/front/h5/js/vue.js" ></script>
 		<script type="text/javascript" src="${base!}/assets/front/h5/js/jquery-2.0.0.min.js" ></script>
-
+		<script type="text/javascript" src="${base!}/assets/decorate/pc/decoratecommon/js/layer/mobile/layer.js" ></script>
 		<script type="application/javascript">
 
             mui.init({
                 swipeBack:true //启用右滑关闭功能
             });
 
+            (function($) {
+                $('#scroll').scroll({
+                    indicators: true //是否显示滚动条
+                });
+                var segmentedControl = document.getElementById('segmentedControl');
+                $('.mui-input-group').on('change', 'input', function() {
+                    if (this.checked) {
+                        var styleEl = document.querySelector('input[name="style"]:checked');
+                        var colorEl = document.querySelector('input[name="color"]:checked');
+                        if (styleEl && colorEl) {
+                            var style = styleEl.value;
+                            var color = colorEl.value;
+                            segmentedControl.className = 'mui-segmented-control' + (style ? (' mui-segmented-control-' + style) : '') + ' mui-segmented-control-' + color;
+                        }
+                    }
+                });
+            })(mui);
             var vue = new Vue({
                 el: '#productList',
                 data: {
@@ -151,6 +307,66 @@
                             }
                         });
 
+                    },
+					priceSelect: function (event) {
+                        var self = this;
+                        var key = $("#searchKey").val();
+						$(".priceSpan").removeClass("price-active");
+						$(event.target).addClass("price-active");
+						var priceArea = $(event.target).attr("priceArea");
+						$.ajax({
+							type:"POST",
+							url:"${base!}/open/h5/product/ProductList.html",
+							dataType:"JSON",
+							data:{
+								key:key,
+								priceArea:priceArea
+							},
+							success:function(data){
+								if (data.code == 0) {
+									var d = data.data;
+									self.productList = d;
+
+                                    var t;
+                                    clearTimeout(t)
+                                    t = setTimeout(function (){
+                                        $("#item3").removeClass("mui-active");
+                                        $(".mui-control-item").removeClass("mui-active");
+                                    }, 10);
+								} else {
+
+								}
+							}
+						});
+            		},
+                    productSort: function (event) {
+                        var self = this;
+                        var key = $("#searchKey").val();
+                        var sortType = $(event.target).attr("sortType");
+                        $.ajax({
+                            type:"POST",
+                            url:"${base!}/open/h5/product/ProductList.html",
+                            dataType:"JSON",
+                            data:{
+                                key:key,
+                                sortType:sortType
+                            },
+                            success:function(data){
+                                if (data.code == 0) {
+                                    var d = data.data;
+                                    self.productList = d;
+                                } else {
+
+                                }
+                                var t;
+                                clearTimeout(t)
+                                t = setTimeout(function (){
+                                    $("#item1").removeClass("mui-active");
+                                    $("#item2").removeClass("mui-active");
+                                    $(".mui-control-item").removeClass("mui-active");
+                                }, 10);
+                            }
+                        });
                     }
                 }
 

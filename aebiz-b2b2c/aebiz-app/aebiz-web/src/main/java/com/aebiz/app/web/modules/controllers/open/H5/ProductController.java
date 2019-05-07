@@ -24,9 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @Auther: zenghaorong
@@ -82,7 +80,9 @@ public class ProductController {
                 pageNumber = 0;
             }
             String key = request.getParameter("key");
+            String priceArea = request.getParameter("priceArea");
             String isRecommend = request.getParameter("isRecommend");
+            String sortType = request.getParameter("sortType");
             Cnd cnd = Cnd.NEW();
             if(StringUtils.isNotEmpty(isRecommend)){
                 cnd.and("recommend","=",Integer.parseInt(isRecommend));
@@ -90,7 +90,10 @@ public class ProductController {
             if(StringUtils.isNotEmpty(key)){
                 cnd.and("name","like","%"+key+"%");
             }
+
             cnd.and("delFlag", "=", 0 );
+            cnd.and("sale", "=", 1);
+            cnd.and("status", "=", 3);
             Pagination res = goodsService.listPage(pageNumber, 2000, cnd);
             List<?> resList = res.getList();
             List<Goods_main> productList = new ArrayList<>();
@@ -109,12 +112,64 @@ public class ProductController {
                     if(gpList!=null&&gpList.size()>0){
                         Integer salePrice = gpList.get(0).getSalePrice();
                         double price = salePrice.doubleValue()/100;
+                        if(StringUtils.isNotEmpty(priceArea)){
+                            String[] prices = priceArea.split("_");
+                            if(!(Double.parseDouble(prices[0])<price&&Double.parseDouble(prices[1])>price)){
+                                continue;
+                            }
+                        }
                         o.setPrice(price+"");
                         o.setSaleNumMonth(gpList.get(0).getSaleNumMonth()+"");
                     }
+
                     productList.add(o);
                 }
             }
+            if(StringUtils.isNotEmpty(sortType)){
+                Collections.sort(productList, new Comparator<Goods_main>() {
+                    @Override
+                    public int compare(Goods_main o1, Goods_main o2) {
+                        if("priceDesc".equals(sortType)){
+                            if (Double.parseDouble(o1.getPrice()) > Double.parseDouble(o2.getPrice())) {
+                                return -1;
+                            }
+                            if (Double.parseDouble(o1.getPrice()) == Double.parseDouble(o2.getPrice())) {
+                                return 0;
+                            }
+                            return 1;
+                        }
+                        if("priceAsc".equals(sortType)){
+                            if (Double.parseDouble(o1.getPrice()) > Double.parseDouble(o2.getPrice())) {
+                                return 1;
+                            }
+                            if (Double.parseDouble(o1.getPrice()) == Double.parseDouble(o2.getPrice())) {
+                                return 0;
+                            }
+                            return -1;
+                        }
+                        if("numDesc".equals(sortType)){
+                            if (Integer.parseInt(o1.getSaleNumMonth()) > Integer.parseInt(o2.getSaleNumMonth())) {
+                                return -1;
+                            }
+                            if (Integer.parseInt(o1.getSaleNumMonth()) == Integer.parseInt(o2.getSaleNumMonth())) {
+                                return 0;
+                            }
+                            return 1;
+                        }
+                        if("numAsc".equals(sortType)){
+                            if (Integer.parseInt(o1.getSaleNumMonth()) > Integer.parseInt(o2.getSaleNumMonth())) {
+                                return 1;
+                            }
+                            if (Integer.parseInt(o1.getSaleNumMonth()) == Integer.parseInt(o2.getSaleNumMonth())) {
+                                return 0;
+                            }
+                            return -1;
+                        }
+                        return 0;
+                    }
+                });
+            }
+
             return Result.success("ok",productList);
         } catch (Exception e) {
             log.error("获取商品列表异常",e);
@@ -177,6 +232,7 @@ public class ProductController {
                 Cnd cnd = Cnd.NEW();
                 cnd.and("delFlag", "=", 0);
                 cnd.and("id", "=", id);
+
                 Goods_main o = goodsService.fetch(id);
                 Cnd imgCnd = Cnd.NEW();
                 imgCnd.and("goodsId", "=", o.getId());

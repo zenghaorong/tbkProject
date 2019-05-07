@@ -102,7 +102,7 @@ public class AddressH5Controller{
                 Cnd cnd = Cnd.NEW();
                 cnd.and("accountId", "=", accountUser.getAccountId() );
                 List<Member_address> list = memberAddressService.query(cnd);
-                Member_address member_address = new Member_address();
+                Member_address member_address = null;
                 if(list!=null && list.size()>0){
                     member_address = list.get(0);
                 }

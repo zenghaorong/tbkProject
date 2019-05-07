@@ -1,6 +1,7 @@
 package com.aebiz.app.integral.modules.models;
 
 import com.aebiz.baseframework.base.model.BaseModel;
+import com.aebiz.commons.utils.DateUtil;
 import org.nutz.dao.entity.annotation.*;
 
 import java.io.Serializable;
@@ -40,6 +41,17 @@ public class Member_Integral_Detail extends BaseModel implements Serializable {
     @Comment("描述")
     @ColDefine(type = ColType.VARCHAR, width = 255)
     private String integralDesc;
+
+    private String integralTime;
+
+    public String getIntegralTime() {
+        integralTime = DateUtil.getDate(this.getOpAt());
+        return integralTime;
+    }
+
+    public void setIntegralTime(String integralTime) {
+        this.integralTime = integralTime;
+    }
 
     public String getIntegralDesc() {
         return integralDesc;

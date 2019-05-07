@@ -66,6 +66,7 @@ public class CartManagerController {
         Cnd cartCnd = Cnd.NEW();
         cartCnd.and("goodsId","=",productId);
         cartCnd.and("delFlag","=",false);
+        cartCnd.and("accountId","=",accountUser.getAccountId());
         List<Member_cart> carList = memberCartService.query(cartCnd);
         if(carList!=null&&carList.size()>0){
             Member_cart mc = carList.get(0);
@@ -165,9 +166,7 @@ public class CartManagerController {
         try{
             String[] ids = StringUtils.split(cartIds, ";");
             for (int i = 0 ; i<ids.length;i++){
-                Member_cart cart = memberCartService.fetch(ids[i]);
-                cart.setDelFlag(true);
-                memberCartService.update(cart);
+                memberCartService.delete(ids[i]);
             }
             return Result.success();
         }catch (Exception e){

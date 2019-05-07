@@ -4,6 +4,7 @@ import com.aebiz.baseframework.base.model.BaseModel;
 import org.nutz.dao.entity.annotation.*;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 用户积分表
@@ -40,6 +41,16 @@ public class Member_Integral extends BaseModel implements Serializable {
     @Comment("累计积分")
     @ColDefine(type = ColType.INT, width = 11)
     private int totalIntegral;
+
+    private List<Member_Integral_Detail> details;
+
+    public List<Member_Integral_Detail> getDetails() {
+        return details;
+    }
+
+    public void setDetails(List<Member_Integral_Detail> details) {
+        this.details = details;
+    }
 
     public String getId() {
         return id;

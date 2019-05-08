@@ -54,6 +54,7 @@ public class StoreCmsVideoController {
 			cnd.and("videoTitle", "like", "%" + videoTitle + "%");
 		}
 		cnd.and("storeId", "=", user.getStoreId());
+		cnd.desc("sort");
 		return cmsVideoService.data(length, start, draw, order, columns, cnd, null);
 	}
 

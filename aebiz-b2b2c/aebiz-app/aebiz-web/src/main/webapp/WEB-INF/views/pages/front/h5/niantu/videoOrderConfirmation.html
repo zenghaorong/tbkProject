@@ -157,6 +157,11 @@
                             if(self.coupons.length>0) {
                                 self.couponId = self.coupons[0].couponId; //让select默认选中
                                 self.sales_coupon = self.coupons[0].sales_coupon;
+                            }else {
+                                var d = {};
+                                d.couponId = "11111111xxxx";
+                                self.coupons[0] = d;
+                                self.couponId = self.coupons[0].couponId; //让select默认选中
                             }
 
                         } else {

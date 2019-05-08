@@ -206,6 +206,11 @@
                                 self.couponId = self.coupons[0].couponId; //让select默认选中
                                 self.sales_coupon = self.coupons[0].sales_coupon;
                                 // self.priceCalculator();
+                            }else {
+                                var d = {};
+                                d.couponId = "11111111xxxx";
+                                self.coupons[0] = d;
+                                self.couponId = self.coupons[0].couponId; //让select默认选中
                             }
                             // self.zongPrice = self.zongPrice - self.couponPrice;
                         } else {

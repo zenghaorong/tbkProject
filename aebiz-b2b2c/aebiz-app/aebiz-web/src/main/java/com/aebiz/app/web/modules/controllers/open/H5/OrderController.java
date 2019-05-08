@@ -345,6 +345,22 @@ public class OrderController {
     }
 
     /**
+     * 订单详情页 待支付继续支付 进入收银台
+     */
+    @RequestMapping("/orderInfoPayCheckoutCounter.html")
+    public String checkoutCounter(HttpServletRequest request,String orderId) {
+        Subject subject = SecurityUtils.getSubject();
+        Account_user accountUser = (Account_user) subject.getPrincipal();
+        if(accountUser==null){
+            return "pages/front/h5/niantu/login";
+        }
+        Order_main order_main = orderMainService.fetch(orderId);
+        request.setAttribute("order", order_main);
+        return "pages/front/h5/niantu/checkoutCounter";
+    }
+
+
+    /**
      * 视频下单进入订单确认页
      */
     @RequestMapping("/videoOrderConfirmation.html")

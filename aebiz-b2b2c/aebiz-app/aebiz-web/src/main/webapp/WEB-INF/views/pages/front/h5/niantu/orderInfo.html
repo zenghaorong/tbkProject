@@ -98,7 +98,8 @@
 
 <!--#if(order.payStatus == 0 ||order.payStatus == 1 ||order.payStatus == 2){#-->
 <div style="width: 300px;margin: 0 auto;">
-    <button type="button" onclick="window.location.reload()" class="mui-btn mui-btn-primary mui-btn-block">点击刷新</button>
+    <button type="button" onclick="window.location.href='${base!}/open/h5/order/orderInfoPayCheckoutCounter.html?orderId=${orderId}'"
+            class="mui-btn mui-btn-primary mui-btn-block">支付</button>
 </div>
 <!--#}#-->
 <!--#if(order.payStatus == 3 && order.deliveryStatus==3 && order.getStatus==0){#-->
@@ -106,11 +107,17 @@
     <button type="button" onclick="confirmReceipt()" class="mui-btn mui-btn-primary mui-btn-block">确认收货</button>
 </div>
 <!--#}#-->
+<!--&lt;!&ndash;#if(order.payStatus == 3 && order.getStatus == 1){#&ndash;&gt;-->
+<!--<div style="width: 300px;margin: 0 auto;">-->
+    <!--<button type="button" onclick="" class="mui-btn mui-btn-primary mui-btn-block">立即评价</button>-->
+<!--</div>-->
+<!--&lt;!&ndash;#}#&ndash;&gt;-->
 <!--#if(order.payStatus == 3){#-->
 <div style="width: 300px;margin: 0 auto;">
     <button type="button" onclick="window.location.href='${base!}/open/h5/refunds/orderRefunds.html?orderId=${orderId!}'" class="mui-btn mui-btn-primary mui-btn-block">申请售后</button>
 </div>
 <!--#}#-->
+
 <script type="text/javascript" src="${base!}/assets/front/h5/js/mui.js" ></script>
 <script type="text/javascript" src="${base!}/assets/front/h5/js/vue.js" ></script>
 <script type="text/javascript" src="${base!}/assets/front/h5/js/jquery-2.0.0.min.js" ></script>

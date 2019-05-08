@@ -4,6 +4,7 @@ import com.aebiz.app.acc.modules.models.Account_user;
 import com.aebiz.app.alipay.modules.models.AliPayFromQO;
 import com.aebiz.app.alipay.modules.models.AlipayConfig;
 import com.aebiz.app.alipay.modules.service.AlipayService;
+import com.aebiz.app.integral.modules.services.MemberIntegralService;
 import com.aebiz.app.order.modules.models.Order_goods;
 import com.aebiz.app.order.modules.models.Order_main;
 import com.aebiz.app.order.modules.models.em.OrderPayStatusEnum;
@@ -73,6 +74,9 @@ public class PayH5Controller {
 
     @Autowired
     private WxConfigService wxConfigService;
+
+    @Autowired
+    private MemberIntegralService memberIntegralService;
 
 
 
@@ -248,6 +252,13 @@ public class PayH5Controller {
                 order_main.setPayType(OrderPayTypeEnum.ALIPAY.getKey());
                 order_main.setPayStatus(OrderPayStatusEnum.PAYALL.getKey());
                 orderMainService.update(order_main);
+                try {
+                    double orderPayMoney = order_main.getPayMoney();
+                    double payMoney = CalculateUtils.div(orderPayMoney, 100, 2);
+                    memberIntegralService.addMemberIntegral(order_main.getAccountId(), "1", "2", payMoney);
+                }catch (Exception e){
+                    log.error("回调给会员添加积分异常",e);
+                }
                 return "success";	//请不要修改或删除
             }else{//验证失败
                 log.error("支付宝回调验签失败:"+out_trade_no);
@@ -312,6 +323,13 @@ public class PayH5Controller {
                 order_main.setPayType(OrderPayTypeEnum.WEIXINPAY.getKey());
                 order_main.setPayStatus(OrderPayStatusEnum.PAYALL.getKey());
                 orderMainService.update(order_main);
+                try {
+                    double orderPayMoney = order_main.getPayMoney();
+                    double payMoney = CalculateUtils.div(orderPayMoney, 100, 2);
+                    memberIntegralService.addMemberIntegral(order_main.getAccountId(), "1", "2", payMoney);
+                }catch (Exception e){
+                    log.error("回调给会员添加积分异常",e);
+                }
                 return success;
             }else {
                 return fail;

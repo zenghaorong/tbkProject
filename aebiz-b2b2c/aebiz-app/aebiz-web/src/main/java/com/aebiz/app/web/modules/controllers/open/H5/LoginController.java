@@ -354,7 +354,7 @@ public class LoginController {
             return Result.success();
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.error(-1, e.getMessage());
+            return Result.error(-1, "验证码不正确");
         }
     }
 

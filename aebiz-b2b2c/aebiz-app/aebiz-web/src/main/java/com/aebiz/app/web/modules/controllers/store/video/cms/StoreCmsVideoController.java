@@ -69,6 +69,12 @@ public class StoreCmsVideoController {
 	@RequiresPermissions("store.cms.video.add")
 	public Object addDo(Cms_video cms_video) {
 		try {
+			if(Strings.isEmpty(cms_video.getVideoUrl())){
+				return Result.error("请上传视频");
+			}
+			if(Strings.isEmpty(cms_video.getImageUrl())){
+				return Result.error("请上传封面图片");
+			}
 			Store_user user = (Store_user) SecurityUtils.getSubject().getPrincipal();
 			cms_video.setStoreId(user.getStoreId());
 			cmsVideoService.insert(cms_video);
@@ -92,6 +98,12 @@ public class StoreCmsVideoController {
 	@RequiresPermissions("store.cms.video")
 	public Object editDo(Cms_video cms_video) {
 		try {
+			if(Strings.isEmpty(cms_video.getVideoUrl())){
+				return Result.error("请上传视频");
+			}
+			if(Strings.isEmpty(cms_video.getImageUrl())){
+				return Result.error("请上传封面图片");
+			}
 			if(cms_video.getDelFlag() == null){
 				cms_video.setDelFlag(true);
 			}

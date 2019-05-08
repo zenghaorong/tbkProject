@@ -398,7 +398,7 @@ public class LoginController {
                 jedis.set(key, code);
                 jedis.expire(key, Integer.valueOf(expireTime));
 
-                String content = "验证码"+code+"。次验正码用于校验身份";
+                String content = "验证码"+code+"。本次验正码用于校验身份";
                 String sndJson = smsService.sendMessages(content,mobile);
                 JSONObject jsonObject = (JSONObject) com.alibaba.fastjson.JSON.parseObject(sndJson);
                 String sendStatus = jsonObject.getString("status");

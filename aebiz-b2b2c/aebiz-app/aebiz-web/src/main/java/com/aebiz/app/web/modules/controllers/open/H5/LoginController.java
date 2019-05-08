@@ -344,9 +344,8 @@ public class LoginController {
             if(userList!=null&&userList.size()>0){
                 try {
                     memberIntegralService.addMemberIntegral(userList.get(0).getAccountId(),"2","1",null);
-                    return Result.error();
                 }catch (Exception e){
-
+                    e.printStackTrace();
                 }
 
             }

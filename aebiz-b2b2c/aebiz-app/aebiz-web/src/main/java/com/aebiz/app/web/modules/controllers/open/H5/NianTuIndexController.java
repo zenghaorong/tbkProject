@@ -101,7 +101,14 @@ public class NianTuIndexController {
      * 进入达人秀场
      */
     @RequestMapping("talentShow.html")
-    public String talentShow() {
+    public String talentShow(String accountId,HttpServletRequest request) {
+        if(Strings.isEmpty(accountId)){
+            request.setAttribute("accountId","");
+        }else{
+            request.setAttribute("accountId",accountId);
+        }
+
+
         return "pages/front/h5/niantu/talentShow";
     }
 

@@ -312,7 +312,8 @@ public class OrderController {
                 }
 
 
-                order_main.setPayMoney(totalMoney + freightMoney);
+//                order_main.setPayMoney(totalMoney + freightMoney);
+                order_main.setPayMoney(1); //先写死一个测试金额
 
                 order_main.setFreightMoney(freightMoney);
                 order_main.setFreeMoney(0);

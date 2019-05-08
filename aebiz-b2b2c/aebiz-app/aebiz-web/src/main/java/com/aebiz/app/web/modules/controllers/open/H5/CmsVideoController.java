@@ -123,28 +123,32 @@ public class CmsVideoController {
      */
     @RequestMapping("cmsListByType.html")
     @SJson
-    public Result cmsListByType(Integer pageNumber,String typeName,String key){
+    public Result cmsListByType(Integer pageNumber,String typeName,String key,String accountId){
         try {
             //根据名称查询对应的栏目编号
+
+            Cnd cnd = Cnd.NEW();
             String str="";
             if("cyms".equals(typeName)){
                 str = "创意美术";
             }
             if("drxc".equals(typeName)){
                 str = "达人秀场";
+                if(!Strings.isEmpty(accountId)){
+                    cnd.and("author", "=", accountId );
+                }
             }
             if("ntjc".equals(typeName)){
                 str = "黏土教程";
             }
             Cnd c = Cnd.NEW();
             c.and("name", "=", str );
-
             Cms_channel cms_channel = cmsChannelService.fetch(c);
 
             if(pageNumber == null){
                 pageNumber = 0;
             }
-            Cnd cnd = Cnd.NEW();
+
             cnd.and("delFlag", "=", 0 );
             cnd.and("channelId","=",cms_channel.getId());
             cnd.desc("location");

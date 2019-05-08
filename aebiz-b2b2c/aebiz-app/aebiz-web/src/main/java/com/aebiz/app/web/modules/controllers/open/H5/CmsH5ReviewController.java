@@ -192,7 +192,10 @@ public class CmsH5ReviewController {
                 return Result.success("ok2");
             }else {
                 Cms_article cms_article = cmsArticleService.fetch(cmsId);
-                int num = cms_article.getLikeNum();
+                int num =0;
+                if( cms_article.getLikeNum() !=null){
+                    num = cms_article.getLikeNum();
+                }
                 num++;
                 cms_article.setLikeNum(num);
                 cmsArticleService.update(cms_article);

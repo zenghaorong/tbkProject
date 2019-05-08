@@ -26,7 +26,7 @@ public class Cms_article extends BaseModel implements Serializable {
     @Name
     @Comment("ID")
     @ColDefine(type = ColType.VARCHAR, width = 32)
-    @Prev(els = {@EL("ig(view.tableName,'')")})
+    @Prev(els = {@EL("uuid()")})
     private String id;
 
     @Column
@@ -58,6 +58,11 @@ public class Cms_article extends BaseModel implements Serializable {
     @Comment("文章内容")
     @ColDefine(type = ColType.TEXT)
     private String content;
+
+    @Column
+    @Comment("用户发布图片地址列表用英文逗号隔开")
+    @ColDefine(type = ColType.TEXT)
+    private String imageUrlStrs;
 
     @Column
     @Comment("是否禁用")
@@ -218,5 +223,13 @@ public class Cms_article extends BaseModel implements Serializable {
 
     public void setChannel(Cms_channel channel) {
         this.channel = channel;
+    }
+
+    public String getImageUrlStrs() {
+        return imageUrlStrs;
+    }
+
+    public void setImageUrlStrs(String imageUrlStrs) {
+        this.imageUrlStrs = imageUrlStrs;
     }
 }

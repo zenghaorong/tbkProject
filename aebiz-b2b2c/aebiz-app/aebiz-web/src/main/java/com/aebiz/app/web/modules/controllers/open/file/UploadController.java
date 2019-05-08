@@ -8,6 +8,7 @@ import com.aebiz.baseframework.base.Result;
 import com.aebiz.baseframework.view.annotation.SJson;
 import com.aebiz.commons.fastdfs.NameValuePair;
 import com.aebiz.commons.utils.DateUtil;
+import com.aebiz.commons.utils.StringUtil;
 import com.aebiz.fastdfs.*;
 import org.nutz.filepool.NutFilePool;
 import org.nutz.img.Images;
@@ -50,8 +51,9 @@ public class UploadController {
     @SJson
     public Object image(@RequestParam("Filedata") MultipartFile tf, @RequestParam(value = "type",required = false) String type) {
         if (!tf.isEmpty()) {
+            String fileName2 = tf.getOriginalFilename();
             List<String> imageList = config.getList("upload.suffix.image", ",");
-            if (imageList.contains(tf.getOriginalFilename().substring(tf.getOriginalFilename().lastIndexOf(".") + 1))) {
+            if (imageList.contains(tf.getOriginalFilename().substring(tf.getOriginalFilename().lastIndexOf(".") + 1))||"blob".equals(fileName2)) {
                 TrackerServer trackerServer = null;
                 TrackerClient tracker = null;
                 StorageServer storageServer = null;
@@ -60,6 +62,9 @@ public class UploadController {
                     if ("fdfs".equalsIgnoreCase(uploadMode)) {
                         //如果使用文件服务器
                         String fileName = tf.getOriginalFilename();
+                        if("blob".equals(fileName)){
+                            fileName = StringUtil.getRndNumber(6)+fileName+".jpg";
+                        }
                         String fileExtName = fileName.substring(fileName.lastIndexOf(".") + 1);
                         byte[] fileBuff = tf.getBytes();
                         ClientGlobal.init(config);

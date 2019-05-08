@@ -110,7 +110,11 @@ public class CmsH5ReviewController {
 
             //添加评论量
             Cms_article cms_article = cmsArticleService.fetch(cmsId);
-            int num = cms_article.getEvaluateNum();
+
+            int num = 0;
+            if( cms_article.getEvaluateNum()!=null){
+                num = cms_article.getEvaluateNum();
+            }
             num++;
             cms_article.setEvaluateNum(num);
             cmsArticleService.update(cms_article);

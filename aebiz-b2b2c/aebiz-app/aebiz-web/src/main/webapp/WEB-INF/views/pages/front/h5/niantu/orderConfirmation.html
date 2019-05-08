@@ -236,8 +236,8 @@
             },
             save:function () {
                 var json = '${productList}';
-                var addressId = this.address.id;
-                if(addressId==""||addressId==undefined||addressId==null){
+
+                if(this.address==null||this.address==""||this.address==undefined||this.address.id==""||this.address.id==undefined||this.address.id==null){
                     layer.open({
                         content: "请先填写收货地址!"
                         ,skin: 'msg'
@@ -245,6 +245,7 @@
                     });
                     return;
                 }
+                var addressId = this.address.id;
                 window.location.href="${base!}/open/h5/order/checkoutCounter.html?productList="+encodeURIComponent(json)+"&addressId="+addressId+"&couponId="+this.couponId;
             }
         },

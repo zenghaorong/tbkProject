@@ -274,13 +274,17 @@
     }
     //添加购物车
     function addCart() {
+        var productNum = $("#productNum").val();
+        if(productNum==null||productNum==undefined||productNum==""){
+            productNum=1;
+        }
         $.ajax({
             type:"POST",
             url:"${base!}/open/h5/cart/addCart.html",
             dataType:"JSON",
             data:{
                 productId:'${id!}',
-                num:1
+                num:productNum
             },
             success:function(data){
                 if (data.code == 0) {

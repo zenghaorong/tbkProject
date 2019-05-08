@@ -206,7 +206,7 @@ public class ProductController {
                         double price = salePrice.doubleValue()/100;
                         double marketPrice2 = marketPrice.doubleValue()/100;
                         o.setPrice(price+"");
-                        o.setMarketPrice(marketPrice2/100+"");
+                        o.setMarketPrice(marketPrice2+"");
                         o.setSaleNumMonth(gpList.get(0).getSaleNumMonth()+"");
                     }
             return Result.success("ok",o);

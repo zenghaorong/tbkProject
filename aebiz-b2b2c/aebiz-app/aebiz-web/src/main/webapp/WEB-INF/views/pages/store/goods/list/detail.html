@@ -204,11 +204,9 @@ layout("/layouts/store.html"){
                                     <label for="weight" class="col-sm-2 control-label">${msg['goods.product.column.weight']}</label>
                                     <div class="col-sm-2">
                                         <div class="input-group">
-                                            <!--# if (obj.hasSpec){#-->
                                                 <input type="hidden" name="productId" value="${productsList[0].id!}"/>
                                                 <input type="text" id="weight" class="form-control input-sm" name="weight" readonly value="${productsList[0].weight!}" data-parsley-type="integer" data-parsley-min="0" data-parsley-required="true" >
-                                                <span class="input-group-addon">${msg["goods.main.unit.length"]}</span>
-                                            <!--#} #-->
+                                                <span class="input-group-addon">${msg["goods.main.unit.weight"]}</span>
                                         </div>
                                     </div>
                                 </div>

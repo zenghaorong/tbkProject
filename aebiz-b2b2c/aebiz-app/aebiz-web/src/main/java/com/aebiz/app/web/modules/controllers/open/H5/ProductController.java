@@ -208,6 +208,7 @@ public class ProductController {
                         o.setPrice(price+"");
                         o.setMarketPrice(marketPrice2+"");
                         o.setSaleNumMonth(gpList.get(0).getSaleNumMonth()+"");
+                        o.setStock(gpList.get(0).getStock());
                     }
             return Result.success("ok",o);
         } catch (Exception e) {

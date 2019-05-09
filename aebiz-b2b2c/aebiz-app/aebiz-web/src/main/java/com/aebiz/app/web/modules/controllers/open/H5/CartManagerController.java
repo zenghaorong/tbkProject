@@ -137,6 +137,14 @@ public class CartManagerController {
         }
         String productId = request.getParameter("productId");
         String num = request.getParameter("num");
+        Cnd proCnd = Cnd.NEW();
+        proCnd.and("goodsId","=",productId);
+        List<Goods_product> gpList = goodsProductService.query(proCnd);
+        if(gpList!=null&&gpList.size()>0){
+            if(gpList.get(0).getStock()<Integer.parseInt(num)){
+                return Result.error(-1,"库存不足");
+            }
+        }
         try{
             Cnd cnd = Cnd.NEW();
             cnd.and("accountId","=",accountUser.getAccountId());

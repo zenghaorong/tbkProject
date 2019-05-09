@@ -184,6 +184,7 @@
     <div class="rcm-hd">
 
         <div class="h3" style="">{{product.name}}</div>
+        <input type="hidden" id="stock" :value="product.stock">
         <div class="price">
             现价：<span class="spanPrice2"><i>￥</i>{{product.price}}</span>厂商指导价：<span class="spanPrice"><i>￥</i>{{product.marketPrice}}</span>
         </div>
@@ -195,8 +196,10 @@
                 <button class="mui-btn mui-btn-numbox-minus" type="button">-</button>
                 <input id="productNum" class="mui-input-numbox" type="number" value="1" />
                 <button class="mui-btn mui-btn-numbox-plus" type="button">+</button>
+
             </div>
         </div>
+
   </div>
 
 <div style="    background: #f9f7f8;">
@@ -268,6 +271,16 @@
         var array = [];
         var pdata = {};
         pdata.num = num;
+        var pNum = $("#stock").val();
+        debugger;
+        if(num*1>pNum*1){
+            layer.open({
+                content: "库存不足!"
+                ,skin: 'msg'
+                ,time: 2 //2秒后自动关闭
+            });
+            return;
+        }
         pdata.productId = '${id!}';
         array[0]=pdata;
         window.location.href="${base!}/open/h5/order/orderConfirmation.html?productList="+encodeURIComponent(JSON.stringify(array));
@@ -277,6 +290,15 @@
         var productNum = $("#productNum").val();
         if(productNum==null||productNum==undefined||productNum==""){
             productNum=1;
+        }
+        var pNum = $("#stock").val();
+        if(productNum*1>pNum*1){
+            layer.open({
+                content: "库存不足!"
+                ,skin: 'msg'
+                ,time: 2 //2秒后自动关闭
+            });
+            return;
         }
         $.ajax({
             type:"POST",

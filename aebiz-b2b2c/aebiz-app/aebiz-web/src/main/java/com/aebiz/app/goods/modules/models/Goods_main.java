@@ -223,6 +223,16 @@ public class Goods_main extends BaseModel implements Serializable {
     //用于下单时购买数量
     private String num;
 
+    private int stock;
+
+    public int getStock() {
+        return stock;
+    }
+
+    public void setStock(int stock) {
+        this.stock = stock;
+    }
+
     public String getNum() {
         return num;
     }

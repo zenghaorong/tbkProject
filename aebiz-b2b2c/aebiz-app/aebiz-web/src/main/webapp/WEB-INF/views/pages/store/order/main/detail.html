@@ -3,7 +3,7 @@ layout("/layouts/store.html"){
 #-->
 <header class="header navbar bg-white shadow">
     <div class="btn-group tool-button">
-        <a class="btn btn-primary navbar-btn" href="${base}/store/order/main/index" id="goBack" data-pjax><i class="ti-angle-left"></i>${msg['globals.button.back']}</a>
+        <a class="btn btn-primary navbar-btn" href="${base}/store/order/main" id="goBack" data-pjax><i class="ti-angle-left"></i>${msg['globals.button.back']}</a>
     </div>
     <div class="pull-right">
 
@@ -30,9 +30,6 @@ layout("/layouts/store.html"){
                         </div>
                         <div class="col-md-4" style="padding: 5px 0px">
                             用户名:   <span>${obj.accountUser.loginname}</span>
-                        </div>
-                        <div class="col-md-4" style="padding: 5px 0px">
-                            订单来源:   <span>${@com.aebiz.app.order.modules.models.em.OrderSourceEnum.getValue(obj.orderSrc)}</span>
                         </div>
                         <div class="col-md-4" style="padding: 5px 0px">
                             下单时间:   <span><!--#if(!isEmpty(obj.orderAt)){#-->${@date.getDate(obj.orderAt)} <!--#}#--></span>
@@ -87,27 +84,6 @@ layout("/layouts/store.html"){
                 </div>
             </div>
 
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title">订单支付凭证</h3>
-                </div>
-                <div class="panel-body">
-                    <div class="col-md-10 col-md-offset-1">
-                        <!--# if(isEmpty(payTransfers)){ #-->
-                        <span>暂无图片</span>
-                        <!--# } #-->
-                        <!--# for(var payTransfer in payTransfers){ #-->
-                        <div id="img" class="div-img-album">
-                            <div class="col-sm-6 col-md-3">
-                                <a href="${payTransfer.uploadImage}" class="thumbnail">
-                                    <img id="${payTransfer.id}" src="${payTransfer.uploadImage}">
-                                </a>
-                            </div>
-                        </div>
-                        <!--#} #-->
-                    </div>
-                </div>
-            </div>
 
             <div class="panel panel-default">
                 <div class="panel-heading">
@@ -191,36 +167,6 @@ layout("/layouts/store.html"){
                 </div>
             </div>
 
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title">订单日志</h3>
-                </div>
-                <div class="panel-body">
-                    <div class="table-responsive ">
-                        <table class="table">
-                            <caption></caption>
-                            <thead>
-                            <tr>
-                                <th>操作时间</th>
-                                <th>操作人</th>
-                                <th>操作类型</th>
-                                <th>操作内容</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <!--#for(log in orderLogList){  #-->
-                            <tr style="border-bottom: 1px solid #dfe6ec;">
-                                <td><!--#if(!isEmpty(log.opAt)){#-->${@date.getDate(log.opAt)} <!--#}#--></td>
-                                <td>${log.opByName!}</td>
-                                <td>${@com.aebiz.app.order.modules.models.em.OrderLogBehaviorEnum.getValue(log.behavior)}</td>
-                                <td>${log.note}</td>
-                            </tr>
-                            <!--#}#-->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
         </div>
         <div style="position:fixed;bottom:0px;background-color:#FFFFFF;width:100%;min-height: 50px;z-index: 5">
             <div class="form-group col-md-12 col-md-offset-4" style="display: inline-block;line-height: 50px">

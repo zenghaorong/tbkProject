@@ -1,7 +1,13 @@
 package com.aebiz.app.integral.modules.models;
 
+import com.aebiz.app.acc.modules.models.Account_user;
+import com.aebiz.app.acc.modules.services.AccountUserService;
+import com.aebiz.app.integral.modules.services.MemberIntegralService;
 import com.aebiz.baseframework.base.model.BaseModel;
+import org.apache.commons.lang3.StringUtils;
+import org.nutz.dao.Cnd;
 import org.nutz.dao.entity.annotation.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.Serializable;
 import java.util.List;
@@ -13,6 +19,10 @@ import java.util.List;
  */
 @Table("Member_Integral")
 public class Member_Integral extends BaseModel implements Serializable {
+    
+    @Autowired
+    private AccountUserService accountUserService;
+    
     @Column
     @Name
     @Comment("ID")
@@ -41,6 +51,22 @@ public class Member_Integral extends BaseModel implements Serializable {
     @Comment("累计积分")
     @ColDefine(type = ColType.INT, width = 11)
     private int totalIntegral;
+    
+    private String customerName;
+
+    public String getCustomerName() {
+        Cnd cnd = Cnd.NEW();
+        cnd.and("accountId","=",this.customerUuid);
+        List<Account_user> users = accountUserService.query(cnd);
+        if(users!=null&&users.size()>0){
+            customerName=users.get(0).getLoginname();
+        }
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
 
     private List<Member_Integral_Detail> details;
 

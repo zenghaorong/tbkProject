@@ -87,7 +87,7 @@
                 </div>
                 <div>
                     <a :href="'${base!}/open/h5/product/productDetail.html?id='+item.goodsId" style="padding-left: 0px;margin-left: 0px;">
-                        <img class="mui-media-object mui-pull-left" :src="item.imgurl">
+                        <img class="mui-media-object mui-pull-left" style="width: 100px;height: 100px;" :src="item.imgurl">
                     </a>
                 </div>
                 <div class="mui-media-body" style="white-space:normal;font-size: 15px;margin-left: 46%;" >
@@ -142,7 +142,16 @@
                         price =price+  $(this).siblings("span").text()*1*n;
 
                     });
-                    $("#totalMoney").html(price+"元");
+                    var totalMoney = price.toFixed(2);
+                    $("#totalMoney").html(totalMoney+"元");
+                } else if(data.code==-1){
+                    layer.open({
+                        content: "库存不足!"
+                        ,skin: 'msg'
+                        ,time: 2 //2秒后自动关闭
+                    });
+                    $(a).siblings("input").val(data.msg*1);
+                    return;
                 }
             }
         });
@@ -153,7 +162,7 @@
         $(b).parent().siblings().children("input[type='checkbox']").prop("checked",true);
         if(num>0){
             if(num==1){
-                return "";
+                return ;
             }else {
                 $(b).siblings("input").val(num-1);
 
@@ -174,7 +183,16 @@
                             price =price+  $(this).siblings("span").text()*1*n;
 
                         });
-                        $("#totalMoney").html(price+"元");
+                        var totalMoney = price.toFixed(2);
+                        $("#totalMoney").html(totalMoney+"元");
+                    } else if(data.code==-1){
+                        layer.open({
+                            content: "库存不足!"
+                            ,skin: 'msg'
+                            ,time: 2 //2秒后自动关闭
+                        });
+                        $(b).siblings("input").val(data.msg*1);
+                        return;
                     }
                 }
             });
@@ -210,7 +228,16 @@
                             price =price+  $(this).siblings("span").text()*1*n;
 
                         });
-                        $("#totalMoney").html(price+"元");
+                        var totalMoney = price.toFixed(2);
+                        $("#totalMoney").html(totalMoney+"元");
+                    }else if(data.code==-1){
+                        layer.open({
+                            content: "库存不足!"
+                            ,skin: 'msg'
+                            ,time: 2 //2秒后自动关闭
+                        });
+                        $(c).val(data.msg*1);
+                        return;
                     }
                 }
             });
@@ -222,7 +249,10 @@
             price =price+  $(this).siblings("span").text()*1*n;
 
         });
-        $("#totalMoney").html(price+"元");
+        if(price!=0){
+            var totalMoney = price.toFixed(2);
+            $("#totalMoney").html(totalMoney+"元");
+        }
     }
     function delCart() {
         var cartIds ="";
@@ -268,7 +298,7 @@
             },
             success:function(data){
                 if (data.code == 0) {
-                    window.location.href="${base!}/open/h5/order/orderConfirmation.html?productList="+encodeURIComponent(data.data);
+                    window.location.href="${base!}/open/h5/order/orderConfirmation.html?productList="+encodeURIComponent(data.data)+"&cartIds="+cartIds;
                 }
             }
         });
@@ -308,7 +338,9 @@
                                     total = total+d[i].price*1*d[i].num;
                                 }
                             }
-                            $("#totalMoney").html(total/100+"元");
+                            var tm = total/100;
+                            var totalMoney = tm.toFixed(2);
+                            $("#totalMoney").html(totalMoney+"元");
                         } else if(data.code == -1){
                             layer.open({
                                 content: '您没有登录，请登录！'

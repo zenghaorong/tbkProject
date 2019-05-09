@@ -636,8 +636,16 @@ layout("/layouts/store.html"){
             }
         }, "json");
     }
-    function cancleRecommend() {
-
+    function cancleRecommend(id) {
+        $.post("${base!}/store/goods/list/setRecommend", {
+            id:id,isRecommend:0,
+        }, function (ret) {
+            if (ret.code == 0) {
+                datatable.ajax.reload();
+            } else {
+                Toast.error(ret.msg);
+            }
+        }, "json");
     }
 
     function showBatchOperation(tab) {

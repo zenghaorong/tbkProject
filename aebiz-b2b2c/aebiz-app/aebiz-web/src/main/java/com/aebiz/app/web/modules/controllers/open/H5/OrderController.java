@@ -107,6 +107,19 @@ public class OrderController {
             return "pages/front/h5/niantu/login";
         }
         String productList = request.getParameter("productList");
+        String cartIds = request.getParameter("cartIds");
+        try{
+            String[] ids = StringUtils.split(cartIds, ";");
+
+            for (int i = 0 ; i<ids.length;i++){
+                Member_cart cart = memberCartService.fetch(ids[i]);
+                cart.setDelFlag(true);
+                memberCartService.update(cart);
+            }
+        }catch (Exception e){
+
+        }
+
 //        List<Map<String,Object>> list = (List<Map<String, Object>>) JSON.parse(productList);
 //        String productIds = request.getParameter("productIds");
 //        String num = request.getParameter("num");
@@ -241,93 +254,47 @@ public class OrderController {
 
         //查询收货信息
         Member_address member_address = memberAddressService.fetch(addressId);
-
-        Map<String,Object> map=list.get(0);
+        String freight = sysDictService.getNameByCode("freight");
+        int freightMoney = Integer.parseInt(freight) * 100; //运费
+        int freeMoney = 0;
+        int totalMoney =0; //单位是分
+        int totalNum=0;
+        Order_main order_main = new Order_main();
+        order_main.setAccountId(accountUser.getAccountId());
+        order_main.setGoodsFreeMoney(0);
+        order_main.setFreeMoney(0);
+        order_main.setPayStatus(0);
+        order_main.setOrderStatus(0);
+        order_main.setOrderAt(DateUtil.getTime(new Date()));
+        order_main.setDeliveryAddress(member_address.getAddress());
+        order_main.setDeliveryMobile(member_address.getMobile());
+        order_main.setOrderType(OrderTypeEnum.product_order_type.getKey());
+        Order_main order = orderMainService.insert(order_main);
+        for (Map<String,Object> map:list
+                ) {
             String id = (String) map.get("productId");
             String num = (String) map.get("num");
             Goods_main good = goodsService.fetch(id);
-            Order_main order_main = new Order_main();
+
             Order_goods order_goods = new Order_goods();
 
-            order_main.setAccountId(accountUser.getAccountId());
-            order_main.setStoreId(good.getStoreId());
+
             Cnd proCnd = Cnd.NEW();
             proCnd.and("goodsId", "=", good.getId());
             List<Goods_product> gpList = goodsProductService.query(proCnd);
             if (gpList != null && gpList.size() > 0) {
                 Goods_product goods_product = gpList.get(0);
+
+
                 Integer salePrice = goods_product.getSalePrice(); //单位是分
                 int n = Integer.parseInt(num);
-                int totalMoney = salePrice * n; //单位是分
-                order_main.setGoodsMoney(totalMoney);
-                order_main.setGoodsFreeMoney(0);
-                String freight = sysDictService.getNameByCode("freight");
-                int freightMoney = Integer.parseInt(freight) * 100; //运费
-                int freeMoney = 0;
-                /**
-                 * 计算优惠劵抵扣金额
-                 */
-                if(couponId!=null) {
-                    Cnd cndCoupon = Cnd.NEW();
-                    cndCoupon.and("accountId", "=", accountUser.getAccountId());
-                    cndCoupon.and("status", "=", 0);//未使用
-                    cndCoupon.and("couponId", "=", couponId);//未使用
-                    List<Member_coupon> member_couponList = memberCouponService.query(cndCoupon);
-                    if (member_couponList != null && member_couponList.size() > 0) {
-                        Member_coupon member_coupon = member_couponList.get(0);
-                        Sales_coupon sales_coupon = salesCouponService.fetch(member_coupon.getCouponId());
-                        //判断优惠劵状态
-                        if (!sales_coupon.isDisabled()) {
-                            int time = (int) WXPayUtil.getCurrentTimestamp();
-                            //判断是否过期
-                            if (sales_coupon.getStartTime() < time || sales_coupon.getEndTime() > time) {
-                                double payMoney = CalculateUtils.div(totalMoney,100,2);//转换为元
-                                if ("1".equals(sales_coupon.getType())) { //满减
-                                    if (sales_coupon.getConditionAmount() != null) {
-                                        if (payMoney >= sales_coupon.getConditionAmount()) {
-                                            payMoney = CalculateUtils.sub(payMoney,sales_coupon.getConditionAmount());
-                                            totalMoney = (int)CalculateUtils.mul(payMoney,100); //转化回分
-                                        }
-                                    }
-                                }
-                                if ("2".equals(sales_coupon.getType())) { //免运费劵
-                                    if(sales_coupon.getProductQuantityRule()!=null) {
-                                        if (gpList.size() >= sales_coupon.getProductQuantityRule()) {
-                                            freightMoney = 0;
-                                        }
-                                    }
-                                }
-                                if("3".equals(sales_coupon.getType())){ //折扣劵
-                                    if(sales_coupon.getProductQuantityRule()!=null) {
-                                        if (gpList.size() >= sales_coupon.getProductQuantityRule()) {
-                                            payMoney = CalculateUtils.mul(payMoney,sales_coupon.getDiscount());
-                                            totalMoney = (int)CalculateUtils.mul(payMoney,100); //转化回分
-                                        }
-                                    }
-                                }
-                            }
-
-                        }
-                    }
-                }
-
-
-//                order_main.setPayMoney(totalMoney + freightMoney);
-                order_main.setPayMoney(1); //先写死一个测试金额
-
-                order_main.setFreightMoney(freightMoney);
-                order_main.setFreeMoney(0);
-                order_main.setPayStatus(0);
-                order_main.setOrderStatus(0);
-                order_main.setOrderAt(DateUtil.getTime(new Date()));
-                order_main.setDeliveryAddress(member_address.getAddress());
-                order_main.setDeliveryMobile(member_address.getMobile());
-                order_main.setOrderType(OrderTypeEnum.product_order_type.getKey());
-                Order_main order = orderMainService.insert(order_main);
+                totalMoney += salePrice * n;
+                totalNum+=n;
+                order_main.setStoreId(good.getStoreId());
                 order_goods.setOrderId(order.getId());
                 order_goods.setAccountId(order.getAccountId());
                 order_goods.setGoodsId(good.getId());
-                order_goods.setStoreId(order_main.getStoreId());
+                order_goods.setStoreId(good.getStoreId());
                 order_goods.setGoodsName(good.getName());
                 order_goods.setProductId(goods_product.getId());
                 order_goods.setSku(goods_product.getSku());
@@ -339,9 +306,24 @@ public class OrderController {
                 order_goods.setFreeMoney(freeMoney);
 //                order_goods.setImgUrl(goods_product.get);  缺商品图片
                 order_goods.setPayMoney(goods_product.getSalePrice() * n - freeMoney);
+
                 orderGoodsService.insert(order_goods);
-                request.setAttribute("order", order);
+                int i = goods_product.getStock() - n;
+                if(i<0){
+                    i=0;
+                }
+                goods_product.setStock(i);
+                goodsService.update(goods_product);
+
             }
+        }
+        this.calCouponMoney(accountUser,couponId,totalMoney,freightMoney,totalNum);
+        order.setGoodsMoney(totalMoney);
+        order.setPayMoney(totalMoney + freightMoney);
+//                order_main.setPayMoney(1); //先写死一个测试金额
+        order.setFreightMoney(freightMoney);
+        orderMainService.update(order);
+        request.setAttribute("order", order);
         return "pages/front/h5/niantu/checkoutCounter";
     }
 
@@ -468,14 +450,22 @@ public class OrderController {
         String cartIds = request.getParameter("cartIds");
         try{
             String[] ids = StringUtils.split(cartIds, ";");
+
             for (int i = 0 ; i<ids.length;i++){
                 Map<String,Object> p = new HashMap<>();
                 Member_cart cart = memberCartService.fetch(ids[i]);
                 p.put("productId",cart.getGoodsId());
                 p.put("num",cart.getNum().toString());
+                Cnd proCnd = Cnd.NEW();
+                proCnd.and("goodsId", "=", cart.getGoodsId());
+                List<Goods_product> gpList = goodsProductService.query(proCnd);
+                if (gpList != null && gpList.size() > 0) {
+                    Goods_product goods_product = gpList.get(0);
+                    if(goods_product.getStock()<cart.getNum()){
+                        return Result.error(-1,"库存不足！");
+                    }
+                }
                 pList.add(p);
-                cart.setDelFlag(true);
-                memberCartService.update(cart);
             }
         }catch (Exception e){
 
@@ -642,4 +632,87 @@ public class OrderController {
             return Result.error("fail");
         }
     }
+    @RequestMapping("/checkStock.html")
+    @SJson
+    public Result checkStock(HttpServletRequest request){
+        Subject subject = SecurityUtils.getSubject();
+        try {
+            Account_user accountUser = (Account_user) subject.getPrincipal();
+            if (accountUser == null) {
+                return Result.error("请登录！");
+            }
+        }catch (Exception e){
+            return Result.error("系统异常！");
+        }
+        try{
+            String productList = request.getParameter("productList");
+            List<Map<String,Object>> list = (List<Map<String, Object>>) JSON.parse(productList);
+            for (Map<String,Object> map:list
+                    ) {
+                String id = (String) map.get("productId");
+                String num = (String) map.get("num");
+                Cnd proCnd = Cnd.NEW();
+                proCnd.and("goodsId", "=", id);
+                List<Goods_product> gpList = goodsProductService.query(proCnd);
+                if (gpList != null && gpList.size() > 0) {
+                    Goods_product goods_product = gpList.get(0);
+                    if(goods_product.getStock()<Integer.parseInt(num)){
+                        return Result.error(-1,"库存不足！");
+                    }
+                }
+            }
+        }catch (Exception e){
+
+        }
+        return Result.success();
+    }
+    private void calCouponMoney(Account_user accountUser,String couponId,double totalMoney,double freightMoney,int totalNum){
+        /**
+         * 计算优惠劵抵扣金额
+         */
+        if(StringUtils.isNotEmpty(couponId)) {
+            Cnd cndCoupon = Cnd.NEW();
+            cndCoupon.and("accountId", "=", accountUser.getAccountId());
+            cndCoupon.and("status", "=", 0);//未使用
+            cndCoupon.and("couponId", "=", couponId);//未使用
+            List<Member_coupon> member_couponList = memberCouponService.query(cndCoupon);
+            if (member_couponList != null && member_couponList.size() > 0) {
+                Member_coupon member_coupon = member_couponList.get(0);
+                Sales_coupon sales_coupon = salesCouponService.fetch(member_coupon.getCouponId());
+                //判断优惠劵状态
+                if (!sales_coupon.isDisabled()) {
+                    int time = (int) WXPayUtil.getCurrentTimestamp();
+                    //判断是否过期
+                    if (sales_coupon.getStartTime() < time || sales_coupon.getEndTime() > time) {
+                        double payMoney = CalculateUtils.div(totalMoney,100,2);//转换为元
+                        if ("1".equals(sales_coupon.getType())) { //满减
+                            if (sales_coupon.getConditionAmount() != null) {
+                                if (payMoney >= sales_coupon.getConditionAmount()) {
+                                    payMoney = CalculateUtils.sub(payMoney,sales_coupon.getConditionAmount());
+                                    totalMoney = (int)CalculateUtils.mul(payMoney,100); //转化回分
+                                }
+                            }
+                        }
+                        if ("2".equals(sales_coupon.getType())) { //免运费劵
+                            if(sales_coupon.getProductQuantityRule()!=null) {
+                                if (totalNum >= sales_coupon.getProductQuantityRule()) {
+                                    freightMoney = 0;
+                                }
+                            }
+                        }
+                        if("3".equals(sales_coupon.getType())){ //折扣劵
+                            if(sales_coupon.getProductQuantityRule()!=null) {
+                                if (totalNum >= sales_coupon.getProductQuantityRule()) {
+                                    payMoney = CalculateUtils.mul(payMoney,sales_coupon.getDiscount());
+                                    totalMoney = (int)CalculateUtils.mul(payMoney,100); //转化回分
+                                }
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
+    }
+
 }

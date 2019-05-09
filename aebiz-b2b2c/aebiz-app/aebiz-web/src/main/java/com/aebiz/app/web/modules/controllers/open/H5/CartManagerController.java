@@ -120,7 +120,12 @@ public class CartManagerController {
                     m.setImgurl(imgList.get(0).getImgAlbum());
                 }
                 m.setProductName(good.getName());
-
+                Cnd proCnd = Cnd.NEW();
+                proCnd.and("goodsId", "=", good.getId());
+                List<Goods_product> gpList = goodsProductService.query(proCnd);
+                if(gpList!=null&&gpList.size()>0){
+                    m.setPrice(gpList.get(0).getSalePrice());
+                }
             }
 
         }
@@ -142,7 +147,7 @@ public class CartManagerController {
         List<Goods_product> gpList = goodsProductService.query(proCnd);
         if(gpList!=null&&gpList.size()>0){
             if(gpList.get(0).getStock()<Integer.parseInt(num)){
-                return Result.error(-1,"库存不足");
+                return Result.error(-1,gpList.get(0).getStock().toString());
             }
         }
         try{

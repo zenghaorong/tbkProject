@@ -77,10 +77,10 @@
         <ul class="mui-table-view">
             <li class="mui-table-view-cell mui-media" >
                 <a href="#">
-                    <img class="mui-media-object mui-pull-left" :src="good.imgList">
+                    <img class="mui-media-object mui-pull-left" style="width: 100px;height: 100px;" :src="good.imgList">
                     <div class="mui-media-body" style="white-space:normal;" >
                         <span>{{good.name}}</span>
-                        <p class='mui-ellipsis'style="margin-top: 35px;margin-left: 110px;" >
+                        <p class='mui-ellipsis'style="margin-top: 35px;margin-left: 80px;" >
                             <span class="jiage-text">￥{{good.price}}</span>
                             <span>*{{good.num}}</span>
                         </p>
@@ -179,7 +179,7 @@
                             for(var o=0;o<self.goodsList.length;o++){
                                 price = price + parseFloat(self.goodsList[o].price)*self.goodsList[o].num;
                             }
-                            self.zongPrice=price;
+                            self.zongPrice=price.toFixed(2);
                             self.getMyOrderCoupon();
                         } else {
 
@@ -250,6 +250,26 @@
                     });
                     return;
                 }
+
+                $.ajax({
+                    type:"POST",
+                    url:"${base!}/open/h5/order/checkStock.html",
+                    dataType:"JSON",
+                    data:{
+                        productList:json
+                    },
+                    success:function(data){
+                        if (data.code == 0) {
+                        } else {
+                            layer.open({
+                                content: "库存不足!"
+                                ,skin: 'msg'
+                                ,time: 2 //2秒后自动关闭
+                            });
+                            return;
+                        }
+                    }
+                });
                 var addressId = this.address.id;
                 window.location.href="${base!}/open/h5/order/checkoutCounter.html?productList="+encodeURIComponent(json)+"&addressId="+addressId+"&couponId="+this.couponId;
             }

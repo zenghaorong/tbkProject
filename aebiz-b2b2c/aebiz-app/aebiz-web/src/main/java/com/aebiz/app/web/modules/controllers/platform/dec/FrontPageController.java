@@ -68,17 +68,17 @@ public class FrontPageController {
 	public String toFronIndex( Model model,
 						 HttpServletResponse response, HttpServletRequest request) {
 		// 获取当前正在使用的模板的uuid
-		String templateUuid = decTemplatesManagerService.getIsUsingTemplate();
-		String pageUuid=decTemplatesPagesService.getPageId(templateUuid,"index.html");
-		try {
-			request.getServletContext()
-					.getRequestDispatcher("/platform/dec/templates/manager/run?templateUuid="+ templateUuid + "&pageUuid=" + pageUuid)
-					.forward(request, response);
-		} catch (Exception ex) {
-			log.error(ex);
-		}
+//		String templateUuid = decTemplatesManagerService.getIsUsingTemplate();
+//		String pageUuid=decTemplatesPagesService.getPageId(templateUuid,"index.html");
+//		try {
+//			request.getServletContext()
+//					.getRequestDispatcher("/platform/dec/templates/manager/run?templateUuid="+ templateUuid + "&pageUuid=" + pageUuid)
+//					.forward(request, response);
+//		} catch (Exception ex) {
+//			log.error(ex);
+//		}
 
-		return null;
+		return "pages/front/h5/niantu/index";
 	}
 
 }

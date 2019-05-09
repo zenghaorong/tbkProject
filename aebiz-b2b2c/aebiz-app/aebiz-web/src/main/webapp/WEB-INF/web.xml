@@ -32,7 +32,7 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>appServlet</servlet-name>
-        <url-pattern>/index</url-pattern>
+        <url-pattern>/</url-pattern>
     </servlet-mapping>
 
     <!-- Custom Route -->

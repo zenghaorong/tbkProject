@@ -119,9 +119,11 @@
     <!-- 静态资源访问配置 -->
     <mvc:resources mapping="/assets/**" location="/assets/" cache-period="31556926"/>
     <mvc:resources mapping="/upload/**" location="/upload/" cache-period="31556926"/>
-    <!-- 支持上传文件 5M -->
+    <!-- 支持上传文件 500M -->
     <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"
-          p:defaultEncoding="UTF-8" p:maxUploadSize="5242880000" p:uploadTempDir="upload/temp"/>
+          p:defaultEncoding="UTF-8" p:maxUploadSize="500242880000" p:uploadTempDir="upload/temp"/>
+
+    <mvc:view-controller path="/" view-name="redirect:index" />
 
     <!-- 配置信息加载,后台获取值通过:
     @Autowired

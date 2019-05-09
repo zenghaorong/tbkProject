@@ -260,7 +260,10 @@ public class CmsH5ReviewController {
 //                return Result.error(2,"请先登录");
 //            }
             Cms_article cms_article = cmsArticleService.fetch(cmsId);
-            int num = cms_article.getPageViews();
+            int num = 0;
+            if(cms_article.getPageViews()!=null){
+                num = cms_article.getPageViews();
+            }
             num++;
             cms_article.setPageViews(num);
             cmsArticleService.update(cms_article);

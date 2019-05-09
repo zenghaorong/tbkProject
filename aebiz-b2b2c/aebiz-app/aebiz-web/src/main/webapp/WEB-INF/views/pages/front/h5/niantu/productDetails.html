@@ -202,7 +202,14 @@
 
   </div>
 
-<div style="    background: #f9f7f8;">
+<div style="background: #f9f7f8;">
+    <ul class="mui-table-view">
+        <li class="mui-table-view-cell" v-on:click="look">
+            <a class="mui-navigate-right" >
+               宝贝评价({{feedCount}})<span style="float:right;padding-right: 20px;color: #ff9908;">查看全部</span>
+            </a>
+        </li>
+    </ul>
     <div class="detailTab">
         <div class="detailHD">商品详情</div>
         <div class="bd">
@@ -226,10 +233,12 @@
         el: '#product',
         data: {
             product: [],
+            feedCount:0
         },
         created:function () {   //实例初始化创建完成执行
 
-            this.ProductDetail()     //调用自身方法
+            this.ProductDetail();     //调用自身方法
+            this.feedbackCount();
 
         },
         methods:{              //定义封装方法
@@ -258,6 +267,28 @@
                 });
 
             },
+            feedbackCount:function () {
+                var self = this;
+                $.ajax({
+                    type:"POST",
+                    url:"${base!}/open/h5/feedback/feedbackCount",
+                    dataType:"JSON",
+                    data:{
+                        goodsId:'${id!}'
+                    },
+                    success:function(data){
+                        if (data.code == 0) {
+                            var d = data.data;
+                            self.feedCount =d;
+                        } else {
+
+                        }
+                    }
+                });
+            },
+            look:function () {
+                 window.location.href="${base!}/open/h5/feedback/goProductFeedback?goodsId=${id!}"
+            }
         },
         watch:{     //监听器
             // carModel:function () {

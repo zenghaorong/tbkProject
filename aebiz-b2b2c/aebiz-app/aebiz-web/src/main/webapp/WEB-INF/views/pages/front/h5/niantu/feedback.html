@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>商品评论</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="${base!}/assets/front/h5/css/mui.min.css" />
+    <link rel="stylesheet" href="${base!}/assets/front/h5/css/hryc.css" />
+    <!--App自定义的css-->
+    <!--<link rel="stylesheet" type="text/css" href="../css/app.css"/>-->
+    <style>
+        .mui-table-view .mui-media-object {
+            line-height: 42px;
+            max-width: 145px;
+            height: 100px;
+        }
+        .jiage-text{
+            font-size: 18px;
+            color: red;
+            margin-right:10px ;
+        }
+        [v-cloak]{
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+
+
+<header class="mui-bar mui-bar-nav top-color">
+    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: white;"></a>
+    <h1 class="mui-title" style="color: white;">
+        商品评论
+    </h1>
+</header>
+
+<div class="mui-card" style="margin-top: 60px;" id="vue">
+    <div class="mui-card-content">
+        <ul class="mui-table-view">
+            <li class="mui-table-view-cell mui-media">
+                <a href="#">
+                    <img class="mui-media-object mui-pull-left" src="${order_goods.imgUrl!}">
+                    <div class="mui-media-body" style="white-space:normal;">
+                        <span>${order_goods.goodsName!}</span>
+                        <p class='mui-ellipsis'style="margin-top: 35px;margin-left: 0px;">
+                            <!--<span class="jiage-text">￥36.00</span>-->
+                            <span>数量：*${order_goods.buyNum!}</span>
+                        </p>
+                    </div>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <p style="margin-left: 20px;">选择分数:</p>
+    <div style="margin-left: 30px;">
+        1分<input   type="radio"   value="1"  v-model="appScore"   name="appScore"   checked="checked" style="margin-right: 15px;"/>
+        2分<input   type="radio"   value="2"  v-model="appScore"  name="appScore"  style="margin-right: 15px;" />
+        3分<input   type="radio"   value="3"  v-model="appScore"  name="appScore" style="margin-right: 15px;"  />
+        4分<input   type="radio"   value="4"  v-model="appScore"  name="appScore"  style="margin-right: 15px;" />
+        5分<input   type="radio"   value="5"  v-model="appScore"  name="appScore"  style="margin-right: 15px;" />
+    </div>
+    <div class="mui-input-row" style="margin: 10px 5px;">
+        <textarea id="textarea" v-model="content" rows="5" placeholder="请输入您要评论的内容"></textarea>
+    </div>
+    <div style="width: 300px;margin: 0 auto;">
+        <button type="button" v-on:click="add" class="mui-btn mui-btn-primary mui-btn-block">发布评论</button>
+    </div>
+
+</div>
+
+
+
+
+<script type="text/javascript" src="${base!}/assets/front/h5/js/mui.js" ></script>
+<script type="text/javascript" src="${base!}/assets/front/h5/js/vue.js" ></script>
+<script type="text/javascript" src="${base!}/assets/front/h5/js/jquery-2.0.0.min.js" ></script>
+<script type="text/javascript" src="${base!}/assets/decorate/pc/decoratecommon/js/layer/mobile/layer.js" ></script>
+<script type="application/javascript">
+    mui.init({
+        swipeBack:true //启用右滑关闭功能
+    });
+
+    var vue = new Vue({
+        el: '#vue',
+        data: {
+            content:'',
+            appScore:''
+        },
+        created:function () {   //实例初始化创建完成执行
+
+            // this.getvideoList()     //调用自身方法
+
+        },
+        methods:{              //定义封装方法
+            //保存收货地址
+            add:function () {
+                var self = this;
+                if(self.appScore == ''){
+                    layerAlert("评分不能为空")
+                    return;
+                }
+                if(self.content == ''){
+                    layerAlert("评论内容不能为空")
+                    return;
+                }
+
+                $.ajax({
+                    type:"POST",
+                    url:"${base!}/open/h5/feedback/saveFeedback",
+                    dataType:"JSON",
+                    data:{
+                        content:self.content,
+                        appScore:self.appScore,
+                        orderGoodId:'${order_goods.id!}'
+                    },
+                    success:function(data){
+                        if (data.code == 0) {
+                            window.location.href = "${base!}/open/h5/order/goOrderInfo.html?orderId=${order_goods.orderId!}";
+                        } else {
+                            layerAlert(data.msg)
+                        }
+                    }
+                });
+
+            }
+        },
+        watch:{     //监听器
+            // carModel:function () {
+            //     this.getProvince();
+            // }
+        }
+
+    })
+
+    function layerAlert(msg) {
+        //提示
+        layer.open({
+            content: msg
+            ,skin: 'msg'
+            ,time: 2 //2秒后自动关闭
+        });
+    }
+
+</script>
+</body>
+</html>

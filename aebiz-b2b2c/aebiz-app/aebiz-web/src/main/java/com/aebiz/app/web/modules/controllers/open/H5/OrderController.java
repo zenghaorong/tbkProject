@@ -304,7 +304,13 @@ public class OrderController {
                 order_goods.setBuyPrice(goods_product.getSalePrice() - freeMoney);
                 order_goods.setTotalMoney(goods_product.getSalePrice() * n);
                 order_goods.setFreeMoney(freeMoney);
-//                order_goods.setImgUrl(goods_product.get);  缺商品图片
+                Cnd imgCnd = Cnd.NEW();
+                imgCnd.and("goodsId","=",order_goods.getGoodsId());
+                List<Goods_image> imgList = goodsImageService.query(imgCnd);
+                if(imgList!=null&&imgList.size()>0){
+                    order_goods.setImgUrl(imgList.get(0).getImgAlbum());
+                }
+
                 order_goods.setPayMoney(goods_product.getSalePrice() * n - freeMoney);
 
                 orderGoodsService.insert(order_goods);

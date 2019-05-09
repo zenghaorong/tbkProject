@@ -260,17 +260,19 @@ public class CmsH5ReviewController {
 //                return Result.error(2,"请先登录");
 //            }
             Cms_article cms_article = cmsArticleService.fetch(cmsId);
-            int num = 0;
-            if(cms_article.getPageViews()!=null){
-                num = cms_article.getPageViews();
+            if(cms_article!=null) {
+                int num = 0;
+                if (cms_article.getPageViews() != null) {
+                    num = cms_article.getPageViews();
+                }
+                num++;
+                cms_article.setPageViews(num);
+                cmsArticleService.update(cms_article);
             }
-            num++;
-            cms_article.setPageViews(num);
-            cmsArticleService.update(cms_article);
 
             return Result.success("ok");
         } catch (Exception e) {
-            log.error("发布评论异常",e);
+            log.error("增加文章浏览量接口异常",e);
             return Result.error("fail");
         }
     }

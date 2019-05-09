@@ -9,6 +9,7 @@ import com.aebiz.app.order.modules.models.Order_goods;
 import com.aebiz.app.order.modules.models.Order_main;
 import com.aebiz.app.order.modules.models.em.OrderPayStatusEnum;
 import com.aebiz.app.order.modules.models.em.OrderPayTypeEnum;
+import com.aebiz.app.order.modules.models.em.OrderStatusEnum;
 import com.aebiz.app.order.modules.models.em.OrderTypeEnum;
 import com.aebiz.app.order.modules.services.OrderMainService;
 import com.aebiz.app.web.commons.utils.CalculateUtils;
@@ -251,6 +252,7 @@ public class PayH5Controller {
                 //5.更新订单数据
                 order_main.setPayType(OrderPayTypeEnum.ALIPAY.getKey());
                 order_main.setPayStatus(OrderPayStatusEnum.PAYALL.getKey());
+                order_main.setOrderStatus(OrderStatusEnum.FINISH.getKey());
                 orderMainService.update(order_main);
                 try {
                     double orderPayMoney = order_main.getPayMoney();
@@ -322,6 +324,7 @@ public class PayH5Controller {
                 //5.更新订单数据
                 order_main.setPayType(OrderPayTypeEnum.WEIXINPAY.getKey());
                 order_main.setPayStatus(OrderPayStatusEnum.PAYALL.getKey());
+                order_main.setOrderStatus(OrderStatusEnum.FINISH.getKey());
                 orderMainService.update(order_main);
                 try {
                     double orderPayMoney = order_main.getPayMoney();

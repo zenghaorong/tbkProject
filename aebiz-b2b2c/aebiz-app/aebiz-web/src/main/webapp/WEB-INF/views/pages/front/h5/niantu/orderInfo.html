@@ -107,11 +107,11 @@
     <button type="button" onclick="confirmReceipt()" class="mui-btn mui-btn-primary mui-btn-block">确认收货</button>
 </div>
 <!--#}#-->
-<!--&lt;!&ndash;#if(order.payStatus == 3 && order.getStatus == 1){#&ndash;&gt;-->
-<!--<div style="width: 300px;margin: 0 auto;">-->
-    <!--<button type="button" onclick="" class="mui-btn mui-btn-primary mui-btn-block">立即评价</button>-->
-<!--</div>-->
-<!--&lt;!&ndash;#}#&ndash;&gt;-->
+<!--#if(order.payStatus == 3 && order.getStatus == 1){#-->
+<div style="width: 300px;margin: 0 auto;">
+    <button type="button" onclick="goFeedback()" class="mui-btn mui-btn-primary mui-btn-block">立即评价</button>
+</div>
+<!--#}#-->
 <!--#if(order.payStatus == 3){#-->
 <div style="width: 300px;margin: 0 auto;">
     <button type="button" onclick="window.location.href='${base!}/open/h5/refunds/orderRefunds.html?orderId=${orderId!}'" class="mui-btn mui-btn-primary mui-btn-block">申请售后</button>
@@ -182,6 +182,11 @@
                 }
             }
         });
+    }
+
+    //进入评价页
+    function goFeedback() {
+        window.location.href = "${base!}/open/h5/feedback/goFeedback?orderId=${orderId}";
     }
 </script>
 </body>

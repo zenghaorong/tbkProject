@@ -226,7 +226,6 @@
 
             var vue = new Vue({
                 el: '#vue',
-                el: '#productList',
                 data: {
                     bannerList: [],
                     productList: [],
@@ -252,7 +251,7 @@
                                 if (data.code == 0) {
                                    var d = data.data;
                                     self.bannerList = d;
-                                    self.banner = d[0];
+                                    self.banner = d[0].imgurl;
                                     var slider = mui("#slider");
                                     slider.slider({
                                         interval: 5000

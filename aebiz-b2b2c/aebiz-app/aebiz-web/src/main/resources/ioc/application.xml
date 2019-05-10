@@ -123,7 +123,6 @@
     <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"
           p:defaultEncoding="UTF-8" p:maxUploadSize="500242880000" p:uploadTempDir="upload/temp"/>
 
-    <mvc:view-controller path="/" view-name="redirect:index" />
 
     <!-- 配置信息加载,后台获取值通过:
     @Autowired

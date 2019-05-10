@@ -6,6 +6,8 @@ import com.aebiz.app.cms.modules.services.CmsArticleService;
 import com.aebiz.app.cms.modules.services.CmsLoveService;
 import com.aebiz.app.cms.modules.services.CmsReviewService;
 import com.aebiz.app.cms.modules.services.CmsVideoService;
+import com.aebiz.app.integral.modules.services.MemberIntegralService;
+import com.aebiz.app.web.commons.utils.CalculateUtils;
 import com.aebiz.baseframework.base.Result;
 import com.aebiz.baseframework.view.annotation.SJson;
 import org.apache.shiro.SecurityUtils;
@@ -42,6 +44,9 @@ public class CmsH5ReviewController {
 
     @Autowired
     private CmsLoveService cmsLoveService;
+
+    @Autowired
+    private MemberIntegralService memberIntegralService;
 
 
     /**
@@ -118,6 +123,13 @@ public class CmsH5ReviewController {
             num++;
             cms_article.setEvaluateNum(num);
             cmsArticleService.update(cms_article);
+
+            try {
+                memberIntegralService.addMemberIntegral(accountUser.getAccountId(), "3", "2", null);
+            }catch (Exception e){
+                log.error("回调给会员添加积分异常",e);
+            }
+
             return Result.success("ok");
         } catch (Exception e) {
             log.error("发布评论异常",e);

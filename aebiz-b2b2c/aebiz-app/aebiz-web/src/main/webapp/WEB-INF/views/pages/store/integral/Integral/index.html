@@ -79,7 +79,14 @@ layout("/layouts/store.html"){
             },
             "order": [[0, "desc"]],
             "columns": [
-                    {"data": "customerUuid", "bSortable": true},
+                    {"data": "customerUuid",
+                        "render":function (data,name,row) {
+                            var name = "";
+                            name = row.customerName;
+                            return name;
+                        },
+                        "bSortable": true
+                    },
                     // {"data": "storeUuid", "bSortable": true},
                     // {"data": "useAbleIntegral", "bSortable": true},
                     {"data": "totalIntegral", "bSortable": true},

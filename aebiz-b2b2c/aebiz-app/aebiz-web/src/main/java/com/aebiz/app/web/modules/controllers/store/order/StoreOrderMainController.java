@@ -5,8 +5,10 @@ import com.aebiz.app.acc.modules.models.Account_user;
 import com.aebiz.app.acc.modules.services.AccountInfoService;
 import com.aebiz.app.acc.modules.services.AccountUserService;
 import com.aebiz.app.alipay.modules.models.AlipayConfig;
+import com.aebiz.app.goods.modules.models.Goods_image;
 import com.aebiz.app.goods.modules.models.Goods_main;
 import com.aebiz.app.goods.modules.models.Goods_product;
+import com.aebiz.app.goods.modules.services.GoodsImageService;
 import com.aebiz.app.goods.modules.services.GoodsProductService;
 import com.aebiz.app.member.modules.models.Member_account;
 import com.aebiz.app.member.modules.models.Member_address;
@@ -32,6 +34,14 @@ import com.aebiz.app.web.commons.log.annotation.SLog;
 import com.aebiz.app.web.commons.utils.CalculateUtils;
 import com.aebiz.app.wx.modules.models.WxGetPayInfoQO;
 import com.aebiz.app.wx.modules.services.WxPayService;
+import com.alibaba.fastjson.JSONObject;
+import com.alipay.api.AlipayClient;
+import com.alipay.api.DefaultAlipayClient;
+import com.alipay.api.domain.AlipayTradeRefundModel;
+import com.alipay.api.request.AlipayTradeRefundRequest;
+import com.alipay.api.response.AlipayTradeRefundResponse;
+import com.aebiz.app.web.commons.utils.CalculateUtils;
+import com.aebiz.app.wx.modules.models.WxGetPayInfoQO;
 import com.aebiz.baseframework.base.Result;
 import com.aebiz.baseframework.page.OffsetPager;
 import com.aebiz.baseframework.page.datatable.DataTableColumn;
@@ -39,11 +49,6 @@ import com.aebiz.baseframework.page.datatable.DataTableOrder;
 import com.aebiz.baseframework.view.annotation.SJson;
 import com.aebiz.commons.utils.StringUtil;
 import com.alibaba.fastjson.JSONObject;
-import com.alipay.api.AlipayClient;
-import com.alipay.api.DefaultAlipayClient;
-import com.alipay.api.domain.AlipayTradeRefundModel;
-import com.alipay.api.request.AlipayTradeRefundRequest;
-import com.alipay.api.response.AlipayTradeRefundResponse;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Sqls;
@@ -130,6 +135,9 @@ public class StoreOrderMainController {
 
     @Autowired
     private AccountInfoService accountInfoService;
+
+    @Autowired
+    private GoodsImageService goodsImageService;
 
     @Autowired
     private WxPayService wxPayService;
@@ -321,15 +329,23 @@ public class StoreOrderMainController {
 //                        .and("orderStatus","=",OrderStatusEnum.ACTIVE.getKey()).desc("payAt");
                 cnd.and("payStatus","=",OrderPayStatusEnum.PAYALL.getKey());
                 cnd.and("deliveryStatus","=",0);
+                cnd.and("videoId","is ", null);
                 break;
+                //已发货
             case 2:
-                cnd.and("orderStatus","=",OrderStatusEnum.WAITVERIFY.getKey());
+                cnd.and("payStatus","=",OrderPayStatusEnum.PAYALL.getKey());
+                cnd.and("deliveryStatus","=",3);
+                cnd.and("videoId","is ", null);
                 break;
+                //已完成
             case 3:
                 cnd.and("payStatus","<",OrderPayStatusEnum.PAYALL.getKey());
+                cnd.and("deliveryStatus","=",3);
+                cnd.and("getStatus","=",1);
                 break;
+                //视频订单
             case 4:
-                cnd.and("payType","in", OrderPayTypeEnum.CASH.getKey()+","+OrderPayTypeEnum.POS.getKey()+","+OrderPayTypeEnum.ALIQRCODE.getKey()).and("orderStatus","=",OrderStatusEnum.ACTIVE.getKey());
+                cnd.and("videoId","is not", null);
                 break;
             case 5:
                 cnd.and("payStatus","in",OrderPayStatusEnum.REFUNDWAIT.getKey()+","+OrderPayStatusEnum.REFUNDALL.getKey());
@@ -349,9 +365,17 @@ public class StoreOrderMainController {
                 }
                 List<Order_goods> orderGoodsList = orderMain.getGoodsList();
                 if(orderGoodsList != null){
+                    Integer goodsPayMoney = 0;
                     for(Order_goods orderGoods:orderGoodsList){
-                        orderGoods.setImgUrl(goodsProductService.getProductImage(orderGoods.getSku()));
+                        goodsPayMoney+=orderGoods.getSalePrice();
+                        Cnd imgCnd = Cnd.NEW();
+                        imgCnd.and("goodsId","=",orderGoods.getGoodsId());
+                        List<Goods_image> imgList = goodsImageService.query(imgCnd);
+                        if(imgList!=null&&imgList.size()>0){
+                            orderGoods.setImgUrl(imgList.get(0).getImgAlbum());
+                        }
                     }
+                    orderMain.setGoodsPayMoney(goodsPayMoney);
                 }
 
             }
@@ -747,12 +771,16 @@ public class StoreOrderMainController {
         try {
                 //根据订单id，查询订单信息
                 Order_main orderMain = orderMainService.fetch(id);
+            String kdname = req.getParameter("kdname");
+            String kdno = req.getParameter("kdno");
 
-                //判断订单是否为空，为空则直接返回错误信息
+            //判断订单是否为空，为空则直接返回错误信息
                 if(Lang.isEmpty(orderMain)){
                     return Result.error("order.main.noOrder.notice");
                 }
                 orderMain.setDeliveryStatus(3);
+                orderMain.setExpressName(kdname);
+                orderMain.setExpressNo(kdno);
             orderMainService.update(orderMain);
             return Result.success("globals.result.success");
         } catch (Exception e) {
@@ -1023,7 +1051,7 @@ public class StoreOrderMainController {
             Order_main order_main = orderMainService.fetch(orderId);
             //判断订单状态
             if(OrderPayStatusEnum.REFUNDWAIT.getKey() == order_main.getPayStatus()){
-               //判断订单返回平台
+                //判断订单返回平台
                 if(OrderPayTypeEnum.ALIPAY.getKey()==order_main.getPayType()) {
 
                     //商户订单号和支付宝交易号不能同时为空。 trade_no、  out_trade_no如果同时存在优先取trade_no
@@ -1092,7 +1120,6 @@ public class StoreOrderMainController {
             return Result.error("fail");
         }
     }
-
 }
 
 

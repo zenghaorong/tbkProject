@@ -63,15 +63,15 @@ layout("/layouts/store.html"){
             </form>
         </div>
     </div>
-    <div class="pull-right">
-        <button type="button" class="btn btn-info dropdown-toggle " id="btn_goods_batch_op" data-toggle="dropdown">${msg["goods.main.batch.operate"]}<span class="ti-angle-down"></span></button>
-        <ul class="dropdown-menu " role="menu">
-            <li id="li_up"><a href="javascript:;" onclick="upCheck()" data-pjax>${msg["goods.main.batch.up"]}</a></li>
-            <li id="li_down"><a href="javascript:;" onclick="downCheck()" data-pjax>${msg["goods.main.batch.down"]}</a></li>
-            <li><a href="javascript:;" onclick="tagCheck()" data-pjax>${msg["goods.main.batch.mark"]}</a></li>
-        </ul>
-        <button class="btn btn-primary navbar-btn" onclick="sublime.toggleFilter('.cd-panel')"><i class="fa fa-sliders"></i> ${msg["goods.main.btn.filter"]}</button>
-    </div>
+    <!--<div class="pull-right">-->
+        <!--<button type="button" class="btn btn-info dropdown-toggle " id="btn_goods_batch_op" data-toggle="dropdown">${msg["goods.main.batch.operate"]}<span class="ti-angle-down"></span></button>-->
+        <!--<ul class="dropdown-menu " role="menu">-->
+            <!--<li id="li_up"><a href="javascript:;" onclick="upCheck()" data-pjax>${msg["goods.main.batch.up"]}</a></li>-->
+            <!--<li id="li_down"><a href="javascript:;" onclick="downCheck()" data-pjax>${msg["goods.main.batch.down"]}</a></li>-->
+            <!--<li><a href="javascript:;" onclick="tagCheck()" data-pjax>${msg["goods.main.batch.mark"]}</a></li>-->
+        <!--</ul>-->
+        <!--<button class="btn btn-primary navbar-btn" onclick="sublime.toggleFilter('.cd-panel')"><i class="fa fa-sliders"></i> ${msg["goods.main.btn.filter"]}</button>-->
+    <!--</div>-->
 </header>
 
 <div class="content-wrap ">
@@ -79,10 +79,10 @@ layout("/layouts/store.html"){
         <div class="box-tab ">
             <ul class="nav nav-tabs" id="goods_list_tabs">
                 <li class="active" ><a class="js-goods-tabs" data-good-name="status" data-good-value="3" href="#goods_list_tab_content" data-toggle="tab">${msg["goods.main.list.tab.up"]}&nbsp;<span class="badge" data-key-name="status3">0</span></a></li>
-                <li class="" ><a class="js-goods-tabs" data-good-name="status" data-good-value="2" href="#goods_list_tab_content" data-toggle="tab">${msg["goods.main.list.tab.waitSale"]}&nbsp;<span class="badge" data-key-name="status2">0</span></a></li>
-                <li class="" ><a class="js-goods-tabs" data-good-name="status" data-good-value="5" href="#goods_list_tab_content" data-toggle="tab">${msg["goods.main.list.tab.checking"]}&nbsp;<span class="badge" data-key-name="status5">0</span></a></li>
-                <li class="" ><a class="js-goods-tabs" data-good-name="checkStatus" data-good-value="2" href="#goods_list_tab_content" data-toggle="tab">${msg["goods.main.list.tab.nopass"]}&nbsp;<span class="badge" data-key-name="check2">0</span></a></li>
-                <li class="" ><a class="js-goods-tabs" data-good-name="checkStatus" data-good-value="3" href="#goods_list_tab_content" data-toggle="tab">${msg["goods.main.list.tab.breakrule"]}&nbsp;<span class="badge" data-key-name="check3">0</span></a></li>
+                <!--<li class="" ><a class="js-goods-tabs" data-good-name="status" data-good-value="2" href="#goods_list_tab_content" data-toggle="tab">${msg["goods.main.list.tab.waitSale"]}&nbsp;<span class="badge" data-key-name="status2">0</span></a></li>-->
+                <!--<li class="" ><a class="js-goods-tabs" data-good-name="status" data-good-value="5" href="#goods_list_tab_content" data-toggle="tab">${msg["goods.main.list.tab.checking"]}&nbsp;<span class="badge" data-key-name="status5">0</span></a></li>-->
+                <!--<li class="" ><a class="js-goods-tabs" data-good-name="checkStatus" data-good-value="2" href="#goods_list_tab_content" data-toggle="tab">${msg["goods.main.list.tab.nopass"]}&nbsp;<span class="badge" data-key-name="check2">0</span></a></li>-->
+                <!--<li class="" ><a class="js-goods-tabs" data-good-name="checkStatus" data-good-value="3" href="#goods_list_tab_content" data-toggle="tab">${msg["goods.main.list.tab.breakrule"]}&nbsp;<span class="badge" data-key-name="check3">0</span></a></li>-->
                 <li class="" ><a class="js-goods-tabs" data-good-name="status" data-good-value="4" href="#goods_list_tab_content" data-toggle="tab">${msg["goods.main.list.tab.down"]}&nbsp;<span class="badge" data-key-name="status4">0</span></a></li>
             </ul>
             <div class="tab-content">
@@ -353,7 +353,7 @@ layout("/layouts/store.html"){
                             str += '<li><a href="javascript:;" onclick="down(\'' + row.id +'\')" data-pjax>${msg["goods.main.btn.down"]}</a></li>';
                             str += '<li class="divider"></li>';
                         }
-                        if (row.status == 2) {//上架待售
+                        if (row.status == 2 || row.status == 4) {//上架待售
                             str += '<li><a href="javascript:;" onclick="up(\'' + row.id +'\')" data-pjax>${msg["goods.main.btn.up"]}</a></li>';
                             str += '<li class="divider"></li>';
                         }
@@ -361,11 +361,11 @@ layout("/layouts/store.html"){
                             str += '<li><a href="javascript:;" onclick="del(\'' + row.id +'\')" data-pjax>${msg["globals.button.delete"]}</a></li>';
                             str += '<li class="divider"></li>';
                         }
-                        if (row.recommend == 0) {
+                        if (row.recommend == 0&&row.status != 4) {
                             // str += '<li><a href="javascript:;" onclick="showChecklog(\'' + row.id +'\')" data-pjax>${msg["goods.main.btn.checklog"]}</a></li>';
                             str += '<li><a href="javascript:;" onclick="setRecommend(\'' + row.id +'\')" data-pjax>设置为热门商品</a></li>';
                         }
-                        if (row.recommend == 1) {
+                        if (row.recommend == 1&&row.status != 4) {
                             // str += '<li><a href="javascript:;" onclick="showChecklog(\'' + row.id +'\')" data-pjax>${msg["goods.main.btn.checklog"]}</a></li>';
                             str += '<li><a href="javascript:;" onclick="cancleRecommend(\'' + row.id +'\')" data-pjax>取消热门商品</a></li>';
                         }

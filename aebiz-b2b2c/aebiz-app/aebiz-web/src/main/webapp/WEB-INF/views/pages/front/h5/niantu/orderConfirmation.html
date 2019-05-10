@@ -65,6 +65,7 @@
         商品金额<span style="color: red;">￥{{zongPrice}}</span>
     </div>
     <div class="mui-card-header">
+        <input type="hidden" id="freight" value="${freightMoney}">
         运费<span style="color: red;">￥${freightMoney}</span>
     </div>
     <!--<div class="mui-card-header">-->
@@ -105,7 +106,7 @@
             border: 0;background-color:red;" v-on:click="save()">立即支付</button>
         <button type="button" style="width: 70%;top: 0px;line-height:1;border: 0;background-color:white;"
                 class="mui-btn mui-btn-primary" id="review">
-            <span style="color: black;">应付:</span><span style="color: red;padding-left: 10px;">{{zongPrice}}元</span>
+            <span style="color: black;">应付:</span><span style="color: red;padding-left: 10px;">{{zongPrice2}}元</span>
         </button>
     </div>
 </nav>
@@ -127,7 +128,9 @@
             address: '',
             order:'',
             goodsList:[],
+            totoalProductPrice:'',
             zongPrice:'',
+            zongPrice2:'',
             yunPrice:0,
             coupons:[],
             couponId:'',
@@ -180,6 +183,9 @@
                                 price = price + parseFloat(self.goodsList[o].price)*self.goodsList[o].num;
                             }
                             self.zongPrice=price.toFixed(2);
+                            self.totoalProductPrice=self.zongPrice;
+                            self.zongPrice2=self.zongPrice*1+$("#freight").val()*1;
+                            self.zongPrice2=self.zongPrice2.toFixed(2);
                             self.getMyOrderCoupon();
                         } else {
 
@@ -223,20 +229,25 @@
             priceCalculator:function(){
                 var self=this;
                 var j = self.sales_coupon;
+                self.zongPrice=self.totoalProductPrice;
                 //满减劵
                 if(j.type == '1'){
-                    self.zongPrice = self.zongPrice - j.conditionAmount;
+                    self.zongPrice = self.zongPrice - j.deductibleAmount;
+                    self.zongPrice2=self.zongPrice*1+$("#freight").val()*1;
                 }
                 //免运费劵
                 if(j.type == '2'){
                     self.yunPrice = 0;
+                    self.zongPrice2=self.zongPrice;
                 }
                 //折扣劵
                 if(j.type == '3'){
                     self.zongPrice = self.zongPrice * j.discount;
+                    self.zongPrice2=self.zongPrice*1+$("#freight").val()*1;
                 }
 
-                self.zongPrice = self.zongPrice + self.yunPrice;
+                self.zongPrice = (self.zongPrice).toFixed(2) ;
+                self.zongPrice2 = (self.zongPrice2).toFixed(2) ;
 
             },
             save:function () {
@@ -250,7 +261,8 @@
                     });
                     return;
                 }
-
+                var addressId = this.address.id;
+                var couponId =this.couponId;
                 $.ajax({
                     type:"POST",
                     url:"${base!}/open/h5/order/checkStock.html",
@@ -260,6 +272,7 @@
                     },
                     success:function(data){
                         if (data.code == 0) {
+                            window.location.href="${base!}/open/h5/order/checkoutCounter.html?productList="+encodeURIComponent(json)+"&addressId="+addressId+"&couponId="+couponId;
                         } else {
                             layer.open({
                                 content: "库存不足!"
@@ -270,8 +283,7 @@
                         }
                     }
                 });
-                var addressId = this.address.id;
-                window.location.href="${base!}/open/h5/order/checkoutCounter.html?productList="+encodeURIComponent(json)+"&addressId="+addressId+"&couponId="+this.couponId;
+
             }
         },
         watch:{     //监听器

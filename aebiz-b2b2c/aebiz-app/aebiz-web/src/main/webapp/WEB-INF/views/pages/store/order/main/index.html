@@ -11,9 +11,13 @@ layout("/layouts/store.html"){
     <div class="wrapper" style="min-height:500px;">
         <div class="box-tab">
             <ul class="nav nav-tabs ">
-                <li class="active"><a href="#orderInfo" onclick="orderQuery(1)" data-toggle="tab"> <!--# if(obj.waitDeliveryNum > 0 ) {  #--><span class="badge pull-right" style="background-color: #ff2e1d">${obj.waitDeliveryNum}</span><!--# } #-->待发货&nbsp;</a> </li>
-                <!--<li><a href="#orderInfo" onclick="orderQuery(2)" data-toggle="tab"> &lt;!&ndash;# if(obj.waitVerifyNum > 0 ) { #&ndash;&gt;<span class="badge pull-right" style="background-color: #ff2e1d">${obj.waitVerifyNum}</span>&lt;!&ndash;# } #&ndash;&gt;待审核&nbsp;</a> </li>-->
                 <li><a href="#orderInfo" onclick="orderQuery(3)" data-toggle="tab"> <!--# if(obj.waitPayNum > 0 ) {  #--><span class="badge pull-right" style="background-color: #ff2e1d">${obj.waitPayNum}</span><!--# } #-->待支付&nbsp;</a> </li>
+                <li class="active"><a href="#orderInfo" onclick="orderQuery(1)" data-toggle="tab"> <!--# if(obj.waitDeliveryNum > 0 ) {  #--><span class="badge pull-right" style="background-color: #ff2e1d">${obj.waitDeliveryNum}</span><!--# } #-->待发货&nbsp;</a> </li>
+                <li class="active"><a href="#orderInfo" onclick="orderQuery(2)" data-toggle="tab"> <!--# if(obj.waitDeliveryNum > 0 ) {  #--><span class="badge pull-right" style="background-color: #ff2e1d">${obj.waitDeliveryNum}</span><!--# } #-->已发货&nbsp;</a> </li>
+                <li class="active"><a href="#orderInfo" onclick="orderQuery(3)" data-toggle="tab"> <!--# if(obj.waitDeliveryNum > 0 ) {  #--><span class="badge pull-right" style="background-color: #ff2e1d">${obj.waitDeliveryNum}</span><!--# } #-->已完成&nbsp;</a> </li>
+                <li class="active"><a href="#orderInfo" onclick="orderQuery(4)" data-toggle="tab"> <!--# if(obj.waitDeliveryNum > 0 ) {  #--><span class="badge pull-right" style="background-color: #ff2e1d">${obj.waitDeliveryNum}</span><!--# } #-->视频订单&nbsp;</a> </li>
+                <!--<li><a href="#orderInfo" onclick="orderQuery(2)" data-toggle="tab"> &lt;!&ndash;# if(obj.waitVerifyNum > 0 ) { #&ndash;&gt;<span class="badge pull-right" style="background-color: #ff2e1d">${obj.waitVerifyNum}</span>&lt;!&ndash;# } #&ndash;&gt;待审核&nbsp;</a> </li>-->
+
                 <!--<li><a href="#orderInfo" onclick="orderQuery(4)" data-toggle="tab"> &lt;!&ndash;# if(obj.deliveryPayNum > 0 ) {  #&ndash;&gt;<span class="badge pull-right" style="background-color: #ff2e1d">${obj.deliveryPayNum}</span>&lt;!&ndash;# } #&ndash;&gt;货到付款&nbsp;</a> </li>-->
                 <li><a href="#orderInfo" onclick="orderQuery(5)" data-toggle="tab"> <!--# if(obj.refundsNum > 0 ) {  #--><span class="badge pull-right" style="background-color: #ff2e1d">${obj.refundsNum}</span><!--# } #-->退款订单&nbsp;</a> </li>
                 <li><a href="#orderInfo" onclick="orderQuery(0)"  data-toggle="tab">全部订单</a></li>
@@ -130,28 +134,26 @@ layout("/layouts/store.html"){
 <!-- 关闭订单 弹出模态 结束 -->
 
 <!-- 订单审核 弹出模态 开始 -->
-<div id="dialogAudit" class="modal fade bs-modal-sm" tabindex="-2" role="dialog" aria-hidden="true" >
+<div id="sendProduct" class="modal fade bs-modal-sm" tabindex="-2" role="dialog" aria-hidden="true" >
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                <h4 class="modal-title">${msg['order.main.modal.dialogAudit.title']}</h4>
+                <h4 class="modal-title">发货</h4>
             </div>
             <div class="modal-body">
-               <div class="form-group">
-                   <input type="hidden" name="orderIds" id="orderIds"/>
-                    <label class="control-label col-xs-2">${msg['order.main.column.auditStatus']}</label>
-                    <label class="radio-inline"><input type="radio" name="checkStatus" value="1" checked>${msg["order.enum.checkstatus.pass"]}</label>
-                    <label class="radio-inline"><input type="radio" name="checkStatus" value="2" >${msg["order.enum.checkstatus.nopass"]}</label>
-                </div>
                 <div class="form-group">
-                    <label class="control-label col-xs-2">${msg['order.main.column.remark']}</label>
-                    <textarea class="form-control" name="comment" style="width: 75%;height: 100px;"></textarea>
+                    <input id="oid" type="hidden">
+                    <label class="control-label col-xs-2">物流公司</label>
+                    <input class="form-control" id="company" style="width: 75%;"></input>
+                    <label class="control-label col-xs-2">快递单号</label>
+                    <input class="form-control" id="companyNo" style="width: 75%;"></input>
+
                 </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">${msg["globals.button.cancel"]}</button>
-                <!--<button id="btn_ok_audit" type="button" onclick="audit();" class="btn btn-primary" data-loading-text="${msg['order.main.modal.dialogAudit.ok.loading']}">${msg["globals.button.confirm"]}</button>-->
+                <button id="btn_ok_audit" type="button" onclick="confirmSend();" class="btn btn-primary" data-loading-text="${msg['order.main.modal.dialogAudit.ok.loading']}">确认发货</button>
             </div>
         </div>
     </div>
@@ -431,7 +433,24 @@ layout("/layouts/store.html"){
             Toast.warning("${msg['order.main.tip.selectgoodsfirst']}");
         }
     }
-
+    function confirmSend(){
+        var btn = $(this);
+        var dialog = $("#sendProduct");
+        var id = $("#oid").val();
+        var kdname = $("#company").val();
+        var kdno = $("#companyNo").val();
+        $.post("${base}/store/order/main/sendProduct/" + id, {
+            kdname:kdname,
+            kdno:kdno
+        }, function (data) {
+            if (data.code == 0) {
+                datatable.ajax.reload(null,false);
+            } else {
+                Toast.error(data.msg);
+            }
+        }, "json");
+        dialog.modal("hide");
+    }
     //确认审核的保存方法
     function audit() {
         var orderIds = $('#orderIds').val();
@@ -476,13 +495,9 @@ layout("/layouts/store.html"){
     //发货
     function sendProduct(id) {
             var btn = $(this);
-            $.post("${base}/store/order/main/sendProduct/" + id, {}, function (data) {
-                if (data.code == 0) {
-                    datatable.ajax.reload(null,false);
-                } else {
-                    Toast.error(data.msg);
-                }
-            }, "json");
+            var dialog = $("#sendProduct");
+            $("#oid").val(id);
+            dialog.modal("show");
     }
 
     //批量删除订单

@@ -363,7 +363,7 @@ public class GoodsProductServiceImpl extends BaseServiceImpl<Goods_product> impl
     }
 
     public String getProductImage(String sku) {
-        return getProductImage(sku, GoodsSaleClientEnum.PC);
+        return getProductImage(sku, GoodsSaleClientEnum.WAP);
     }
 
     public String getProductImage(String sku, GoodsSaleClientEnum client) {

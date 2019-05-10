@@ -1,5 +1,8 @@
 package com.aebiz.app.web.modules.controllers.store.integral;
 
+import com.aebiz.app.acc.modules.models.Account_user;
+import com.aebiz.app.acc.modules.services.AccountUserService;
+import com.aebiz.app.order.modules.models.Order_after_refundment;
 import com.aebiz.app.web.commons.log.annotation.SLog;
 import com.aebiz.baseframework.base.Result;
 import com.aebiz.baseframework.page.datatable.DataTable;
@@ -11,6 +14,7 @@ import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
 import org.nutz.lang.Strings;
+import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 @RequestMapping("/store/integral/Integral")
@@ -26,6 +31,9 @@ public class MemberIntegralController {
     private static final Log log = Logs.get();
     @Autowired
 	private MemberIntegralService memberIntegralService;
+
+    @Autowired
+    private AccountUserService accountUserService;
 
     @RequestMapping("")
     @RequiresPermissions("store.integral.Integral")
@@ -38,7 +46,20 @@ public class MemberIntegralController {
     @RequiresPermissions("store.integral.Integral")
     public Object data(DataTable dataTable) {
 		Cnd cnd = Cnd.NEW();
-    	return memberIntegralService.data(dataTable.getLength(), dataTable.getStart(), dataTable.getDraw(), dataTable.getOrders(), dataTable.getColumns(), cnd, null);
+        NutMap nutMap = memberIntegralService.data(dataTable.getLength(), dataTable.getStart(), dataTable.getDraw(), dataTable.getOrders(), dataTable.getColumns(), cnd, "account_user");
+        if (nutMap.get("data") != null) {
+            List<Member_Integral> refundment = (List<Member_Integral>) nutMap.get("data");
+            for (Member_Integral m : refundment) {
+                Cnd cnd2 = Cnd.NEW();
+                cnd2.and("accountId","=",m.getCustomerUuid());
+                List<Account_user> auList = accountUserService.query(cnd2);
+                if(auList!=null&&auList.size()>0){
+                    m.setCustomerName(auList.get(0).getLoginname());
+                }
+            }
+            nutMap.put("data", refundment);
+        }
+        return nutMap;
     }
 
     @RequestMapping("/add")

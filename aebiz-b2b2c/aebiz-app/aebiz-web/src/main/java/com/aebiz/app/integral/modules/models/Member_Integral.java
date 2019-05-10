@@ -20,9 +20,7 @@ import java.util.List;
 @Table("Member_Integral")
 public class Member_Integral extends BaseModel implements Serializable {
     
-    @Autowired
-    private AccountUserService accountUserService;
-    
+
     @Column
     @Name
     @Comment("ID")
@@ -51,21 +49,26 @@ public class Member_Integral extends BaseModel implements Serializable {
     @Comment("累计积分")
     @ColDefine(type = ColType.INT, width = 11)
     private int totalIntegral;
-    
+
+    @One(target = Account_user.class, field = "customerUuid")
+    private Account_user account_user;
+
     private String customerName;
 
     public String getCustomerName() {
-        Cnd cnd = Cnd.NEW();
-        cnd.and("accountId","=",this.customerUuid);
-        List<Account_user> users = accountUserService.query(cnd);
-        if(users!=null&&users.size()>0){
-            customerName=users.get(0).getLoginname();
-        }
         return customerName;
     }
 
     public void setCustomerName(String customerName) {
         this.customerName = customerName;
+    }
+
+    public Account_user getAccount_user() {
+        return account_user;
+    }
+
+    public void setAccount_user(Account_user account_user) {
+        this.account_user = account_user;
     }
 
     private List<Member_Integral_Detail> details;

@@ -323,11 +323,11 @@ public class OrderController {
 
             }
         }
-        this.calCouponMoney(accountUser,couponId,totalMoney,freightMoney,totalNum);
-        order.setGoodsMoney(totalMoney);
-        order.setPayMoney(totalMoney + freightMoney);
+        Map<String, Double> money = this.calCouponMoney(accountUser, couponId, totalMoney, freightMoney, totalNum);
+        order.setGoodsMoney(money.get("totalMoney").intValue());
+        order.setPayMoney(money.get("totalMoney").intValue() +money.get("freightMoney").intValue() );
 //                order_main.setPayMoney(1); //先写死一个测试金额
-        order.setFreightMoney(freightMoney);
+        order.setFreightMoney(money.get("freightMoney").intValue());
         orderMainService.update(order);
         request.setAttribute("order", order);
         return "pages/front/h5/niantu/checkoutCounter";
@@ -672,10 +672,14 @@ public class OrderController {
         }
         return Result.success();
     }
-    private void calCouponMoney(Account_user accountUser,String couponId,double totalMoney,double freightMoney,int totalNum){
+    private Map<String,Double> calCouponMoney(Account_user accountUser,String couponId,double totalMoney,double freightMoney,int totalNum){
         /**
          * 计算优惠劵抵扣金额
          */
+
+        Map<String,Double> money = new HashMap<>();
+        money.put("totalMoney",totalMoney);
+        money.put("freightMoney",freightMoney);
         if(StringUtils.isNotEmpty(couponId)) {
             Cnd cndCoupon = Cnd.NEW();
             cndCoupon.and("accountId", "=", accountUser.getAccountId());
@@ -696,6 +700,9 @@ public class OrderController {
                                 if (payMoney >= sales_coupon.getConditionAmount()) {
                                     payMoney = CalculateUtils.sub(payMoney,sales_coupon.getConditionAmount());
                                     totalMoney = (int)CalculateUtils.mul(payMoney,100); //转化回分
+                                    money.put("totalMoney",totalMoney);
+                                    member_coupon.setStatus(1);
+                                    memberCouponService.update(member_coupon);
                                 }
                             }
                         }
@@ -703,6 +710,9 @@ public class OrderController {
                             if(sales_coupon.getProductQuantityRule()!=null) {
                                 if (totalNum >= sales_coupon.getProductQuantityRule()) {
                                     freightMoney = 0;
+                                    money.put("freightMoney",freightMoney);
+                                    member_coupon.setStatus(1);
+                                    memberCouponService.update(member_coupon);
                                 }
                             }
                         }
@@ -711,6 +721,9 @@ public class OrderController {
                                 if (totalNum >= sales_coupon.getProductQuantityRule()) {
                                     payMoney = CalculateUtils.mul(payMoney,sales_coupon.getDiscount());
                                     totalMoney = (int)CalculateUtils.mul(payMoney,100); //转化回分
+                                    money.put("totalMoney",totalMoney);
+                                    member_coupon.setStatus(1);
+                                    memberCouponService.update(member_coupon);
                                 }
                             }
                         }
@@ -719,6 +732,7 @@ public class OrderController {
                 }
             }
         }
+        return money;
     }
 
 }

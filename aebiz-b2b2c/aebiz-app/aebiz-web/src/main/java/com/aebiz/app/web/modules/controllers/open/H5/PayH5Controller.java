@@ -4,10 +4,13 @@ import com.aebiz.app.acc.modules.models.Account_user;
 import com.aebiz.app.alipay.modules.models.AliPayFromQO;
 import com.aebiz.app.alipay.modules.models.AlipayConfig;
 import com.aebiz.app.alipay.modules.service.AlipayService;
+import com.aebiz.app.goods.modules.models.Goods_product;
+import com.aebiz.app.goods.modules.services.GoodsProductService;
 import com.aebiz.app.integral.modules.services.MemberIntegralService;
 import com.aebiz.app.order.modules.models.Order_goods;
 import com.aebiz.app.order.modules.models.Order_main;
 import com.aebiz.app.order.modules.models.em.*;
+import com.aebiz.app.order.modules.services.OrderGoodsService;
 import com.aebiz.app.order.modules.services.OrderMainService;
 import com.aebiz.app.web.commons.utils.CalculateUtils;
 import com.aebiz.app.web.commons.utils.HttpRequestUtil;
@@ -72,6 +75,12 @@ public class PayH5Controller {
 
     @Autowired
     private WxConfigService wxConfigService;
+
+    @Autowired
+    private OrderGoodsService orderGoodsService;
+
+    @Autowired
+    private GoodsProductService goodsProductService;
 
     @Autowired
     private MemberIntegralService memberIntegralService;
@@ -259,6 +268,21 @@ public class PayH5Controller {
                 }catch (Exception e){
                     log.error("回调给会员添加积分异常",e);
                 }
+                try {
+                    Cnd proCnd = Cnd.NEW();
+                    proCnd.and("orderId","=",order_main.getId());
+                    List<Order_goods> goods = orderGoodsService.query(proCnd);
+                    for (Order_goods good: goods
+                         ) {
+                        Goods_product gp = goodsProductService.fetch(good.getProductId());
+                        gp.setSaleNumMonth(good.getBuyNum());
+                        goodsProductService.update(gp);
+                    }
+
+                }catch (Exception e){
+                    log.error("更新商品销量异常",e);
+                }
+
                 return "success";	//请不要修改或删除
             }else{//验证失败
                 log.error("支付宝回调验签失败:"+out_trade_no);

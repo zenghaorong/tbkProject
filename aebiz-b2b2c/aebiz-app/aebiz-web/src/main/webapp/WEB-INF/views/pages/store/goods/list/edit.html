@@ -284,10 +284,10 @@ layout("/layouts/store.html"){
                                             </div>
                                         </div>
                                         <label for="marketPrice" class="col-sm-1 control-label">${msg["goods.product.column.marketPrice"]}</label>
-                                        <div class="col-sm-2" hidden>
+                                        <div class="col-sm-2" >
                                             <div class="input-group">
                                                 <span class="input-group-addon">${msg["goods.main.unit.money"]}</span>
-                                                <input type="text" class="form-control input-sm" name="marketPrice" id="marketPrice" value="${@money.fenToYuan(productsList[0].marketPrice)}" placeholder="${msg['goods.main.placeholder.priceunit']}">
+                                                <input type="text" class="form-control input-sm" name="marketPrice" id="marketPrice" value="${@money.fenToYuan(productsList[0].marketPrice)}" data-parsley-price="true" placeholder="${msg['goods.main.placeholder.priceunit']}">
                                             </div>
                                         </div>
                                     </div>
@@ -2498,9 +2498,12 @@ layout("/layouts/store.html"){
             var stock = $("input[name='stock']", $productDiv).val();
             var buyMin = $("input[name='buyMin']", $productDiv).val();
             var buyMax = $("input[name='buyMax']", $productDiv).val();
-            var salePrice = $("input[name='salePrice']", $productDiv).val();
-            var costPrice = $("input[name='costPrice']", $productDiv).val();
-            var marketPrice = $("input[name='marketPrice']", $productDiv).val();
+            var salePrice = $("input[name='salePrice']", $productDiv).val()*100;
+            salePrice=salePrice.toFixed(2);
+            var costPrice = $("input[name='costPrice']", $productDiv).val()*100;
+            costPrice=costPrice.toFixed(2);
+            var marketPrice = $("input[name='marketPrice']", $productDiv).val()*100;
+            marketPrice=marketPrice.toFixed(2);
             var saleToAllAera = $("input[name='partitionBy'][value='0']", $productDiv).is(":checked");
             var partitionBy = $("input[name='partitionBy']:checked", $productDiv).val();
             var areaList = getAreaList($productDiv);
@@ -2524,9 +2527,9 @@ layout("/layouts/store.html"){
                 'stock': stock,
                 'buyMin': buyMin,
                 'buyMax': buyMax,
-                'salePrice': parseFloat(salePrice) * 100,
-                'costPrice': parseFloat(costPrice) * 100,
-                'marketPrice': parseFloat(marketPrice) * 100,
+                'salePrice': parseInt(salePrice) ,
+                'costPrice': parseInt(costPrice) ,
+                'marketPrice': parseInt(marketPrice),
                 'saleToAllAera': saleToAllAera,
                 'partitionBy': partitionBy,
                 'areaList': areaList,

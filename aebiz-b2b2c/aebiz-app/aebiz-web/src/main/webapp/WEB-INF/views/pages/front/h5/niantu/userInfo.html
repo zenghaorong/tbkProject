@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>注册</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="${base!}/assets/front/h5/css/mui.min.css" />
+    <link rel="stylesheet" href="${base!}/assets/front/h5/css/hryc.css" />
+    <!--App自定义的css-->
+    <!--<link rel="stylesheet" type="text/css" href="../css/app.css"/>-->
+    <style>
+        .area {
+            margin: 20px auto 0px auto;
+        }
+        .mui-input-group:first-child {
+            margin-top: 20px;
+        }
+        .mui-input-group label {
+            width: 35%;
+        }
+        .mui-input-row label~input,
+        .mui-input-row label~select,
+        .mui-input-row label~textarea {
+            width: 65%;
+        }
+        .mui-checkbox input[type=checkbox],
+        .mui-radio input[type=radio] {
+            top: 6px;
+        }
+        .mui-content-padded {
+            margin-top: 25px;
+        }
+        .mui-btn {
+            padding: 10px;
+        }
+    </style>
+</head>
+<body style="background: white;">
+
+
+<header class="mui-bar mui-bar-nav top-color">
+    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: white;"></a>
+    <h1 class="mui-title" style="color: white;">修改昵称</h1>
+</header>
+    <div class="mui-content" id="vue">
+        <form class="mui-input-group">
+            <input type="hidden" id="accountId" value="${accountId}">
+            <div class="mui-input-row">
+                <label>昵称</label>
+                <input id='nickName' v-model="nickName" type="text" class="mui-input-clear mui-input" placeholder="请输入新昵称">
+            </div>
+        </form>
+        <div class="mui-content-padded">
+                <button id='reg' v-on:click="updateUserInfo" class="mui-btn mui-btn-block mui-btn-primary" style="border-color: rgb(56,206,204);
+    background-color: rgb(56,206,204);">修改</button>
+            <p></p>
+        </div>
+    </div>
+
+<script type="text/javascript" src="${base!}/assets/front/h5/js/mui.js" ></script>
+<script type="text/javascript" src="${base!}/assets/front/h5/js/vue.js" ></script>
+<script type="text/javascript" src="${base!}/assets/front/h5/js/jquery-2.0.0.min.js" ></script>
+<script type="text/javascript" src="${base!}/assets/decorate/pc/decoratecommon/js/layer/mobile/layer.js" ></script>
+<script type="application/javascript">
+    mui.init({
+        swipeBack:true //启用右滑关闭功能
+    });
+
+    var s = true;
+
+    var vue = new Vue({
+        el: '#vue',
+        data: {
+            password:'',
+            password2:'',
+            captcha:''
+        },
+        created:function () {   //实例初始化创建完成执行
+
+            // this.getvideoList()     //调用自身方法
+
+        },
+        methods:{              //定义封装方法
+            //获取列表
+            updateUserInfo:function () {
+                var self = this;
+                var is=this.parameterCheck();
+                if(!is){
+                    return;
+                }
+                var accountId = $("#accountId").val();
+                $.ajax({
+                    type:"POST",
+                    url:"${base!}/open/H5/login/updateUserInfo",
+                    dataType:"JSON",
+                    data:{
+                        accountId:accountId,
+                        nickName:self.nickName
+                    },
+                    success:function(data){
+                        if (data.code == 0) {
+                            layer.open({
+                            content: data.msg
+                            ,skin: 'msg'
+                            ,time: 2 //2秒后自动关闭
+                        });
+                            window.location.href='${base!}/open/h5/niantu/userCenter.html';
+                        } else {
+                            //提示
+                            layer.open({
+                                content: data.msg
+                                ,skin: 'msg'
+                                ,time: 2 //2秒后自动关闭
+                            });
+                        }
+                    }
+                });
+
+            },
+            parameterCheck:function () {
+                if(this.nickName=='' || this.nickName==null){
+                    layerAlert("昵称不能为空");
+                    return false;
+                }
+                return true;
+            }
+
+        },
+        watch:{     //监听器
+            // carModel:function () {
+            //     this.getProvince();
+            // }
+        }
+
+    })
+
+    //手机号校验
+    function layerAlert(msg) {
+        //提示
+        layer.open({
+            content: msg
+            ,skin: 'msg'
+            ,time: 2 //2秒后自动关闭
+        });
+    }
+
+
+</script>
+</body>
+</html>

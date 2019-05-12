@@ -30,6 +30,12 @@
                                 <!--#}#-->
                             </tr>
                             <tr>
+                                <td>满减抵扣金额</td><td>${obj.conditionAmount}</td>
+                            </tr>
+                            <tr>
+                                <td>条件金额</td><td>${obj.deductibleAmount}</td>
+                            </tr>
+                            <tr>
                                 <td>${msg['sales.coupon.column.limit_num']}</td><td>${obj.limit_num}</td>
                             </tr>
                             <tr>
@@ -39,20 +45,20 @@
                                 <td>优惠劵结束时间</td><td>${@date.getDate(obj.endTime)}</td>
                             </tr>
 
-                            <tr>
-                                <td>${msg['sales.coupon.column.checkStatus']}</td>
-                                <td>
-                                    <!--#if (obj.checkStatus == 0) {#-->
-                                    未提交
-                                    <!--#}else if (obj.checkStatus == 1) {#-->
-                                    待审核
-                                    <!--#} else if (obj.checkStatus == 2) {#-->
-                                    审核通过
-                                    <!--#} else if (obj.checkStatus == 3) {#-->
-                                    未通过
-                                    <!--#}#-->
-                                </td>
-                            </tr>
+                            <!--<tr>-->
+                                <!--<td>${msg['sales.coupon.column.checkStatus']}</td>-->
+                                <!--<td>-->
+                                    <!--&lt;!&ndash;#if (obj.checkStatus == 0) {#&ndash;&gt;-->
+                                    <!--未提交-->
+                                    <!--&lt;!&ndash;#}else if (obj.checkStatus == 1) {#&ndash;&gt;-->
+                                    <!--待审核-->
+                                    <!--&lt;!&ndash;#} else if (obj.checkStatus == 2) {#&ndash;&gt;-->
+                                    <!--审核通过-->
+                                    <!--&lt;!&ndash;#} else if (obj.checkStatus == 3) {#&ndash;&gt;-->
+                                    <!--未通过-->
+                                    <!--&lt;!&ndash;#}#&ndash;&gt;-->
+                                <!--</td>-->
+                            <!--</tr>-->
                             <tr>
                                 <td>${msg['sales.coupon.column.disabled']}</td>
                                 <td>

@@ -117,6 +117,9 @@
     <button type="button" onclick="window.location.href='${base!}/open/h5/refunds/orderRefunds.html?orderId=${orderId!}'" class="mui-btn mui-btn-primary mui-btn-block">申请售后</button>
 </div>
 <!--#}#-->
+<div style="width: 300px;margin: 0 auto; background: red; ">
+    <button type="button" onclick="delOrder()" style="background: red;border: red;" class="mui-btn mui-btn-primary mui-btn-block">删除订单</button>
+</div>
 
 <script type="text/javascript" src="${base!}/assets/front/h5/js/mui.js" ></script>
 <script type="text/javascript" src="${base!}/assets/front/h5/js/vue.js" ></script>
@@ -177,6 +180,23 @@
             success:function(data){
                 if (data.code == 0) {
                     window.location.reload();
+                } else {
+
+                }
+            }
+        });
+    }
+    function delOrder() {
+        $.ajax({
+            type:"POST",
+            url:"${base!}/open/h5/order/delOrder.html",
+            dataType:"JSON",
+            data:{
+                orderId:'${orderId}'
+            },
+            success:function(data){
+                if (data.code == 0) {
+                    window.location.href="${base!}/open/h5/order/goOrderList.html?status=6";
                 } else {
 
                 }

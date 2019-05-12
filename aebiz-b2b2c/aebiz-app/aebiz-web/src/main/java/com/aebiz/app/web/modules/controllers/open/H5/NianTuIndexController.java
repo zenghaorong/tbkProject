@@ -1,6 +1,8 @@
 package com.aebiz.app.web.modules.controllers.open.H5;
 
+import com.aebiz.app.acc.modules.models.Account_info;
 import com.aebiz.app.acc.modules.models.Account_user;
+import com.aebiz.app.acc.modules.services.AccountInfoService;
 import com.aebiz.app.cms.modules.models.Cms_link;
 import com.aebiz.app.order.modules.services.OrderMainService;
 import com.aebiz.app.shop.modules.models.Shop_adv_main;
@@ -53,6 +55,8 @@ public class NianTuIndexController {
     @Autowired
     private WxConfigService wxConfigService;
 
+    @Autowired
+    private AccountInfoService accountInfoService;
 
     /**
      * 进入首页
@@ -83,9 +87,12 @@ public class NianTuIndexController {
     public String userCenter(HttpServletRequest request) {
         Subject subject = SecurityUtils.getSubject();
         Account_user accountUser = (Account_user) subject.getPrincipal();
+
         if(accountUser==null){
             return "pages/front/h5/niantu/login";
         }
+        Account_info info = accountInfoService.fetch(accountUser.getAccountId());
+        request.setAttribute("info",info);
         request.setAttribute("accountUser",accountUser);
         return "pages/front/h5/niantu/userCenter";
     }

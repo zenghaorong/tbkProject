@@ -1,6 +1,7 @@
 package com.aebiz.app.sales.modules.models;
 
 import com.aebiz.baseframework.base.model.BaseModel;
+import com.aebiz.commons.utils.DateUtil;
 import org.nutz.dao.entity.annotation.*;
 
 import java.io.Serializable;
@@ -17,7 +18,7 @@ public class Sales_coupon extends BaseModel implements Serializable {
     @Name
     @Comment("ID")
     @ColDefine(type = ColType.VARCHAR, width = 32)
-    @Prev(els = {@EL("ig(view.tableName,'')")})
+    @Prev(els = {@EL("uuid()")})
     private String id;
 
     @Column
@@ -113,6 +114,17 @@ public class Sales_coupon extends BaseModel implements Serializable {
     @Comment("优惠劵折扣额")
     @ColDefine(type = ColType.FLOAT)
     private Double discount;
+
+    private String endTimeStr;
+
+    public String getEndTimeStr() {
+        endTimeStr = DateUtil.getDate(this.endTime);
+        return endTimeStr;
+    }
+
+    public void setEndTimeStr(String endTimeStr) {
+        this.endTimeStr = endTimeStr;
+    }
 
     public Double getDiscount() {
         return discount;

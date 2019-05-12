@@ -319,6 +319,7 @@ public class OrderController {
                 if(i<0){
                     i=0;
                 }
+
                 goods_product.setStock(i);
                 goodsService.update(goods_product);
 
@@ -505,10 +506,12 @@ public class OrderController {
                 }
                 if ("3".equals(status)) {
                     cndMain.and("payStatus", "=", 3);
+                    cndMain.and("orderStatus", "!=", 5);
                     cndMain.and("deliveryStatus", "=", 3);
                 }
                 if ("4".equals(status)) {
                     cndMain.and("payStatus", "=", 3);
+                    cndMain.and("orderStatus", "!=", 5);
                     cndMain.and("getStatus", "=", 1);
 
                 }
@@ -519,6 +522,7 @@ public class OrderController {
 //            cndMain.and("orderType", "=", OrderTypeEnum.product_order_type.getKey());
             cndMain.and("accountId", "=", accountUser.getAccountId());
             cndMain.orderBy("orderAt","desc");
+            cndMain.and("delFlag","=",false);
             List<Order_main> order_mainList = orderMainService.query(cndMain);
 
             List<Order_goods> order_goodsList = new ArrayList<>();
@@ -688,10 +692,29 @@ public class OrderController {
         }
         Order_main order_main = orderMainService.fetch(orderId);
         order_main.setGetStatus(1);
+        order_main.setOrderStatus(5);
         orderMainService.update(order_main);
         return Result.success("ok");
     }
-
+    /**
+     * 删除订单
+     * @param request
+     * @param orderId
+     * @return
+     */
+    @RequestMapping("delOrder.html")
+    @SJson
+    public Result delOrder(HttpServletRequest request,String orderId) {
+        Subject subject = SecurityUtils.getSubject();
+        Account_user accountUser = (Account_user) subject.getPrincipal();
+        if (accountUser == null) {
+            return Result.success("fail","未登录！");
+        }
+        Order_main order_main = orderMainService.fetch(orderId);
+        order_main.setDelFlag(true);
+        orderMainService.update(order_main);
+        return Result.success("ok");
+    }
 
     /**
      * 退款申请

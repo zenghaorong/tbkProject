@@ -28,22 +28,23 @@
             display: none !important;
         }
         .lijilq{
-            width: 34%;
+            width: 30%;
             background: green;
             color: white;
             padding: 10px 16px;
             border-radius: 25px;
             /* margin-left: 70%; */
-            margin-top: 15px;
+            margin-top: 30px;
             /* position: absolute; */
             /* bottom: 20px; */
             /* left: 250px; */
             float: left;
+            text-align: center;
         }
         .left-con{
             white-space: normal;
             color: white;
-            width: 66%;
+            width: 70%;
             float: left;
         }
     </style>
@@ -78,7 +79,7 @@
 <div class="mui-content" style="background: white;" id="vue" v-cloak>
     <ul class="mui-table-view" style="padding: 10px;">
         <li class="mui-table-view-cell mui-media" v-for="item in couponList" :key="item.id"
-            style="background-color:#f0ad4e;margin-top: 10px; height: 90px;border-radius:12px;">
+            style="background-color:#f0ad4e;margin-top: 10px; height: 120px;border-radius:12px;">
             <!--<a :href="'${base!}/open/h5/cms/videoBuyPage.html?id='+item.id">-->
                 <div class="mui-media-body left-con">
                     {{item.name}}
@@ -86,9 +87,11 @@
                     <span v-if="item.type==1">满减劵</span>
                     <span v-if="item.type==2">免运费劵</span>
                     <span v-if="item.type==3">折扣劵</span>
+                    <br><br>
+                    <span>结束时间：{{item.endTimeStr}}</span>
                 </div>
                 <div class="lijilq" v-on:click="receive(item.id)">
-                   立即领取
+                   领取
                 </div>
             <!--</a>-->
         </li>

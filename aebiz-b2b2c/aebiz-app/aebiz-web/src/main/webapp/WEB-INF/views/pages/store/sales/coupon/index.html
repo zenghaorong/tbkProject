@@ -61,7 +61,7 @@ layout("/layouts/store.html"){
                         <th>${msg['sales.coupon.column.send_type']}</th>
                         <!--<th>${msg['sales.coupon.column.score']}</th>-->
                         <th>${msg['sales.coupon.column.enabled']}</th>
-                        <th>${msg['sales.coupon.column.checkStatus']}</th>
+                        <!--<th>${msg['sales.coupon.column.checkStatus']}</th>-->
                         <th>${msg['globals.table.column.operation']}</th>
                     </tr>
                 </thead>
@@ -171,19 +171,19 @@ layout("/layouts/store.html"){
                     },
                     "targets": 6
                 },
-                {//0 未提交  1 待审核  2 审核通过  3 未通过
-                    "render": function (data, type, row) {
-                        var str = "";
-                        switch (data) {
-                            case 0: str = "未提交";break;
-                            case 1: str = "待审核";break;
-                            case 2: str = "审核通过";break;
-                            case 3: str = "未通过";break;
-                        }
-                        return str;
-                    },
-                    "targets": 7
-                },
+                // {//0 未提交  1 待审核  2 审核通过  3 未通过
+                //     "render": function (data, type, row) {
+                //         var str = "";
+                //         switch (data) {
+                //             case 0: str = "未提交";break;
+                //             case 1: str = "待审核";break;
+                //             case 2: str = "审核通过";break;
+                //             case 3: str = "未通过";break;
+                //         }
+                //         return str;
+                //     },
+                //     "targets": 7
+                // },
                 {
                     "render": function (data, type, row) {
                         var returnHtml = '<div class="btn-group"><button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">' +
@@ -199,7 +199,7 @@ layout("/layouts/store.html"){
                         returnHtml += '</ul></div>';
                         return returnHtml;
                     },
-                    "targets": 8
+                    "targets": 7
                 }
             ]
         });

@@ -3,6 +3,7 @@ package com.aebiz.app.web.modules.controllers.open.H5;
 import com.aebiz.app.acc.modules.models.Account_info;
 import com.aebiz.app.acc.modules.models.Account_login;
 import com.aebiz.app.acc.modules.models.Account_user;
+import com.aebiz.app.acc.modules.services.AccountInfoService;
 import com.aebiz.app.acc.modules.services.AccountLoginService;
 import com.aebiz.app.acc.modules.services.AccountUserService;
 import com.aebiz.app.integral.modules.services.MemberIntegralService;
@@ -76,6 +77,9 @@ public class LoginController {
     private AccountUserService accountUserService;
 
     @Autowired
+    private AccountInfoService accountInfoService;
+
+    @Autowired
     private AccountLoginService accountLoginService;
 
     @Autowired
@@ -140,6 +144,49 @@ public class LoginController {
         return "pages/front/h5/niantu/forgetPassword";
     }
 
+    /**
+     * 进入修改密码页
+     */
+    @RequestMapping("updatePassword.html")
+    public String updatePassword(HttpServletRequest request) {
+        String mobile = request.getParameter("mobile");
+        request.setAttribute("mobile",mobile);
+        return "pages/front/h5/niantu/password";
+    }
+    /**
+     * 进入修改昵称页
+     */
+    @RequestMapping("updateName.html")
+    public String updateName(HttpServletRequest request) {
+        String accountId = request.getParameter("accountId");
+        request.setAttribute("accountId",accountId);
+        return "pages/front/h5/niantu/userInfo";
+    }
+    @RequestMapping(value = "/updateUserInfo", method = RequestMethod.POST)
+    @SJson
+    public Object updateUserInfo(@RequestParam("accountId") String accountId, @RequestParam("nickName") String nickName, HttpServletRequest req) {
+        try {
+            Account_info info = accountInfoService.fetch(accountId);
+            info.setNickname(nickName);
+            accountInfoService.update(info);
+            return Result.success("操作成功");
+        } catch (Exception e) {
+            return Result.error("操作失败");
+        }
+    }
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    @SJson
+    public Object update(@RequestParam("mobile") String mobile, @RequestParam("password") String password, HttpServletRequest req) {
+        try {
+            Account_user account_user = accountUserService.fetch(Cnd.where("mobile", "=", mobile));
+            String hashedPasswordBase64 = new Sha256Hash(password, account_user.getSalt(), 1024).toBase64();
+            account_user.setPassword(hashedPasswordBase64);
+            accountUserService.updateIgnoreNull(account_user);
+            return Result.success("操作成功");
+        } catch (Exception e) {
+            return Result.error("操作失败");
+        }
+    }
 
     /**
      * 会员验证码登录接口

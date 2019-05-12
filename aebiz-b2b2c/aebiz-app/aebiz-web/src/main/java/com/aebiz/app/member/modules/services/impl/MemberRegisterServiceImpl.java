@@ -52,6 +52,7 @@ public class MemberRegisterServiceImpl extends BaseServiceImpl<Member_user> impl
     public void memberRegister(String mobile, String password,String username,String passwordStrength) {
         /*账户信息表添加一条记录*/
         Account_info accountInfo = new Account_info();
+        accountInfo.setNickname(mobile);
         accountInfo = accountInfoService.insert(accountInfo);
 
         // 获取账户id

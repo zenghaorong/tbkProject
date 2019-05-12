@@ -62,10 +62,10 @@
 <div class="mui-content" style="padding-bottom: 0;background: white;">
     <ul class="mui-table-view mui-grid-view mui-grid-9" style="background: rgb(56,206,204);margin-top: 0px;">
         <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3" style="padding: 0;border:0;">
-        <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3" style="padding: 0;border:0; margin-left: 12%;">
+        <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3" style="padding: 0;border:0; margin-left: 0;">
             <a href="#">
                 <img src="${base!}/assets/front/h5/img/tu1.png" width="80px;"/>
-                <div class="mui-media-body" style="color: white;">${accountUser.loginname!}</div>
+                <div class="mui-media-body" style="color: white;">${info.nickname!}</div>
             </a>
         </li>
         <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3" style="padding: 0;border:0;">
@@ -116,7 +116,12 @@
             </a>
             <div class="circle" id="cartNum5">{{numMap.num5}}</div>
         </li>
-
+        <li class="mui-table-view-cell mui-media mui-col-xs-2 mui-col-sm-3" style="padding: 0;margin-left:7%;border: 0; ">
+            <a href="${base!}/open/h5/order/goOrderList.html?status=6">
+                <img src="${base!}/assets/front/h5/img/c5.png" width="62px;"/>
+                <div class="mui-media-body">全部订单</div>
+            </a>
+        </li>
     </ul>
 </div>
 
@@ -149,6 +154,18 @@
         <a class="mui-navigate-right" href="${base!}/open/h5/feedback/goMyFeedback.html">
             <img width="30" style="margin-bottom: -10px;" src="${base!}/assets/front/h5/img/cr2.png" />
             <span style="margin-left: 15px;">我的评价</span>
+        </a>
+    </li>
+    <li class="mui-table-view-cell">
+        <a class="mui-navigate-right" href="${base!}/open/H5/login/updatePassword.html?mobile=${accountUser.mobile!}">
+            <img width="30" style="margin-bottom: -10px;" src="${base!}/assets/front/h5/img/cr2.png" />
+            <span style="margin-left: 15px;">修改密码</span>
+        </a>
+    </li>
+    <li class="mui-table-view-cell">
+        <a class="mui-navigate-right" href="${base!}/open/H5/login/updateName.html?accountId=${accountUser.accountId!}">
+            <img width="30" style="margin-bottom: -10px;" src="${base!}/assets/front/h5/img/cr2.png" />
+            <span style="margin-left: 15px;">修改昵称</span>
         </a>
     </li>
 

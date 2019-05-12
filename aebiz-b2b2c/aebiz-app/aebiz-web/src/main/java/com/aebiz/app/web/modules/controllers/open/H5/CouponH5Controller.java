@@ -141,7 +141,10 @@ public class CouponH5Controller {
 
             //查询优惠劵详情信息
             Sales_coupon sales_coupon = salesCouponService.fetch(couponId);
-
+            if(sales_coupon.getSend_num()<1){
+                sales_coupon.setSend_num(0);
+                return Result.error(-1,"很抱歉，优惠券已经领完了！");
+            }
             //查询本人优惠劵
             Cnd cndC = Cnd.NEW();
             cndC.and("couponId", "=", couponId );
@@ -161,6 +164,7 @@ public class CouponH5Controller {
             String random =  getStringRandom(4);
             member_coupon.setCode(sales_coupon.getCodeprefix()+codeTime+random);
             memberCouponService.insert(member_coupon);
+            sales_coupon.setSend_num(sales_coupon.getSend_num()-1);
             return Result.success("ok");
         } catch (Exception e) {
             log.error("获取领劵中心优惠劵列表异常",e);

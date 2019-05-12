@@ -87,6 +87,30 @@
             //保存收货地址
             add:function () {
                 var self = this;
+                if(self.name==""||self.name==null||self.name==undefined){
+                    layer.open({
+                        content: "请填写收货人姓名!"
+                        ,skin: 'msg'
+                        ,time: 2 //2秒后自动关闭
+                    });
+                    return;
+                }
+                if(self.address==""||self.address==null||self.address==undefined){
+                    layer.open({
+                        content: "请填写收货地址!"
+                        ,skin: 'msg'
+                        ,time: 2 //2秒后自动关闭
+                    });
+                    return;
+                }
+                if(self.mobile==""||self.mobile==null||self.mobile==undefined){
+                    layer.open({
+                        content: "请填写收货人手机!"
+                        ,skin: 'msg'
+                        ,time: 2 //2秒后自动关闭
+                    });
+                    return;
+                }
                 $.ajax({
                     type:"POST",
                     url:"${base!}/open/h5/address/addAddress.html",

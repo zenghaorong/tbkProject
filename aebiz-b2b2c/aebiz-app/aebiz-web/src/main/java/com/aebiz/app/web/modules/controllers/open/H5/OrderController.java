@@ -46,6 +46,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -355,21 +356,36 @@ public class OrderController {
      * 视频下单进入订单确认页
      */
     @RequestMapping("/videoOrderConfirmation.html")
-    public String videoOrderConfirmation(HttpServletRequest request,String videoId) {
+    public String videoOrderConfirmation(HttpServletRequest request,String videoId,String type,Integer num) {
         Subject subject = SecurityUtils.getSubject();
         Account_user accountUser = (Account_user) subject.getPrincipal();
         if (accountUser == null) {
             return "pages/front/h5/niantu/login";
         }
         request.setAttribute("videoId",videoId);
+        request.setAttribute("type",type);
+        request.setAttribute("num",num);
+
+        //计算包月价格
+        String monthlyPrice = sysDictService.getNameByCode("Monthly_price");
+        BigDecimal b1 = new BigDecimal(monthlyPrice);
+        Double payMoney = CalculateUtils.mul(b1.doubleValue(), num); //会员包月价格
+        request.setAttribute("payMoney", payMoney);
+        request.setAttribute("monthlyPrice", monthlyPrice);
+
         return "pages/front/h5/niantu/videoOrderConfirmation";
     }
 
     /**
      * 视频下单进入收银台
+     * @param request
+     * @param videoId
+     * @param couponId
+     * @param type 2:单个购买  3:包月
+     * @return
      */
     @RequestMapping("/videoCheckoutCounter.html")
-    public String videoCheckoutCounter(HttpServletRequest request,String videoId,String couponId) {
+    public String videoCheckoutCounter(HttpServletRequest request,String videoId,String couponId,String type,Integer monthlyNum) {
         Subject subject = SecurityUtils.getSubject();
         Account_user accountUser = (Account_user) subject.getPrincipal();
         if(accountUser==null){
@@ -416,13 +432,24 @@ public class OrderController {
         order_main.setGoodsMoney(cms_video.getPrice().intValue());
         order_main.setGoodsFreeMoney(0);
 
-        order_main.setPayMoney(totalMoney); //单位是分
+
         order_main.setFreightMoney(0);
         order_main.setFreeMoney(0);
         order_main.setPayStatus(0);
         order_main.setOrderStatus(0);
         order_main.setOrderAt(DateUtil.getTime(new Date()));
-        order_main.setOrderType(OrderTypeEnum.video_order_type.getKey());
+        if("3".equals(type)) {
+            order_main.setOrderType(OrderTypeEnum.monthly_order_type.getKey());
+            String monthlyPrice = sysDictService.getNameByCode("Monthly_price");
+            BigDecimal b1 = new BigDecimal(monthlyPrice);
+            int payMoney = (int)CalculateUtils.mul(b1.doubleValue(),100); //会员包月价格
+            payMoney = payMoney * monthlyNum; //乘上月数
+            order_main.setPayMoney(payMoney); //单位是分
+            order_main.setMonthlyNum(monthlyNum);
+        }else {
+            order_main.setOrderType(OrderTypeEnum.video_order_type.getKey());
+            order_main.setPayMoney(totalMoney); //单位是分
+        }
         order_main.setVideoId(videoId);
         Order_main order = orderMainService.insert(order_main);
         order_goods.setOrderId(order.getId());
@@ -437,7 +464,11 @@ public class OrderController {
         Double price = CalculateUtils.mul(cms_video.getPrice(),100);
         order_goods.setSalePrice(price.intValue());
         order_goods.setBuyPrice(totalMoney);
-        order_goods.setOrderType(OrderTypeEnum.video_order_type.getKey());
+        if("3".equals(type)) {
+            order_main.setOrderType(OrderTypeEnum.monthly_order_type.getKey());
+        }else {
+            order_main.setOrderType(OrderTypeEnum.video_order_type.getKey());
+        }
         order_goods.setImgUrl(cms_video.getImageUrl());
         orderGoodsService.insert(order_goods);
         request.setAttribute("order",order);

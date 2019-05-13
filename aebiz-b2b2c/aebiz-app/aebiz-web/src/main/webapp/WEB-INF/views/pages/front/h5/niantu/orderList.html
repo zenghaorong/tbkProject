@@ -71,7 +71,7 @@
             <span v-if="item.payStatus == 6" style="color: red;">已退款</span>
             <span>订单号：</span><span>{{item.id}}</span>
         </div>
-        <div class="mui-card-content">
+        <div class="mui-card-content" v-if="item.orderType !='3' ">
             <div class="mui-card-content" v-for="good in item.goodsList" :key="good.id">
                 <ul class="mui-table-view">
                     <li class="mui-table-view-cell mui-media" >
@@ -82,6 +82,24 @@
                                 <p class='mui-ellipsis'style="margin-top: 35px;margin-left: 0px;" >
                                     <span class="jiage-text">￥{{good.salePrice/100}}</span>
                                     <span>*{{good.buyNum}}</span>
+                                </p>
+                                <span>{{item.orderTime}}</span>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="mui-card-content" v-if="item.orderType =='3' ">
+            <div class="mui-card-content">
+                <ul class="mui-table-view">
+                    <li class="mui-table-view-cell mui-media" >
+                        <a :href="'${base!}/open/h5/order/goOrderInfo.html?orderId='+item.id">
+                            <div class="mui-media-body" style="white-space:normal;" >
+                                <span>包月视频服务</span>
+                                <p class='mui-ellipsis'style="margin-top: 35px;margin-left: 0px;" >
+                                    <span class="jiage-text">￥{{item.payMoney/100}}</span>
+                                    <span>*1</span>
                                 </p>
                                 <span>{{item.orderTime}}</span>
                             </div>

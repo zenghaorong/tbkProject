@@ -171,8 +171,16 @@
                             if (data.code == 0) {
                                 var d = data.data;
                                 self.payData = d;
+                                d = JSON.parse(d);
+                                if (d.return_code == 'SUCCESS' && d.result_code == 'SUCCESS'){
+                                    var payUrl = d.mweb_url+
+                                        '&redirect_url=http://www.xunchuangyi.cn/open/h5/order/goOrderPayInfo.html?orderId=${order.id!}';
+                                   window.location.href = payUrl;
+                                }else {
+                                    alert(d.return_msg);
+                                }
                             } else {
-
+                                alert("商户无微信H5支付权限，请去公众号支付")
                             }
                             fila =true;
                         }

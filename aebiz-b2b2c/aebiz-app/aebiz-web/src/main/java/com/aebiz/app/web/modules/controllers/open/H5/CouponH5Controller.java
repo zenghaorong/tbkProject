@@ -58,6 +58,9 @@ public class CouponH5Controller {
             Map<String,Integer> map = new HashedMap();
             for(Member_coupon member_coupon : member_couponList){
                 Sales_coupon sales_coupon = salesCouponService.fetch(member_coupon.getCouponId());
+                if(sales_coupon == null){
+                    break;
+                }
                 int time = getSecondTimestamp(new Date());
                 //判断是否过期
                 if(sales_coupon.getStartTime()>time || sales_coupon.getEndTime()<time){

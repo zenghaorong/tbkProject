@@ -260,6 +260,7 @@ public class PayH5Controller {
                 order_main.setPayStatus(OrderPayStatusEnum.PAYALL.getKey());
                 order_main.setOrderStatus(OrderStatusEnum.FINISH.getKey());
                 order_main.setGetStatus(OrderGetStatusEnum.NONE.getKey());
+                order_main.setPayAt((int)WXPayUtil.getCurrentTimestamp());
                 orderMainService.update(order_main);
                 try {
                     double orderPayMoney = order_main.getPayMoney();
@@ -348,6 +349,7 @@ public class PayH5Controller {
                 order_main.setPayStatus(OrderPayStatusEnum.PAYALL.getKey());
                 order_main.setOrderStatus(OrderStatusEnum.FINISH.getKey());
                 order_main.setGetStatus(OrderGetStatusEnum.NONE.getKey());
+                order_main.setPayAt((int)WXPayUtil.getCurrentTimestamp());
                 orderMainService.update(order_main);
                 try {
                     double orderPayMoney = order_main.getPayMoney();

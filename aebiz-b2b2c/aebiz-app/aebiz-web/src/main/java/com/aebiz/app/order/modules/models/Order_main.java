@@ -294,6 +294,11 @@ public class Order_main extends BaseModel implements Serializable {
     @ColDefine(type = ColType.VARCHAR, width = 32)
     private String videoId;
 
+    @Column
+    @Comment("包月月数")
+    @ColDefine(type = ColType.INT, width = 6)
+    private Integer monthlyNum;
+
 
     @Many(field = "orderId")
     private List<Order_goods>  goodsList;
@@ -326,6 +331,14 @@ public class Order_main extends BaseModel implements Serializable {
     private String expressInfo;
 
     private String orderTime;
+
+    public Integer getMonthlyNum() {
+        return monthlyNum;
+    }
+
+    public void setMonthlyNum(Integer monthlyNum) {
+        this.monthlyNum = monthlyNum;
+    }
 
     public String getOrderTime() {
         return orderTime;

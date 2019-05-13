@@ -256,7 +256,9 @@ public class OrderController {
         //查询收货信息
         Member_address member_address = memberAddressService.fetch(addressId);
         String freight = sysDictService.getNameByCode("freight");
-        int freightMoney = Integer.parseInt(freight) * 100; //运费
+//        Integer.parseInt(freight) * 100; //运费
+        Double v = Double.parseDouble(freight)* 100;
+        int freightMoney =v.intValue();
         int freeMoney = 0;
         int totalMoney =0; //单位是分
         int totalNum=0;

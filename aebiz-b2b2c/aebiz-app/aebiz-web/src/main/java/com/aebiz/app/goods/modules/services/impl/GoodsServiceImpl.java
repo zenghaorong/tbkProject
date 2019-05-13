@@ -123,12 +123,12 @@ public class GoodsServiceImpl extends BaseServiceImpl<Goods_main> implements Goo
         countSql.params().putAll(valuesMap);
         NutMap re = new NutMap();
         sb.append(" ORDER BY ");
-        if (orders != null && orders.size() > 0) {
-            for (DataTableOrder order : orders) {
-                DataTableColumn col = columns.get(order.getColumn());
-                sb.append(" main.").append(Sqls.escapeSqlFieldValue(col.getData()).toString()).append(" ").append(order.getDir()).append(", ");
-            }
-        }
+//        if (orders != null && orders.size() > 0) {
+//            for (DataTableOrder order : orders) {
+//                DataTableColumn col = columns.get(order.getColumn());
+//                sb.append(" main.").append(Sqls.escapeSqlFieldValue(col.getData()).toString()).append(" ").append(order.getDir()).append(", ");
+//            }
+//        }
         sb.append(" main.opAt desc ");
 
         Sql orderSql = Sqls.create(sb.toString());

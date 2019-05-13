@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>黏土工程</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="${base!}/assets/front/h5/css/mui.min.css" />
+		<link rel="stylesheet" type="text/css" href="${base!}/assets/front/h5/css/icons-extra.css" />
+		<link rel="stylesheet" href="${base!}/assets/front/h5/css/hryc.css" />
+		<style>
+			.productList{
+				width: 50%;
+			}
+			.circle{
+				width: 30px;
+				height: 30px;
+				color: white;
+				background-color: #f9850d;
+				-moz-border-radius: 50%;
+				-webkit-border-radius: 50%;
+				position: absolute;
+				left: 59%;
+				top: -7%;
+				text-align: center;
+				line-height: 30px;
+			}
+			.mui-bar .mui-input-row .mui-input-clear~.mui-icon-clear, .mui-bar .mui-input-row .mui-input-speech~.mui-icon-speech {
+				top: 13px;
+				right: 0;
+			}
+			 .mui-card .mui-control-content {
+				 padding: 10px;
+			 }
+
+			.mui-control-content {
+				height: 0px;
+			}
+			.mui-segmented-control {
+				font-size: 15px;
+				font-weight: 400;
+				position: relative;
+				display: table;
+				overflow: hidden;
+				width: 100%;
+				table-layout: fixed;
+				border: 0px solid #007aff;
+				border-radius: 3px;
+				background-color: transparent;
+				-webkit-touch-callout: none;
+			}
+			.mui-segmented-control .mui-control-item {
+				line-height: 38px;
+				display: table-cell;
+				overflow: hidden;
+				width: 0%;
+				-webkit-transition: background-color .1s linear;
+				transition: background-color .1s linear;
+				text-align: center;
+				white-space: nowrap;
+				text-overflow: ellipsis;
+				color: black;
+				border-color: #007aff;
+				border-left: 0px solid #007aff;
+			}
+			.mui-segmented-control .mui-control-item.mui-active {
+				color: #fff;
+				background-color: #38cecc;
+			}
+			.mui-table-view-cell.mui-active {
+				color: #fff;
+				background-color: #38cecc;
+			}
+
+			.price-active{
+				background-color: #38cecc;
+			}
+			.mui-control-content.mui-active {
+				display: block;
+				height: 120px;
+			}
+			.priceSpan{
+				border:1px solid #d8d8d8;;
+				margin-left: 7%;
+				display:inline-block;
+				width: 80px;
+				height: 35px;
+				text-align: center;
+				line-height:33px;
+			}
+			.priceLi:after {
+				position: absolute;
+				right: 0;
+				bottom: 0;
+				left: 15px;
+				height: 1px;
+				content: '';
+				-webkit-transform: scaleY(.5);
+				transform: scaleY(.5);
+				background-color: #ffffff !important;
+			}
+			.priceUl:after {
+				position: absolute;
+				right: 0;
+				bottom: 0;
+				left: 0;
+				height: 1px;
+				content: '';
+				-webkit-transform: scaleY(.5);
+				transform: scaleY(.5);
+				background-color: #ffffff;
+			}
+			.mui-table-view-cell:after {
+				position: absolute;
+				right: 0px;
+				bottom: 0px;
+				left: 0px;
+				height: 1px;
+				content: '';
+				-webkit-transform: scaleY(.5);
+				transform: scaleY(.5);
+				background-color: #c8c7cc;
+			}
+			.priceUl .mui-active{
+				background: white !important;
+			}
+		</style>
+		<!--App自定义的css-->
+		<!--<link rel="stylesheet" type="text/css" href="../css/app.css"/>-->
+	</head>
+	<body style="background: #FFFFFF">
+		<div  id="productList">
+		
+		<header class="mui-bar mui-bar-nav top-color">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: white;"></a>
+		    <div class="mui-title mui-input-row " style="width: 50%">
+                <input type="search" id="searchKey" class="mui-input-clear" style="background: white;" placeholder="请输入商品名称">
+
+		    </div>
+			<a id="search" v-on:click="getProductList()" style="color: white ;float: right; margin-right: 45px;margin-top: 12px;" > 搜索</a>
+		</header>
+
+			<!--底部导航栏-->
+			<nav class="mui-bar mui-bar-tab" style="background: white;">
+				<a class="mui-tab-item mui-active" onclick="window.location.href='${base!}/open/h5/niantu/index.html'">
+					<span class="mui-icon mui-icon-home"></span>
+					<span class="mui-tab-label">首页</span>
+				</a>
+				<a class="mui-tab-item" onclick="window.location.href='${base!}/open/h5/cart/shoppingCart.html'">
+					<span class="mui-icon mui-icon-extra mui-icon-extra-cart"></span>
+					<span class="mui-tab-label">购物车</span>
+				</a>
+				<a class="mui-tab-item" onclick="window.location.href='${base!}/open/h5/coupon/receiveCoupon.html'">
+					<span class="mui-icon mui-icon-extra mui-icon-extra-gift"></span>
+					<span class="mui-tab-label">领劵中心</span>
+				</a>
+				<a class="mui-tab-item" onclick="window.location.href='${base!}/open/h5/niantu/userCenter.html'">
+					<span class="mui-icon mui-icon-person"></span>
+					<span class="mui-tab-label">个人中心</span>
+				</a>
+			</nav>
+			<div class="mui-content" style="padding-bottom:0px;background: #FFFFFF">
+				<div style="padding: 10px 10px;">
+					<div id="segmentedControl" class="mui-segmented-control">
+						<a class="mui-control-item " style="touch-action: none" href="#item1">销量</a>
+						<a class="mui-control-item" style="touch-action: none" href="#item2">价格</a>
+						<a class="mui-control-item" style="touch-action: none" href="#item3">筛选</a>
+					</div>
+				</div>
+				<div id="selectDiv">
+					<div id="item1" class="mui-control-content">
+						<ul class="mui-table-view" >
+							<li class="mui-table-view-cell cell-width" sortType="numDesc" v-on:click="productSort($event)">
+								销量从高到低
+							</li>
+							<li class="mui-table-view-cell" sortType="numAsc" v-on:click="productSort($event)">
+								销量从低到高
+							</li>
+						</ul>
+					</div>
+					<div id="item2" class="mui-control-content">
+						<ul class="mui-table-view ">
+							<li class="mui-table-view-cell cell-width" sortType="priceDesc" v-on:click="productSort($event)">
+								价格从高到低
+							</li>
+							<li class="mui-table-view-cell" sortType="priceAsc" v-on:click="productSort($event)">
+								价格从低到高
+							</li>
+						</ul>
+					</div>
+					<div id="item3" class="mui-control-content ">
+						<ul class="mui-table-view priceUl">
+							<div class="mui-table-view-cell priceLi">
+								<div class="priceSpan" priceArea="0_20" v-on:click="priceSelect($event)" >0-20</div>
+								<div class="priceSpan" priceArea="20_40" v-on:click="priceSelect($event)">20-40</div>
+								<div class="priceSpan" priceArea="40_60" v-on:click="priceSelect($event)">40-60</div>
+							</div>
+							<div class="mui-table-view-cell priceLi">
+								<span class="priceSpan" priceArea="60_80" v-on:click="priceSelect($event)">60 - 80</span>
+								<span class="priceSpan" priceArea="80_100" v-on:click="priceSelect($event)">80-100</span>
+								<span class="priceSpan" priceArea="100_1000000" v-on:click="priceSelect($event)">100 以上</span>
+							</div>
+						</ul>
+					</div>
+				</div>
+			</div>
+		<div class="mui-content" style="background: white;padding-top: 0px">
+		        <ul class="mui-table-view mui-grid-view mui-grid-9" style="background: white;margin-top: 0px">
+		            <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-3 productList"  v-for="item in productList" :key="item.id">
+		            	<a v-bind:href="'${base!}/open/h5/product/productDetail.html?id='+item.id" >
+		            		<img  :src="item.imgList"  style="width: 150px;height: 150px"/>
+		                    <div class="mui-media-body">{{item.name}}</div>
+		                    <div class="mui-media-body" style="height: 19px;">
+		                    	<span class="left1">￥{{item.price}}</span>
+		                    	<span class="left2 text-color-1">月销{{item.saleNumMonth}}笔</span>
+		                    </div>
+		            	</a>
+		            </li>
+		        </ul>
+		</div>
+
+		<!--悬浮购物车图标-->
+		<div onclick="window.location.href='${base!}/open/h5/cart/shoppingCart.html'"
+			style="position: fixed;z-index: 999999;top:80%;left: 80%;">
+			<img src="${base!}/assets/front/h5/img/myCar.png" style="width: 50px;">
+			<div class="circle" id="cartNum"></div>
+		</div>
+		</div>
+		<script type="text/javascript" src="${base!}/assets/front/h5/js/mui.js" ></script>
+		<script type="text/javascript" src="${base!}/assets/front/h5/js/vue.js" ></script>
+		<script type="text/javascript" src="${base!}/assets/front/h5/js/jquery-2.0.0.min.js" ></script>
+		<script type="text/javascript" src="${base!}/assets/decorate/pc/decoratecommon/js/layer/mobile/layer.js" ></script>
+		<script type="application/javascript">
+
+            mui.init({
+                swipeBack:true //启用右滑关闭功能
+            });
+
+            (function($) {
+                $('#scroll').scroll({
+                    indicators: true //是否显示滚动条
+                });
+                var segmentedControl = document.getElementById('segmentedControl');
+                $('.mui-input-group').on('change', 'input', function() {
+                    if (this.checked) {
+                        var styleEl = document.querySelector('input[name="style"]:checked');
+                        var colorEl = document.querySelector('input[name="color"]:checked');
+                        if (styleEl && colorEl) {
+                            var style = styleEl.value;
+                            var color = colorEl.value;
+                            segmentedControl.className = 'mui-segmented-control' + (style ? (' mui-segmented-control-' + style) : '') + ' mui-segmented-control-' + color;
+                        }
+                    }
+                });
+            })(mui);
+            var vue = new Vue({
+                el: '#productList',
+                data: {
+                    productList: [],
+                },
+                created:function () {   //实例初始化创建完成执行
+
+                    this.getProductList() ;//调用自身方法
+					this.getCartNum();
+                },
+                methods:{              //定义封装方法
+                    //获取列表
+                    getProductList:function () {
+                        var self = this;
+                        var key = $("#searchKey").val();
+                        $.ajax({
+                            type:"POST",
+                            url:"${base!}/open/h5/product/ProductList.html",
+                            dataType:"JSON",
+                            data:{
+								key:key
+                            },
+                            success:function(data){
+                                if (data.code == 0) {
+                                    var d = data.data;
+                                    self.productList = d;
+                                } else {
+
+                                }
+                            }
+                        });
+
+                    },
+                    //获取购物车数量
+                    getCartNum:function () {
+                        $.ajax({
+                            type:"POST",
+                            url:"${base!}/open/h5/cart/getCartNum.html",
+                            dataType:"JSON",
+                            data:{
+
+                            },
+                            success:function(data){
+                                if (data.code == 0) {
+                                    $("#cartNum").html(data.msg)
+                                } else {
+                                    $("#cartNum").hide();
+                                }
+                            }
+                        });
+
+                    },
+					priceSelect: function (event) {
+                        var self = this;
+                        var key = $("#searchKey").val();
+						$(".priceSpan").removeClass("price-active");
+						$(event.target).addClass("price-active");
+						var priceArea = $(event.target).attr("priceArea");
+						$.ajax({
+							type:"POST",
+							url:"${base!}/open/h5/product/ProductList.html",
+							dataType:"JSON",
+							data:{
+								key:key,
+								priceArea:priceArea
+							},
+							success:function(data){
+								if (data.code == 0) {
+									var d = data.data;
+									self.productList = d;
+
+                                    var t;
+                                    clearTimeout(t)
+                                    t = setTimeout(function (){
+                                        $("#item3").removeClass("mui-active");
+                                        $(".mui-control-item").removeClass("mui-active");
+                                    }, 10);
+								} else {
+
+								}
+							}
+						});
+            		},
+                    productSort: function (event) {
+                        var self = this;
+                        var key = $("#searchKey").val();
+                        var sortType = $(event.target).attr("sortType");
+                        $.ajax({
+                            type:"POST",
+                            url:"${base!}/open/h5/product/ProductList.html",
+                            dataType:"JSON",
+                            data:{
+                                key:key,
+                                sortType:sortType
+                            },
+                            success:function(data){
+                                if (data.code == 0) {
+                                    var d = data.data;
+                                    self.productList = d;
+                                } else {
+
+                                }
+                                var t;
+                                clearTimeout(t)
+                                t = setTimeout(function (){
+                                    $("#item1").removeClass("mui-active");
+                                    $("#item2").removeClass("mui-active");
+                                    $(".mui-control-item").removeClass("mui-active");
+                                }, 10);
+                            }
+                        });
+                    }
+                }
+
+                ,
+                watch:{     //监听器
+                    // carModel:function () {
+                    //     this.getProvince();
+                    // }
+                }
+
+            })
+		</script>
+	</body>
+</html>

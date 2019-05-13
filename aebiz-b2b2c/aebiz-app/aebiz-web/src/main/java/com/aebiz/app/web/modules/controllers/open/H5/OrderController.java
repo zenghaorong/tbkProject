@@ -131,7 +131,8 @@ public class OrderController {
 //        request.setAttribute("num",num);
         request.setAttribute("productList",productList);
         String freight = sysDictService.getNameByCode("freight");
-        int freightMoney = Integer.parseInt(freight);
+        Double fm = Double.parseDouble(freight);
+        int freightMoney = fm.intValue();
         request.setAttribute("freightMoney",freightMoney);
         return "pages/front/h5/niantu/orderConfirmation";
     }

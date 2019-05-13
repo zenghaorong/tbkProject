@@ -860,7 +860,6 @@ layout("/layouts/store.html"){
                 $("#isSubmit").val("1");
             },
             success: function (data, statusText, xhr, form) {
-                debugger;
                 if (data.code == 0) {
                     Toast.success(data.msg);
                     if ($("#subType").val() == "draft") {
@@ -873,6 +872,9 @@ layout("/layouts/store.html"){
                 }
                 form.resetForm();
                 $("#div_img_album_wap").html("");
+                // $("#wapNote").textbox("setValue","");
+                window.location.href="${base!}/store/goods/list"
+
                 $("#isSubmit").val("0");
                 form.find("button:submit").button("reset");
             },
@@ -1547,10 +1549,10 @@ layout("/layouts/store.html"){
             Toast.error("请上传商品图片！");
             return false;
         }
-        // if ($.trim($("#wapNote").val()) === "") {
-        //     Toast.error("请填写商品详情信息！");
-        //     return false;
-        // }
+        if ($.trim($("#wapNote").html()) === "") {
+            Toast.error("请填写商品详情信息！");
+            return false;
+        }
 
         // if ($("#saleClientTV").is(":checked") && $.trim($("#div_img_album_tv").html()) === "") {
         //     Toast.error("${msg['goods.main.tip.tvalbumrequired']}");

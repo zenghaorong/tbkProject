@@ -91,7 +91,10 @@
         </ul>
     </div>
 </div>
-<div class="mui-content-padded">
+<div class="mui-content-padded" v-if="coupons==''">
+    暂无可用优惠券
+</div>
+    <div class="mui-content-padded" v-if="coupons!=''">
     可用优惠劵
     <select class="mui-btn mui-btn-block" v-model="couponId">
         <option  :value="item.couponId" v-for="item in coupons" :key="item.id">

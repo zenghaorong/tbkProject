@@ -260,7 +260,7 @@ layout("/layouts/store.html"){
                     if(goodsList != null){
                         for(var n= 0;n< goodsList.length;n++){
                             trView.push('<tr>' +
-                                          '<td><div><a target="_blank" href="/front/detail?sku='+ data[i]['goodsList'][n]['sku'] +'" class="order_imgbx"> <img src="'+ data[i]['goodsList'][n]['imgUrl'] +'" alt="..."></a></div><div><a target="_blank" href="/front/detail?sku='+ data[i]['goodsList'][n]['sku'] +'">'+ data[i]['goodsList'][n]['goodsName']+'&nbsp;&nbsp;&nbsp;&nbsp;'+data[i]['goodsList'][n]['name']+'</a></div></td>' +
+                                          '<td><div><a  href="javascript:void(0);" class="order_imgbx"> <img src="'+ data[i]['goodsList'][n]['imgUrl'] +'" alt="..."></a></div><div><a  href="javascript:void(0);">'+ data[i]['goodsList'][n]['goodsName']+'&nbsp;&nbsp;&nbsp;&nbsp;'+'</a></div></td>' +
                                           '<td>¥' + setPrice(data[i]['goodsList'][n]['salePrice'])  +'</td>' +
                                           '<td>' + data[i]['goodsList'][n]['buyNum']  +'</td>');
 

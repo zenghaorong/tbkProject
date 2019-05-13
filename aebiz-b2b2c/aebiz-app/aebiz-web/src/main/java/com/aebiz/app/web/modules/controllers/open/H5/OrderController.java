@@ -109,18 +109,18 @@ public class OrderController {
             return "pages/front/h5/niantu/login";
         }
         String productList = request.getParameter("productList");
-        String cartIds = request.getParameter("cartIds");
-        try{
-            String[] ids = StringUtils.split(cartIds, ";");
-
-            for (int i = 0 ; i<ids.length;i++){
-                Member_cart cart = memberCartService.fetch(ids[i]);
-                cart.setDelFlag(true);
-                memberCartService.update(cart);
-            }
-        }catch (Exception e){
-
-        }
+//        String cartIds = request.getParameter("cartIds");
+//        try{
+//            String[] ids = StringUtils.split(cartIds, ";");
+//
+//            for (int i = 0 ; i<ids.length;i++){
+//                Member_cart cart = memberCartService.fetch(ids[i]);
+//                cart.setDelFlag(true);
+//                memberCartService.update(cart);
+//            }
+//        }catch (Exception e){
+//
+//        }
 
 //        List<Map<String,Object>> list = (List<Map<String, Object>>) JSON.parse(productList);
 //        String productIds = request.getParameter("productIds");
@@ -509,6 +509,8 @@ public class OrderController {
                         return Result.error(-1,"库存不足！");
                     }
                 }
+                cart.setDelFlag(true);
+                memberCartService.update(cart);
                 pList.add(p);
             }
         }catch (Exception e){

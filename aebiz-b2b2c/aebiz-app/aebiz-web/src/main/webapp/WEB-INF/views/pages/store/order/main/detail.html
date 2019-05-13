@@ -171,39 +171,39 @@ layout("/layouts/store.html"){
         <div style="position:fixed;bottom:0px;background-color:#FFFFFF;width:100%;min-height: 50px;z-index: 5">
             <div class="form-group col-md-12 col-md-offset-4" style="display: inline-block;line-height: 50px">
                 <!--# if(obj.orderStatus == 0){ #-->
-                    <button type="button" class="btn btn-sm btn-info" onclick="auditModal('${obj.id}')">审核</button>
+                    <!--<button type="button" class="btn btn-sm btn-info" onclick="auditModal('${obj.id}')">审核</button>-->
                 <!--# } #-->
                 <!--# if(obj.payStatus < 2 && obj.orderStatus == 1){ #-->
-                    <button type="button" class="btn btn-sm btn-info" onclick="operation('改价','${base}/store/order/main/changePrice/${obj.id}')">改价</button>
+                    <!--<button type="button" class="btn btn-sm btn-info" onclick="operation('改价','${base}/store/order/main/changePrice/${obj.id}')">改价</button>-->
                 <!--# } #-->
 
                 <!--# if(obj.deliveryStatus == 0 && obj.orderStatus == 1){ #-->
-                    <button type="button" class="btn btn-sm btn-info" onclick="operation('改地址','${base}/store/order/main/changeAddress/${obj.id}')">改地址</button>
+                    <!--<button type="button" class="btn btn-sm btn-info" onclick="operation('改地址','${base}/store/order/main/changeAddress/${obj.id}')">改地址</button>-->
                 <!--# } #-->
 
                 <!--# if(obj.payStatus < 3 && obj.orderStatus == 1 && (obj.payType == 0 || obj.payType == 4)){ #-->
-                    <button type="button" class="btn btn-sm btn-info" onclick="operation('上传支付凭证','${base}/store/order/main/upload/${obj.id}')">上传支付凭证</button>
+                    <!--<button type="button" class="btn btn-sm btn-info" onclick="operation('上传支付凭证','${base}/store/order/main/upload/${obj.id}')">上传支付凭证</button>-->
                 <!--# } #-->
 
                 <!--# if(((obj.payStatus == 1 || obj.payStatus == 2) || (obj.payType == 1 || obj.payType == 2 || obj.payType == 3)) && obj.payStatus != 3 && obj.orderStatus == 1 ){ #-->
-                    <button type="button" class="btn btn-sm btn-info" onclick="operation('确认收款','${base}/store/order/main/receipt/${obj.id}')">确认收款</button>
+                    <!--<button type="button" class="btn btn-sm btn-info" onclick="operation('确认收款','${base}/store/order/main/receipt/${obj.id}')">确认收款</button>-->
                 <!--# } #-->
 
                 <!--# if(obj.payStatus <= 1 && obj.orderStatus == 1){ #-->
-                    <button type="button" class="btn btn-sm btn-info" onclick="closeOrder('${obj.id}')">关闭订单</button>
+                    <!--<button type="button" class="btn btn-sm btn-info" onclick="closeOrder('${obj.id}')">关闭订单</button>-->
                 <!--# } #-->
 
                 <!--# if(obj.orderStatus == 2 || obj.orderStatus == 3 || obj.orderStatus == 4){ #-->
-                    <button type="button" class="btn btn-sm btn-info" onclick="del('${obj.id}')">删除订单</button>
+                    <!--<button type="button" class="btn btn-sm btn-info" onclick="del('${obj.id}')">删除订单</button>-->
                 <!--# } #-->
 
                 <!--# if(obj.orderStatus == 2){ #-->
-                    <button type="button" class="btn btn-sm btn-info" onclick="operation('现价恢复')">现价恢复</button>
-                    <button type="button" class="btn btn-sm btn-info" onclick="operation('原价恢复')">原价恢复</button>
+                    <!--<button type="button" class="btn btn-sm btn-info" onclick="operation('现价恢复')">现价恢复</button>-->
+                    <!--<button type="button" class="btn btn-sm btn-info" onclick="operation('原价恢复')">原价恢复</button>-->
                 <!--# } #-->
 
                 <!--# if(obj.payStatus == 3 && obj.orderStatus == 1 && (obj.deliveryStatus == 0 || obj.deliveryStatus == 2)){ #-->
-                    <button type="button" class="btn btn-sm btn-info" onclick="operation('创建配货单','${base}/store/order/main/createDelivery/${obj.id}')">创建配货单</button>
+                    <!--<button type="button" class="btn btn-sm btn-info" onclick="operation('创建配货单','${base}/store/order/main/createDelivery/${obj.id}')">创建配货单</button>-->
                 <!--# } #-->
             </div>
         </div>

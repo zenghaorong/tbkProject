@@ -65,14 +65,17 @@
         <div class="mui-input-row mui-password" style="border: 0px;">
             <!--<button type="button" id="place"  class="mui-btn mui-btn-primary" style="width: 30%;top: 0px;line-height:1;-->
             <!--border: 0;background-color:rgb(56,206,204);">加入购物车</button>-->
-            <button type="button" style="width: 100%;top: 0px;line-height:1;border: 0;background-color: rgb(247, 70, 33);"
-                    v-on:click="save"      class="mui-btn mui-btn-primary" id="review">立即购买</button>
+            <button type="button" style="width: 50%;top: 0px;line-height:1;border: 0;background-color: rgb(0, 0, 0);color: yellow;"
+                    v-on:click="saveM"      class="mui-btn mui-btn-primary" id="reviewM">开通包月</button>
+            <button type="button" style="width: 50%;top: 0px;line-height:1;border: 0;background-color: rgb(247, 70, 33);"
+                    v-on:click="save"      class="mui-btn mui-btn-primary" id="review">单个购买</button>
         </div>
     </nav>
 </div>
 <script type="text/javascript" src="${base!}/assets/front/h5/js/mui.js" ></script>
 <script type="text/javascript" src="${base!}/assets/front/h5/js/vue.js" ></script>
 <script type="text/javascript" src="${base!}/assets/front/h5/js/jquery-2.0.0.min.js" ></script>
+<script type="text/javascript" src="${base!}/assets/decorate/pc/decoratecommon/js/layer/mobile/layer.js" ></script>
 <script type="application/javascript">
     mui.init({
         swipeBack:true //启用右滑关闭功能
@@ -115,7 +118,40 @@
             },
             save:function () {
                 var id= this.video.id;
-                window.location.href="${base!}/open/h5/order/videoOrderConfirmation.html?videoId="+id;
+                window.location.href="${base!}/open/h5/order/videoOrderConfirmation.html?videoId="+id+"&type=2&num=0";
+            },
+            saveM:function () {
+                var id= this.video.id;
+                layer.open({
+                    title: [
+                        '请确定要购买的月数',
+                        'background-color:#8DCE16; color:#fff;'
+                    ]
+                    ,anim: 'up'
+                    ,content: '<div style="display: inline" >\n' +
+                        '            <div style="float: left;width: 35%" class="price" >\n' +
+                        '                数量：\n' +
+                        '            </div>\n' +
+                        '            <div style="float: right;width: 35%;left: 0%;margin-top:-8px;" class="mui-numbox" data-numbox-min=\'1\' data-numbox-max=\'1000\'>\n' +
+                        '                <button id="jj" onclick="numJj()" class="mui-btn mui-btn-numbox-minus" type="button">-</button>\n' +
+                        '                <input id="productNum" class="mui-input-numbox" type="number" value="1" />\n' +
+                        '                <button id="add" onclick="numAdd()" class="mui-btn mui-btn-numbox-plus" type="button">+</button>\n' +
+                        '\n' +
+                        '            </div>\n' +
+                        '        </div>'
+                    ,btn: ['确认', '取消']
+                    ,yes: function(index){
+                        var num = $("#productNum").val();
+                        if (!(/(^[1-9]\d*$)/.test(num))) {
+                            layerAlert("请输入正整数");
+                            return false;
+                        }else {
+                            window.location.href="${base!}/open/h5/order/videoOrderConfirmation.html?videoId="+id+"&type=3&num="+num;
+                        }
+
+                    }
+                });
+
             }
 
         },
@@ -123,6 +159,22 @@
         }
 
     })
+
+    function numAdd() {
+        var num = $("#productNum").val();
+        num++
+        $("#productNum").val(num);
+    }
+
+    function numJj() {
+        var num = $("#productNum").val();
+        if(num<=1){
+            return;
+        }
+        num--
+        $("#productNum").val(num);
+    }
+
 
 
 
@@ -136,6 +188,15 @@
         m = date.getMinutes();
         s = date.getSeconds();
         return Y+M+D+h+m;
+    }
+
+    function layerAlert(msg) {
+        //提示
+        layer.open({
+            content: msg
+            ,skin: 'msg'
+            ,time: 2 //2秒后自动关闭
+        });
     }
 </script>
 </body>

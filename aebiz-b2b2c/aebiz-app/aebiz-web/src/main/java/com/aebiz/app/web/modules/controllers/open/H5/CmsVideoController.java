@@ -17,6 +17,7 @@ import com.aebiz.app.shop.modules.models.Shop_adv_main;
 import com.aebiz.baseframework.base.Result;
 import com.aebiz.baseframework.page.Pagination;
 import com.aebiz.baseframework.view.annotation.SJson;
+import com.aebiz.commons.utils.DateUtil;
 import com.aebiz.commons.utils.StringUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
@@ -31,7 +32,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -199,25 +204,46 @@ public class CmsVideoController {
             return "pages/front/h5/niantu/login";
         }
 
+        try {
+            Cms_video cms_video = cmsVideoService.fetch(id);
+            Integer num = cms_video.getPageViews();
+            if (num == null) {
+                num = 0;
+            }
+            num++;
+            cms_video.setPageViews(num);
+            cmsVideoService.update(cms_video);
+        }catch (Exception e){
+            log.error("添加视频浏览浪异常",e);
+            e.printStackTrace();
+        }
+
+        //先判断是否开通包月
+        Cnd cndM = Cnd.NEW();
+        cndM.and("payStatus", "=", OrderPayStatusEnum.PAYALL.getKey() );
+        cndM.and("accountId", "=", accountUser.getAccountId());
+        cndM.and("orderType", "=", OrderTypeEnum.monthly_order_type.getKey());
+        cndM.desc("payAt");
+        List<Order_main> list = orderMainService.query(cndM);
+        if(list !=null && list.size()>0){
+            Order_main order_main = list.get(0);
+            boolean is = DateUtil.videoMonthlyTime(order_main.getPayAt().toString(),order_main.getMonthlyNum());
+            if(is){
+                return "pages/front/h5/niantu/videoDetail";
+            }
+        }
+
         //判断是否购买 从而判断进入购买页还是详情页
         Cnd cnd = Cnd.NEW();
         cnd.and("payStatus", "=", OrderPayStatusEnum.PAYALL.getKey() );
         cnd.and("accountId", "=", accountUser.getAccountId());
-        cnd.and("orderType", "=", "2");
+        cnd.and("orderType", "=", OrderTypeEnum.video_order_type.getKey());
         cnd.and("videoId", "=", id);
         int orderSize =orderMainService.count(cnd);
         if(orderSize>0){ //进入播放详情页
             return "pages/front/h5/niantu/videoDetail";
         }
 
-        Cms_video cms_video = cmsVideoService.fetch(id);
-        Integer num = cms_video.getLikeNum();
-        if(num == null){
-            num = 0;
-        }
-        num++;
-        cms_video.setLikeNum(num);
-        cmsVideoService.update(cms_video);
 
         return "pages/front/h5/niantu/videoBuyPage";
     }

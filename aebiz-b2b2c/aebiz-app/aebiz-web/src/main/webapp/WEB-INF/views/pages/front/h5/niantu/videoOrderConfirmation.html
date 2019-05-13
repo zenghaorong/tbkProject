@@ -38,7 +38,50 @@
         </h1>
     </header>
 
+    <!--视频单个购买订单-->
+  <!--#if(type == "3"){#-->
+    <div class="mui-card" style="margin-top: 60px;">
+        <div class="mui-card-header" >
+            单月价格<span style="color: red;">${monthlyPrice!}</span>
+        </div>
+        <div class="mui-card-header">
+            包月月数<span style="color: red;">${num!}个月</span>
+        </div>
+        <!--<div class="mui-card-header">-->
+        <!--优惠劵<span style="color: red;">￥10.00</span>-->
+        <!--</div>-->
+    </div>
 
+    <!--<div class="mui-card">-->
+        <!--<div class="mui-card-content">-->
+            <!--<ul class="mui-table-view">-->
+                <!--<li class="mui-table-view-cell mui-media" >-->
+                    <!--<a href="#">-->
+                        <!--<img class="mui-media-object mui-pull-left" :src="videoInfo.imageUrl">-->
+                        <!--<div class="mui-media-body" style="white-space:normal;" >-->
+                            <!--<span>{{videoInfo.videoTitle}}</span>-->
+                            <!--<p class='mui-ellipsis'style="margin-top: 35px;margin-left: 100px;" >-->
+                                <!--<span class="jiage-text">￥{{videoInfo.price}}</span>-->
+                                <!--<span>*1</span>-->
+                            <!--</p>-->
+                        <!--</div>-->
+                    <!--</a>-->
+                <!--</li>-->
+            <!--</ul>-->
+        <!--</div>-->
+    <!--</div>-->
+
+    <nav class="mui-bar mui-bar-tab" style="height: 40px;">
+        <div class="mui-input-row mui-password" style="border: 0px;">
+            <button type="button" id="placeM"  class="mui-btn mui-btn-primary" style="width: 30%;top: 0px;line-height:1;
+            border: 0;background-color:red;" v-on:click="saveM()">立即支付</button>
+            <button type="button" style="width: 70%;top: 0px;line-height:1;border: 0;background-color:white;"
+                    class="mui-btn mui-btn-primary" id="reviewM">
+                <span style="color: black;">应付:</span><span style="color: red;padding-left: 10px;">${payMoney!}元</span>
+            </button>
+        </div>
+    </nav>
+    <!--#}else{#-->
     <div class="mui-card" style="margin-top: 60px;">
         <div class="mui-card-header" >
             商品金额<span style="color: red;">￥{{videoInfo.price}}</span>
@@ -88,6 +131,7 @@
             </button>
         </div>
     </nav>
+    <!--#}#-->
 </div>
 <script type="text/javascript" src="${base!}/assets/front/h5/js/mui.js" ></script>
 <script type="text/javascript" src="${base!}/assets/front/h5/js/vue.js" ></script>
@@ -181,6 +225,9 @@
             },
             save:function () {
                 window.location.href="${base!}/open/h5/order/videoCheckoutCounter.html?videoId="+videoId+"&couponId="+this.couponId;
+            },
+            saveM:function () {
+                window.location.href="${base!}/open/h5/order/videoCheckoutCounter.html?videoId="+videoId+"&monthlyNum=${num!}"+"&type=3";
             }
         },
         watch:{     //监听器

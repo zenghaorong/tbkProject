@@ -109,7 +109,7 @@
             border: 0;background-color:red;" v-on:click="save()">立即支付</button>
         <button type="button" style="width: 70%;top: 0px;line-height:1;border: 0;background-color:white;"
                 class="mui-btn mui-btn-primary" id="review">
-            <span style="color: black;">应付:</span><span style="color: red;padding-left: 10px;">{{zongPrice2}}元</span>
+            <span style="color: black;">应付:</span><span id="zongPriceSp" style="color: red;padding-left: 10px;">{{zongPrice2}}元</span>
         </button>
     </div>
 </nav>
@@ -300,14 +300,15 @@
         },
         watch:{     //监听器
             couponId:function () {
-                console.log("监听器开始执行：couponId")
-                for(var i=0;i++;i<this.coupons.length){
+                console.log("监听器开始执行：couponId");
+                for(var i=0;i<this.coupons.length;i++){
                     var id = this.coupons[i].sales_coupon.id;
                     if(id == this.couponId){
                        this.sales_coupon = this.coupons[i].sales_coupon;
                     }
                 }
                 this.priceCalculator();
+                $("#zongPriceSp").val(this.zongPrice);
             }
         }
 

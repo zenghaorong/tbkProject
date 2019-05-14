@@ -258,7 +258,7 @@ public class PayH5Controller {
                 //5.更新订单数据
                 order_main.setPayType(OrderPayTypeEnum.ALIPAY.getKey());
                 order_main.setPayStatus(OrderPayStatusEnum.PAYALL.getKey());
-                order_main.setOrderStatus(OrderStatusEnum.FINISH.getKey());
+                order_main.setOrderStatus(OrderStatusEnum.WAITVERIFY.getKey());
                 order_main.setGetStatus(OrderGetStatusEnum.NONE.getKey());
                 order_main.setPayAt((int)WXPayUtil.getCurrentTimestamp());
                 orderMainService.update(order_main);
@@ -347,7 +347,7 @@ public class PayH5Controller {
                 //5.更新订单数据
                 order_main.setPayType(OrderPayTypeEnum.WEIXINPAY.getKey());
                 order_main.setPayStatus(OrderPayStatusEnum.PAYALL.getKey());
-                order_main.setOrderStatus(OrderStatusEnum.FINISH.getKey());
+                order_main.setOrderStatus(OrderStatusEnum.WAITVERIFY.getKey());
                 order_main.setGetStatus(OrderGetStatusEnum.NONE.getKey());
                 order_main.setPayAt((int)WXPayUtil.getCurrentTimestamp());
                 orderMainService.update(order_main);

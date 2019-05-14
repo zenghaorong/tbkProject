@@ -509,8 +509,6 @@ public class OrderController {
                         return Result.error(-1,"库存不足！");
                     }
                 }
-                cart.setDelFlag(true);
-                memberCartService.update(cart);
                 pList.add(p);
             }
         }catch (Exception e){

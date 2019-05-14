@@ -204,7 +204,7 @@ public class CmsH5ReviewController {
                 Cms_article cms_article = new Cms_article();
                 cms_article.setId(cmsId);
                 cms_article.setLikeNum(loves.size());
-                cmsArticleService.update(cms_article);
+                cmsArticleService.updateIgnoreNull(cms_article);
                 return Result.success("ok2");
             }else {
                 Cms_article cms_article = cmsArticleService.fetch(cmsId);

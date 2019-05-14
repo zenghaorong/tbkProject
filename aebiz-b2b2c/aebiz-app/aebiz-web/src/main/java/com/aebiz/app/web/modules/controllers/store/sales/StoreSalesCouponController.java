@@ -139,7 +139,7 @@ public class StoreSalesCouponController {
 			return Result.success("globals.result.success", salesCoupon.getId());
 		} catch (Exception e) {
 		    e.printStackTrace();
-			return Result.error("globals.result.error");
+			return Result.error("编码前缀重复");
 		}
     }
 

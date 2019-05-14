@@ -467,10 +467,10 @@ public class LoginController {
                 }
             }
             log.info("短信验证码:  " + code);
-            return Result.success("member.register.join.success");
+            return Result.success("ok");
         }catch (Exception e){
             e.printStackTrace();
-            return Result.error("member.register.join.fail");
+            return Result.error("验证码获取失败");
         }
     }
 

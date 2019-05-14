@@ -60,7 +60,7 @@ public class StoreCmsArticleController {
 		if (!Strings.isBlank(title)) {
 			cnd.and("title", "like", "%" + title + "%");
 		}
-		cnd.and("storeId", "=", user.getStoreId());
+//		cnd.and("storeId", "=", user.getStoreId());
 		cnd.desc("publishAt");
 		return cmsArticleService.data(length, start, draw, order, columns, cnd, null);
 	}

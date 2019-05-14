@@ -47,8 +47,13 @@ public class StoreCmsVideoController {
 			ArrayList<DataTableOrder> order, ArrayList<DataTableColumn> columns) {
 		Store_user user = (Store_user) SecurityUtils.getSubject().getPrincipal();
 		Cnd cnd = Cnd.NEW();
-		if (!Strings.isBlank(delFlag) && !"0".equals(delFlag)) {
-			cnd.and("delFlag", "=", delFlag );
+		if (!Strings.isBlank(delFlag)) {
+			if("1".equals(delFlag)){
+				cnd.and("delFlag", "=", true );
+			}else {
+				cnd.and("delFlag", "=", false );
+			}
+
 		}
 		if (!Strings.isBlank(videoTitle)) {
 			cnd.and("videoTitle", "like", "%" + videoTitle + "%");

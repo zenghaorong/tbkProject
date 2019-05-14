@@ -49,10 +49,12 @@ public class MemberIntegralServiceImpl extends BaseServiceImpl<Member_Integral> 
             List<Member_Integral> list2 = this.query(iCnd);
             if(list2!=null&&list2.size()>0){
                 Member_Integral mi = list2.get(0);
+                payMoney=payMoney*100;
                 mi.setUseAbleIntegral(mi.getUseAbleIntegral()+integral_rule.getIntegralCount());
                 mi.setTotalIntegral(mi.getTotalIntegral()+integral_rule.getIntegralCount()*payMoney.intValue());
                 this.update(mi);
                 Member_Integral_Detail md = new Member_Integral_Detail();
+                payMoney=payMoney*100;
                 md.setAddIntegral(integral_rule.getIntegralCount()*payMoney.intValue());
                 md.setCustomerUuid(userId);
                 md.setIntegralDesc("购物送积分");
@@ -61,6 +63,7 @@ public class MemberIntegralServiceImpl extends BaseServiceImpl<Member_Integral> 
             }else {
                     Member_Integral m = new Member_Integral();
                     m.setCustomerUuid(userId);
+                    payMoney=payMoney*100;
                     m.setTotalIntegral(integral_rule.getIntegralCount()*payMoney.intValue());
                     m.setUseAbleIntegral(integral_rule.getIntegralCount()*payMoney.intValue());
                     this.insert(m);

@@ -540,12 +540,12 @@ public class OrderController {
                 }
                 if ("3".equals(status)) {
                     cndMain.and("payStatus", "=", 3);
-                    cndMain.and("orderStatus", "!=", 5);
+                    cndMain.and("orderStatus", "<", 5);
                     cndMain.and("deliveryStatus", "=", 3);
                 }
                 if ("4".equals(status)) {
                     cndMain.and("payStatus", "=", 3);
-                    cndMain.and("orderStatus", "!=", 5);
+                    cndMain.and("orderStatus", "<", 5);
                     cndMain.and("getStatus", "=", 1);
 
                 }

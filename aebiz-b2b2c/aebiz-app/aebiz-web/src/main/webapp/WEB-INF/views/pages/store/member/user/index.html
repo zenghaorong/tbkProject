@@ -47,12 +47,8 @@ layout("/layouts/store.html"){
                     <th>${msg['account.info.column.nickname']}</th><!--昵称-->
                     <th>${msg['member.type.memberType']}</th><!--类型-->
                     <th>${msg['member.level.memberLevel']}</th><!--等级-->
-                    <th>${msg['member.account.column.score']}</th><!--积分-->
-                    <th>${msg['member.account.column.money']}(￥)</th><!--余额-->
                     <th>${msg['account.user.column.mobile']}</th><!--手机号-->
-                    <th>${msg['account.user.column.email']}</th><!--邮箱-->
                     <th>${msg['member.user.state']}</th><!--会员状态-->
-                    <th width="10%">${msg['globals.table.column.operation']}</th><!--操作-->
                 </tr>
                 </thead>
             </table>
@@ -132,12 +128,9 @@ layout("/layouts/store.html"){
                 {"data": "accountid","visible": false, "bSortable": true},
                 {"data": "username", "sortable": true},
                 {"data": "nickname", "bSortable": true},
-                {"data": "type", "bSortable": true},
-                {"data": "level", "bSortable": true},
                 {"data": "score", "bSortable": true},
                 {"data": "money", "bSortable": true},
                 {"data": "mobile", "bSortable": true},
-                {"data": "email", "bSortable": true},
                 {"data": "state", "bSortable": true}
             ],
             "columnDefs": [
@@ -149,7 +142,7 @@ layout("/layouts/store.html"){
                             return row.money/100;
                         }
                     },
-                    "targets": 6
+                    "targets": 4
                 },
                 {
                     "render": function (data, type, row) {
@@ -159,27 +152,7 @@ layout("/layouts/store.html"){
                             return '<i class="fa fa-circle text-danger ml5"></i>';
                         }
                     },
-                    "targets": 9
-                },
-                {
-                    "render": function (data, type, row) {
-                        return '<div class="btn-group">' +
-                            '<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown"><i class="ti-settings"></i> <span class="ti-angle-down"></span></button>' +
-                            '<ul class="dropdown-menu" role="menu">' +
-                            '<li><a href="${base}/store/member/user/detail/' + row.id + '">${msg["globals.button.detail"]}</a></li>' +
-                            // '<li><a href="${base}/store/member/user/edit/' + row.id + '" data-pjax>${msg["globals.button.update"]}</a></li>' +
-                            // '<li><a href="javascript:;" onclick="resetPwd(\'' + row.id + '\')" >密码重置</a></li>' +
-                            // '<li class="divider"></li>' +
-                            // '<li><a href="${base}/store/member/account/money/add/' + row.accountid + '" data-toggle="modal" data-target="#dialogDetail">${msg["member.account.money"]}</a></li>' +
-                            // '<li><a href="${base}/store/member/account/score/add/' + row.accountid + '" data-toggle="modal" data-target="#dialogDetail">${msg["member.account.score"]}</a></li>' +
-                            // '<li class="divider"></li>' +
-                            // '<li><a href="${base}/store/member/account/'+row.accountid+'/coupon" data-toggle="modal" data-target="#dialogCoupon">赠送优惠券</a></li>' +
-                            // '<li class="divider"></li>' +
-                            // '<li><a href="${base}/store/member/account/money/detail/' + row.accountid + '" data-toggle="modal" data-target="#dialogDetail">${msg["member.account.money.log"]}</a></li>' +
-                            // '<li><a href="${base}/store/member/account/score/detail/' + row.accountid + '" data-toggle="modal" data-target="#dialogDetail">${msg["member.account.score.log"]}</a></li>' +
-                            '</ul></div>';
-                    },
-                    "targets": 10
+                    "targets": 6
                 }
             ]
         });

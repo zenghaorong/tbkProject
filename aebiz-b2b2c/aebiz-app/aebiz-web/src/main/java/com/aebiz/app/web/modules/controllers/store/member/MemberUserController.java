@@ -130,7 +130,7 @@ public class MemberUserController {
 
         /*返回到页面的对象,datatable接受的格式只能是这样,obj的key是固定死的,不能改变*/
         NutMap obj = new NutMap();
-        obj.put("recordsFiltered", memberUserService.count());
+        obj.put("recordsFiltered", list.size());
         obj.put("data", list);
         obj.put("draw", dataTable.getDraw());
         obj.put("recordsTotal", dataTable.getLength());
@@ -303,18 +303,13 @@ public class MemberUserController {
                 "\tmu.accountId,\n" +
                 "\tau.loginname AS username,\n" +
                 "\tai.nickname,\n" +
-                "\tmt.`name` AS type,\n" +
-                "\tml.`name` AS level,\n" +
-                "\tma.money,\n" +
-                "\tma.score,\n" +
+                "\tmu.money,\n" +
+                "\tmu.score,\n" +
                 "\tau.mobile,\n" +
                 "\tau.email,\n" +
                 "\tau.disabled AS state\n" +
                 "FROM\n" +
-                "\tmember_user AS mu\n" +
-                "LEFT JOIN member_type AS mt ON mu.typeId = mt.id\n" +
-                "LEFT JOIN member_level AS ml ON mu.levelId = ml.id\n" +
-                "LEFT JOIN member_account AS ma ON mu.accountId = ma.accountId\n" +
+                "\tmember_account AS  mu\n" +
                 "LEFT JOIN account_info AS ai ON mu.accountId = ai.id\n" +
                 "LEFT JOIN account_user AS au ON mu.accountId = au.accountId\n" +
                 "$condition");

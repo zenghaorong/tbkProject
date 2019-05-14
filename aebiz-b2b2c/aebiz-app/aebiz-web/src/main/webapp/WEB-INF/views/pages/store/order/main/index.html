@@ -11,7 +11,7 @@ layout("/layouts/store.html"){
     <div class="wrapper" style="min-height:500px;">
         <div class="box-tab">
             <ul class="nav nav-tabs ">
-                <li><a href="#orderInfo" onclick="orderQuery(3)" data-toggle="tab"> <!--# if(obj.waitPayNum > 0 ) {  #--><span class="badge pull-right" style="background-color: #ff2e1d">${obj.waitPayNum}</span><!--# } #-->待支付&nbsp;</a> </li>
+                <li><a href="#orderInfo" onclick="orderQuery(8)" data-toggle="tab"> <!--# if(obj.waitPayNum > 0 ) {  #--><span class="badge pull-right" style="background-color: #ff2e1d">${obj.waitPayNum}</span><!--# } #-->待支付&nbsp;</a> </li>
                 <li class="active"><a href="#orderInfo" onclick="orderQuery(1)" data-toggle="tab"> <!--# if(obj.waitDeliveryNum > 0 ) {  #--><span class="badge pull-right" style="background-color: #ff2e1d">${obj.waitDeliveryNum}</span><!--# } #-->待发货&nbsp;</a> </li>
                 <li class="active"><a href="#orderInfo" onclick="orderQuery(2)" data-toggle="tab"> <!--# if(obj.waitDeliveryNum > 0 ) {  #--><span class="badge pull-right" style="background-color: #ff2e1d">${obj.waitDeliveryNum}</span><!--# } #-->已发货&nbsp;</a> </li>
                 <li class="active"><a href="#orderInfo" onclick="orderQuery(3)" data-toggle="tab"> <!--# if(obj.waitDeliveryNum > 0 ) {  #--><span class="badge pull-right" style="background-color: #ff2e1d">${obj.waitDeliveryNum}</span><!--# } #-->已完成&nbsp;</a> </li>

@@ -16,7 +16,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
 <title>商品详情</title> 
 <link rel="icon" href="">
-<link href="css/jquery.hiSlider.min.css" type="text/css" rel="stylesheet" />
+<link href="${base!}/assets/front/newH5/css/jquery.hiSlider.min.css" type="text/css" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="${base!}/assets/front/newH5/css/common-m.css">
 <link rel="stylesheet" type="text/css" href="${base!}/assets/front/newH5/css/index.css">
 </head>
@@ -25,8 +25,12 @@
     <section class="center" id="product">
     <a href="javascript:history.go(-1)" class="return"><img src="${base!}/assets/front/newH5/images/arrowRight.png" alt="" /></a>
     <section class="banner"  id="wrap">
-        <ul  class="hiSlider hiSlider1">
-            <li class="hiSlider-item" ><a href="javascript:void(0);"><img  style="width: 415px;height: 300px;":src="product.imgList" alt="" /></a></li>
+        <ul  class="hiSlider hiSlider1" >
+
+            <!--<li class="hiSlider-item" ><a href="javascript:void(0);"><img  style="width: 415px;height: 300px;":src="item.imgAlbum" alt="" /></a></li>-->
+            <li class="hiSlider-item" v-for="item in product.imageList" :key="item.id"><a href="javascript:void(0);"><img style="width: 415px;height: 300px;" :src="item.imgAlbum"alt="" /></a></li>
+            <!--<li class="hiSlider-item"><a href="javascript:void(0);"><img src="${base!}/assets/front/newH5/images/banner.png" alt="" /></a></li>-->
+            <li class="hiSlider-item item-clone" style="width: 415px; height: 300px; float: left;"><a href="javascript:void(0);"><img src="${base!}/assets/front/newH5/images/banner.png" alt=""></a></li>
         </ul>
     </section>
     <section class="detailsMessage bgGray">
@@ -72,11 +76,10 @@
     </footer>
 </section>
 <script type="text/javascript" src="${base!}/assets/front/newH5/js/jquery-2.2.4.min.js"></script>
-<script src="${base!}/assets/front/newH5/js/jquery.hiSlider.min.js"></script>
+<script type="text/javascript" src="${base!}/assets/front/newH5/js/jquery.hiSlider.min.js"></script>
 <script type="text/javascript" src="${base!}/assets/front/newH5/js/common.js"></script>
     <script type="text/javascript" src="${base!}/assets/front/h5/js/mui.js" ></script>
     <script type="text/javascript" src="${base!}/assets/front/h5/js/vue.js" ></script>
-    <script type="text/javascript" src="${base!}/assets/front/h5/js/jquery-2.0.0.min.js" ></script>
     <script type="text/javascript" src="${base!}/assets/decorate/pc/decoratecommon/js/layer/mobile/layer.js" ></script>
     <script type="text/javascript" charset="utf-8">
         var vue = new Vue({

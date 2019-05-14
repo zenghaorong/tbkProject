@@ -96,7 +96,7 @@
 </div>
     <div class="mui-content-padded" v-if="coupons!=''">
     可用优惠劵
-    <select class="mui-btn mui-btn-block" v-model="couponId">
+    <select class="mui-btn mui-btn-block" v-on:onchange="selectCoupon(this.value)" v-model="couponId">
         <option  :value="item.couponId" v-for="item in coupons" :key="item.id">
             {{item.sales_coupon!=''?item.sales_coupon.name:'暂无可用优惠劵'}}
         </option>
@@ -289,6 +289,13 @@
                     }
                 });
 
+            }
+        },
+        selectCoupon:function(cid){
+            for(var i =0 ; i<self.coupons.length; i++){
+                if(cid==self.coupons[i].couponId){
+                    self.sales_coupon==self.coupons[i].sales_coupon;
+                }
             }
         },
         watch:{     //监听器

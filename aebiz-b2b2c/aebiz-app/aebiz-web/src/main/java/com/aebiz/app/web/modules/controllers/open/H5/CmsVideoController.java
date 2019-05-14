@@ -278,6 +278,22 @@ public class CmsVideoController {
 
             Cms_video cms_video = new Cms_video();
 
+            //先判断是否开通包月
+            Cnd cndM = Cnd.NEW();
+            cndM.and("payStatus", "=", OrderPayStatusEnum.PAYALL.getKey() );
+            cndM.and("accountId", "=", accountUser.getAccountId());
+            cndM.and("orderType", "=", OrderTypeEnum.monthly_order_type.getKey());
+            cndM.desc("payAt");
+            List<Order_main> list = orderMainService.query(cndM);
+            if(list !=null && list.size()>0){
+                Order_main order_main = list.get(0);
+                boolean is = this.videoMonthlyTime(order_main.getPayAt().toString(),order_main.getMonthlyNum());
+                if(is){
+                    cms_video=cmsVideoService.getField("^(id|videoTitle|videoDetails|imageUrl|price|opAt|videoUrl)$",id);
+                    return Result.success("ok",cms_video);
+                }
+            }
+
             Cnd cnd = Cnd.NEW();
             cnd.and("payStatus", "=", OrderPayStatusEnum.PAYALL.getKey() );
             cnd.and("accountId", "=", accountUser.getAccountId());

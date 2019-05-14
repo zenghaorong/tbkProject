@@ -138,7 +138,8 @@
             coupons:[],
             couponId:'',
             couponPrice:0,
-            sales_coupon:''
+            sales_coupon:'',
+            productNum:0
         },
         created:function () {   //实例初始化创建完成执行
 
@@ -183,6 +184,7 @@
                             self.goodsList = data.data;
                             var price = 0;
                             for(var o=0;o<self.goodsList.length;o++){
+                                self.productNum=self.productNum+self.goodsList[o].num*1;
                                 price = price + parseFloat(self.goodsList[o].price)*self.goodsList[o].num;
                             }
                             self.zongPrice=price.toFixed(2);
@@ -204,7 +206,7 @@
                     url:"${base!}/open/h5/coupon/getMyOrderCoupon.html",
                     dataType:"JSON",
                     data:{
-                        productNum:self.goodsList.length,
+                        productNum:self.productNum,
                         price:self.zongPrice,
                         productType:"1"
                     },

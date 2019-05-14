@@ -168,6 +168,7 @@ public class CouponH5Controller {
             member_coupon.setCode(sales_coupon.getCodeprefix()+codeTime+random);
             memberCouponService.insert(member_coupon);
             sales_coupon.setSend_num(sales_coupon.getSend_num()-1);
+            salesCouponService.update(sales_coupon);
             return Result.success("ok");
         } catch (Exception e) {
             log.error("获取领劵中心优惠劵列表异常",e);

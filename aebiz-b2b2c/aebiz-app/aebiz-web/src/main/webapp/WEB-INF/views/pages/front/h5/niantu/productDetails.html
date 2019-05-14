@@ -44,13 +44,16 @@
     <section class="detailsImg">
         <h3>商品详情</h3>
         <img src="${base!}/assets/front/newH5/images/89cf81961ad20b14.jpg!q70.png" alt="" />
+        <img src="images/89cf81961ad20b14.jpg!q70.png" alt="" />
+        <div v-html="product.wapNote">
         {{product.wapNote}}
+        </div>
     </section>
     <footer class="detailsFooter">
         <ul class="clear">
             <li>
                 <a href="javascript:void(0);" onclick="window.location.href='${base!}/open/h5/cart/shoppingCart.html'" >
-                    <img src="${base!}/assets/front/newH5/images/icon2.png" alt=""  />
+                    <img src="images/icon2.png" alt=""  />
                     <span>
                         购物车
                         <i id="cartNum">0</i>

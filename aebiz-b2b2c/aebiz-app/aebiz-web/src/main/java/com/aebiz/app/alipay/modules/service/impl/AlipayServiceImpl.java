@@ -3,6 +3,7 @@ package com.aebiz.app.alipay.modules.service.impl;
 import com.aebiz.app.alipay.modules.models.AliPayFromQO;
 import com.aebiz.app.alipay.modules.models.AlipayConfig;
 import com.aebiz.app.alipay.modules.service.AlipayService;
+import com.alibaba.fastjson.JSON;
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.AlipayClient;
 import com.alipay.api.DefaultAlipayClient;
@@ -52,6 +53,9 @@ public class AlipayServiceImpl implements AlipayService {
 //            String timeout_express="2m";
             // 销售产品码 必填
             String product_code="QUICK_WAP_WAY";
+
+            log.info("支付宝支付参数："+ JSON.toJSONString(aliPayFromQO));
+
             /**********************/
             // SDK 公共请求类，包含公共请求参数，以及封装了签名与验签，开发者无需关注签名与验签
             //调用RSA签名方式
@@ -77,6 +81,7 @@ public class AlipayServiceImpl implements AlipayService {
 
             // 调用SDK生成表单
             form = client.pageExecute(alipay_request).getBody();
+            log.info("支付宝请求支付form表单："+form);
             return form;
         } catch (AlipayApiException e) {
             // TODO Auto-generated catch block

@@ -180,8 +180,8 @@ public class PayH5Controller {
             wxGetPayInfoQO.setThisIp(TcpipUtil.getClientRealIp(request));
             AliPayFromQO aliPayFromQO = new AliPayFromQO();
             aliPayFromQO.setOut_trade_no(orderId);
-            aliPayFromQO.setProductBody("黏土商城产品订单支付");
-            aliPayFromQO.setSubject("黏土商城产品订单支付");
+            aliPayFromQO.setProductBody("寻创意商品");
+            aliPayFromQO.setSubject("寻创意商品订单");
             double orderPayMoney = order_main.getPayMoney();
             double payMoney = CalculateUtils.div(orderPayMoney,100,2);
             aliPayFromQO.setTotal_amount(payMoney+"");

@@ -227,7 +227,7 @@ public class CmsVideoController {
         List<Order_main> list = orderMainService.query(cndM);
         if(list !=null && list.size()>0){
             Order_main order_main = list.get(0);
-            boolean is = DateUtil.videoMonthlyTime(order_main.getPayAt().toString(),order_main.getMonthlyNum());
+            boolean is = this.videoMonthlyTime(order_main.getPayAt().toString(),order_main.getMonthlyNum());
             if(is){
                 return "pages/front/h5/niantu/videoDetail";
             }
@@ -348,6 +348,43 @@ public class CmsVideoController {
             log.error("获取视频列表异常",e);
             return Result.error("fail");
         }
+    }
+
+
+    /**
+     * 判断当前会员是否到期
+     * @param payAt
+     * @param monthlyNum
+     * @return
+     */
+    public static boolean videoMonthlyTime(String payAt,int monthlyNum){
+        //到期时间
+        String nowDate = null;
+        String date = payAt;
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        try {
+            Date parse = format.parse(date);
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(parse);
+            calendar.add(Calendar.MONTH, monthlyNum);
+            nowDate = format.format(calendar.getTime());
+            System.out.println(nowDate);
+
+            //到期时间转化为时间戳
+            int endTime = DateUtil.getTime(nowDate);
+
+            //获取当前时间戳
+            int thisTime = DateUtil.getTime(new Date());
+
+            if(endTime<thisTime){
+                System.out.println("当前会员已到期");
+                return false;
+            }
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return true;
     }
 
 

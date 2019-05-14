@@ -334,6 +334,10 @@ public class StoreOrderMainController {
                 cnd.and("deliveryStatus","=",3);
                 cnd.and("videoId","is ", null);
                 break;
+            case 8:
+                cnd.and("payStatus","=",OrderPayStatusEnum.NO.getKey());
+                cnd.and("deliveryStatus","=",0);
+                break;
                 //已完成
             case 3:
                 cnd.and("payStatus","<",OrderPayStatusEnum.PAYALL.getKey());

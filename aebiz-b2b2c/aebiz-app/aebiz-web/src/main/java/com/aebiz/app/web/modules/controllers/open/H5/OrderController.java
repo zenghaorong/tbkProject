@@ -830,7 +830,7 @@ public class OrderController {
                         if ("1".equals(sales_coupon.getType())) { //满减
                             if (sales_coupon.getConditionAmount() != null) {
                                 if (payMoney >= sales_coupon.getConditionAmount()) {
-                                    payMoney = CalculateUtils.sub(payMoney,sales_coupon.getConditionAmount());
+                                    payMoney = CalculateUtils.sub(payMoney,sales_coupon.getDeductibleAmount());
                                     totalMoney = (int)CalculateUtils.mul(payMoney,100); //转化回分
                                     money.put("totalMoney",totalMoney);
                                     member_coupon.setStatus(1);

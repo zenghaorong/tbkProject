@@ -146,7 +146,7 @@
 <div class="mui-content" style="background: white;" id="vue" v-cloak>
     <ul class="mui-table-view" style="padding: 10px;margin-bottom: 100px;">
         <li class="mui-table-view-cell mui-media" v-for="item in couponList" :key="item.id"
-            style="background-color:#f0ad4e;margin-top: 10px; height: 120px;border-radius:12px;">
+            style="background-color:#f0ad4e;margin-top: 10px; height: 130px;border-radius:12px;">
             <!--<a :href="'${base!}/open/h5/cms/videoBuyPage.html?id='+item.id">-->
                 <div class="mui-media-body left-con">
                     {{item.name}}
@@ -155,7 +155,7 @@
                     <span v-if="item.type==2">免运费劵</span>
                     <span v-if="item.type==3">折扣劵</span>
                     <br><br>
-                    <span>结束时间：{{item.endTimeStr}}</span>
+                    <span style="font-size: 13px;">结束时间：{{item.endTimeStr}}</span>
                 </div>
                 <div class="lijilq" v-on:click="receive(item.id)">
                    领取

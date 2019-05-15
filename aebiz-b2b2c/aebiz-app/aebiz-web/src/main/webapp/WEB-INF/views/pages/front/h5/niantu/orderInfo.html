@@ -125,7 +125,7 @@
     <button type="button" onclick="confirmReceipt()" class="mui-btn mui-btn-primary mui-btn-block">确认收货</button>
 </div>
 <!--#}#-->
-<!--#if(order.payStatus == 3 && order.getStatus == 1){#-->
+<!--#if(order.payStatus == 3 && order.getStatus == 1 && order.feedStatus==0){#-->
 <div style="width: 300px;margin: 0 auto;">
     <button type="button" onclick="goFeedback()" class="mui-btn mui-btn-primary mui-btn-block">立即评价</button>
 </div>

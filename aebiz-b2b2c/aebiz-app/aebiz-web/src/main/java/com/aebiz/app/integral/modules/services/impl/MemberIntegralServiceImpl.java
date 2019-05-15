@@ -54,7 +54,6 @@ public class MemberIntegralServiceImpl extends BaseServiceImpl<Member_Integral> 
                 mi.setTotalIntegral(mi.getTotalIntegral()+integral_rule.getIntegralCount()*payMoney.intValue());
                 this.update(mi);
                 Member_Integral_Detail md = new Member_Integral_Detail();
-                payMoney=payMoney*100;
                 md.setAddIntegral(integral_rule.getIntegralCount()*payMoney.intValue());
                 md.setCustomerUuid(userId);
                 md.setIntegralDesc("购物送积分");

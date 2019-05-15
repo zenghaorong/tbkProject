@@ -545,7 +545,7 @@ public class OrderController {
                 }
                 if ("4".equals(status)) {
                     cndMain.and("payStatus", "=", 3);
-                    cndMain.and("orderStatus", "<", 5);
+                    cndMain.and("orderStatus", "=", 5);
                     cndMain.and("getStatus", "=", 1);
 
                 }
@@ -630,6 +630,7 @@ public class OrderController {
             Cnd cndMain3 = Cnd.NEW();
             cndMain3.and("payStatus", "=", 3);
             cndMain3.and("deliveryStatus", "=", 3);
+            cndMain3.and("orderStatus", "<", 5);
             cndMain3.and("accountId", "=", accountUser.getAccountId());
             int num3 = orderMainService.count(cndMain3);
             returnMap.put("num3",num3);
@@ -638,6 +639,7 @@ public class OrderController {
             Cnd cndMain4 = Cnd.NEW();
             cndMain4.and("payStatus", "=", 3);
             cndMain4.and("getStatus", "=", 1);
+            cndMain4.and("orderStatus", "=", 5);
             cndMain4.and("accountId", "=", accountUser.getAccountId());
             int num4 = orderMainService.count(cndMain4);
             returnMap.put("num4",num4);

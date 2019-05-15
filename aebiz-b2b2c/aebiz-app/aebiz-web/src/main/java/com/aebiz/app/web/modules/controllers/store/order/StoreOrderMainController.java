@@ -340,7 +340,7 @@ public class StoreOrderMainController {
                 break;
                 //已完成
             case 3:
-                cnd.and("payStatus","<",OrderPayStatusEnum.PAYALL.getKey());
+                cnd.and("payStatus","=",OrderPayStatusEnum.PAYALL.getKey());
                 cnd.and("deliveryStatus","=",3);
                 cnd.and("getStatus","=",1);
                 break;

@@ -542,6 +542,7 @@ public class OrderController {
                     cndMain.and("payStatus", "=", 3);
                     cndMain.and("orderStatus", "<", 5);
                     cndMain.and("deliveryStatus", "=", 3);
+                    cndMain.and("getStatus", "=", 0);
                 }
                 if ("4".equals(status)) {
                     cndMain.and("payStatus", "=", 3);
@@ -630,6 +631,7 @@ public class OrderController {
             Cnd cndMain3 = Cnd.NEW();
             cndMain3.and("payStatus", "=", 3);
             cndMain3.and("deliveryStatus", "=", 3);
+            cndMain3.and("getStatus", "=", 0);
             cndMain3.and("orderStatus", "<", 5);
             cndMain3.and("accountId", "=", accountUser.getAccountId());
             int num3 = orderMainService.count(cndMain3);

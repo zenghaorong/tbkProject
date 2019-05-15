@@ -58,14 +58,8 @@ layout("/layouts/store.html"){
                         <div class="col-md-4" style="padding: 5px 0px">
                             发货状态:   <span>${@com.aebiz.app.order.modules.models.em.OrderDeliveryStatusEnum.getValue(obj.deliveryStatus)}</span>
                         </div>
-                        <div class="col-md-8" style="padding: 5px 0px">
-                            发货时间:   <span><!--#if(!isEmpty(obj.deliveryAt)){#-->${@date.getDate(obj.deliveryAt)} <!--#}#--></span>
-                        </div>
                         <div class="col-md-4" style="padding: 5px 0px">
                             收货状态:   <span>${@com.aebiz.app.order.modules.models.em.OrderGetStatusEnum.getValue(obj.getStatus)}</span>
-                        </div>
-                        <div class="col-md-4" style="padding: 5px 0px">
-                            收货时间:   <span><!--#if(!isEmpty(obj.getAt)){#-->${@date.getDate(obj.getAt)} <!--#}#--></span>
                         </div>
 
                         <!-- <div class="col-md-4" style="padding: 5px 0px">
@@ -77,9 +71,6 @@ layout("/layouts/store.html"){
                          <div class="col-md-4" style="padding: 5px 0px">
                              参与活动:   <span>双11促销</span>
                          </div> -->
-                        <div class="col-md-12" style="padding: 5px 0px">
-                            订单备注:   <span>${obj.mark}</span>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -98,31 +89,13 @@ layout("/layouts/store.html"){
                             手机号码:   <span>${obj.deliveryMobile}</span>
                         </div>
                         <div class="col-md-4" style="padding: 5px 0px">
-                            固定电话:   <span>${obj.deliveryPhone}</span>
-                        </div>
-                        <div class="col-md-4" style="padding: 5px 0px">
-                            邮编:   <span>${obj.deliveryPostcode}</span>
-                        </div>
-                        <div class="col-md-4" style="padding: 5px 0px">
-                            配送状态:   <span>${@com.aebiz.app.order.modules.models.em.OrderDeliveryStatusEnum.getValue(obj.deliveryStatus)}</span>
-                        </div>
-                        <div class="col-md-4" style="padding: 5px 0px">
-                            发货时间:   <span><!--#if(!isEmpty(obj.deliveryAt)){#-->${@date.getDate(obj.deliveryAt)} <!--#}#--></span>
-                        </div>
-                        <div class="col-md-4" style="padding: 5px 0px">
                             物流公司:   <span>${obj.expressName!}</span>
                         </div>
                         <div class="col-md-4" style="padding: 5px 0px">
                             物流单号:   <span>${obj.expressNo!}</span>
                         </div>
-                        <div class="col-md-4" style="padding: 5px 0px">
-                            收货时间:   <span><!--#if(!isEmpty(obj.getAt)){#-->${@date.getDate(obj.getAt)} <!--#}#--></span>
-                        </div>
                         <div class="col-md-12" style="padding: 5px 0px">
                             收货地址:   <span>${@area.getNameByCode(obj.deliveryProvince)} ${@area.getNameByCode(obj.deliveryCity)} ${@area.getNameByCode(obj.deliveryCounty)} ${obj.deliveryAddress}</span>
-                        </div>
-                        <div class="col-md-12" style="padding: 5px 0px">
-                            买家留言:   <span>${obj.note}</span>
                         </div>
                     </div>
                 </div>

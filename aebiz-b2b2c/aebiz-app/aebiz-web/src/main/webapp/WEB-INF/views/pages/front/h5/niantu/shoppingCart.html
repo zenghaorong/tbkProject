@@ -372,6 +372,12 @@
             success:function(data){
                 if (data.code == 0) {
                     window.location.href="${base!}/open/h5/order/orderConfirmation.html?productList="+encodeURIComponent(data.data)+"&cartIds="+cartIds;
+                }else {
+                    layer.open({
+                        content: "库存不足!"
+                        ,skin: 'msg'
+                        ,time: 2 //2秒后自动关闭
+                    });
                 }
             }
         });

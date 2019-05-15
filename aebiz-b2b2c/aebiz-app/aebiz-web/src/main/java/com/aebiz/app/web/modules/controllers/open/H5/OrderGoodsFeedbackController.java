@@ -1,6 +1,8 @@
 package com.aebiz.app.web.modules.controllers.open.H5;
 
+import com.aebiz.app.acc.modules.models.Account_info;
 import com.aebiz.app.acc.modules.models.Account_user;
+import com.aebiz.app.acc.modules.services.AccountInfoService;
 import com.aebiz.app.acc.modules.services.AccountUserService;
 import com.aebiz.app.goods.modules.models.Goods_image;
 import com.aebiz.app.goods.modules.models.Goods_main;
@@ -57,6 +59,8 @@ public class OrderGoodsFeedbackController {
     private GoodsService goodsService;
     @Autowired
     private AccountUserService accountUserService;
+    @Autowired
+    private AccountInfoService accountInfoService;
 
     /**
      * 进入商品订单评价页
@@ -198,10 +202,13 @@ public class OrderGoodsFeedbackController {
             for (Order_goods_feedback o:list) {
                 Cnd imgCnd = Cnd.NEW();
                 imgCnd.and("accountId","=",o.getAccountId());
-                Account_user account_user=accountUserService.fetch(imgCnd);
+                    Account_user account_user=accountUserService.fetch(imgCnd);
                 if(account_user==null){
                     account_user = new Account_user();
                 }
+                Account_info ai = new Account_info();
+                ai = accountInfoService.fetch(account_user.getAccountId());
+                account_user.setAccountInfo(ai);
                 o.setAccountUser(account_user);
 
             }

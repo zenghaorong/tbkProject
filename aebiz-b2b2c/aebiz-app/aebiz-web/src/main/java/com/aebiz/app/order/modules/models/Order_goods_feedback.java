@@ -5,6 +5,7 @@ import com.aebiz.app.acc.modules.models.Account_user;
 import com.aebiz.app.goods.modules.models.Goods_main;
 import com.aebiz.app.goods.modules.models.Goods_product;
 import com.aebiz.baseframework.base.model.BaseModel;
+import com.aebiz.commons.utils.DateUtil;
 import org.nutz.dao.entity.annotation.*;
 
 import java.io.Serializable;
@@ -113,6 +114,17 @@ public class Order_goods_feedback extends BaseModel implements Serializable {
 
     @One(field = "accountId",key = "accountId")
     private Account_user accountUser;
+
+    private String feedAtTime;
+
+    public String getFeedAtTime() {
+        feedAtTime=DateUtil.getDate(this.feedAt);
+        return feedAtTime;
+    }
+
+    public void setFeedAtTime(String feedAtTime) {
+        this.feedAtTime = feedAtTime;
+    }
 
     public Integer getAppScore() {
         return appScore;

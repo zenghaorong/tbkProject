@@ -271,6 +271,7 @@ public class OrderController {
         order_main.setPayStatus(0);
         order_main.setOrderStatus(0);
         order_main.setOrderAt(DateUtil.getTime(new Date()));
+        order_main.setDeliveryName(member_address.getFullName());
         order_main.setDeliveryAddress(member_address.getAddress());
         order_main.setDeliveryMobile(member_address.getMobile());
         order_main.setOrderType(OrderTypeEnum.product_order_type.getKey());

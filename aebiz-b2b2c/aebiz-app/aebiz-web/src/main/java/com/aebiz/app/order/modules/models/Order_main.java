@@ -332,6 +332,23 @@ public class Order_main extends BaseModel implements Serializable {
 
     private String orderTime;
 
+    private String orderTypeName;
+
+    public String getOrderTypeName() {
+        if("1".equals(this.orderType)){
+            orderTypeName="商品订单";
+        }else if("2".equals(this.orderType)){
+            orderTypeName="视频单次购买订单";
+        }else {
+            orderTypeName="视频包月订单";
+        }
+        return orderTypeName;
+    }
+
+    public void setOrderTypeName(String orderTypeName) {
+        this.orderTypeName = orderTypeName;
+    }
+
     public Integer getMonthlyNum() {
         return monthlyNum;
     }

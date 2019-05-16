@@ -70,7 +70,10 @@ public class CartManagerController {
         List<Member_cart> carList = memberCartService.query(cartCnd);
         if(carList!=null&&carList.size()>0){
             Member_cart mc = carList.get(0);
-            mc.setNum(mc.getNum()+1);
+            if(num<1){
+                num=1;
+            }
+            mc.setNum(mc.getNum()+num);
             memberCartService.update(mc);
             return Result.success();
         }

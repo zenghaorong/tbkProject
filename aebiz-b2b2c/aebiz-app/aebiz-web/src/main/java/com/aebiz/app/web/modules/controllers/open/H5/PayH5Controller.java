@@ -266,6 +266,7 @@ public class PayH5Controller {
                     order_main.setGetStatus(OrderGetStatusEnum.ALL.getKey());
                     order_main.setFeedStatus(0);
                     order_main.setOrderStatus(OrderStatusEnum.FINISH.getKey());
+                    order_main.setDeliveryStatus(OrderDeliveryStatusEnum.ALL.getKey());
                 }
                 orderMainService.update(order_main);
                 try {
@@ -361,6 +362,7 @@ public class PayH5Controller {
                     order_main.setGetStatus(OrderGetStatusEnum.ALL.getKey());
                     order_main.setFeedStatus(0);
                     order_main.setOrderStatus(OrderStatusEnum.FINISH.getKey());
+                    order_main.setDeliveryStatus(OrderDeliveryStatusEnum.ALL.getKey());
                 }
                 orderMainService.update(order_main);
                 try {

@@ -13,16 +13,16 @@ layout("/layouts/store.html"){
                     <label class="control-label"></label>
                     <input type="text" class="form-control" name="content" id="content" placeholder="评论内容" />
                 </div>
+                <!--<div class="form-group">-->
+                    <!--<select class="form-control" name="cmsType" id="cmsType" placeholder="内容类型">-->
+                        <!--<option value="">内容类型</option>-->
+                        <!--<option value="1">黏土教程</option>-->
+                        <!--<option value="2">视频教程</option>-->
+                    <!--</select>-->
+                <!--</div>-->
                 <div class="form-group">
-                    <select class="form-control" name="cmsType" id="cmsType" placeholder="内容类型">
-                        <option value="">内容类型</option>
-                        <option value="1">黏土教程</option>
-                        <option value="2">视频教程</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <button type="button" class="btn btn-primary js-search-ok" >${msg['globals.button.search']}</button>
-                    <button type="button" class="btn btn-default js-search-reset" >${msg['globals.button.reset']}</button>
+                    <button type="button" id="searchBtn" class="btn btn-primary js-search-ok" >${msg['globals.button.search']}</button>
+                    <!--<button type="button" class="btn btn-default js-search-reset" >${msg['globals.button.reset']}</button>-->
                 </div>
             </form>
         </div>

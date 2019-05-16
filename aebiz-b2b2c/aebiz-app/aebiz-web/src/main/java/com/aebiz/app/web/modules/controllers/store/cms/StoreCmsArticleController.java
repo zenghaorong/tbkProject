@@ -130,6 +130,7 @@ public class StoreCmsArticleController {
 	public String edit(@PathVariable String id, HttpServletRequest req) {
 		 Cms_article article = cmsArticleService.fetch(id);
 	        req.setAttribute("obj", article != null ? article : null);
+	        req.setAttribute("srcList",article.getImageUrlStrs());
 		return "pages/store/cms/article/edit";
 	}
 

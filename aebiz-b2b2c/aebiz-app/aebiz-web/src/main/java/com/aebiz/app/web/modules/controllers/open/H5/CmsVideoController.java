@@ -352,7 +352,7 @@ public class CmsVideoController {
             List<Order_goods> order_goodsList = new ArrayList<>();
             for (Order_main o:order_mainList){
                 Cnd cndOrder = Cnd.NEW();
-                cndOrder.and("orderType", "=", OrderTypeEnum.video_order_type.getKey());
+//                cndOrder.and("orderType", "=", OrderTypeEnum.video_order_type.getKey());
                 cndOrder.and("orderId","=",o.getId());
                 Order_goods order_goods = orderGoodsService.fetch(cndOrder);
                 order_goodsList.add(order_goods);

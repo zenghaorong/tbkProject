@@ -189,10 +189,7 @@
 				</div>
 			</div>
 			<div class="mui-slider-indicator">
-				<div class="mui-indicator mui-active"></div>
-				<div class="mui-indicator"></div>
-				<div class="mui-indicator"></div>
-			
+				<div class="mui-indicator" v-for="item in bannerList"></div>
 			</div>
 		</div>
 		
@@ -323,6 +320,9 @@
                                     slider.slider({
                                         interval: 5000
                                     });
+                                    window.setTimeout(function () {
+                                        $(".mui-indicator").eq(0).addClass("mui-active");
+                                    },200);
                                 } else {
 
                                 }

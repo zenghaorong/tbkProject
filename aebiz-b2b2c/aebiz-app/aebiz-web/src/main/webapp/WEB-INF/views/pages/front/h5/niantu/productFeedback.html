@@ -179,7 +179,7 @@
                         if (data.code == 0) {
                             var d = data.data;
                             $.each(d, function (index, obj) {
-                                obj.feedAt=formatDate(obj.feedAt)
+                                obj.feedAtTime=formatDate(obj.feedAt)
                                 d[index] = obj;
                             })
                             self.feedList = d;

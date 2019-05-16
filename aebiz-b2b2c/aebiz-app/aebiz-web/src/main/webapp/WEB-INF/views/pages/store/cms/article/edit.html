@@ -97,6 +97,16 @@ layout("/layouts/store.html"){
                                     <input type="hidden" id="picurl" name="picurl" value="${obj.picurl!}" >
                                 </div>
                             </div>
+                            <!--#if(!isEmpty(obj.imageUrlStrs)){#-->
+                            <div class="form-group">
+                                <label for="content" class="col-sm-2 control-label">用户上传创意图片</label>
+                                <div class="col-sm-8">
+                                    <div id="imageListStr">
+
+                                    </div>
+                                </div>
+                            </div>
+                            <!--#}#-->
                             <div class="form-group">
                                 <label for="content" class="col-sm-2 control-label">${msg['cms.article.column.articlecontent']}</label>
 
@@ -231,6 +241,18 @@ layout("/layouts/store.html"){
         });
 
     });
+
+    var srcList = '${srcList!}';
+    if(srcList!='') {
+        var imageList = srcList.split(",");
+        var mtml = '';
+            $.each(imageList, function (index, d) {
+            mtml = mtml + '<img src="'+d+'" style="width: 200px;height: 150px;margin: 5px;"/>';
+        })
+        $("#imageListStr").html(mtml);
+    }
+
+
 </script>
 
 

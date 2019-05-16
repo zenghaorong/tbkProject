@@ -150,6 +150,7 @@ public class CmsVideoController {
             }
 
             cnd.and("delFlag", "=", 0 );
+            cnd.and("disabled", "=", 0 );
             cnd.and("channelId","=",cms_channel.getId());
             cnd.desc("location");
             if(StringUtils.isNotEmpty(key)){

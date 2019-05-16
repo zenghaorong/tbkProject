@@ -41,8 +41,8 @@ public class CmsReviewController {
     @RequiresPermissions("store.cms.review")
     public Object data(DataTable dataTable,String cmsId,String reviewId,String type,String cmsType,String content) {
 		Cnd cnd = Cnd.NEW();
-        Store_user user = (Store_user) SecurityUtils.getSubject().getPrincipal();
-        cnd.and("storeId", "=", user.getStoreId());
+//        Store_user user = (Store_user) SecurityUtils.getSubject().getPrincipal();
+//        cnd.and("storeId", "=", user.getStoreId());
         cnd.and("delFlag", "=", 0);
         if(!Strings.isBlank(cmsId)){
             cnd.and("cmsId", "=",cmsId);

@@ -78,6 +78,7 @@ public class StoreCmsVideoController {
 			}
 			Store_user user = (Store_user) SecurityUtils.getSubject().getPrincipal();
 			cms_video.setStoreId(user.getStoreId());
+			cms_video.setPageViews(0);
 			cmsVideoService.insert(cms_video);
 			return Result.success("globals.result.success");
 		} catch (Exception e) {

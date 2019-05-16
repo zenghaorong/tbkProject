@@ -356,6 +356,22 @@ public class PayH5Controller {
                 }catch (Exception e){
                     log.error("回调给会员添加积分异常",e);
                 }
+
+                try {
+                    Cnd proCnd = Cnd.NEW();
+                    proCnd.and("orderId","=",order_main.getId());
+                    List<Order_goods> goods = orderGoodsService.query(proCnd);
+                    for (Order_goods good: goods
+                    ) {
+                        Goods_product gp = goodsProductService.fetch(good.getProductId());
+                        gp.setSaleNumMonth(good.getBuyNum());
+                        goodsProductService.update(gp);
+                    }
+
+                }catch (Exception e){
+                    log.error("更新商品销量异常",e);
+                }
+
                 return success;
             }else {
                 return fail;

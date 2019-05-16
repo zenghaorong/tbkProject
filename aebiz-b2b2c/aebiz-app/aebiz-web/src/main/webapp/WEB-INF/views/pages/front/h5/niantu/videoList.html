@@ -68,7 +68,7 @@
                     {{item.videoTitle}}
                     <p class='mui-ellipsis'>
                         <span class="jiage-text">￥{{item.price}}</span>
-                        <span>浏览量{{item.pageViews}}次</span>
+                        <span>浏览量{{item.pageViews==null?0:item.pageViews}}次</span>
                         <!--<img class="pon right1" src="${base!}/assets/front/h5/img/购物车.png" width="25px"/>-->
                     </p>
                 </div>

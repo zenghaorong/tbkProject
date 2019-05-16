@@ -432,9 +432,11 @@ public class OrderController {
         order_goods.setSku(cms_video.getId());
         order_goods.setName(cms_video.getVideoTitle());
         order_goods.setBuyNum(1);
-        order_goods.setSalePrice(cms_video.getPrice().intValue());
-        order_goods.setBuyPrice(cms_video.getPrice().intValue());
+        Double price = CalculateUtils.mul(cms_video.getPrice(),100);
+        order_goods.setSalePrice(price.intValue());
+        order_goods.setBuyPrice(totalMoney);
         order_goods.setOrderType(OrderTypeEnum.video_order_type.getKey());
+        order_goods.setImgUrl(cms_video.getImageUrl());
         orderGoodsService.insert(order_goods);
         request.setAttribute("order",order);
         return "pages/front/h5/niantu/checkoutCounter";
@@ -513,7 +515,7 @@ public class OrderController {
                     cndMain.and("payStatus", "in", OrderPayStatusEnum.REFUNDWAIT.getKey() + "," + OrderPayStatusEnum.REFUNDALL.getKey());
                 }
             }
-            cndMain.and("orderType", "=", OrderTypeEnum.product_order_type.getKey());
+//            cndMain.and("orderType", "=", OrderTypeEnum.product_order_type.getKey());
             cndMain.and("accountId", "=", accountUser.getAccountId());
             cndMain.orderBy("orderAt","desc");
             List<Order_main> order_mainList = orderMainService.query(cndMain);
@@ -523,14 +525,17 @@ public class OrderController {
                 Cnd cndOrder = Cnd.NEW();
                 cndOrder.and("orderId","=",o.getId());
                 List<Order_goods> order_goods = orderGoodsService.query(cndOrder);
-                if(order_goods!=null&&order_goods.size()>0){
-                    for (int i =0 ; i<order_goods.size();i++){
-                        Cnd imgCnd = Cnd.NEW();
-                        Order_goods good = order_goods.get(i);
-                        imgCnd.and("goodsId","=",good.getGoodsId());
-                        List<Goods_image> imgList = goodsImageService.query(imgCnd);
-                        if(imgList!=null&&imgList.size()>0){
-                            good.setImgUrl(imgList.get(0).getImgAlbum());
+                //商品订单
+                if(OrderTypeEnum.product_order_type.getKey().equals(o.getOrderType())) {
+                    if (order_goods != null && order_goods.size() > 0) {
+                        for (int i = 0; i < order_goods.size(); i++) {
+                            Cnd imgCnd = Cnd.NEW();
+                            Order_goods good = order_goods.get(i);
+                            imgCnd.and("goodsId", "=", good.getGoodsId());
+                            List<Goods_image> imgList = goodsImageService.query(imgCnd);
+                            if (imgList != null && imgList.size() > 0) {
+                                good.setImgUrl(imgList.get(0).getImgAlbum());
+                            }
                         }
                     }
                 }

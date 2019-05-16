@@ -7,6 +7,7 @@ import com.aebiz.app.cms.modules.services.CmsChannelService;
 import com.aebiz.app.store.modules.models.Store_user;
 import com.aebiz.app.sys.modules.models.Sys_user;
 import com.aebiz.app.web.commons.log.annotation.SLog;
+import com.aebiz.app.web.commons.utils.WXPayUtil;
 import com.aebiz.baseframework.base.Result;
 import com.aebiz.baseframework.page.datatable.DataTableColumn;
 import com.aebiz.baseframework.page.datatable.DataTableOrder;
@@ -60,6 +61,7 @@ public class StoreCmsArticleController {
 			cnd.and("title", "like", "%" + title + "%");
 		}
 		cnd.and("storeId", "=", user.getStoreId());
+		cnd.desc("publishAt");
 		return cmsArticleService.data(length, start, draw, order, columns, cnd, null);
 	}
 
@@ -102,13 +104,19 @@ public class StoreCmsArticleController {
 	@SJson
 	@SLog(description = "Cms_article")
 	@RequiresPermissions("store.cms.article.add")
-	public Object addDo(@RequestParam String at, Cms_article cmsArticle, HttpServletRequest req) {
+	public Object addDo(String at, Cms_article cmsArticle, HttpServletRequest req) {
 		try {
 			Store_user user = (Store_user) SecurityUtils.getSubject().getPrincipal();
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            int publishAt = (int) (sdf.parse(at).getTime() / 1000);
-			cmsArticle.setPublishAt(publishAt);
+//			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//            int publishAt = (int) (sdf.parse(at).getTime() / 1000);
+			cmsArticle.setPublishAt((int)WXPayUtil.getCurrentTimestamp());
 			cmsArticle.setStoreId(user.getStoreId());
+			if(Strings.isEmpty(cmsArticle.getContent())){
+				return Result.error("富文本内容不能为空");
+			}
+			if(Strings.isEmpty(cmsArticle.getPicurl())){
+				return Result.error("图片不能为空");
+			}
 			cmsArticleService.insert(cmsArticle);
 			cmsArticleService.clearCache();
 			return Result.success("globals.result.success");
@@ -131,6 +139,12 @@ public class StoreCmsArticleController {
 	@RequiresPermissions("store.cms.article.edit")
 	public Object editDo(Cms_article cmsArticle, HttpServletRequest req) {
 		try {
+			if(Strings.isEmpty(cmsArticle.getContent())){
+				return Result.error("富文本内容不能为空");
+			}
+			if(Strings.isEmpty(cmsArticle.getPicurl())){
+				return Result.error("图片不能为空");
+			}
 			cmsArticle.setOpBy(StringUtil.getUid());
 			cmsArticle.setOpAt((int) (System.currentTimeMillis() / 1000));
 			cmsArticleService.updateIgnoreNull(cmsArticle);

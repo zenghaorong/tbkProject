@@ -42,4 +42,13 @@ public interface StoreGoodsclassService extends BaseService<Store_goodsclass>{
      * @return
      */
     public List<Store_goodsclass> getSameLevelProductCategorysByStoreUuid(String storeUuid);
+
+    /**
+     * 获取商品关联分类商品编号
+     * @param storeGoodsClassId
+     * @return
+     */
+    public List<String> getGoodsMainStoreGoodsclassIdList(String storeGoodsClassId);
+
+
 }

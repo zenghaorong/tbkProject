@@ -6,6 +6,8 @@ import com.aebiz.app.goods.modules.models.Goods_product;
 import com.aebiz.app.goods.modules.services.GoodsImageService;
 import com.aebiz.app.goods.modules.services.GoodsProductService;
 import com.aebiz.app.goods.modules.services.GoodsService;
+import com.aebiz.app.store.modules.models.Store_goodsclass;
+import com.aebiz.app.store.modules.services.StoreGoodsclassService;
 import com.aebiz.app.web.commons.utils.CalculateUtils;
 import com.aebiz.baseframework.base.Result;
 import com.aebiz.baseframework.page.Pagination;
@@ -16,6 +18,7 @@ import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Sqls;
 import org.nutz.dao.sql.Sql;
+import org.nutz.lang.Strings;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,11 +49,15 @@ public class ProductController {
     @Autowired
     private GoodsProductService goodsProductService;
 
+    @Autowired
+    private StoreGoodsclassService storeGoodsclassService;
+
     /**
      * 进入商品列表页  或 进入宝妈专区
      */
     @RequestMapping("/list.html")
-    public String index() {
+    public String index(HttpServletRequest request,String goodsClass) {
+        request.setAttribute("goodsClass",goodsClass);
         return "pages/front/h5/niantu/productList";
     }
 
@@ -58,9 +65,10 @@ public class ProductController {
      * 进入商品详情页
      */
     @RequestMapping("/productDetail.html")
-    public String productDetail(HttpServletRequest request) {
+    public String productDetail(HttpServletRequest request,String goodsClass) {
         String id = request.getParameter("id");
         request.setAttribute("id",id);
+        request.setAttribute("goodsClass",goodsClass);
         return "pages/front/h5/niantu/productDetails";
     }
 
@@ -74,7 +82,7 @@ public class ProductController {
      */
     @RequestMapping("ProductList.html")
     @SJson
-    public Result getProductList(Integer pageNumber,HttpServletRequest request){
+    public Result getProductList(Integer pageNumber,HttpServletRequest request,String goodsClass){
         try {
             if(pageNumber == null){
                 pageNumber = 0;
@@ -94,12 +102,27 @@ public class ProductController {
             cnd.and("delFlag", "=", 0 );
             cnd.and("sale", "=", 1);
             cnd.and("status", "=", 3);
+            List<String> goodsIdList = null;
+            //宝妈专区
+            if("1".equals(goodsClass)) {
+                Store_goodsclass store_goodsclass = storeGoodsclassService.fetch(Cnd.where("name","=","宝妈专区"));
+                if(store_goodsclass!=null) {
+                    goodsIdList = storeGoodsclassService.getGoodsMainStoreGoodsclassIdList(store_goodsclass.getId());
+                }
+            }
             Pagination res = goodsService.listPage(pageNumber, 2000, cnd);
             List<?> resList = res.getList();
+//            System.out.println("8888888:"+JSON.toJSONString(resList));
             List<Goods_main> productList = new ArrayList<>();
             if(resList!=null&&resList.size()>0){
                 for (int i=0;i<resList.size();i++){
                     Goods_main o = (Goods_main) resList.get(i);
+                    if(goodsIdList!=null && goodsIdList.size()>0){
+                        if(!goodsIdList.contains(o.getId())){
+                             continue;
+                        }
+                    }
+
                     Cnd imgCnd = Cnd.NEW();
                     imgCnd.and("goodsId","=",o.getId());
                     List<Goods_image> imgList = goodsImageService.query(imgCnd);

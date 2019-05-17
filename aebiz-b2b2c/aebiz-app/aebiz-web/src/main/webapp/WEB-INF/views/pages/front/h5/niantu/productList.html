@@ -151,7 +151,8 @@
                         url:"${base!}/open/h5/product/ProductList.html",
                         dataType:"JSON",
                         data:{
-                            key:key
+                            key:key,
+                            goodsClass:'${goodsClass!}'
                         },
                         success:function(data){
                             if (data.code == 0) {

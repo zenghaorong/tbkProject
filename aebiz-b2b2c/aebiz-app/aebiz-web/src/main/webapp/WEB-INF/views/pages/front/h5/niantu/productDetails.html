@@ -147,7 +147,8 @@
                         url:"${base!}/open/h5/product/getProductDetail.html",
                         dataType:"JSON",
                         data:{
-                            id:'${id!}'
+                            id:'${id!}',
+                            goodsClass:'${goodsClass!}'
                         },
                         success:function(data){
                             if (data.code == 0) {

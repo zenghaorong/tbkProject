@@ -1,11 +1,17 @@
 package com.aebiz.app.store.modules.services.impl;
 
+import com.aebiz.app.member.modules.models.Member_coupon;
 import com.aebiz.baseframework.base.service.BaseServiceImpl;
 import com.aebiz.app.store.modules.models.Store_goodsclass;
 import com.aebiz.app.store.modules.services.StoreGoodsclassService;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
+import org.nutz.dao.Sqls;
+import org.nutz.dao.sql.Sql;
 import org.nutz.lang.Lang;
 import org.nutz.lang.Strings;
 import org.springframework.cache.annotation.CacheConfig;
@@ -198,6 +204,22 @@ public class StoreGoodsclassServiceImpl extends BaseServiceImpl<Store_goodsclass
         return this.query(Cnd.where("storeId","=",storeUuid).and("parentId","!=","").groupBy("parentId"));
     }
 
+    @Override
+    public List<String> getGoodsMainStoreGoodsclassIdList(String storeGoodsClassId) {
+        String orderSql ="SELECT g.goodsId FROM  goods_main_store_goodsclass g where g.storeGoodsClassId = @storeGoodsClassId";
+        Sql sql = Sqls.queryRecord(orderSql);
+        sql.setParam("storeGoodsClassId", storeGoodsClassId);
+        dao().execute(sql);
+        List<String> glist =  new ArrayList<>();
+        List<String> list = sql.getList(String.class);
 
+        for (int j=0;j<list.size();j++) {
+//            JSONObject jsonObject = JSON.parseObject();
+//            System.out.println("---------------"+JSON.toJSONString(list.get(j)));
+            JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(list.get(j)));
+            glist.add(jsonObject.getString("goodsid"));
+        }
 
+        return glist;
+    }
 }

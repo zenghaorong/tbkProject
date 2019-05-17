@@ -14,8 +14,19 @@
     <!--App自定义的css-->
     <!--<link rel="stylesheet" type="text/css" href="../css/app.css"/>-->
     <style>
-        .noBorder{
-
+        .circle{
+            width: 20px;
+            height: 20px;
+            color: white;
+            background-color: #f9850d;
+            -moz-border-radius: 50%;
+            -webkit-border-radius: 50%;
+            position: absolute;
+            left: 60%;
+            top: 10%;
+            text-align: center;
+            line-height: 22px;
+            font-size: 12px;
         }
     </style>
 </head>
@@ -61,37 +72,49 @@
     </ul>
 </div>
 
-<div class="mui-content" style="padding-top: 0px;background: white;">
+<div class="mui-content" style="padding-top: 0px;background: white;" id="vue">
     <ul class="mui-table-view mui-grid-view mui-grid-9 noborder" style="background: white;">
+        <li class="mui-table-view-cell mui-media mui-col-xs-2 mui-col-sm-3" style="padding: 0;margin-left:7%;border: 0; ">
+            <a href="${base!}/open/h5/order/goOrderList.html">
+                <img src="${base!}/assets/front/h5/img/c1.png" width="62px;"/>
+                <div class="mui-media-body">全部订单</div>
+            </a>
+            <div class="circle" id="cartNum">{{numMap.num}}</div>
+        </li>
         <li class="mui-table-view-cell mui-media mui-col-xs-2 mui-col-sm-3" style="padding: 0;margin-left:7%;border: 0; ">
             <a href="${base!}/open/h5/order/goOrderList.html?status=1">
                 <img src="${base!}/assets/front/h5/img/c1.png" width="62px;"/>
                 <div class="mui-media-body">待付款</div>
             </a>
+            <div class="circle" id="cartNum1">{{numMap.num1}}</div>
         </li>
         <li class="mui-table-view-cell mui-media mui-col-xs-2 mui-col-sm-3" style="padding: 0;margin-left:7%;border: 0; ">
             <a href="${base!}/open/h5/order/goOrderList.html?status=2">
                 <img src="${base!}/assets/front/h5/img/c2.png" width="62px;"/>
                 <div class="mui-media-body">待发货</div>
             </a>
+            <div class="circle" id="cartNum2">{{numMap.num2}}</div>
         </li>
         <li class="mui-table-view-cell mui-media mui-col-xs-2 mui-col-sm-3" style="padding: 0;margin-left:7%;border: 0; ">
             <a href="${base!}/open/h5/order/goOrderList.html?status=3">
                 <img src="${base!}/assets/front/h5/img/c3.png" width="62px;"/>
                 <div class="mui-media-body">待收货</div>
             </a>
+            <div class="circle" id="cartNum3">{{numMap.num3}}</div>
         </li>
         <li class="mui-table-view-cell mui-media mui-col-xs-2 mui-col-sm-3" style="padding: 0;margin-left:7%;border: 0; ">
             <a href="${base!}/open/h5/order/goOrderList.html?status=4">
                 <img src="${base!}/assets/front/h5/img/c4.png" width="62px;"/>
                 <div class="mui-media-body">待评价</div>
             </a>
+            <div class="circle" id="cartNum4">{{numMap.num4}}</div>
         </li>
         <li class="mui-table-view-cell mui-media mui-col-xs-2 mui-col-sm-3" style="padding: 0;margin-left:7%;border: 0; ">
             <a href="${base!}/open/h5/order/goOrderList.html?status=5">
                 <img src="${base!}/assets/front/h5/img/c5.png" width="62px;"/>
                 <div class="mui-media-body">退款售后</div>
             </a>
+            <div class="circle" id="cartNum5">{{numMap.num5}}</div>
         </li>
 
     </ul>
@@ -138,6 +161,7 @@
 
 
 <script type="text/javascript" src="${base!}/assets/front/h5/js/mui.js" ></script>
+<script type="text/javascript" src="${base!}/assets/front/h5/js/vue.js" ></script>
 <script type="text/javascript" src="${base!}/assets/front/h5/js/jquery-2.0.0.min.js" ></script>
 <script type="text/javascript" src="${base!}/assets/decorate/pc/decoratecommon/js/layer/mobile/layer.js" ></script>
 <script type="application/javascript">
@@ -147,6 +171,51 @@
 
     $("#out").click(function () {
         window.location.href= '${base!}/open/H5/login/logout.html';
+    })
+
+    var vue = new Vue({
+        el: '#vue',
+        data: {
+            numMap: '',
+        },
+        created:function () {   //实例初始化创建完成执行
+
+            this.getOrderNumMap()     //调用自身方法
+
+        },
+        methods:{              //定义封装方法
+            //获取列表
+            getOrderNumMap:function () {
+                var self = this;
+                var status = "${status!}";
+                $.ajax({
+                    type:"POST",
+                    url:"${base!}/open/h5/order/getMyOrderCount.html",
+                    dataType:"JSON",
+                    data:{
+                        status:status
+                    },
+                    success:function(data){
+                        if (data.code == 0) {
+                            var d = data.data;
+                            self.numMap = d;
+                        } else {
+
+                        }
+                    }
+                });
+
+            }
+        },
+        filters: {
+
+        },
+        watch:{     //监听器
+            // carModel:function () {
+            //     this.getProvince();
+            // }
+        }
+
     })
 
 </script>

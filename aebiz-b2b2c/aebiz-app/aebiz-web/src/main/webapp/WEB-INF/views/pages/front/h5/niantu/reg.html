@@ -50,7 +50,7 @@
         <form class="mui-input-group">
             <div class="mui-input-row">
                 <label>账号</label>
-                <input id='mobile' v-model="mobile" type="text" class="mui-input-clear mui-input" placeholder="请输入手机号">
+                <input id='mobile' v-model="mobile" type="tel" class="mui-input-clear mui-input" placeholder="请输入手机号">
             </div>
             <div class="mui-input-row">
                 <label>密码</label>
@@ -173,7 +173,7 @@
                         settime();
                     },1000);
                 }
-                settime();
+
 
                 var self = this;
                 $.ajax({
@@ -186,10 +186,11 @@
                     success:function(data){
                         if (data.code == 0) {
                             var d = data.data;
+                            settime();
                         } else {
                             //提示
                             layer.open({
-                                content: '验证码获取失败'
+                                content: data.msg
                                 ,skin: 'msg'
                                 ,time: 2 //2秒后自动关闭
                             });

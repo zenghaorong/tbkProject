@@ -34,6 +34,7 @@ import com.aebiz.commons.utils.DateUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
@@ -546,6 +547,75 @@ public class OrderController {
             }
 
             return Result.success("ok",order_mainList);
+        } catch (Exception e) {
+            log.error("获取视频列表异常",e);
+            return Result.error("fail");
+        }
+    }
+
+    /**
+     * 获得我的订单数量
+     * @return
+     */
+    @RequestMapping("getMyOrderCount.html")
+    @SJson
+    public Result getMyOrderCount(HttpServletRequest request){
+        try {
+            Subject subject = SecurityUtils.getSubject();
+            Account_user accountUser = (Account_user) subject.getPrincipal();
+
+            Map<String,Integer> returnMap = new HashedMap();
+
+            //总订单数
+            Cnd cndMain = Cnd.NEW();
+            cndMain.and("accountId", "=", accountUser.getAccountId());
+            int num = orderMainService.count(cndMain);
+            returnMap.put("num",num);
+
+            //代付款订单数
+            Cnd cndMain1 = Cnd.NEW();
+            cndMain1.and("payStatus", "=", 0);
+            cndMain1.and("accountId", "=", accountUser.getAccountId());
+            int num1 = orderMainService.count(cndMain1);
+            returnMap.put("num1",num1);
+
+
+            //待发货订单数
+            Cnd cndMain2 = Cnd.NEW();
+            cndMain2.and("payStatus", "=", 3);
+            cndMain2.and("deliveryStatus", "=", 0);
+            cndMain2.and("accountId", "=", accountUser.getAccountId());
+            int num2 = orderMainService.count(cndMain2);
+            returnMap.put("num2",num2);
+
+            //待收货订单数
+            Cnd cndMain3 = Cnd.NEW();
+            cndMain3.and("payStatus", "=", 3);
+            cndMain3.and("deliveryStatus", "=", 3);
+            cndMain3.and("accountId", "=", accountUser.getAccountId());
+            int num3 = orderMainService.count(cndMain3);
+            returnMap.put("num3",num3);
+
+            //待评价
+            Cnd cndMain4 = Cnd.NEW();
+            cndMain4.and("payStatus", "=", 3);
+            cndMain4.and("getStatus", "=", 1);
+            cndMain4.and("accountId", "=", accountUser.getAccountId());
+            int num4 = orderMainService.count(cndMain4);
+            returnMap.put("num4",num4);
+
+            //售后退款
+            Cnd cndMain5 = Cnd.NEW();
+            cndMain5.and("payStatus", "in", OrderPayStatusEnum.REFUNDWAIT.getKey() + "," + OrderPayStatusEnum.REFUNDALL.getKey());
+            cndMain5.and("accountId", "=", accountUser.getAccountId());
+            int num5 = orderMainService.count(cndMain5);
+            returnMap.put("num5",num5);
+
+//            cndMain.and("orderType", "=", OrderTypeEnum.product_order_type.getKey());
+
+
+
+            return Result.success("ok",returnMap);
         } catch (Exception e) {
             log.error("获取视频列表异常",e);
             return Result.error("fail");

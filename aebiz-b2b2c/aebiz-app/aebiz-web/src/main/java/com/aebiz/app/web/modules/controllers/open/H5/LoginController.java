@@ -390,6 +390,50 @@ public class LoginController {
     @SJson
     public Result getLoginMsgCode(@RequestParam("mobile") String mobile) {
         try {
+
+            Cnd cnd = Cnd.where("mobile", "=", mobile).and("delFlag", "=", false);
+            if (isExist(accountUserService, cnd)) {
+                return Result.error("手机号已注册");
+            }
+
+            String key = MOBILE_CAPTCHA + mobile;
+            String expireTime = "300";
+            String code = StringUtil.getRndNumber(6);
+            try (Jedis jedis = redisService.jedis()) {
+                jedis.set(key, code);
+                jedis.expire(key, Integer.valueOf(expireTime));
+
+                String content = "验证码"+code+"。本次验正码用于校验身份";
+                String sndJson = smsService.sendMessages(content,mobile);
+                JSONObject jsonObject = (JSONObject) com.alibaba.fastjson.JSON.parseObject(sndJson);
+                String sendStatus = jsonObject.getString("status");
+                if("-1".equals(sendStatus)){
+                    //获取登录session
+                    String loginJSON = smsService.SmsYdLogin();
+                    JSONObject jsonObjectLogin = com.alibaba.fastjson.JSON.parseObject(loginJSON);
+                    String loginStatus = jsonObjectLogin.getString("status");
+                    if("0".equals(loginStatus)){ //调用成功
+                        String sessionId = jsonObjectLogin.getString("sessionId");
+                        jedis.set(session_login_key,sessionId);
+                        smsService.sendMessages(content,mobile);
+                    }
+                }
+            }
+            log.info("短信验证码:  " + code);
+            return Result.success("member.register.join.success");
+        }catch (Exception e){
+            e.printStackTrace();
+            return Result.error("member.register.join.fail");
+        }
+    }
+
+    /**
+     * 获取忘记密码验证码
+     */
+    @RequestMapping("/getforgetPasswordMsgCode")
+    @SJson
+    public Result getforgetPasswordMsgCode(@RequestParam("mobile") String mobile) {
+        try {
             String key = MOBILE_CAPTCHA + mobile;
             String expireTime = "300";
             String code = StringUtil.getRndNumber(6);

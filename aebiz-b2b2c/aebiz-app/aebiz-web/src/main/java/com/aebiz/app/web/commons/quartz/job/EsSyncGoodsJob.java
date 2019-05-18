@@ -41,33 +41,33 @@ public class EsSyncGoodsJob implements Job {
 
 
     public void execute(JobExecutionContext context) throws JobExecutionException {
-        JobDataMap data = context.getJobDetail().getJobDataMap();
-        String taskId = context.getJobDetail().getKey().getName();
-        try {
-            int pageSize = data.getInt("pageSize");
-            log.info("EsGoodsJob Job pageSize::" + pageSize);
-            Pager pager = new Pager();
-            pager.setPageNumber(1);
-            pager.setPageSize(pageSize);
-            List<Shop_estemp> list = shopEstempService.query(Cnd.orderBy().asc("opAt"), "goods", pager);
-            if (list.size() > 0) {
-                for (Shop_estemp estemp : list) {
-                    Goods_main goods = estemp.getGoods();
-                    goodsService.fetchLinks(goods, null, Cnd.orderBy().asc("location"));
-                    if ("delete".equals(estemp.getAction())) {
-                        if (esService.deleteData(config.get("es.index.name"), "goods", goods.getId())) {
-                            shopEstempService.delete(estemp.getId());
-                        }
-                    } else {
-                        if (esService.createOrUpdateData(config.get("es.index.name"), "goods", goods.getId(), goods)) {
-                            shopEstempService.delete(estemp.getId());
-                        }
-                    }
-                }
-            }
-            sysTaskService.update(Chain.make("exeAt", (int) (System.currentTimeMillis() / 1000)).add("exeResult", "执行成功").add("nextAt", DateUtil.getTime(context.getNextFireTime())), Cnd.where("id", "=", taskId));
-        } catch (Exception e) {
-            sysTaskService.update(Chain.make("exeAt", (int) (System.currentTimeMillis() / 1000)).add("exeResult", "执行失败").add("nextAt", DateUtil.getTime(context.getNextFireTime())), Cnd.where("id", "=", taskId));
-        }
+//        JobDataMap data = context.getJobDetail().getJobDataMap();
+//        String taskId = context.getJobDetail().getKey().getName();
+//        try {
+//            int pageSize = data.getInt("pageSize");
+//            log.info("EsGoodsJob Job pageSize::" + pageSize);
+//            Pager pager = new Pager();
+//            pager.setPageNumber(1);
+//            pager.setPageSize(pageSize);
+//            List<Shop_estemp> list = shopEstempService.query(Cnd.orderBy().asc("opAt"), "goods", pager);
+//            if (list.size() > 0) {
+//                for (Shop_estemp estemp : list) {
+//                    Goods_main goods = estemp.getGoods();
+//                    goodsService.fetchLinks(goods, null, Cnd.orderBy().asc("location"));
+//                    if ("delete".equals(estemp.getAction())) {
+//                        if (esService.deleteData(config.get("es.index.name"), "goods", goods.getId())) {
+//                            shopEstempService.delete(estemp.getId());
+//                        }
+//                    } else {
+//                        if (esService.createOrUpdateData(config.get("es.index.name"), "goods", goods.getId(), goods)) {
+//                            shopEstempService.delete(estemp.getId());
+//                        }
+//                    }
+//                }
+//            }
+//            sysTaskService.update(Chain.make("exeAt", (int) (System.currentTimeMillis() / 1000)).add("exeResult", "执行成功").add("nextAt", DateUtil.getTime(context.getNextFireTime())), Cnd.where("id", "=", taskId));
+//        } catch (Exception e) {
+//            sysTaskService.update(Chain.make("exeAt", (int) (System.currentTimeMillis() / 1000)).add("exeResult", "执行失败").add("nextAt", DateUtil.getTime(context.getNextFireTime())), Cnd.where("id", "=", taskId));
+//        }
     }
 }

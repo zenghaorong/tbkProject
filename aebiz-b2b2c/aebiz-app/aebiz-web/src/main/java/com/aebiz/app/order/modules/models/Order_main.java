@@ -299,6 +299,12 @@ public class Order_main extends BaseModel implements Serializable {
     @ColDefine(type = ColType.INT, width = 6)
     private Integer monthlyNum;
 
+    @Column
+    @Comment("是否已发送短信") // 1 已发送
+    @ColDefine(type = ColType.VARCHAR, width = 2)
+    private String isSend;
+
+
 
     @Many(field = "orderId")
     private List<Order_goods>  goodsList;
@@ -343,6 +349,14 @@ public class Order_main extends BaseModel implements Serializable {
             orderTypeName="视频包月订单";
         }
         return orderTypeName;
+    }
+
+    public String getIsSend() {
+        return isSend;
+    }
+
+    public void setIsSend(String isSend) {
+        this.isSend = isSend;
     }
 
     public void setOrderTypeName(String orderTypeName) {

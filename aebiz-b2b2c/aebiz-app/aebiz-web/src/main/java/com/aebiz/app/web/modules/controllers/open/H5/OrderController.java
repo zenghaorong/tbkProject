@@ -662,7 +662,7 @@ public class OrderController {
 
             //售后退款
             Cnd cndMain5 = Cnd.NEW();
-            cndMain5.and("payStatus", "in", OrderPayStatusEnum.REFUNDWAIT.getKey() + "," + OrderPayStatusEnum.REFUNDALL.getKey());
+            cndMain5.and("payStatus", "in", "4,6");
             cndMain5.and("accountId", "=", accountUser.getAccountId());
             cndMain.and("delFlag","=",false);
             int num5 = orderMainService.count(cndMain5);

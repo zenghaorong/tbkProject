@@ -380,15 +380,16 @@ public class CmsVideoController {
     public static boolean videoMonthlyTime(String payAt,int monthlyNum){
         //到期时间
         String nowDate = null;
-        String date = payAt;
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         try {
-            Date parse = format.parse(date);
+            long date = new Long(payAt);
+            String str = DateUtil.getDate(date);
+            Date parse = format.parse(str);
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(parse);
             calendar.add(Calendar.MONTH, monthlyNum);
             nowDate = format.format(calendar.getTime());
-            System.out.println(nowDate);
+            System.out.println("到期时间:"+nowDate);
 
             //到期时间转化为时间戳
             int endTime = DateUtil.getTime(nowDate);
@@ -403,11 +404,42 @@ public class CmsVideoController {
 
         } catch (ParseException e) {
             e.printStackTrace();
+            return false;
         }
         return true;
     }
 
 
+    /**
+     * 测试日历
+     */
+
+    @RequestMapping("/ceshirili")
+    @SJson
+    public String ceshirili() {
+        //到期时间
+        String nowDate = null;
+        String date = ""; //开始时间
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        try {
+            Date parse = format.parse(date);
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(parse);
+            calendar.add(Calendar.MONTH, 1);
+            nowDate = format.format(calendar.getTime());
+            System.out.println("到期时间:"+nowDate);
+
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+    public static void main(String[] args) {
+        String str = DateUtil.getDate(1558086430);
+        System.out.println("----:"+str);
+    }
 
 
 }

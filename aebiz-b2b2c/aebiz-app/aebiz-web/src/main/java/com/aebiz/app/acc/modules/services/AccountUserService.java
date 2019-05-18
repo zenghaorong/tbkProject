@@ -9,4 +9,7 @@ public interface AccountUserService extends BaseService<Account_user> {
     Account_user getAccount(String accountId);
 
     Account_user getAccountByLoginname(String loginname);
+
+    //包月到期给用户发送验证码
+    boolean sendMsg(String content,String mobile);
 }

@@ -2,32 +2,19 @@ package com.aebiz.app.web.commons.quartz.job;
 
 import com.aebiz.app.acc.modules.models.Account_user;
 import com.aebiz.app.acc.modules.services.AccountUserService;
-import com.aebiz.app.acc.modules.services.impl.AccountUserServiceImpl;
 import com.aebiz.app.order.modules.models.Order_main;
 import com.aebiz.app.order.modules.models.em.OrderPayStatusEnum;
 import com.aebiz.app.order.modules.models.em.OrderTypeEnum;
 import com.aebiz.app.order.modules.services.OrderMainService;
-import com.aebiz.app.order.modules.services.impl.OrderMainServiceImpl;
-import com.aebiz.app.sales.modules.services.impl.SalesRuleOrderServiceImpl;
 import com.aebiz.app.sys.modules.services.SysTaskService;
-import com.aebiz.app.sys.modules.services.impl.SysTaskServiceImpl;
-import com.aebiz.baseframework.base.Result;
-import com.aebiz.baseframework.redis.RedisService;
 import com.aebiz.commons.utils.DateUtil;
-import com.aebiz.commons.utils.SpringUtil;
-import com.alibaba.fastjson.JSONObject;
 import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
 import org.nutz.lang.Strings;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
-import org.quartz.Job;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.springframework.stereotype.Component;
-import redis.clients.jedis.Jedis;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -36,12 +23,11 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * @Auther: zenghaorong
- * @Date: 2019/5/14  9:59
- * @Description: 视频包月到期提醒
+ * 定时器的bean
+ * Created by Administrator on 2018/4/4.
  */
-@Component
-public class VideoMonthlyRemindJob  extends QuartzJobBean {
+@Component("myBean")
+public class MyBean {
 
     private static final Log log = Logs.get();
 
@@ -54,17 +40,15 @@ public class VideoMonthlyRemindJob  extends QuartzJobBean {
     @Autowired
     private AccountUserService accountUserService;
 
-
-    protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
-        String taskId = context.getJobDetail().getKey().getName();
+    public void printMessage(){
         try{
             log.debug("视频包月检查到期发短信开始执行---------------");
 
             //1.查询订单列表
             //先判断是否开通包月
             Cnd cndM = Cnd.NEW();
-            cndM.and("payStatus", "=", OrderPayStatusEnum.PAYALL.getKey() );
-            cndM.and("orderType", "=", OrderTypeEnum.monthly_order_type.getKey());
+            cndM.and("payStatus", "=", 3 );
+            cndM.and("orderType", "=", "3");
             cndM.and("delFlag", "=", 0);
             List<Order_main> orderList = orderMainService.query(cndM);
             for(Order_main order_main:orderList){
@@ -89,11 +73,11 @@ public class VideoMonthlyRemindJob  extends QuartzJobBean {
             }
 
         }catch (Exception e){
-            sysTaskService.update(Chain.make("exeAt", (int) (System.currentTimeMillis() / 1000)).add("exeResult", "执行失败").add("nextAt", DateUtil.getTime(context.getNextFireTime())), Cnd.where("id", "=", taskId));
+            e.printStackTrace();
+//            sysTaskService.update(Chain.make("exeAt", (int) (System.currentTimeMillis() / 1000)).add("exeResult", "执行失败").add("nextAt", DateUtil.getTime(), Cnd.where("id", "=", taskId));
         }finally {
             log.debug("视频包月检查到期发短信执行结束---------------");
         }
-
     }
 
     /**
@@ -132,4 +116,5 @@ public class VideoMonthlyRemindJob  extends QuartzJobBean {
         }
         return true;
     }
+
 }

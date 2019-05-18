@@ -59,12 +59,12 @@ public class CouponH5Controller {
             for(Member_coupon member_coupon : member_couponList){
                 Sales_coupon sales_coupon = salesCouponService.fetch(member_coupon.getCouponId());
                 if(sales_coupon == null){
-                    break;
+                    continue;
                 }
                 int time = getSecondTimestamp(new Date());
                 //判断是否过期
                 if(sales_coupon.getStartTime()>time || sales_coupon.getEndTime()<time){
-                    break;
+                    continue;
                 }
                 boolean isYou = false;
                 //判断优惠劵类型

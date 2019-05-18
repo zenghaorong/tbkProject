@@ -1,5 +1,6 @@
 package com.aebiz.app.cms.modules.models;
 
+import com.aebiz.app.acc.modules.models.Account_info;
 import com.aebiz.baseframework.base.model.BaseModel;
 import org.nutz.dao.entity.annotation.*;
 
@@ -95,6 +96,16 @@ public class Cms_review extends BaseModel implements Serializable {
     @Comment("回复实体")
     private List<ReplyVO> replyVOList;
 
+    @One(field = "reviewOpId")
+    private Account_info account_info;
+
+    public Account_info getAccount_info() {
+        return account_info;
+    }
+
+    public void setAccount_info(Account_info account_info) {
+        this.account_info = account_info;
+    }
 
     public String getId() {
         return id;

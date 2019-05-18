@@ -1,6 +1,8 @@
 package com.aebiz.app.web.modules.controllers.open.H5;
 
+import com.aebiz.app.acc.modules.models.Account_info;
 import com.aebiz.app.acc.modules.models.Account_user;
+import com.aebiz.app.acc.modules.services.AccountInfoService;
 import com.aebiz.app.cms.modules.models.*;
 import com.aebiz.app.cms.modules.services.CmsArticleService;
 import com.aebiz.app.cms.modules.services.CmsLoveService;
@@ -48,6 +50,9 @@ public class CmsH5ReviewController {
     @Autowired
     private MemberIntegralService memberIntegralService;
 
+    @Autowired
+    private AccountInfoService accountInfoService;
+
 
     /**
      * 获取当前内容下的评论和回复
@@ -64,6 +69,8 @@ public class CmsH5ReviewController {
             List<Cms_review> list = cmsReviewService.query(cnd);
             List<Cms_review> cms_reviewList = new ArrayList<>();
             for (Cms_review cms_review : list) {
+                Account_info account_info = accountInfoService.fetch(cms_review.getReviewOpId());
+                cms_review.setAccount_info(account_info);
                 //查看回复
                 Cnd replyCnd = Cnd.NEW();
                 replyCnd.and("delFlag", "=", 0 );
@@ -74,10 +81,13 @@ public class CmsH5ReviewController {
                 List<ReplyVO> replyVOList = new ArrayList<>();
                 for (Cms_review r:replyList) {
                     ReplyVO replyVO = new ReplyVO();
+//                    Account_info account_info2 = accountInfoService.fetch(r.getReviewOpId());
+//                    replyVO.setAccount_info(account_info2);
                     replyVO.setContent(r.getContent());
                     replyVO.setReviewFatherName(r.getReviewFatherName());
                     replyVO.setReviewOpName(r.getReviewOpName());
                     replyVO.setReviewFatherId(r.getReviewFatherId());
+
                     replyVOList.add(replyVO);
                 }
                 cms_review.setReplyVOList(replyVOList);
@@ -103,13 +113,14 @@ public class CmsH5ReviewController {
             if(accountUser == null){
                 return Result.error(2,"请先登录");
             }
+            Account_info account_info = accountInfoService.fetch(accountUser.getAccountId());
             Cms_review cms_review = new Cms_review();
             cms_review.setCmsId(cmsId);
             cms_review.setIsStore("2");
             cms_review.setType("1");
             cms_review.setCmsTitle(cmsTitle);
             cms_review.setContent(content);
-            cms_review.setReviewOpName(accountUser.getMobile());
+            cms_review.setReviewOpName(account_info.getNickname());
             cms_review.setReviewOpId(accountUser.getAccountId());
             cmsReviewService.insert(cms_review);
 
@@ -150,13 +161,14 @@ public class CmsH5ReviewController {
             if(accountUser == null){
                 return Result.error(2,"请先登录");
             }
+            Account_info account_info = accountInfoService.fetch(accountUser.getAccountId());
             Cms_review cms_review = new Cms_review();
             cms_review.setCmsId(cmsId);
             cms_review.setIsStore("2");
             cms_review.setType("2");
             cms_review.setCmsTitle(cmsTitle);
             cms_review.setContent(content);
-            cms_review.setReviewOpName(accountUser.getMobile());
+            cms_review.setReviewOpName(account_info.getNickname());
             cms_review.setReviewOpId(accountUser.getAccountId());
             cms_review.setReviewId(reviewId);
             cms_review.setReviewFatherName(reviewFatherName);

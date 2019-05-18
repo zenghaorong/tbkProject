@@ -61,7 +61,12 @@
         <ul class="mui-table-view">
             <div id="zanwu" style="display: none;margin: 40px 30px;">暂无评论....</div>
             <li class="mui-table-view-cell" v-for="item in reviewList" :key="item.id">
-                <img src="${base!}/assets/front/h5/img/man.png" width="20px;">
+                <span v-if="item.account_info.imageUrl==null ||item.account_info.imageUrl==''">
+                    <img src="${base!}/assets/front/h5/img/man.png" width="20px;">
+                </span>
+                <span v-else>
+                    <img :src="item.account_info.imageUrl" width="20px;">
+                </span>
                 {{item.reviewOpName}}:
                 <p style="padding:10px;">
                     {{item.content}}

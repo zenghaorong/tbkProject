@@ -32,10 +32,10 @@ layout("/layouts/store.html"){
             <table class="table table-bordered table-striped mg-t datatable">
                 <thead>
                     <tr>
-                            <th>内容类型</th>
+                            <!--<th>内容类型</th>-->
                             <th>类型</th>
                             <th>评论回复内容</th>
-                            <th>评论点赞数</th>
+                            <!--<th>评论点赞数</th>-->
                             <th>评论人名称</th>
                             <th>是否为官方评论</th>
                             <th>操作</th>
@@ -104,27 +104,27 @@ layout("/layouts/store.html"){
             },
             "order": [[0, "desc"]],
             "columns": [
-                    {"data": "cmsType", "bSortable": true,"width":70},
+                    // {"data": "cmsType", "bSortable": true,"width":70},
                     {"data": "type", "bSortable": true,"width":50},
                     {"data": "content", "bSortable": true},
-                    {"data": "loveNum", "bSortable": true},
+                    // {"data": "loveNum", "bSortable": true},
                     {"data": "reviewOpName", "bSortable": true},
                     {"data": "isStore", "bSortable": true,"width":150},
             ],
             "columnDefs": [
+                // {
+                //     "targets":0,
+                //     "render":function (data, type, row) {
+                //         var str ="";
+                //         switch (data) {
+                //             case '1': str = "黏土教程";break;
+                //             case '2': str = "视频教程";break;
+                //         }
+                //         return str;
+                //     }
+                // },
                 {
                     "targets":0,
-                    "render":function (data, type, row) {
-                        var str ="";
-                        switch (data) {
-                            case '1': str = "黏土教程";break;
-                            case '2': str = "视频教程";break;
-                        }
-                        return str;
-                    }
-                },
-                {
-                    "targets":1,
                     "render":function (data, type, row) {
                         var str ="";
                         switch (data) {
@@ -135,7 +135,7 @@ layout("/layouts/store.html"){
                     }
                 },
                 {
-                    "targets":5,
+                    "targets":3,
                     "render":function (data, type, row) {
                         var str ="";
                         switch (data) {
@@ -156,7 +156,7 @@ layout("/layouts/store.html"){
                                 '<li><a href="javascript:;" onclick="del(\'' + row.id + '\')">删除</a></li>' +
                                 '</ul></div>';
                     },
-                    "targets": 6
+                    "targets": 4
                 }
             ]
         });

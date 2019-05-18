@@ -1,6 +1,8 @@
 package com.aebiz.app.web.modules.controllers.open.H5;
 
+import com.aebiz.app.acc.modules.models.Account_info;
 import com.aebiz.app.acc.modules.models.Account_user;
+import com.aebiz.app.acc.modules.services.AccountInfoService;
 import com.aebiz.app.cms.modules.models.Cms_article;
 import com.aebiz.app.cms.modules.models.Cms_channel;
 import com.aebiz.app.cms.modules.models.Cms_video;
@@ -63,6 +65,9 @@ public class CmsVideoController {
 
     @Autowired
     private OrderMainService orderMainService;
+
+    @Autowired
+    private AccountInfoService accountInfoService;
 
     /**
      * 进入视频列表页
@@ -161,8 +166,14 @@ public class CmsVideoController {
             if(StringUtils.isNotEmpty(key)){
                 cnd.and("title","like","%"+key+"%");
             }
-            Pagination pagination = cmsArticleService.listPage(pageNumber,1500,cnd);
-            return Result.success("ok",pagination.getList());
+            List<Cms_article> list = cmsArticleService.query(cnd);
+            if("达人秀场".equals(str)) {
+                for (Cms_article cms_article : list) {
+                    Account_info account_info = accountInfoService.fetch(cms_article.getAuthor());
+                    cms_article.setAccount_info(account_info);
+                }
+            }
+            return Result.success("ok",list);
         } catch (Exception e) {
             log.error("获取图文列表异常",e);
             return Result.error("fail");

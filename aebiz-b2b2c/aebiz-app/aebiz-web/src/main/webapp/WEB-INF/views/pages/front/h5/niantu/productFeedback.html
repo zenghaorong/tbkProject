@@ -178,10 +178,10 @@
                     success:function(data){
                         if (data.code == 0) {
                             var d = data.data;
-                            $.each(d, function (index, obj) {
-                                obj.feedAtTime=formatDate(obj.feedAt)
-                                d[index] = obj;
-                            })
+                            // $.each(d, function (index, obj) {
+                            //     obj.feedAtTime=formatDate(obj.feedAt)
+                            //     d[index] = obj;
+                            // })
                             self.feedList = d;
                         } else {
 

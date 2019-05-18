@@ -130,10 +130,15 @@
     <ul class="mui-table-view mui-grid-view mui-grid-9" style="background: rgb(56,206,204);margin-top: 0px;">
         <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3" style="padding: 0;border:0;">
         <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3" style="padding: 0;border:0; margin-left: 0;">
-            <a href="#">
-                <img src="${base!}/assets/front/h5/img/tu1.png" width="80px;"/>
+            <a href="javascript:void(0)" id="upload2">
+                <!--#if(isEmpty(info.imageUrl)){#-->
+                <img src="${base!}/assets/front/h5/img/man.png" width="80px;" id="touxiang" style="border-radius:50px;"/>
+                <!--#}else{#-->
+                <img src="${info.imageUrl!}" width="80px;" id="touxiang" style="border-radius:50px;"/>
+                <!--#}#-->
                 <div class="mui-media-body" style="color: white;">${info.nickname!}</div>
             </a>
+            <input type="file" onchange="shangchaun(this)" id="choose" accept="image/*" multiple>
         </li>
         <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3" style="padding: 0;border:0;">
     </ul>
@@ -301,6 +306,65 @@
         }
 
     })
+
+    var filechooser = document.getElementById("choose");
+
+    $("#upload2").on("click", function() {
+        filechooser.click();
+    })
+    
+    function shangchaun(t) {
+        var formData = new FormData();
+        formData.append("Filedata",t.files[0]);
+        $.ajax({
+            url: "${base!}/open/file/upload/image",
+            type: "POST",
+            data: formData,
+            /**
+             *必须false才会自动加上正确的Content-Type
+             */
+            contentType: false,
+            /**
+             * 必须false才会避开jQuery对 formdata 的默认处理
+             * XMLHttpRequest会对 formdata 进行正确的处理
+             */
+            processData: false,
+            success: function (data) {
+                if (data.code == 0) {
+                    var imageUrl = data.data;
+                    $.ajax({
+                        type:"POST",
+                        url:"${base!}/open/H5/login/updateUserInfo",
+                        dataType:"JSON",
+                        data:{
+                            accountId:'${info.id!}',
+                            imageUrl:imageUrl
+                        },
+                        success:function(data){
+                            if (data.code == 0) {
+                                alert("上传成功")
+                                $("#touxiang").attr("src",imageUrl);
+                            } else {
+                                //提示
+                                layer.open({
+                                    content: data.msg
+                                    ,skin: 'msg'
+                                    ,time: 2 //2秒后自动关闭
+                                });
+                            }
+                        }
+                    });
+
+                }else {
+
+                }
+            },
+            error: function () {
+                alert("上传失败！");
+                $("#imgWait").hide();
+            }
+        });
+    }
 
 </script>
 </body>

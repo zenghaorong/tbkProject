@@ -2,6 +2,7 @@ package com.aebiz.app.cms.modules.models;
 
 import java.io.Serializable;
 
+import com.aebiz.app.acc.modules.models.Account_info;
 import org.nutz.dao.DB;
 import org.nutz.dao.entity.annotation.ColDefine;
 import org.nutz.dao.entity.annotation.ColType;
@@ -103,6 +104,17 @@ public class Cms_article extends BaseModel implements Serializable {
 
     @One(field = "channelId")
     private Cms_channel channel;
+
+    @One(field = "author")
+    private Account_info account_info;
+
+    public Account_info getAccount_info() {
+        return account_info;
+    }
+
+    public void setAccount_info(Account_info account_info) {
+        this.account_info = account_info;
+    }
 
 
     public Integer getPageViews() {

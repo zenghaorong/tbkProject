@@ -164,10 +164,16 @@ public class LoginController {
     }
     @RequestMapping(value = "/updateUserInfo", method = RequestMethod.POST)
     @SJson
-    public Object updateUserInfo(@RequestParam("accountId") String accountId, @RequestParam("nickName") String nickName, HttpServletRequest req) {
+    public Object updateUserInfo(@RequestParam("accountId") String accountId, String nickName,
+                                 String imageUrl,HttpServletRequest req) {
         try {
             Account_info info = accountInfoService.fetch(accountId);
-            info.setNickname(nickName);
+            if(!Strings.isEmpty(nickName)){
+                info.setNickname(nickName);
+            }
+            if(!Strings.isEmpty(imageUrl)){
+                info.setImageUrl(imageUrl);
+            }
             accountInfoService.update(info);
             return Result.success("操作成功");
         } catch (Exception e) {

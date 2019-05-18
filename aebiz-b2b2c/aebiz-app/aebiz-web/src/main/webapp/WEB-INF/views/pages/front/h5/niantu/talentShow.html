@@ -137,8 +137,11 @@
                     <span class="tutorial">{{item.publishAt}}</span>
                 </div>
                 <div class="mui-media-body" style="height: 20px;">
-                    <span class="left2">
+                    <span class="left2" v-if="item.account_info.imageUrl==null ||item.account_info.imageUrl==''">
                         <img class="pon" src="${base!}/assets/front/h5/img/man.png" width="20px" style="border-radius:50%;"/>
+                    </span>
+                    <span class="left2"  v-else>
+                        <img  class="pon" :src="item.account_info.imageUrl" width="20px;" style="border-radius:50%;"/>
                     </span>
                     <!--<span style="float: left;font-size: 0.88em;color: #919191;">100</span>-->
                     <span class="left2" style="margin-left: 15px;">

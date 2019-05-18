@@ -145,7 +145,7 @@
                     <div style="margin-left: 20px;margin-bottom: 10px;">
                         <div>评论内容：</div>
                          <p  style="margin-left: 20px;">{{good.feedNote}}</p>
-                        <div>评论时间：<span>{{good.feedAt}}</span></div>
+                        <div>评论时间：<span>{{good.feedAtTime}}</span></div>
                     </div>
                 </ul>
             </div>
@@ -194,10 +194,10 @@
                     success:function(data){
                         if (data.code == 0) {
                             var d = data.data;
-                            $.each(d, function (index, obj) {
-                                obj.feedAt=formatDate(obj.feedAt)
-                                d[index] = obj;
-                            })
+                            // $.each(d, function (index, obj) {
+                            //     obj.feedAt=formatDate(obj.feedAt)
+                            //     d[index] = obj;
+                            // })
                             self.feedList = d;
                         } else {
 

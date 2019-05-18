@@ -1,9 +1,7 @@
 package com.aebiz.app.cms.modules.models;
 
-import org.nutz.dao.entity.annotation.ColDefine;
-import org.nutz.dao.entity.annotation.ColType;
-import org.nutz.dao.entity.annotation.Column;
-import org.nutz.dao.entity.annotation.Comment;
+import com.aebiz.app.acc.modules.models.Account_info;
+import org.nutz.dao.entity.annotation.*;
 
 /**
  * @Auther: zenghaorong
@@ -31,6 +29,17 @@ public class ReplyVO {
     @Comment("评论回复内容")
     @ColDefine(type = ColType.VARCHAR, width = 255)
     private String content;
+
+    @One(field = "reviewOpId")
+    private Account_info account_info;
+
+    public Account_info getAccount_info() {
+        return account_info;
+    }
+
+    public void setAccount_info(Account_info account_info) {
+        this.account_info = account_info;
+    }
 
 
     public String getReviewOpName() {

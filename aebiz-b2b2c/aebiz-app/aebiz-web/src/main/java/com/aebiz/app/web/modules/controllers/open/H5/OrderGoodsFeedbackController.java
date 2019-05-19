@@ -4,6 +4,8 @@ import com.aebiz.app.acc.modules.models.Account_info;
 import com.aebiz.app.acc.modules.models.Account_user;
 import com.aebiz.app.acc.modules.services.AccountInfoService;
 import com.aebiz.app.acc.modules.services.AccountUserService;
+import com.aebiz.app.cms.modules.models.Cms_video;
+import com.aebiz.app.cms.modules.services.CmsVideoService;
 import com.aebiz.app.goods.modules.models.Goods_image;
 import com.aebiz.app.goods.modules.models.Goods_main;
 import com.aebiz.app.goods.modules.services.GoodsImageService;
@@ -61,6 +63,9 @@ public class OrderGoodsFeedbackController {
     private AccountUserService accountUserService;
     @Autowired
     private AccountInfoService accountInfoService;
+
+    @Autowired
+    private CmsVideoService cmsVideoService;
 
     /**
      * 进入商品订单评价页
@@ -235,17 +240,25 @@ public class OrderGoodsFeedbackController {
             List<Order_goods_feedback> list = orderGoodsFeedbackService.query(cnd);
             for (Order_goods_feedback o:list) {
                   Goods_main goods_main = goodsService.fetch(o.getGoodsId());
-                Cnd imgCnd = Cnd.NEW();
-                imgCnd.and("goodsId","=",o.getGoodsId());
-                List<Goods_image> imgList = goodsImageService.query(imgCnd);
-                if(imgList!=null&&imgList.size()>0){
-                    goods_main.setImgList(imgList.get(0).getImgAlbum());
-                }
-                o.setGoodsMain(goods_main);
-                if(goods_main == null){
-                    Goods_main goods_main2 =new Goods_main();
-                    o.setGoodsMain(goods_main2);
-                }
+                  if(goods_main!=null) {
+                      Cnd imgCnd = Cnd.NEW();
+                      imgCnd.and("goodsId", "=", o.getGoodsId());
+                      List<Goods_image> imgList = goodsImageService.query(imgCnd);
+                      if (imgList != null && imgList.size() > 0) {
+                          goods_main.setImgList(imgList.get(0).getImgAlbum());
+                      }
+                      o.setGoodsMain(goods_main);
+                      if (goods_main == null) {
+                          Goods_main goods_main2 = new Goods_main();
+                          o.setGoodsMain(goods_main2);
+                      }
+                  }else {
+                      Cms_video cms_video = cmsVideoService.fetch(o.getGoodsId());
+                      Goods_main goodsMain = new Goods_main();
+                      goodsMain.setImgList(cms_video.getImageUrl());
+                      goodsMain.setName(cms_video.getVideoTitle());
+                      o.setGoodsMain(goodsMain);
+                  }
 
             }
             return Result.success("ok",list);

@@ -126,7 +126,7 @@
     </ul>
 </footer>
 
-<div id="vue" style="margin-top: 60px;margin-bottom: 60px;" v-cloak>
+<div id="vue" style="margin-top: 60px;margin-bottom: 120px;" v-cloak>
     <div class="mui-card"  v-for="good in feedList" :key="good.id">
         <div class="mui-card-header">
             <span>订单号：</span><span>{{good.orderId}}</span>
@@ -136,7 +136,7 @@
                 <ul class="mui-table-view">
                     <li class="mui-table-view-cell mui-media" >
                         <a href="">
-                            <img class="mui-media-object mui-pull-left" :src="good.goodsMain.imgList">
+                            <img class="mui-media-object mui-pull-left" :src="good.goodsMain.imgList" style="width: 150px;height: 100px;">
                             <div class="mui-media-body" style="white-space:normal;" >
                                 <span>{{good.goodsMain.name}}</span>
                             </div>

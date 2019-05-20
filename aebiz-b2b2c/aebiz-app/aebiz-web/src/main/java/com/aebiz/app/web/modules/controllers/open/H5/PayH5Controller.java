@@ -261,6 +261,10 @@ public class PayH5Controller {
                 order_main.setOrderStatus(OrderStatusEnum.WAITVERIFY.getKey());
                 order_main.setGetStatus(OrderGetStatusEnum.NONE.getKey());
                 order_main.setPayAt((int)WXPayUtil.getCurrentTimestamp());
+                if(OrderTypeEnum.video_order_type.getKey().equals(order_main.getOrderType()) ||
+                        OrderTypeEnum.monthly_order_type.getKey().equals(order_main.getOrderType()) ){
+                    order_main.setGetStatus(OrderGetStatusEnum.ALL.getKey());
+                }
                 orderMainService.update(order_main);
                 try {
                     double orderPayMoney = order_main.getPayMoney();
@@ -350,6 +354,10 @@ public class PayH5Controller {
                 order_main.setOrderStatus(OrderStatusEnum.WAITVERIFY.getKey());
                 order_main.setGetStatus(OrderGetStatusEnum.NONE.getKey());
                 order_main.setPayAt((int)WXPayUtil.getCurrentTimestamp());
+                if(OrderTypeEnum.video_order_type.getKey().equals(order_main.getOrderType()) ||
+                        OrderTypeEnum.monthly_order_type.getKey().equals(order_main.getOrderType()) ){
+                    order_main.setGetStatus(OrderGetStatusEnum.ALL.getKey());
+                }
                 orderMainService.update(order_main);
                 try {
                     double orderPayMoney = order_main.getPayMoney();

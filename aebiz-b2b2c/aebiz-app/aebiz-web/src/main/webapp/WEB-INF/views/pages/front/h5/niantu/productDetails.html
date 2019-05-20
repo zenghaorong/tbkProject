@@ -16,23 +16,56 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
 <title>商品详情</title> 
 <link rel="icon" href="">
-<link href="${base!}/assets/front/newH5/css/jquery.hiSlider.min.css" type="text/css" rel="stylesheet" />
+<!--<link href="${base!}/assets/front/newH5/css/jquery.hiSlider.min.css" type="text/css" rel="stylesheet" />-->
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="${base!}/assets/front/h5/css/mui.min.css" />
 <link rel="stylesheet" type="text/css" href="${base!}/assets/front/newH5/css/common-m.css">
 <link rel="stylesheet" type="text/css" href="${base!}/assets/front/newH5/css/index.css">
 </head>
 <!-- 给body加一个空的touchstart事件即可让:active效果在移动端生效 -->
-<body ontouchstart=""> 
+<body ontouchstart="">
     <section class="center" id="product">
     <a href="javascript:history.go(-1)" class="return"><img src="${base!}/assets/front/newH5/images/arrowRight.png" alt="" /></a>
-    <section class="banner"  id="wrap">
-        <ul  class="hiSlider hiSlider1" >
+    <!--<section class="banner"  id="wrap">-->
+        <!--<ul  class="hiSlider hiSlider1" >-->
 
-            <!--<li class="hiSlider-item" ><a href="javascript:void(0);"><img  style="width: 415px;height: 300px;":src="item.imgAlbum" alt="" /></a></li>-->
-            <li class="hiSlider-item" v-for="item in product.imageList" :key="item.id"><a href="javascript:void(0);"><img style="width: 415px;height: 300px;" :src="item.imgAlbum"alt="" /></a></li>
-            <!--<li class="hiSlider-item"><a href="javascript:void(0);"><img src="${base!}/assets/front/newH5/images/banner.png" alt="" /></a></li>-->
-            <li class="hiSlider-item item-clone" style="width: 415px; height: 300px; float: left;"><a href="javascript:void(0);"><img src="${base!}/assets/front/newH5/images/banner.png" alt=""></a></li>
-        </ul>
-    </section>
+            <!--&lt;!&ndash;<li class="hiSlider-item" ><a href="javascript:void(0);"><img  style="width: 415px;height: 300px;":src="item.imgAlbum" alt="" /></a></li>&ndash;&gt;-->
+            <!--<li class="hiSlider-item" v-for="item in product.imageList" :key="item.id"><a href="javascript:void(0);"><img style="width: 415px;height: 300px;" :src="item.imgAlbum"alt="" /></a></li>-->
+            <!--&lt;!&ndash;<li class="hiSlider-item"><a href="javascript:void(0);"><img src="${base!}/assets/front/newH5/images/banner.png" alt="" /></a></li>&ndash;&gt;-->
+            <!--<li class="hiSlider-item item-clone" style="width: 415px; height: 300px; float: left;"><a href="javascript:void(0);"><img src="${base!}/assets/front/newH5/images/banner.png" alt=""></a></li>-->
+        <!--</ul>-->
+
+        <div id="slider" class="mui-slider" >
+            <div class="mui-slider-group mui-slider-loop" >
+                <!-- 额外增加的一个节点(循环轮播：第一个节点是最后一张轮播) -->
+                <div class="mui-slider-item mui-slider-item-duplicate">
+                    <a href="#">
+                        <img :src="banner" style="height: 250px;">
+                    </a>
+                </div>
+
+                <!-- 第二张 -->
+                <div class="mui-slider-item" v-for="item in product.imageList" :key="item.id">
+                    <a href="#">
+                        <img :src="item.imgAlbum" style="height: 250px;">
+                    </a>
+                </div>
+
+                <!-- 额外增加的一个节点(循环轮播：最后一个节点是第一张轮播) -->
+                <div class="mui-slider-item mui-slider-item-duplicate">
+                    <a href="#">
+                        <img :src="banner" style="height: 250px;">
+                    </a>
+                </div>
+            </div>
+            <div class="mui-slider-indicator">
+                <div class="mui-indicator mui-active"></div>
+                <div class="mui-indicator"></div>
+                <div class="mui-indicator"></div>
+
+            </div>
+        </div>
+    <!--</section>-->
     <section class="detailsMessage bgGray">
         <p>{{product.name}}</p>
         <input type="hidden" id="stock" :value="product.stock">
@@ -82,11 +115,17 @@
     <script type="text/javascript" src="${base!}/assets/front/h5/js/vue.js" ></script>
     <script type="text/javascript" src="${base!}/assets/decorate/pc/decoratecommon/js/layer/mobile/layer.js" ></script>
     <script type="text/javascript" charset="utf-8">
+
+        mui.init({
+            swipeBack:true //启用右滑关闭功能
+        });
+
         var vue = new Vue({
             el: '#product',
             data: {
                 product: [],
-                feedCount:0
+                feedCount:0,
+                banner:''
             },
             created:function () {   //实例初始化创建完成执行
 
@@ -110,9 +149,10 @@
                             if (data.code == 0) {
                                 var d = data.data;
                                 self.product = d;
+                                self.banner = d.imageList[0].imgAlbum;
                                 var slider = mui("#slider");
                                 slider.slider({
-                                    interval: 5000
+                                    interval: 1000
                                 });
                             } else {
 

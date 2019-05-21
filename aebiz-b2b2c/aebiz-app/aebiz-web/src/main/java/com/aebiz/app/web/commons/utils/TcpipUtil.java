@@ -4,6 +4,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
+import java.net.*;
+import java.util.Enumeration;
+import java.util.List;
 
 /**
  * tcp/ip 工具类
@@ -52,6 +55,59 @@ public class TcpipUtil {
             }
         }
 		return ip;
+	}
+
+
+	/**
+	 * 获取本机IP
+	 *
+	 * @param request
+	 * @return
+	 */
+	public static String getLocalIpv4(HttpServletRequest request) {
+		Enumeration<String> enumeration = request.getHeaderNames();
+		StringBuffer stringBuffer = new StringBuffer();
+		while (enumeration.hasMoreElements()) {
+			String headName = enumeration.nextElement();
+			stringBuffer.append(headName);
+			stringBuffer.append(":");
+			stringBuffer.append(request.getHeader(headName));
+			stringBuffer.append(";");
+		}
+
+		String ip = request.getHeader("x-forwarded-for");
+		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+			ip = request.getHeader("Proxy-Client-IP");
+		}
+		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+			ip = request.getHeader("WL-Proxy-Client-IP");
+		}
+		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+			ip = request.getHeader("x-real-ip");
+		}
+		// 获取 真实的IP地址
+		if (ip != null && ip.contains(",")) {
+			String[] ips = ip.split(",");
+			int len = ips.length;
+			if (len > 1) {
+				String ip1 = ips[0];
+				String ip2 = ips[len - 1];
+				if (ip1.startsWith("10.") || ip1.startsWith("172.16.") || ip1.startsWith("192.168.")) {
+					ip = ip2;
+				} else {
+					ip = ip1;
+				}
+			} else if (len == 1) {
+				ip = ips[0];
+			}
+		}
+		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+			ip = request.getRemoteAddr();
+		}
+		if (ip != null && (ip.startsWith("10.") || ip.startsWith("172.16.") || ip.startsWith("192.168."))) {
+			ip = request.getRemoteAddr();
+		}
+		return ip.replaceAll(" ","");
 	}
 
 }

@@ -11,18 +11,12 @@
 		<link rel="stylesheet" href="${base!}/assets/front/h5/css/mui.min.css" />
 		<link rel="stylesheet" type="text/css" href="${base!}/assets/front/h5/css/icons-extra.css" />
 		<link rel="stylesheet" href="${base!}/assets/front/h5/css/hryc.css" />
+		<link rel="stylesheet" href="${base!}/assets/front/newH5/css/index.css" />
 		<!--App自定义的css-->
 		<!--<link rel="stylesheet" type="text/css" href="../css/app.css"/>-->
 		<style>
 
-			.rdcp {
-				background: #fff;
-				margin-top: 8px;
-				padding: .5rem 4%;
-			}
-			.rdcp_title {
-				position: relative;
-			}
+
 			.red_x {
 				height: auto;
 				width: 1.2rem;
@@ -66,66 +60,9 @@
 				top: 13px;
 				right: 0;
 			}
-			footer {
-				position: fixed;
-				bottom: 0;
-				left: 0;
-				width: 100%;
-				background: #fafafa;
-				border-top: 1px solid #e6e6e6;
-			}
-			.ful{
-				margin: 0;
-				padding: 0;
-				list-style: none;
-				font-family: "Microsoft Yahei";
-			}
-			footer li {
-				float: left;
-				width: 25%;
-				text-align: center;
-				padding: 20px 0;
-				color: #323232;
-			}
-			footer li a {
-				display: block;
-				color: #333;
-			}
-			.mui-bar-tab-new {
-				bottom: 0;
-				display: table;
-				width: 100%;
-				height: 50px;
-				padding: 0;
-				table-layout: fixed;
-				border-top: 0;
-				border-bottom: 0;
-				-webkit-touch-callout: none;
-			}
-			.mui-bar-new {
-				position: fixed;
-				z-index: 10;
-				right: 0;
-				left: 0;
-				height: 76px;
-				padding-right: 10px;
-				padding-left: 10px;
-				border-bottom: 0;
-				background-color: #f7f7f7;
-				-webkit-box-shadow: 0 0 0 rgba(0, 0, 0, .85);
-				box-shadow: 0 0 0 rgba(0, 0, 0, .85);
-				-webkit-backface-visibility: hidden;
-				backface-visibility: hidden;
-			}
-			footer a img {
-				display: block;
-				margin: 6px auto;
-				width: 30px;
-				height: auto;
-			}
 		</style>
 	</head>
-	<body style="background: white;">
+	<body class="simp_hasfooter">
 		
 		
 		<header class="mui-bar mui-bar-nav top-color">
@@ -136,9 +73,9 @@
 		</header>
 		<footer class="mui-bar-new mui-bar-tab-new" >
 			<ul class="ful">
-				<li>
+				<li class="active">
 					<a href="javascript:void(0);" onclick="window.location.href='${base!}/open/h5/niantu/index.html'">
-						<img src="${base!}/assets/front/newH5/images/icon1.png" alt="" />
+						<img src="${base!}/assets/front/newH5/images/icon1_active.png" alt="" />
 						<span>首页</span>
 					</a>
 				</li>
@@ -193,41 +130,41 @@
 			</div>
 		</div>
 		
-		<div class="mui-content" style="padding-top: 0px;background: white;">
-		        <ul class="mui-table-view mui-grid-view mui-grid-9" style="background: white;">
-		            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3" style="padding: 0;">
+		<div class="mui-content simp_content">
+		        <ul class="mui-table-view mui-grid-view mui-grid-9 ">
+		            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
 		            	<a href="${base!}/open/h5/product/list.html">
-		                    <img src="${base!}/assets/front/h5/img/tu1.png" width="80px;"/>
+		                    <img src="${base!}/assets/front/h5/img/tu1.png" width="80%;"/>
 		                    <div class="mui-media-body">在线商城</div>
 		                </a>
 		            </li>
-		           <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3" style="padding: 0;">
+		           <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
 		            	<a href="${base!}/open/h5/cms/video.html">
-		                    <img src="${base!}/assets/front/h5/img/tu2.png" width="80px;"/>
+		                    <img src="${base!}/assets/front/h5/img/tu2.png" width="80%;"/>
 		                    <div class="mui-media-body">视频专区</div>
 		                </a>
 		            </li>
-		            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3" style="padding: 0;">
+		            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
 		            	<a href="${base!}/open/h5/product/list.html?goodsClass=1">
-		                    <img src="${base!}/assets/front/h5/img/tu3.png" width="80px;"/>
+		                    <img src="${base!}/assets/front/h5/img/tu3.png" width="80%;"/>
 		                    <div class="mui-media-body">宝妈专区</div>
 		                </a>
 		            </li>
-		            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3" style="padding: 0;">
+		            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
 		            	<a href="${base!}/open/h5/niantu/tutorial.html">
-		                    <img src="${base!}/assets/front/h5/img/tu4.png" width="80px;"/>
+		                    <img src="${base!}/assets/front/h5/img/tu4.png" width="80%;"/>
 		                    <div class="mui-media-body">黏土教程</div>
 		                </a>
 		            </li>
-		            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3" style="padding: 0;">
+		            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
 		            	<a href="${base!}/open/h5/niantu/creativeArt.html">
-		                    <img src="${base!}/assets/front/h5/img/tu5.png" width="80px;"/>
+		                    <img src="${base!}/assets/front/h5/img/tu5.png" width="80%;"/>
 		                    <div class="mui-media-body">创意美术</div>
 		                </a>
 		            </li>
-		            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3" style="padding: 0;">
+		            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
 		            	<a href="${base!}/open/h5/niantu/talentShow.html">
-		                    <img src="${base!}/assets/front/h5/img/tu6.png" width="80px;"/>
+		                    <img src="${base!}/assets/front/h5/img/tu6.png" width="80%;"/>
 		                    <div class="mui-media-body">达人秀场</div>
 		                </a>
 		            </li>
@@ -240,13 +177,13 @@
 					热门商品
 				</p>
 			</div>
-			<div class="mui-content" style="background: white;    padding-bottom: 30%;" id="productList">
-				<ul class="mui-table-view mui-grid-view mui-grid-9" style="background: white;">
+			<div class="mui-content simp_content"  id="productList">
+				<ul class="mui-table-view mui-grid-view mui-grid-9 product_imglist">
 					<li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-3 productList"  v-for="item in productList" :key="item.id">
 						<a v-bind:href="'${base!}/open/h5/product/productDetail.html?id='+item.id" >
-							<img  :src="item.imgList"  style="width: 150px;height: 150px"/>
+							<img  :src="item.imgList" />
 							<div class="mui-media-body">{{item.name}}</div>
-							<div class="mui-media-body" style="height: 19px;">
+							<div class="mui-media-body" >
 								<span class="left1">￥{{item.price}}</span>
 								<span class="left2 text-color-1">月销{{item.saleNumMonth}}笔</span>
 							</div>

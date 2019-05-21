@@ -10,6 +10,7 @@
     <!--标准mui.css-->
     <link rel="stylesheet" href="${base!}/assets/front/h5/css/mui.min.css" />
     <link rel="stylesheet" href="${base!}/assets/front/h5/css/hryc.css" />
+    <link rel="stylesheet" href="${base!}/assets/front/newH5/css/index.css" />
     <!--App自定义的css-->
     <!--<link rel="stylesheet" type="text/css" href="../css/app.css"/>-->
     <style>
@@ -26,6 +27,9 @@
         [v-cloak]{
             display: none !important;
         }
+        .mui-input-group:before,.mui-input-group:after,.mui-input-group .mui-input-row:last-child:after{
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -38,7 +42,7 @@
     </h1>
 </header>
 
-<div class="mui-card" style="margin-top: 60px;" id="vue">
+<div style="margin-top: 44px;" id="vue">
     <form class="mui-input-group">
         <div class="mui-input-row">
             <label>姓名</label>
@@ -48,12 +52,13 @@
             <label>手机号</label>
             <input v-model="mobile" type="tel" class="mui-input-clear" placeholder="请输入手机号">
         </div>
+        <div class="mui-input-row">
+            <label>收货地址</label>
+            <textarea cols="5" id="textarea" v-model="address" rows="5" placeholder="请输入收货地址"></textarea>
+        </div>
 
     </form>
-    <div class="mui-input-row" style="margin: 10px 5px;">
-        <textarea id="textarea" v-model="address" rows="5" placeholder="请输入收货地址"></textarea>
-    </div>
-    <div style="width: 300px;margin: 0 auto;">
+    <div style="margin: 30px 10px;">
         <button type="button" v-on:click="add" class="mui-btn mui-btn-primary mui-btn-block">保存</button>
     </div>
 

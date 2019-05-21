@@ -11,80 +11,9 @@
     <link rel="stylesheet" href="${base!}/assets/front/h5/css/mui.min.css" />
     <link rel="stylesheet" type="text/css" href="${base!}/assets/front/h5/css/icons-extra.css" />
     <link rel="stylesheet" href="${base!}/assets/front/h5/css/hryc.css" />
+    <link rel="stylesheet" href="${base!}/assets/front/newH5/css/index.css" />
     <!--App自定义的css-->
     <!--<link rel="stylesheet" type="text/css" href="../css/app.css"/>-->
-    <style>
-        .mui-table-view .mui-media-object {
-            line-height: 42px;
-            max-width: 145px;
-            height: 100px;
-        }
-        .jiage-text{
-            font-size: 18px;
-            color: red;
-            margin-right:10px ;
-        }
-        [v-cloak]{
-            display: none !important;
-        }
-        footer {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: #fafafa;
-            border-top: 1px solid #e6e6e6;
-        }
-        .ful{
-            margin: 0;
-            padding: 0;
-            list-style: none;
-            font-family: "Microsoft Yahei";
-        }
-        footer li {
-            float: left;
-            width: 25%;
-            text-align: center;
-            padding: 20px 0;
-            color: #323232;
-        }
-        footer li a {
-            display: block;
-            color: #333;
-        }
-        .mui-bar-tab-new {
-            bottom: 0;
-            display: table;
-            width: 100%;
-            height: 50px;
-            padding: 0;
-            table-layout: fixed;
-            border-top: 0;
-            border-bottom: 0;
-            -webkit-touch-callout: none;
-        }
-        .mui-bar-new {
-            position: fixed;
-            z-index: 10;
-            right: 0;
-            left: 0;
-            height: 76px;
-            padding-right: 10px;
-            padding-left: 10px;
-            border-bottom: 0;
-            background-color: #f7f7f7;
-            -webkit-box-shadow: 0 0 0 rgba(0, 0, 0, .85);
-            box-shadow: 0 0 0 rgba(0, 0, 0, .85);
-            -webkit-backface-visibility: hidden;
-            backface-visibility: hidden;
-        }
-        footer a img {
-            display: block;
-            margin: 6px auto;
-            width: 30px;
-            height: auto;
-        }
-    </style>
 </head>
 <body>
 
@@ -96,37 +25,9 @@
     </h1>
 </header>
 
-<!--底部导航栏-->
-<footer class="mui-bar-new mui-bar-tab-new" >
-    <ul class="ful">
-        <li>
-            <a href="javascript:void(0);" onclick="window.location.href='${base!}/open/h5/niantu/index.html'">
-                <img src="${base!}/assets/front/newH5/images/icon1.png" alt="" />
-                <span>首页</span>
-            </a>
-        </li>
-        <li>
-            <a href="javascript:void(0);">
-                <img src="${base!}/assets/front/newH5/images/icon2.png" onclick="window.location.href='${base!}/open/h5/cart/shoppingCart.html'" alt="" />
-                <span>购物车</span>
-            </a>
-        </li>
-        <li>
-            <a href="javascript:void(0);">
-                <img src="${base!}/assets/front/newH5/images/icon3.png" alt="" onclick="window.location.href='${base!}/open/h5/coupon/receiveCoupon.html'" />
-                <span>领券中心</span>
-            </a>
-        </li>
-        <li>
-            <a href="javascript:void(0);">
-                <img src="${base!}/assets/front/newH5/images/icon4.png" alt="" onclick="window.location.href='${base!}/open/h5/niantu/userCenter.html'" />
-                <span>个人中心</span>
-            </a>
-        </li>
-    </ul>
-</footer>
 
-<div id="vue" style="margin-top: 60px;margin-bottom: 120px;" v-cloak>
+
+<div id="vue" style="margin-top: 60px;margin-bottom: 74px;" v-cloak>
     <div class="mui-card"  v-for="good in feedList" :key="good.id">
         <div class="mui-card-header">
             <span>订单号：</span><span>{{good.orderId}}</span>
@@ -136,16 +37,15 @@
                 <ul class="mui-table-view">
                     <li class="mui-table-view-cell mui-media" >
                         <a href="">
-                            <img class="mui-media-object mui-pull-left" :src="good.goodsMain.imgList" style="width: 150px;height: 100px;">
+                            <img class="mui-media-object mui-pull-left" :src="good.goodsMain.imgList" style="width: 100px;height: 100px;max-width: inherit;">
                             <div class="mui-media-body" style="white-space:normal;" >
                                 <span>{{good.goodsMain.name}}</span>
                             </div>
                         </a>
                     </li>
-                    <div style="margin-left: 20px;margin-bottom: 10px;">
-                        <div>评论内容：</div>
-                         <p  style="margin-left: 20px;">{{good.feedNote}}</p>
-                        <div>评论时间：<span>{{good.feedAtTime}}</span></div>
+                    <div style="margin-bottom: 10px;padding: 0 15px;margin-top: 10px">
+                         <p>{{good.feedNote}}</p>
+                        <div><span style="color: #999999">{{good.feedAtTime}}</span></div>
                     </div>
                 </ul>
             </div>

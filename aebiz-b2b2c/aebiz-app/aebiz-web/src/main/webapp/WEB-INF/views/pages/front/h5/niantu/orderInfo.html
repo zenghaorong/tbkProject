@@ -10,6 +10,7 @@
     <!--标准mui.css-->
     <link rel="stylesheet" href="${base!}/assets/front/h5/css/mui.min.css" />
     <link rel="stylesheet" href="${base!}/assets/front/h5/css/hryc.css" />
+    <link rel="stylesheet" href="${base!}/assets/front/newH5/css/index.css" />
     <!--App自定义的css-->
     <!--<link rel="stylesheet" type="text/css" href="../css/app.css"/>-->
     <style>
@@ -34,7 +35,7 @@
 <header class="mui-bar mui-bar-nav top-color">
     <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: white;"></a>
     <h1 class="mui-title" style="color: white;">
-        订单详情页
+        订单详情
     </h1>
 </header>
 <div id="vue">
@@ -64,10 +65,6 @@
 
 
     <div class="mui-card" >
-
-        <p style="margin-left: 10px;color: black;margin-top: 10px;">
-            订单详情
-        </p>
         <div class="mui-card-header">
             <div>订单编号：${orderId}</div>
         </div>
@@ -95,7 +92,7 @@
             <ul class="mui-table-view">
                 <li class="mui-table-view-cell mui-media" v-for="item in orderProductList" :key="item.id">
                     <a href="#">
-                        <img class="mui-media-object mui-pull-left" :src="item.imgUrl">
+                        <img class="mui-media-object mui-pull-left" :src="item.imgUrl" style="width: 100px;height: 100px;">
                         <div class="mui-media-body" style="white-space:normal;">
                             <span>{{item.goodsName}}</span>
                             <p class='mui-ellipsis'style="margin-top: 35px;margin-left: 0px;">
@@ -115,27 +112,27 @@
 
 
 <!--#if(order.payStatus == 0 ||order.payStatus == 1 ||order.payStatus == 2){#-->
-<div style="width: 300px;margin: 0 auto;">
+<div style="margin: 30px 10px 10px 10px;">
     <button type="button" onclick="window.location.href='${base!}/open/h5/order/orderInfoPayCheckoutCounter.html?orderId=${orderId}'"
             class="mui-btn mui-btn-primary mui-btn-block">支付</button>
 </div>
 <!--#}#-->
 <!--#if(order.payStatus == 3 && order.deliveryStatus==3 && order.getStatus==0){#-->
-<div style="width: 300px;margin: 0 auto;">
+<div style="margin: 10px;">
     <button type="button" onclick="confirmReceipt()" class="mui-btn mui-btn-primary mui-btn-block">确认收货</button>
 </div>
 <!--#}#-->
 <!--#if(order.payStatus == 3 && order.getStatus == 1 && order.feedStatus==0){#-->
-<div style="width: 300px;margin: 0 auto;">
+<div style="margin: 10px;">
     <button type="button" onclick="goFeedback()" class="mui-btn mui-btn-primary mui-btn-block">立即评价</button>
 </div>
 <!--#}#-->
 <!--#if(order.payStatus == 3){#-->
-<div style="width: 300px;margin: 0 auto;">
+<div style="margin: 10px;">
     <button type="button" onclick="window.location.href='${base!}/open/h5/refunds/orderRefunds.html?orderId=${orderId!}'" class="mui-btn mui-btn-primary mui-btn-block">申请售后</button>
 </div>
 <!--#}#-->
-<div style="width: 300px;margin: 0 auto; background: red; ">
+<div style="margin: 10px;">
     <button type="button" onclick="delOrder()" style="background: red;border: red;" class="mui-btn mui-btn-primary mui-btn-block">删除订单</button>
 </div>
 

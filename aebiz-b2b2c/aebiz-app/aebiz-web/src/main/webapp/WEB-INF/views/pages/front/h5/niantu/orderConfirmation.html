@@ -10,25 +10,16 @@
     <!--标准mui.css-->
     <link rel="stylesheet" href="${base!}/assets/front/h5/css/mui.min.css" />
     <link rel="stylesheet" href="${base!}/assets/front/h5/css/hryc.css" />
+    <link rel="stylesheet" href="${base!}/assets/front/newH5/css/index.css" />
     <!--App自定义的css-->
     <!--<link rel="stylesheet" type="text/css" href="../css/app.css"/>-->
     <style>
-        .mui-table-view .mui-media-object {
-            line-height: 42px;
-            max-width: 145px;
-            height: 100px;
-        }
-        .jiage-text{
-            font-size: 18px;
-            color: red;
-            margin-right:10px ;
-        }
         [v-cloak]{
             display: none !important;
         }
     </style>
 </head>
-<body >
+<body  class="simp_hasfooter">
 <div id="order">
 
 <header class="mui-bar mui-bar-nav top-color">
@@ -62,11 +53,11 @@
 
 <div class="mui-card" >
     <div class="mui-card-header" >
-        商品金额<span style="color: red;">￥{{zongPrice}}</span>
+        商品金额<span style="color: #ff3535;">￥{{zongPrice}}</span>
     </div>
     <div class="mui-card-header">
         <input type="hidden" id="freight" value="${freightMoney}">
-        运费<span style="color: red;">￥${freightMoney}</span>
+        运费<span style="color: #ff3535;">￥${freightMoney}</span>
     </div>
     <!--<div class="mui-card-header">-->
         <!--优惠劵<span style="color: red;">￥10.00</span>-->
@@ -81,7 +72,7 @@
                     <img class="mui-media-object mui-pull-left" style="width: 100px;height: 100px;" :src="good.imgList">
                     <div class="mui-media-body" style="white-space:normal;" >
                         <span>{{good.name}}</span>
-                        <p class='mui-ellipsis'style="margin-top: 35px;margin-left: 80px;" >
+                        <p style="margin-top: 35px;" >
                             <span class="jiage-text">￥{{good.price}}</span>
                             <span>*{{good.num}}</span>
                         </p>
@@ -91,7 +82,7 @@
         </ul>
     </div>
 </div>
-<div class="mui-content-padded" v-if="coupons==''">
+<div class="mui-content-padded" style="color: #999999;text-align: center" v-if="coupons==''">
     暂无可用优惠券
 </div>
     <div class="mui-content-padded" v-if="coupons!=''">
@@ -103,13 +94,13 @@
     </select>
 </div>
 
-<nav class="mui-bar mui-bar-tab" style="height: 40px;">
+<nav class="mui-bar mui-bar-tab" style="background: #ffffff;padding: 10px;border-top: 1px solid #e5e5e5;" >
     <div class="mui-input-row mui-password" style="border: 0px;">
         <button type="button" id="place"  class="mui-btn mui-btn-primary" style="width: 30%;top: 0px;line-height:1;
-            border: 0;background-color:red;" v-on:click="save()">立即支付</button>
-        <button type="button" style="width: 70%;top: 0px;line-height:1;border: 0;background-color:white;"
+            border: 0;background-color:#ff3535;" v-on:click="save()">立即支付</button>
+        <button type="button" style="width: 70%;top: 0px;line-height:1;border: 0;text-align: left;background: none"
                 class="mui-btn mui-btn-primary" id="review">
-            <span style="color: black;">应付:</span><span id="zongPriceSp" style="color: red;padding-left: 10px;">{{zongPrice2}}元</span>
+            <span>应付:</span><span id="zongPriceSp" style="color: #ff3535;padding-left: 10px;font-size: 18px;">{{zongPrice2}}元</span>
         </button>
     </div>
 </nav>

@@ -10,6 +10,7 @@
     <!--标准mui.css-->
     <link rel="stylesheet" href="${base!}/assets/front/h5/css/mui.min.css" />
     <link rel="stylesheet" href="${base!}/assets/front/h5/css/hryc.css" />
+    <link rel="stylesheet" href="${base!}/assets/front/newH5/css/index.css" />
     <!--App自定义的css-->
     <!--<link rel="stylesheet" type="text/css" href="../css/app.css"/>-->
     <style>
@@ -25,6 +26,12 @@
         }
         [v-cloak]{
             display: none !important;
+        }
+        .mui-btn-mini{
+            padding: 5px 15px;
+        }
+        .mui-card-content-inner{
+            padding-bottom: 0;
         }
     </style>
 </head>
@@ -49,15 +56,15 @@
             </div>
         </div>
         <div class="mui-card-header">
-            <button type="button" class="mui-btn mui-btn-success" v-on:click="goUpd(item.id)">编辑</button>
-            <button type="button"  v-on:click="del(item.id)" class="mui-btn mui-btn-danger mui-btn-outlined">
+            <button type="button" class="mui-btn mui-btn-mini" v-on:click="goUpd(item.id)">编辑</button>
+            <button type="button"  v-on:click="del(item.id)" class="mui-btn mui-btn-danger mui-btn-mini">
                 删除
             </button>
         </div>
     </div>
 
 
-    <div style="width: 300px;margin: 0 auto;">
+    <div style="margin: 30px 10px;">
       <button type="button" class="mui-btn mui-btn-primary mui-btn-block" v-on:click="goAdd()">新增地址</button>
     </div>
 </div>

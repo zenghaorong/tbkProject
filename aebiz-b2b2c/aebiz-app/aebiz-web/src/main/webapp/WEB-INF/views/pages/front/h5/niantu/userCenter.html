@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="${base!}/assets/front/h5/css/mui.min.css" />
     <link rel="stylesheet" type="text/css" href="${base!}/assets/front/h5/css/icons-extra.css" />
     <link rel="stylesheet" href="${base!}/assets/front/h5/css/hryc.css" />
+    <link rel="stylesheet" href="${base!}/assets/front/newH5/css/index.css" />
     <!--App自定义的css-->
     <!--<link rel="stylesheet" type="text/css" href="../css/app.css"/>-->
     <style>
@@ -18,80 +19,30 @@
             width: 20px;
             height: 20px;
             color: white;
-            background-color: #f9850d;
+            background-color: #f45768;
             -moz-border-radius: 50%;
             -webkit-border-radius: 50%;
             position: absolute;
             left: 60%;
             top: 10%;
             text-align: center;
-            line-height: 22px;
+            line-height: 20px;
             font-size: 12px;
         }
-        footer {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: #fafafa;
-            border-top: 1px solid #e6e6e6;
+        .mui-bar{
+            background: #38cecd;
+            box-shadow: none;
         }
-        .ful{
-            margin: 0;
-            padding: 0;
-            list-style: none;
-            font-family: "Microsoft Yahei";
-        }
-        footer li {
-            float: left;
-            width: 25%;
-            text-align: center;
-            padding: 20px 0;
-            color: #323232;
-        }
-        footer li a {
-            display: block;
-            color: #333;
-        }
-        .mui-bar-tab-new {
-            bottom: 0;
-            display: table;
-            width: 100%;
-            height: 50px;
-            padding: 0;
-            table-layout: fixed;
-            border-top: 0;
-            border-bottom: 0;
-            -webkit-touch-callout: none;
-        }
-        .mui-bar-new {
-            position: fixed;
-            z-index: 10;
-            right: 0;
-            left: 0;
-            height: 76px;
-            padding-right: 10px;
-            padding-left: 10px;
-            border-bottom: 0;
-            background-color: #f7f7f7;
-            -webkit-box-shadow: 0 0 0 rgba(0, 0, 0, .85);
-            box-shadow: 0 0 0 rgba(0, 0, 0, .85);
-            -webkit-backface-visibility: hidden;
-            backface-visibility: hidden;
-        }
-        footer a img {
-            display: block;
-            margin: 6px auto;
-            width: 30px;
-            height: auto;
+        .mui-title{
+            color: #ffffff;
         }
     </style>
 </head>
-<body style="background: white;">
+<body>
 
 
 <header class="mui-bar mui-bar-nav">
-    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: #0a0a0a;"></a>
+    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: #ffffff;"></a>
     <p class="mui-title" >
         个人中心
     </p>
@@ -118,9 +69,9 @@
                 <span>领券中心</span>
             </a>
         </li>
-        <li>
+        <li class="active">
             <a href="javascript:void(0);">
-                <img src="${base!}/assets/front/newH5/images/icon4.png" alt="" onclick="window.location.href='${base!}/open/h5/niantu/userCenter.html'" />
+                <img src="${base!}/assets/front/newH5/images/icon4_active.png" alt="" onclick="window.location.href='${base!}/open/h5/niantu/userCenter.html'" />
                 <span>个人中心</span>
             </a>
         </li>
@@ -132,9 +83,9 @@
         <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3" style="padding: 0;border:0; margin-left: 0;">
             <a href="javascript:void(0)" id="upload2">
                 <!--#if(isEmpty(info.imageUrl)){#-->
-                <img src="${base!}/assets/front/h5/img/man.png" width="80px;" id="touxiang" style="border-radius:50px;"/>
+                <img src="${base!}/assets/front/h5/img/man.png" id="touxiang" style="border-radius:50%;border:3px solid #9ce7e6;width: 80px;height: 80px"/>
                 <!--#}else{#-->
-                <img src="${info.imageUrl!}" width="80px;" id="touxiang" style="border-radius:50px;"/>
+                <img src="${info.imageUrl!}" id="touxiang" style="border-radius:50%;border:3px solid #9ce7e6;width: 80px;height: 80px"/>
                 <!--#}#-->
                 <div class="mui-media-body" style="color: white;">${info.nickname!}</div>
             </a>
@@ -144,8 +95,8 @@
     </ul>
 </div>
 
-<div class="mui-content" style="padding-top: 0px;background: white;" id="vue">
-    <ul class="mui-table-view mui-grid-view mui-grid-9 noborder" style="background: white;">
+<div class="mui-content simp_content" style="padding-top: 0px;background: white;" id="vue">
+    <ul class="mui-table-view mui-grid-view mui-grid-9 noborder func_list" style="background: white;">
         <li class="mui-table-view-cell mui-media mui-col-xs-2 mui-col-sm-3" style="padding: 0;margin-left:7%;border: 0; ">
             <a href="${base!}/open/h5/order/goOrderList.html">
                 <img src="${base!}/assets/front/h5/img/c1.png" width="62px;"/>
@@ -197,53 +148,53 @@
     </ul>
 </div>
 
-<ul class="mui-table-view">
+<ul class="mui-table-view user_function">
     <li class="mui-table-view-cell">
         <a class="mui-navigate-right" href="${base!}/open/h5/integral/myIntegral.html">
-            <img width="30" style="margin-bottom: -10px;" src="${base!}/assets/front/h5/img/cr1.png" />
+            <img width="30" src="${base!}/assets/front/h5/img/cr1.png" />
             <span style="margin-left: 15px;">我的积分</span>
         </a>
     </li>
     <li class="mui-table-view-cell">
         <a class="mui-navigate-right" href="${base!}/open/h5/cms/goMyVideoList.html">
-            <img width="30" style="margin-bottom: -10px;" src="${base!}/assets/front/h5/img/cr2.png" />
+            <img width="30" src="${base!}/assets/front/h5/img/cr2.png" />
             <span style="margin-left: 15px;">我的视频</span>
         </a>
     </li>
     <li class="mui-table-view-cell">
         <a class="mui-navigate-right" href="${base!}/open/h5/coupon/goMyCoupon.html">
-            <span class="mui-icon-extra mui-icon-extra-gift"></span>
+            <img width="30" src="${base!}/assets/front/h5/img/cr3.png" />
             <span style="margin-left: 15px;">我的优惠劵</span>
         </a>
     </li>
     <li class="mui-table-view-cell">
         <a class="mui-navigate-right" href="${base!}/open/h5/niantu/talentShow.html?accountId=${accountUser.accountId!}">
-            <img width="30" style="margin-bottom: -10px;" src="${base!}/assets/front/h5/img/cr2.png" />
+            <img width="30" src="${base!}/assets/front/h5/img/cr4.png" />
             <span style="margin-left: 15px;">我的达人秀</span>
         </a>
     </li>
     <li class="mui-table-view-cell">
         <a class="mui-navigate-right" href="${base!}/open/h5/feedback/goMyFeedback.html">
-            <img width="30" style="margin-bottom: -10px;" src="${base!}/assets/front/h5/img/cr2.png" />
+            <img width="30" src="${base!}/assets/front/h5/img/cr5.png" />
             <span style="margin-left: 15px;">我的评价</span>
         </a>
     </li>
     <li class="mui-table-view-cell">
         <a class="mui-navigate-right" href="${base!}/open/H5/login/updatePassword.html?mobile=${accountUser.mobile!}">
-            <img width="30" style="margin-bottom: -10px;" src="${base!}/assets/front/h5/img/cr2.png" />
+            <img width="30" src="${base!}/assets/front/h5/img/cr6.png" />
             <span style="margin-left: 15px;">修改密码</span>
         </a>
     </li>
     <li class="mui-table-view-cell">
         <a class="mui-navigate-right" href="${base!}/open/H5/login/updateName.html?accountId=${accountUser.accountId!}">
-            <img width="30" style="margin-bottom: -10px;" src="${base!}/assets/front/h5/img/cr2.png" />
+            <img width="30" src="${base!}/assets/front/h5/img/cr7.png" />
             <span style="margin-left: 15px;">修改昵称</span>
         </a>
     </li>
 
 </ul>
 
-<div class="mui-content-padded" style="width: 70%;margin: 60px auto;margin-top:60px;margin-bottom: 30%">
+<div class="mui-content-padded" style="margin: 10px;margin-top:30px;margin-bottom: 84px">
     <button id='out' class="mui-btn mui-btn-block mui-btn-primary" style="border-color: rgb(206, 56, 56);
     background-color: rgb(206, 56, 56);">退出登录</button>
 </div>

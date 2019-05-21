@@ -1,6 +1,6 @@
 a.c-Btn, a.c-BorderBtn {
   -webkit-tap-highlight-color: transparent; }
-
+body,a,p,span{color: #333333}
 button, [type="button"], [type="submit"], [type="reset"], input.c-Field {
   -webkit-appearance: none;
   -moz-appearance: none;
@@ -78,6 +78,26 @@ a.c-Btn, a.c-BorderBtn {
 *{
   font-family: "Microsoft Yahei";
 }
+a{
+    color: #38cecd;
+}
+.mui-btn-blue, .mui-btn-primary, input[type=submit]{
+    border: 1px solid #38cecd;
+    background: #38cecd;
+}
+.mui-input-row .mui-btn{
+    margin-top: 4px;
+    padding: 7px 14px;
+}
+.mui-btn-block{
+    font-size: 16px;
+}
+.mui-table-view-cell:after{
+    background: #e5e5e5;
+}
+body,input, select, textarea{
+    font-size: 15px;
+}
 dl,dt,dd,ul,li,ol{
   margin:0;padding:0;
   list-style:none;
@@ -88,17 +108,20 @@ h1,h2,h3,h4,h5,h6,p,button {font-size:100%;font-weight:500;margin:0;padding:0;fo
   background: #f0eff5;
 }
 header{
-  background: #38cecd;
-  padding:18px 12%;
-      position: fixed;
+    background: #38cecd;
+    position: fixed;
     width: 100%;
     top: 0;
     left: 0;
+    z-index: 99;
+
 }
 .search{
   background: #fff;
   border-radius: 14px;
   position: relative;
+    width: 70%;
+    margin: 12px auto;
 }
 .search input{
   border: none;
@@ -107,9 +130,10 @@ header{
   height: 2rem;
   line-height: 2rem;
   padding:0 12px;
+    font-size: 14px;
 }
 .search button{
-      position: absolute;
+    position: absolute;
     height: 100%;
     right: 15px;
     top: 0;
@@ -117,16 +141,22 @@ header{
     border: none;
     color: #39cfd0;
     padding: 0;
-    font-size: 16px;
+    font-size: 14px;
 }
 .searchCondition{
-  margin-top: 16px;
+    font-size: 0;
+    width: 70%;
+    margin: 0 auto;
+    text-align-last: justify;
+    -webkit-text-align-last: justify;
 }
 .searchCondition a{
-  float: left;
-  margin-right:28%;
-  color: #efeef4;
-    padding: 3px 0;
+    color: #ffffff;
+    display: inline-block;
+    text-align: center;
+    font-size: 16px;
+    position: relative;
+    margin: 0 0 7px 0;
 }
 .searchCondition a:last-child{
   margin-right: 0;
@@ -136,8 +166,8 @@ header{
 }
 .main {
   padding:12px;
-      margin-top: 114px;
-      margin-bottom: 76px;
+  margin-top: 89px;
+  margin-bottom: 76px;
 }
 .main ul li{
   float: left;
@@ -155,10 +185,10 @@ header{
       padding: 12px;
       text-align: center;
 }
-.main ul li a img{
-    width: auto;
-    height: 180px;
-    max-width: 100%;
+.main ul li a img,.simp_content .product_imglist img{
+    width: 100%;
+    height: 39vw;
+    display: block;
 }
 .main ul li a b{
     color: #333;
@@ -200,7 +230,7 @@ footer{
   left: 0;
   width:100%;
   background: #fafafa;
-  border-top: 1px solid #e6e6e6;
+  z-index: 9;
 }
 footer li{
   float: left;
@@ -208,6 +238,8 @@ footer li{
   text-align: center;
   padding: 6px 0;
   color: #323232;
+    border-top: 1px solid #e6e6e6;
+    background: #ffffff;
 }
 footer li a{
   display: block;
@@ -215,8 +247,8 @@ footer li a{
 }
 footer a img{
   display: block;
-  margin:6px auto;
-  width:30px;
+  margin:6px auto 0 auto;
+  width:24px;
   height: auto;
 }
 /*details*/
@@ -225,8 +257,8 @@ footer a img{
 }
 .return{
     position: absolute;
-    left: 20px;
-    top: 20px;
+    left: 15px;
+    top: 15px;
     width: 36px;
     z-index: 99;
     height: 36px;
@@ -256,11 +288,12 @@ footer a img{
 .detailsMessage h1 i{
   font-style:normal;
   font-size:.85rem;
-  color: #af5668;
+  color: #ff3535;
 }
 .detailsMessage h1 span{
-  color: #af5668;
+  color: #ff3535;
   margin-right: 25px;
+  font-size: 24px;
 }
 .detailsMessage h1  em{
   font-style:normal;
@@ -278,9 +311,9 @@ footer a img{
   border-radius: 2px;
 }
 .detailsMessage h2 b button{
-    width:50px;
-    height: 40px;
-    line-height: 40px;
+    width:30px;
+    height: 30px;
+    line-height: 30px;
     text-align: center;
     color: #504b51;
     background: #f9f4fa;
@@ -297,16 +330,17 @@ footer a img{
   color: #d4cfd5;
 }
 .detailsMessage h2 b span{
-  width:42px;
-  height: 40px;
-  line-height: 40px;
+  width:32px;
+  height: 30px;
+  line-height: 30px;
   text-align: center;
   display: inline-block;
 }
 .detailsImg{
   background: #fff;
-  margin-bottom:3.8rem;
-  text-align: center;
+  margin-bottom: 75px;
+  text-align: left;
+  padding: 0 15px 15px 15px;
 }
 .detailsImg h3{
   height: 3rem;
@@ -317,6 +351,21 @@ footer a img{
 .detailsImg  img{
   max-width: 100%;
   height: auto;
+}
+.detailsImg .mui-table-view-cell{
+    padding: 11px 0 11px 0;
+}
+.detailsImg .mui-table-view-cell>a:not(.mui-btn){
+    margin: -11px -15px -11px 0;
+}
+.detailsImg .mui-table-view:before,.detailsImg .mui-table-view:after{
+    display: none;
+}
+.nobd.mui-table-view:before,.nobd.mui-table-view:after{
+    display: none;
+}
+.detailsImg .mui-navigate-right:after, .mui-push-right:after{
+    color: #38cecd;
 }
 footer.detailsFooter li{
     width: 33.3%;
@@ -355,10 +404,201 @@ footer.detailsFooter li:nth-child(2) a,footer.detailsFooter li:nth-child(3) a{
 footer.detailsFooter li:nth-child(3){
   background: #fe0000;
 }
+footer ul li.active span{
+    color: #38cecd;
+}
 
 @media screen and (min-width:768px){
   .center{
       width:414px;
       margin: 0 auto;
   }
+}
+.simp_content{
+    background: #ffffff;
+}
+.mui-grid-view.mui-grid-9,.mui-grid-view.mui-grid-9 .mui-table-view-cell{
+    border: 0;
+}
+.mui-checkbox input[type=checkbox]:checked:before, .mui-radio input[type=radio]:checked:before{
+    color: #38cecd;
+}
+.simp_content .mui-table-view:first-child{
+    margin-top: 0;
+}
+.mui-content>.mui-table-view:first-child{
+    margin-top: 0;
+}
+.rdcp {
+    margin-top: 20px;
+    padding: 20px 4%;
+    background: #ffffff
+;
+}
+.rdcp_title {
+    position: relative;
+}
+.ful span{
+    font-size: 14px;
+}
+.mui-grid-view.mui-grid-9{
+    background: #ffffff;
+}
+.mui-grid-view.mui-grid-9 .mui-table-view-cell{
+    padding: 0 15px;
+}
+ul:after{
+    content: "";
+    display: block;
+    clear: both;
+}
+.simp_hasfooter{
+    padding-bottom: 64px;
+}
+.mui-slider-indicator .mui-indicator{
+    box-shadow: none;
+    width: 8px;
+    height: 8px;
+    margin: 0 4px;
+}
+#selectDiv{
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 86px;
+    z-index: 98;
+}
+#selectDiv>div{
+    background: #ffffff;
+    position: relative;
+    z-index: 9;
+}
+#selectDiv>div:after{
+    content: "";
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 86px;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: -1;
+}
+.selectUl{
+    padding: 10px;
+    background: #ffffff;
+}
+.selectUl .selectLi{
+    margin: 0;
+    border-bottom: 1px solid #e5e5e5;
+    width: 100%;
+    padding: 10px
+}
+.selectUl .selectLi:last-child{
+    border: 0;
+}
+.mui-bar,.mui-bar-nav,.mui-card{
+    box-shadow: none;
+}
+.mui-bar input[type=search]{
+    font-size: 14px;
+    text-align: left;
+}
+.func_list{
+    padding: 20px 0;
+}
+.func_list img{
+    display: block;
+    width: 32px;
+    margin: 0 auto;
+}
+.user_function{
+    margin-top: 20px;
+}
+.user_function:before,.user_function:after{
+    display: none;
+}
+.user_function img{
+    width: 21px;
+    margin-bottom: -5px;
+}
+.yhq_list{
+    margin-bottom: 74px;
+    padding: 20px;
+    background: none;
+}
+.yhq_list:before,.yhq_list:after{
+    display: none;
+}
+.yhq_list li{
+    margin-top: 10px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px #bbb;
+    position: relative;
+    border-bottom: 5px solid #38cecd;
+    overflow: hidden;
+    background: #ffffff;
+}
+.yhq_info{
+    position: relative;
+}
+.yhq_name{
+    font-size: 24px;
+    color: #38cecd;
+    display: block;
+    line-height: 2;
+}
+.yhq_time{
+    font-size: 14px;
+    color: #38cecd;
+    display: block;
+}
+.yhq_type{
+    color: #767676;
+    position: absolute;
+    right: 0;
+    top: 11px;
+    line-height: 30px;
+}
+.yhq_get{
+    text-align: center;
+    font-size: 18px;
+    border-top: 2px dashed #ddd;
+    line-height: 20px;
+    margin-top: 15px;
+    color: #38cecd;
+    padding-top: 10px;
+}
+.list_head,.list_des{
+    color: #ffffff;
+}
+.list_head span{
+    color: #ffffff;
+}
+.list_des{
+    margin-top: 10px;
+}
+.mui-input-group label,.mui-input-row label~input, .mui-input-row label~select, .mui-input-row label~textarea{
+    font-size: 14px;
+}
+.mui-input-row label{
+    padding: 13px 15px;
+}
+.mui-card-header{
+    font-size: 15px;
+}
+.mui-card{
+    border-radius: 5px;
+}
+.jiage-text{
+    color: #ff3535;
+    font-size: 18px;
+}
+.mui-btn {
+    padding: 10px;
+}
+.mui-card-footer:before, .mui-card-header:after{
+    background: #e5e5e5;
+}
+.mui-table-view .mui-media-object{
+    max-width: inherit;
 }

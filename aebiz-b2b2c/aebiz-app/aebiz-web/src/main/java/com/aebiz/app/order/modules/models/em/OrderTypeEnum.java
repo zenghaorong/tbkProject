@@ -10,7 +10,7 @@ import com.aebiz.baseframework.base.Message;
 public enum OrderTypeEnum {
 
     product_order_type("1", "商品订单"),
-    video_order_type("2", "视频订单"),
+        video_order_type("2", "视频订单"),
     monthly_order_type("3", "会员包月订单");
 
     private String key;

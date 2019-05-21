@@ -9,6 +9,10 @@ import com.aebiz.app.goods.modules.models.Goods_product;
 import com.aebiz.app.goods.modules.services.GoodsImageService;
 import com.aebiz.app.goods.modules.services.GoodsProductService;
 import com.aebiz.app.goods.modules.services.GoodsService;
+import com.aebiz.app.integral.modules.models.Member_Integral;
+import com.aebiz.app.integral.modules.models.Member_Integral_Detail;
+import com.aebiz.app.integral.modules.services.MemberIntegralDetailService;
+import com.aebiz.app.integral.modules.services.MemberIntegralService;
 import com.aebiz.app.member.modules.models.Member_address;
 import com.aebiz.app.member.modules.models.Member_cart;
 import com.aebiz.app.member.modules.models.Member_coupon;
@@ -89,6 +93,14 @@ public class OrderController {
 
     @Autowired
     private MemberCouponService memberCouponService;
+
+    @Autowired
+    private MemberIntegralService memberIntegralService;
+
+    @Autowired
+    private MemberIntegralDetailService memberIntegralDetailService;
+
+
 
     @Autowired
     private SalesCouponService salesCouponService;
@@ -245,7 +257,7 @@ public class OrderController {
      * 进入收银台
      */
     @RequestMapping("/checkoutCounter.html")
-    public String checkoutCounter(HttpServletRequest request,String productList,String addressId,String couponId) {
+    public String checkoutCounter(HttpServletRequest request,String productList,String addressId,String couponId,String integralMoney) {
 
         List<Map<String,Object>> list = (List<Map<String, Object>>) JSON.parse(productList);
 
@@ -254,7 +266,6 @@ public class OrderController {
         if(accountUser==null){
             return "pages/front/h5/niantu/login";
         }
-
         //查询收货信息
         Member_address member_address = memberAddressService.fetch(addressId);
         String freight = sysDictService.getNameByCode("freight");
@@ -330,7 +341,13 @@ public class OrderController {
 
             }
         }
-        Map<String, Double> money = this.calCouponMoney(accountUser, couponId, totalMoney, freightMoney, totalNum);
+        int im=0;
+        if(StringUtils.isNotEmpty(integralMoney)){
+             im = Integer.parseInt(integralMoney);
+
+
+        }
+        Map<String, Double> money = this.calCouponMoney(accountUser, couponId, totalMoney, freightMoney, totalNum,im);
         order.setGoodsMoney(money.get("totalMoney").intValue());
         order.setPayMoney(money.get("totalMoney").intValue() +money.get("freightMoney").intValue() );
 //                order_main.setPayMoney(1); //先写死一个测试金额
@@ -389,9 +406,10 @@ public class OrderController {
      * @return
      */
     @RequestMapping("/videoCheckoutCounter.html")
-    public String videoCheckoutCounter(HttpServletRequest request,String videoId,String couponId,String type,Integer monthlyNum) {
+    public String videoCheckoutCounter(HttpServletRequest request,String videoId,String couponId,String type,Integer monthlyNum,String integralMoney) {
         Subject subject = SecurityUtils.getSubject();
         Account_user accountUser = (Account_user) subject.getPrincipal();
+        float integralToMoney=0;
         if(accountUser==null){
             return "pages/front/h5/niantu/login";
         }
@@ -428,7 +446,43 @@ public class OrderController {
                 }
             }
         }
+        if(StringUtils.isNotEmpty(integralMoney)){
+            int i1 = Integer.parseInt(integralMoney);
+            if(i1>0){
+                Cnd cnd3 = Cnd.NEW();
+                cnd3.and("delFlag", "=", false);
+                cnd3.and("customerUuid","=",accountUser.getAccountId());
+                List<Member_Integral> list=memberIntegralService.query(cnd3);
+                if(list!=null&&list.size()>0){
+                    Member_Integral memIntegral = list.get(0);
+                    if(memIntegral.getUseAbleIntegral()<i1){
 
+                    }else {
+                        String itm = sysDictService.getNameByCode("integralToMoney");
+                        int i = Integer.parseInt(itm);
+                        float fi =i1;
+                        float imoney = (fi/i);
+                        float total=totalMoney-imoney*100;
+                        integralToMoney=imoney*100;
+                        if(total<=0){
+//                        break;
+                        }else {
+                            totalMoney=(int)total;
+                            memIntegral.setUseAbleIntegral(memIntegral.getUseAbleIntegral()-i1);
+                            memberIntegralService.update(memIntegral);
+                            Member_Integral_Detail  mid = new Member_Integral_Detail();
+                            mid.setIntegralDesc("购物减积分");
+                            mid.setIntegralType(4);
+                            mid.setCustomerUuid(accountUser.getAccountId());
+                            mid.setAddIntegral(i1);
+                            memberIntegralDetailService.insert(mid);
+                        }
+
+                    }
+
+                }
+            }
+        }
         Order_main order_main = new Order_main();
         Order_goods order_goods = new Order_goods();
         order_main.setAccountId(accountUser.getAccountId());
@@ -448,6 +502,10 @@ public class OrderController {
             BigDecimal b1 = new BigDecimal(monthlyPrice);
             int payMoney = (int)CalculateUtils.mul(b1.doubleValue(),100); //会员包月价格
             payMoney = payMoney * monthlyNum; //乘上月数
+            if(integralToMoney>0){
+                int itmoney =(int) integralToMoney;
+                payMoney = payMoney-itmoney;
+            }
             order_main.setPayMoney(payMoney); //单位是分
             order_main.setMonthlyNum(monthlyNum);
         }else {
@@ -823,7 +881,7 @@ public class OrderController {
         }
         return Result.success();
     }
-    private Map<String,Double> calCouponMoney(Account_user accountUser,String couponId,double totalMoney,double freightMoney,int totalNum){
+    private Map<String,Double> calCouponMoney(Account_user accountUser,String couponId,double totalMoney,double freightMoney,int totalNum,int integralMoney){
         /**
          * 计算优惠劵抵扣金额
          */
@@ -882,6 +940,35 @@ public class OrderController {
 
                 }
             }
+        }
+        if(integralMoney>0){
+            Cnd cnd3 = Cnd.NEW();
+            cnd3.and("delFlag", "=", false);
+            cnd3.and("customerUuid","=",accountUser.getAccountId());
+            List<Member_Integral> list=memberIntegralService.query(cnd3);
+            if(list!=null&&list.size()>0){
+                Member_Integral memIntegral = list.get(0);
+                if(memIntegral.getUseAbleIntegral()<integralMoney){
+                    return money;
+                }
+                String itm = sysDictService.getNameByCode("integralToMoney");
+                int i = Integer.parseInt(itm);
+                float fi =integralMoney;
+                float imoney = (fi/i);
+                totalMoney=totalMoney-imoney*100;
+                if(totalMoney<=0){
+                    return money;
+                }
+                memIntegral.setUseAbleIntegral(memIntegral.getUseAbleIntegral()-integralMoney);
+                memberIntegralService.update(memIntegral);
+                Member_Integral_Detail  mid = new Member_Integral_Detail();
+                mid.setIntegralDesc("购物减积分");
+                mid.setIntegralType(4);
+                mid.setCustomerUuid(accountUser.getAccountId());
+                mid.setAddIntegral(integralMoney);
+                memberIntegralDetailService.insert(mid);
+            }
+            money.put("totalMoney",totalMoney);
         }
         return money;
     }

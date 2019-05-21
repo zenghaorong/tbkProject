@@ -24,11 +24,11 @@
 </header>
 
 <div class="mui-content" style="background: white;" id="vue" v-cloak>
-    <div style="text-align: center;margin-top: 20px;color: #333333;font-size: 16px;">累计积分：{{integrals.totalIntegral}}</div>
+    <div style="text-align: center;margin-top: 20px;color: #333333;font-size: 16px;">累计积分：{{integrals.useAbleIntegral}}</div>
     <ul class="mui-table-view nobd" style="padding: 10px;">
         <li class="mui-table-view-cell mui-media"  v-for="item in integrals.details" :key="item.id"
             style="background-color:rgb(56, 206, 204);margin-top: 10px; border-radius:5px;">
-            <div class="list_head"><span>{{item.integralDesc}}</span><span style="    margin-left: 60%;">+{{item.addIntegral}}</span></div>
+            <div class="list_head"><span>{{item.integralDesc}}</span><span style="    margin-left: 60%;">{{item.integralType<4?'+':'-'}}{{item.addIntegral}}</span></div>
             <div class="list_des">{{item.integralTime}}</div>
         </li>
     </ul>

@@ -55,6 +55,16 @@ public class Member_Integral extends BaseModel implements Serializable {
 
     private String customerName;
 
+    private String integralMoney;
+
+    public String getIntegralMoney() {
+        return integralMoney;
+    }
+
+    public void setIntegralMoney(String integralMoney) {
+        this.integralMoney = integralMoney;
+    }
+
     public String getCustomerName() {
         return customerName;
     }

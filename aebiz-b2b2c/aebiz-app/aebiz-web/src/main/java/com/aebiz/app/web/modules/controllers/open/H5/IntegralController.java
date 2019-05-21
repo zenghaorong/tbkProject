@@ -5,6 +5,7 @@ import com.aebiz.app.integral.modules.models.Member_Integral;
 import com.aebiz.app.integral.modules.models.Member_Integral_Detail;
 import com.aebiz.app.integral.modules.services.MemberIntegralDetailService;
 import com.aebiz.app.integral.modules.services.MemberIntegralService;
+import com.aebiz.app.sys.modules.services.SysDictService;
 import com.aebiz.baseframework.base.Result;
 import com.aebiz.baseframework.view.annotation.SJson;
 import org.apache.shiro.SecurityUtils;
@@ -35,6 +36,9 @@ public class IntegralController {
     private MemberIntegralService memberIntegralService;
     @Autowired
     private MemberIntegralDetailService memberIntegralDetailService;
+
+    @Autowired
+    private SysDictService sysDictService;
 
 
 
@@ -82,6 +86,9 @@ public class IntegralController {
                 mi=list.get(0);
                 mi.setDetails(details);
             }
+            String integralToMoney = sysDictService.getNameByCode("integralToMoney");
+            mi.setIntegralMoney(integralToMoney);
+
             return Result.success("ok",mi);
         } catch (Exception e) {
             log.error("获取积分异常",e);

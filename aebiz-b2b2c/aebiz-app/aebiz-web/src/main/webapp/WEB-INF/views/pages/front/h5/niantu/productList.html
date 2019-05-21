@@ -73,6 +73,12 @@
                     <!--</div>-->
                 </ul>
             </div>
+            <div id="item4" class="mui-control-content " style="display: none">
+                <ul class="mui-table-view priceUl selectUl" selectUl v-for="item in goodClassList" :key="item.id">
+                    <!--<div class="mui-table-view-cell priceLi">-->
+                    <li class="priceSpan selectLi" :classId="item.id" v-on:click="classSelect($event)" >{{item.name}}</li>
+                </ul>
+            </div>
         </div>
         <ul class="clear">
             <li v-for="item in productList" :key="item.id">
@@ -124,10 +130,12 @@
             el: '#productList',
             data: {
                 productList: [],
+                goodClassList:[],
             },
             created:function () {   //实例初始化创建完成执行
 
                 this.getProductList() ;//调用自身方法
+                this.getGoodClassList();
                 // this.getCartNum();
             },
             methods:{              //定义封装方法
@@ -147,6 +155,25 @@
                             if (data.code == 0) {
                                 var d = data.data;
                                 self.productList = d;
+                            } else {
+
+                            }
+                        }
+                    });
+
+                },
+                getGoodClassList:function () {
+                    var self = this;
+                    $.ajax({
+                        type:"POST",
+                        url:"${base!}/open/h5/product/getGoodClass.html",
+                        dataType:"JSON",
+                        data:{
+                        },
+                        success:function(data){
+                            if (data.code == 0) {
+                                var d = data.data;
+                                self.goodClassList = d;
                             } else {
 
                             }
@@ -189,6 +216,42 @@
                         }
                     });
                 },
+                classSelect: function (event) {
+                    var self = this;
+                    var key = $("#searchKey").val();
+                    $(".priceSpan").removeClass("price-active");
+                    $(event.target).addClass("price-active");
+                    var classId = $(event.target).attr("classId");
+                    $.ajax({
+                        type:"POST",
+                        url:"${base!}/open/h5/product/ProductList.html",
+                        dataType:"JSON",
+                        data:{
+                            key:key,
+                            classId:classId
+                        },
+                        success:function(data){
+                            if (data.code == 0) {
+                                var d = data.data;
+                                self.productList = d;
+                                $("#item1").hide();
+                                $("#item2").hide();
+                                $("#item3").hide();
+                                $("#item4").hide();
+                                $(".selBtn").removeClass("active");
+                                // var t;
+                                // clearTimeout(t)
+                                // t = setTimeout(function (){
+                                //     $("#item3").removeClass("mui-active");
+                                //     $(".mui-control-item").removeClass("mui-active");
+                                // }, 10);
+                            } else {
+
+                            }
+                        }
+                    });
+                },
+
                 productSort: function (event) {
                     var self = this;
                     var key = $("#searchKey").val();

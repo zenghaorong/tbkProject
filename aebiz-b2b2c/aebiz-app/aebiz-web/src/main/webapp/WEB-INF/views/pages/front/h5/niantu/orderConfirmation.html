@@ -55,6 +55,11 @@
     <div class="mui-card-header" >
         商品金额<span style="color: #ff3535;">￥{{zongPrice}}</span>
     </div>
+    <div class="mui-card-header" >
+        <div>积分抵扣:&nbsp<input id="integralNum" placeholder="" v-on:blur="useIntegral()"  style="    height: 32px; width: 100px; margin-left: 3px;" value=""></div>
+        (剩余积分：{{memberIntegral.useAbleIntegral}})
+        <input type="hidden" :value="memberIntegral.useAbleIntegral" id="totalIntegral">
+    </div>
     <div class="mui-card-header">
         <input type="hidden" id="freight" value="${freightMoney}">
         运费<span style="color: #ff3535;">￥${freightMoney}</span>
@@ -89,7 +94,7 @@
     可用优惠劵
     <select class="mui-btn mui-btn-block" v-on:onchange="selectCoupon(this.value)" v-model="couponId">
         <option  :value="item.couponId" v-for="item in coupons" :key="item.id">
-            {{item.sales_coupon!=''?item.sales_coupon.name:'暂无可用优惠劵'}}
+            {{item.sales_coupon!='null'?item.sales_coupon.name:'暂无可用优惠劵'}}
         </option>
     </select>
 </div>
@@ -123,19 +128,23 @@
             order:'',
             goodsList:[],
             totoalProductPrice:'',
-            zongPrice:'',
-            zongPrice2:'',
+            zongPrice:0,
+            zongPrice2:0,
+            zongPrice3:0,
             yunPrice:0,
             coupons:[],
             couponId:'',
             couponPrice:0,
             sales_coupon:'',
-            productNum:0
+            productNum:0,
+            memberIntegral:'',
+            integralMoney:1
         },
         created:function () {   //实例初始化创建完成执行
 
             this.defaultAddress();    //调用自身方法
             this.getOrderProductList();
+            this.getIntegral();
 
         },
         methods:{              //定义封装方法
@@ -160,6 +169,29 @@
                 });
 
             },
+            useIntegral:function(){
+                var integral= $("#integralNum").val();
+                var totalIntegral= $("#totalIntegral").val()*1;
+                if(integral>totalIntegral){
+                    layer.open({
+                        content: "可用积分不足!"
+                        ,skin: 'msg'
+                        ,time: 2 //2秒后自动关闭
+                    });
+                    $("#integralNum").val(totalIntegral);
+                }
+                this.zongPrice2=this.zongPrice3;
+                if(integral/(this.integralMoney*1)>=this.zongPrice2-$("#freight").val()*1){
+                    layer.open({
+                        content: "兑换积分数量不能大于或等于商品总价!"
+                        ,skin: 'msg'
+                        ,time: 2 //2秒后自动关闭
+                    });
+                    return;
+                }
+                this.zongPrice2=this.zongPrice2-integral/(this.integralMoney*1);
+                this.zongPrice2=this.zongPrice2.toFixed(2);
+            },
             //获取确认商品
             getOrderProductList:function () {
                 var self = this;
@@ -182,7 +214,28 @@
                             self.totoalProductPrice=self.zongPrice;
                             self.zongPrice2=self.zongPrice*1+$("#freight").val()*1;
                             self.zongPrice2=self.zongPrice2.toFixed(2);
+                            self.zongPrice3=self.zongPrice2;
                             self.getMyOrderCoupon();
+                        } else {
+
+                        }
+                    }
+                });
+            },
+            //获取可用积分
+            getIntegral:function () {
+                var self = this;
+                $.ajax({
+                    type:"POST",
+                    url:"${base!}/open/h5/integral/getIntegral.html",
+                    dataType:"JSON",
+                    data:{
+
+                    },
+                    success:function(data){
+                        if (data.code == 0) {
+                            self.memberIntegral = data.data;
+                            self.integralMoney=self.memberIntegral.integralMoney;
                         } else {
 
                         }
@@ -211,6 +264,7 @@
                             }else {
                                 var d = {};
                                 d.couponId = "11111111xxxx";
+                                d.sales_coupon="null";
                                 self.coupons[0] = d;
                                 self.couponId = self.coupons[0].couponId; //让select默认选中
                             }
@@ -242,8 +296,9 @@
                     self.zongPrice2=self.zongPrice*1+$("#freight").val()*1;
                 }
 
-                self.zongPrice = (self.zongPrice).toFixed(2) ;
-                self.zongPrice2 = (self.zongPrice2).toFixed(2) ;
+                self.zongPrice = (self.zongPrice*1).toFixed(2) ;
+                self.zongPrice2 = (self.zongPrice2*1).toFixed(2) ;
+                self.zongPrice3=self.zongPrice2;
 
             },
             save:function () {
@@ -259,6 +314,16 @@
                 }
                 var addressId = this.address.id;
                 var couponId =this.couponId;
+                var integral = $("#integralNum").val();
+                if(integral/(this.integralMoney*1)>=this.zongPrice3-$("#freight").val()*1){
+                    layer.open({
+                        content: "兑换积分数量不能大于或等于商品总价!"
+                        ,skin: 'msg'
+                        ,time: 2 //2秒后自动关闭
+                    });
+                    return;
+                }
+                var integralToMoney = integral/(self.integralMoney*1);
                 $.ajax({
                     type:"POST",
                     url:"${base!}/open/h5/order/checkStock.html",
@@ -268,7 +333,7 @@
                     },
                     success:function(data){
                         if (data.code == 0) {
-                            window.location.href="${base!}/open/h5/order/checkoutCounter.html?productList="+encodeURIComponent(json)+"&addressId="+addressId+"&couponId="+couponId;
+                            window.location.href="${base!}/open/h5/order/checkoutCounter.html?productList="+encodeURIComponent(json)+"&addressId="+addressId+"&couponId="+couponId+"&integralMoney="+integral;
                         } else {
                             layer.open({
                                 content: "库存不足!"
@@ -289,13 +354,16 @@
                 }
             }
         },
+
         watch:{     //监听器
             couponId:function () {
                 console.log("监听器开始执行：couponId");
                 for(var i=0;i<this.coupons.length;i++){
-                    var id = this.coupons[i].sales_coupon.id;
-                    if(id == this.couponId){
-                       this.sales_coupon = this.coupons[i].sales_coupon;
+                    if(this.coupons[i].sales_coupon !="null"){
+                        var id = this.coupons[i].sales_coupon.id;
+                        if(id == this.couponId){
+                            this.sales_coupon = this.coupons[i].sales_coupon;
+                        }
                     }
                 }
                 this.priceCalculator();

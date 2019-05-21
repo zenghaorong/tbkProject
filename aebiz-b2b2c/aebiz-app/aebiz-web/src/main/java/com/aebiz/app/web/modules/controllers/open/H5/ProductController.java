@@ -91,6 +91,8 @@ public class ProductController {
             String priceArea = request.getParameter("priceArea");
             String isRecommend = request.getParameter("isRecommend");
             String sortType = request.getParameter("sortType");
+            String classId = request.getParameter("classId");
+
             Cnd cnd = Cnd.NEW();
             if(StringUtils.isNotEmpty(isRecommend)){
                 cnd.and("recommend","=",Integer.parseInt(isRecommend));
@@ -103,6 +105,12 @@ public class ProductController {
             cnd.and("sale", "=", 1);
             cnd.and("status", "=", 3);
             List<String> goodsIdList = null;
+            if(StringUtils.isNotEmpty(classId)){
+                goodsIdList = storeGoodsclassService.getGoodsMainStoreGoodsclassIdList(classId);
+                if(goodsIdList==null||goodsIdList.size()<1){
+                    return Result.success();
+                }
+            }
             //宝妈专区
             if("1".equals(goodsClass)) {
                 Store_goodsclass store_goodsclass = storeGoodsclassService.fetch(Cnd.where("name","=","宝妈专区"));
@@ -287,7 +295,26 @@ public class ProductController {
         }
     }
 
-
+    @RequestMapping("getGoodClass.html")
+    @SJson
+    public Result getGoodClass(String id){
+        try {
+            Cnd cnd = Cnd.NEW();
+            cnd.and("delFlag", "=", 0 );
+            cnd.and("parentId","=","2019030000000001");
+            List<Store_goodsclass> query = storeGoodsclassService.query(cnd);
+//            List<String> goodsIdList = null;
+//            for (Store_goodsclass sg: query
+//                 ) {
+//                List<String> list = storeGoodsclassService.getGoodsMainStoreGoodsclassIdList(sg.getId());
+//                goodsIdList.addAll(list);
+//            }
+            return Result.success("ok",query);
+        } catch (Exception e) {
+            log.error("获取商品分类列表异常",e);
+            return Result.error("fail");
+        }
+    }
 
 
 

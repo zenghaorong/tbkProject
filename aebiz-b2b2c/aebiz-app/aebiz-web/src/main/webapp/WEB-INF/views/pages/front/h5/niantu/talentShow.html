@@ -166,6 +166,8 @@
         swipeBack:true //启用右滑关闭功能
     });
 
+    var this_id = "";
+
     var vue = new Vue({
         el: '#vue',
         data: {
@@ -207,13 +209,14 @@
 
             },
             goUrl:function (id) {
+                this_id = id;
                 if("${accountId}"==""){
                     window.location.href='${base!}/open/h5/show/goShowInfo.html?id='+id;
                     return;
                 }
                 var html = '<div>' +
-                        '<button type="button" onclick="goInfo('+id+')" class="mui-btn mui-btn-primary mui-btn-block">查看详情</button>' +
-                        '<button type="button" onclick="del('+id+')"  class="mui-btn mui-btn-primary mui-btn-block">删除</button>' +
+                        '<button type="button" onclick="goInfo()" class="mui-btn mui-btn-primary mui-btn-block">查看详情</button>' +
+                        '<button type="button" onclick="del()"  class="mui-btn mui-btn-primary mui-btn-block">删除</button>' +
                         '<button type="button" onclick="quxiao()" class="mui-btn mui-btn-primary mui-btn-block">取消</button>' +
                     '</div>';
                 //页面层
@@ -235,21 +238,21 @@
 
     })
 
-    function goInfo(id) {
-        window.location.href='${base!}/open/h5/show/goShowInfo.html?id='+id;
+    function goInfo(){
+        window.location.href='${base!}/open/h5/show/goShowInfo.html?id='+this_id;
     }
 
     function quxiao() {
         layer.closeAll()
     }
 
-    function del(id) {
+    function del() {
         $.ajax({
             type:"POST",
             url:"${base!}/open/h5/show/removeShow.html",
             dataType:"JSON",
             data:{
-                id:id
+                id:this_id
             },
             success:function(data){
                 if (data.code == 0) {

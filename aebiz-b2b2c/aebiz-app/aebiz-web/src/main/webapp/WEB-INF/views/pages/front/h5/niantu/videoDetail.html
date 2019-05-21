@@ -73,28 +73,42 @@
         <!--</div>-->
     <!--</nav>-->
 
-    <div style="padding: 20px;margin-bottom:30px;">
-        <div class="title" style="padding-bottom: 10px;">
-            评论
+    <!--<div style="padding: 20px;margin-bottom:30px;">-->
+        <!--<div class="title" style="padding-bottom: 10px;">-->
+            <!--评论-->
+        <!--</div>-->
+        <!--<ul class="mui-table-view">-->
+            <!--<div id="zanwu" style="display: none;margin: 40px 30px;">暂无评论....</div>-->
+            <!--<li class="mui-table-view-cell" v-for="item in reviewList" :key="item.id">-->
+                <!--<img src="${base!}/assets/front/h5/img/魏晨.jpg" width="20px;">-->
+                <!--{{item.reviewOpName}}:-->
+                <!--<p style="padding:10px;">-->
+                    <!--{{item.content}}-->
+                    <!--<span style="margin-left: 10px;color: #2700ef;" v-on:click="clickReply(item.id,item.reviewOpName,item.reviewOpId)">回复</span>-->
+                <!--</p>-->
+                <!--<div v-for="item2 in item.replyVOList" :key="item2.id" style="padding-left:10px;">-->
+                    <!--<p style="color: #0a0a0a;">{{item2.reviewOpName}}-回复-{{item2.reviewFatherName}}:</p>-->
+                    <!--<p style="padding:10px;">-->
+                        <!--{{item2.content}}-->
+                        <!--<span style="margin-left: 10px;color: #2700ef;" v-on:click="clickReply2(item.id,item2.reviewOpName,item2.reviewOpId,item2.id)">回复</span>-->
+                    <!--</p>-->
+                <!--</div>-->
+            <!--</li>-->
+        <!--</ul>-->
+    <!--</div>-->
+    <div class="mui-card"  v-for="good in feedList" :key="good.id">
+        <div class="mui-card-content">
+            <div class="mui-card-content">
+                <ul class="mui-table-view">
+                    <div style="margin-left: 20px;margin-bottom: 10px;margin-top: 10px;">
+                        <div>用户：{{good.accountUser.mobile}}</div>
+                        <div>评论内容：</div>
+                        <p  style="margin-left: 20px;">{{good.feedNote}}</p>
+                        <div>评论时间：<span>{{good.feedAt}}</span></div>
+                    </div>
+                </ul>
+            </div>
         </div>
-        <ul class="mui-table-view">
-            <div id="zanwu" style="display: none;margin: 40px 30px;">暂无评论....</div>
-            <li class="mui-table-view-cell" v-for="item in reviewList" :key="item.id">
-                <img src="${base!}/assets/front/h5/img/魏晨.jpg" width="20px;">
-                {{item.reviewOpName}}:
-                <p style="padding:10px;">
-                    {{item.content}}
-                    <span style="margin-left: 10px;color: #2700ef;" v-on:click="clickReply(item.id,item.reviewOpName,item.reviewOpId)">回复</span>
-                </p>
-                <div v-for="item2 in item.replyVOList" :key="item2.id" style="padding-left:10px;">
-                    <p style="color: #0a0a0a;">{{item2.reviewOpName}}-回复-{{item2.reviewFatherName}}:</p>
-                    <p style="padding:10px;">
-                        {{item2.content}}
-                        <span style="margin-left: 10px;color: #2700ef;" v-on:click="clickReply2(item.id,item2.reviewOpName,item2.reviewOpId,item2.id)">回复</span>
-                    </p>
-                </div>
-            </li>
-        </ul>
     </div>
 
 </div>
@@ -121,12 +135,14 @@
             reviewFatherId:'', //回复父级发布人编号
             reviewReplyId:'', //回复父级回复编号（区分回复的是评论底下哪条回复）
             isHf:1, //是评论还是回复
+            feedList: [],
 
         },
         created:function () {   //实例初始化创建完成执行
 
             this.getVideoDesc();     //调用自身方法
             this.jqueryLin();
+            this.queryFeedback();
 
         },
         methods:{              //定义封装方法
@@ -146,6 +162,32 @@
                             var time = timestamp(data.data.opAt)
                             self.time = time;
                             self.getReview();
+                        } else {
+
+                        }
+                    }
+                });
+
+            },
+            //获取列表
+            queryFeedback:function () {
+                var self = this;
+                var status = "${status!}";
+                $.ajax({
+                    type:"POST",
+                    url:"${base!}/open/h5/feedback/queryFeedback",
+                    dataType:"JSON",
+                    data:{
+                        goodsId:'${id!}'
+                    },
+                    success:function(data){
+                        if (data.code == 0) {
+                            var d = data.data;
+                            $.each(d, function (index, obj) {
+                                obj.feedAt=timestamp(obj.feedAt)
+                                d[index] = obj;
+                            })
+                            self.feedList = d;
                         } else {
 
                         }

@@ -264,6 +264,8 @@ public class PayH5Controller {
                 if(OrderTypeEnum.video_order_type.getKey().equals(order_main.getOrderType()) ||
                         OrderTypeEnum.monthly_order_type.getKey().equals(order_main.getOrderType()) ){
                     order_main.setGetStatus(OrderGetStatusEnum.ALL.getKey());
+                    order_main.setFeedStatus(0);
+                    order_main.setOrderStatus(OrderStatusEnum.FINISH.getKey());
                 }
                 orderMainService.update(order_main);
                 try {
@@ -357,6 +359,8 @@ public class PayH5Controller {
                 if(OrderTypeEnum.video_order_type.getKey().equals(order_main.getOrderType()) ||
                         OrderTypeEnum.monthly_order_type.getKey().equals(order_main.getOrderType()) ){
                     order_main.setGetStatus(OrderGetStatusEnum.ALL.getKey());
+                    order_main.setFeedStatus(0);
+                    order_main.setOrderStatus(OrderStatusEnum.FINISH.getKey());
                 }
                 orderMainService.update(order_main);
                 try {

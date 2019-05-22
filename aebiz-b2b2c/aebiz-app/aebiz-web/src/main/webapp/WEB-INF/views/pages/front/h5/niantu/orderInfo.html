@@ -127,7 +127,7 @@
     <button type="button" onclick="goFeedback()" class="mui-btn mui-btn-primary mui-btn-block">立即评价</button>
 </div>
 <!--#}#-->
-<!--#if(order.payStatus == 3){#-->
+<!--#if(order.payStatus == 3 &&order.orderType == '1'){#-->
 <div style="margin: 10px;">
     <button type="button" onclick="window.location.href='${base!}/open/h5/refunds/orderRefunds.html?orderId=${orderId!}'" class="mui-btn mui-btn-primary mui-btn-block">申请售后</button>
 </div>

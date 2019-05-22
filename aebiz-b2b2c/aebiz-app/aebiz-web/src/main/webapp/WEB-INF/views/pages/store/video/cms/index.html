@@ -247,5 +247,9 @@ layout("/layouts/store.html"){
     $(".js-search-ok").click(function () {
         $('.datatable').DataTable().ajax.reload();
     });
+    $(".js-search-reset").click(function () {
+        $(".js-search-form").resetForm();
+        $('.datatable').DataTable().ajax.reload();
+    });
 </script>
 <!--#}#-->

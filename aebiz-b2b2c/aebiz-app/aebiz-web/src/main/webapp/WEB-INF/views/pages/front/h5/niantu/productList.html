@@ -203,6 +203,7 @@
                                 $("#item1").hide();
                                 $("#item2").hide();
                                 $("#item3").hide();
+                                $("#item4").hide();
                                 $(".selBtn").removeClass("active");
                                 // var t;
                                 // clearTimeout(t)
@@ -271,6 +272,7 @@
                                 $("#item1").hide();
                                 $("#item2").hide();
                                 $("#item3").hide();
+                                $("#item4").hide();
                                 $(".selBtn").removeClass("active");
                             } else {
 
@@ -290,12 +292,23 @@
 
         })
         function chooseSelect(item,a) {
-            $("#item1").hide();
-            $("#item2").hide();
-            $("#item3").hide();
+            var b = $("#"+item).css("display");
+            if(b=='none'){
+                $("#item1").hide();
+                $("#item2").hide();
+                $("#item3").hide();
+                $("#item4").hide();
+                $(".selBtn").removeClass("active");
+                $("#"+item).show();
+                $(a).addClass("active");
+            }else {
+                $("#item1").hide();
+                $("#item2").hide();
+                $("#item3").hide();
+                $("#item4").hide();
+                $(".selBtn").removeClass("active");
+            }
 
-            $("#"+item).show();
-            $(a).addClass("active");
         }
     </script>
 </body>

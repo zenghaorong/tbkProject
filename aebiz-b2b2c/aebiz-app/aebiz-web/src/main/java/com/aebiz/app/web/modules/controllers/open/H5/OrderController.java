@@ -745,12 +745,14 @@ public class OrderController {
     public Result getOrderProductList(String orderId){
         try {
 
+            Order_main order_main = orderMainService.fetch(orderId);
+
             Cnd cndOrder = Cnd.NEW();
             cndOrder.and("orderId","=",orderId);
             List<Order_goods> order_goods = orderGoodsService.query(cndOrder);
 
             for(Order_goods o:order_goods) {
-                if("1".equals(o.getOrderType())||o.getOrderType()==null) {
+                if("1".equals(order_main.getOrderType())) {
                     Cnd imgCnd = Cnd.NEW();
                     imgCnd.and("goodsId", "=", o.getGoodsId());
                     List<Goods_image> imgList = goodsImageService.query(imgCnd);
@@ -758,7 +760,7 @@ public class OrderController {
                         o.setImgUrl(imgList.get(0).getImgAlbum());
                     }
                 }
-                if("2".equals(o.getOrderType())) {
+                if("2".equals(order_main.getOrderType())) {
                     Cms_video cms_video = cmsVideoService.fetch(o.getGoodsId());
                     o.setImgUrl(cms_video.getImageUrl());
                 }

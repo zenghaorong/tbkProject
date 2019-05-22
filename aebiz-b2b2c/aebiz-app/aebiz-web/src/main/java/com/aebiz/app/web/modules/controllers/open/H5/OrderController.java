@@ -679,6 +679,7 @@ public class OrderController {
             //总订单数
             Cnd cndMain = Cnd.NEW();
             cndMain.and("accountId", "=", accountUser.getAccountId());
+            cndMain.and("delFlag","=",false);
             int num = orderMainService.count(cndMain);
             returnMap.put("num",num);
 
@@ -686,6 +687,7 @@ public class OrderController {
             Cnd cndMain1 = Cnd.NEW();
             cndMain1.and("payStatus", "=", 0);
             cndMain1.and("accountId", "=", accountUser.getAccountId());
+            cndMain1.and("delFlag","=",false);
             int num1 = orderMainService.count(cndMain1);
             returnMap.put("num1",num1);
 
@@ -695,6 +697,7 @@ public class OrderController {
             cndMain2.and("payStatus", "=", 3);
             cndMain2.and("deliveryStatus", "=", 0);
             cndMain2.and("accountId", "=", accountUser.getAccountId());
+            cndMain2.and("delFlag","=",false);
             int num2 = orderMainService.count(cndMain2);
             returnMap.put("num2",num2);
 
@@ -705,6 +708,7 @@ public class OrderController {
             cndMain3.and("getStatus", "=", 0);
             cndMain3.and("orderStatus", "<", 5);
             cndMain3.and("accountId", "=", accountUser.getAccountId());
+            cndMain3.and("delFlag","=",false);
             int num3 = orderMainService.count(cndMain3);
             returnMap.put("num3",num3);
 
@@ -715,6 +719,7 @@ public class OrderController {
             cndMain4.and("orderStatus", "=", 5);
             cndMain4.and("feedStatus", "=", 0);
             cndMain4.and("accountId", "=", accountUser.getAccountId());
+            cndMain4.and("delFlag","=",false);
             int num4 = orderMainService.count(cndMain4);
             returnMap.put("num4",num4);
 
@@ -722,7 +727,7 @@ public class OrderController {
             Cnd cndMain5 = Cnd.NEW();
             cndMain5.and("payStatus", "in", "4,6");
             cndMain5.and("accountId", "=", accountUser.getAccountId());
-            cndMain.and("delFlag","=",false);
+            cndMain5.and("delFlag","=",false);
             int num5 = orderMainService.count(cndMain5);
             returnMap.put("num5",num5);
 

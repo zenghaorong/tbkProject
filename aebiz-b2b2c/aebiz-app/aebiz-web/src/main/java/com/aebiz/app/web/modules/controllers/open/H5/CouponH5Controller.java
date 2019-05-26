@@ -212,11 +212,16 @@ public class CouponH5Controller {
             cnd.and("accountId", "=", accountUser.getAccountId() );
             cnd.and("status","=", 0); //未使用
             List<Member_coupon> member_couponList = memberCouponService.query(cnd);
+            List<Member_coupon> member_coupons = new ArrayList<>();
             for(Member_coupon member_coupon : member_couponList) {
                 Sales_coupon sales_coupon = salesCouponService.fetch(member_coupon.getCouponId());
+                if(sales_coupon.getDelFlag()){
+                    continue;
+                }
                 member_coupon.setSales_coupon(sales_coupon);
+                member_coupons.add(member_coupon);
             }
-            return Result.success("ok",member_couponList);
+            return Result.success("ok",member_coupons);
         } catch (Exception e) {
             log.error("获取订单可用优惠劵异常",e);
             return Result.error("fail");

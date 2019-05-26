@@ -29,15 +29,25 @@
                                 <td>订单打折</td>
                                 <!--#}#-->
                             </tr>
+
+                            <!--#if (obj.type=='1') {#-->
                             <tr>
                                 <td>满减抵扣金额</td><td>${obj.deductibleAmount}</td>
                             </tr>
                             <tr>
                                 <td>条件金额</td><td>${obj.conditionAmount}</td>
                             </tr>
+                            <!--#}#-->
+                            <!--#if (obj.type=='2') {#-->
+
+                            <!--#}#-->
+                            <!--#if (obj.type=='3') {#-->
+
+                            <!--#}#-->
                             <tr>
                                 <td>${msg['sales.coupon.column.limit_num']}</td><td>${obj.limit_num}</td>
                             </tr>
+
                             <tr>
                                 <td>优惠劵开始时间</td><td>${@date.getDate(obj.startTime)}</td>
                             </tr>

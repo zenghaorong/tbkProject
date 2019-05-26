@@ -27,6 +27,7 @@
     <ul class="mui-table-view yhq_list">
         <li class="mui-table-view-cell mui-media" v-for="item in couponList" :key="item.id">
             <!--<a :href="'${base!}/open/h5/cms/videoBuyPage.html?id='+item.id">-->
+            <div  v-if="item.sales_coupon!=null">
             <div class="yhq_info">
                 <div>
                 <span class="yhq_name">{{item.sales_coupon.name}}</span>
@@ -34,9 +35,11 @@
                 <span class="yhq_type" v-if="item.sales_coupon.type==2">免运费劵</span>
                 <span class="yhq_type" v-if="item.sales_coupon.type==3">折扣劵</span>
                 </div>
+                <span class="yhq_time">结束时间：{{item.sales_coupon.endTimeStr}}</span>
             </div>
             <div class="yhq_get" v-on:click="receive(item.id)">
                 立即使用
+            </div>
             </div>
             <!--</a>-->
         </li>

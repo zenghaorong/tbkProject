@@ -35,7 +35,7 @@ layout("/layouts/store.html"){
                             下单时间:   <span><!--#if(!isEmpty(obj.orderAt)){#-->${@date.getDate(obj.orderAt)} <!--#}#--></span>
                         </div>
                         <div class="col-md-4" style="padding: 5px 0px">
-                            订单优惠:   <span>￥${obj.freeMoney}</span>
+                            订单优惠:   <span>￥${@money.fenToYuan(obj.freeMoney)}</span>
                         </div>
                         <div class="col-md-4" style="padding: 5px 0px">
                             付款状态:   <span>${@com.aebiz.app.order.modules.models.em.OrderPayStatusEnum.getValue(obj.payStatus)}</span>

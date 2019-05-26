@@ -746,7 +746,7 @@ layout("/layouts/store.html"){
         if(row.orderStatus == 2 || row.orderStatus == 3 || row.orderStatus == 4 ){
             buttonList.push('<div class="order_button"><a class="btn btn-info btn-xs" href="javascript:;" onclick="del(\'' + row.id + '\')">${msg["globals.button.delete"]}</a></div>');
         }
-        if(row.payStatus == 3 &&  row.deliveryStatus == 0){
+        if(row.payStatus == 3 &&  row.deliveryStatus == 0 && row.orderType == 1){
             buttonList.push('<div class="order_button"><a class="btn btn-info btn-xs" href="javascript:;" onclick="sendProduct(\'' + row.id + '\')">发货</a></div>');
         }
         // if(row.orderStatus == 2){

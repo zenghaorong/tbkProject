@@ -241,6 +241,10 @@ public class StoreGoodsListController {
                          @RequestParam("tags")String tags, @RequestParam("images") String images,
                          @RequestParam("products") String products) {
         try {
+            List<Goods_image> list = Json.fromJsonAsList(Goods_image.class, images);
+            if(list==null || list.size()<1){
+                return Result.error("商品图片不能为空");
+            }
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             if (Strings.isNotBlank(saleAt)) {
                 goods.setSaleAt((int) (sdf.parse(saleAt).getTime() / 1000));

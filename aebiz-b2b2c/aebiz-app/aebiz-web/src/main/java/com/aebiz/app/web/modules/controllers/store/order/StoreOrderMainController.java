@@ -5,6 +5,8 @@ import com.aebiz.app.acc.modules.models.Account_user;
 import com.aebiz.app.acc.modules.services.AccountInfoService;
 import com.aebiz.app.acc.modules.services.AccountUserService;
 import com.aebiz.app.alipay.modules.models.AlipayConfig;
+import com.aebiz.app.cms.modules.models.Cms_video;
+import com.aebiz.app.cms.modules.services.CmsVideoService;
 import com.aebiz.app.goods.modules.models.Goods_image;
 import com.aebiz.app.goods.modules.models.Goods_main;
 import com.aebiz.app.goods.modules.models.Goods_product;
@@ -18,10 +20,7 @@ import com.aebiz.app.member.modules.services.MemberAddressService;
 import com.aebiz.app.member.modules.services.MemberUserService;
 import com.aebiz.app.order.commons.vo.OrderCheckBoxStatus;
 import com.aebiz.app.order.modules.models.*;
-import com.aebiz.app.order.modules.models.em.OrderDeliveryStatusEnum;
-import com.aebiz.app.order.modules.models.em.OrderPayStatusEnum;
-import com.aebiz.app.order.modules.models.em.OrderPayTypeEnum;
-import com.aebiz.app.order.modules.models.em.OrderStatusEnum;
+import com.aebiz.app.order.modules.models.em.*;
 import com.aebiz.app.order.modules.services.*;
 import com.aebiz.app.shop.modules.models.Shop_account;
 import com.aebiz.app.shop.modules.models.Shop_express;
@@ -138,6 +137,9 @@ public class StoreOrderMainController {
 
     @Autowired
     private WxPayService wxPayService;
+
+    @Autowired
+    private CmsVideoService cmsVideoService;
 
     @RequestMapping("")
     @RequiresPermissions("store.order.manager.list")
@@ -367,15 +369,28 @@ public class StoreOrderMainController {
                 List<Order_goods> orderGoodsList = orderMain.getGoodsList();
                 if(orderGoodsList != null){
                     Integer goodsPayMoney = 0;
-                    for(Order_goods orderGoods:orderGoodsList){
-                        goodsPayMoney+=orderGoods.getSalePrice();
-                        Cnd imgCnd = Cnd.NEW();
-                        imgCnd.and("goodsId","=",orderGoods.getGoodsId());
-                        List<Goods_image> imgList = goodsImageService.query(imgCnd);
-                        if(imgList!=null&&imgList.size()>0){
-                            orderGoods.setImgUrl(imgList.get(0).getImgAlbum());
+                    //视频订单
+                    if(OrderTypeEnum.video_order_type.getKey().equals(orderMain.getOrderType())) {
+                        if (orderGoodsList != null && orderGoodsList.size() > 0) {
+                            for (int i = 0; i < orderGoodsList.size(); i++) {
+                                Order_goods good = orderGoodsList.get(i);
+                                Cms_video cms_video = cmsVideoService.fetch(good.getProductId());
+                                good.setImgUrl(cms_video.getImageUrl());
+                            }
+
+                        }
+                    }else {
+                        for(Order_goods orderGoods:orderGoodsList){
+                            goodsPayMoney+=orderGoods.getSalePrice();
+                            Cnd imgCnd = Cnd.NEW();
+                            imgCnd.and("goodsId","=",orderGoods.getGoodsId());
+                            List<Goods_image> imgList = goodsImageService.query(imgCnd);
+                            if(imgList!=null&&imgList.size()>0){
+                                orderGoods.setImgUrl(imgList.get(0).getImgAlbum());
+                            }
                         }
                     }
+
                     orderMain.setGoodsPayMoney(goodsPayMoney);
                 }
 
@@ -400,6 +415,7 @@ public class StoreOrderMainController {
             orderMainService.fetchLinks(orderMain,"accountInfo");
             Account_user accountUser = accountUserService.fetch(Cnd.where("accountId","=",orderMain.getAccountId()));
             orderMain.setAccountUser(accountUser);
+            orderMain.setFreeMoney(orderMain.getGoodsMoney() - (orderMain.getPayMoney()-orderMain.getFreightMoney()));
             req.setAttribute("obj", orderMain);
             List<Order_goods> orderGoodsList = orderGoodsService.query(Cnd.where("delFlag","=",false).and("orderId","=",id));
             //加载订单商品信息

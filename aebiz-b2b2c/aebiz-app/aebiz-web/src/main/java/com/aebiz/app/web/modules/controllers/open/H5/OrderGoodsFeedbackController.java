@@ -165,6 +165,18 @@ public class OrderGoodsFeedbackController {
     public Result saveFeedback(String orderGoodId,Integer appScore,String content){
         try {
             Order_goods order_goods = orderGoodsService.fetch(orderGoodId);
+
+            Cnd cnd = Cnd.NEW();
+            cnd.and("orderId","=",order_goods.getOrderId());
+            cnd.and("accountId","=",order_goods.getAccountId());
+            cnd.and("goodsId","=",order_goods.getGoodsId());
+            List<Order_goods_feedback> list = orderGoodsFeedbackService.query(cnd);
+            if(list!=null){
+                if(list.size()>0){
+                    return Result.error("您已评价过此订单");
+                }
+            }
+
             Order_goods_feedback Order_goods_feedback = new Order_goods_feedback();
             Order_goods_feedback.setOrderId(order_goods.getOrderId());
             Order_goods_feedback.setAccountId(order_goods.getAccountId());

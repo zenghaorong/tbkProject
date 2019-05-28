@@ -115,22 +115,22 @@ layout("/layouts/store.html"){
                                 <th>销售价</th>
                                 <th>购买价</th>
                                 <th>数量</th>
-                                <th>优惠</th>
-                                <th>配送费</th>
-                                <th>应付总金额</th>
+                                <!--<th>优惠</th>-->
+                                <!--<th>配送费</th>-->
+                                <!--<th>应付总金额</th>-->
                             </tr>
                             </thead>
                             <tbody>
                             <!--#for(o in orderGoods ){  #-->
                             <tr style="border-bottom: 1px solid #dfe6ec;">
-                                <td>${o.goodsName} ${o.name}</td>
+                                <td>${o.goodsName}</td>
                                 <td>￥${@money.fenToYuan(o.salePrice)}</td>
                                 <td>￥${@money.fenToYuan(o.buyPrice)}</td>
                                 <td>${o.buyNum}</td>
-                                <td>￥${@money.fenToYuan(o.freeMoney)}</td>
+                                <!--<td>￥${@money.fenToYuan(o.freeMoney)}</td>-->
                                 <!--# if(oLP.first ){ #-->    <!--border-bottom: 1px solid #dfe6ec;-->
-                                <td rowspan="${@orderGoods.size()}" style="text-align: center;border: 1px solid #dfe6ec;vertical-align: middle;">￥${@money.fenToYuan(obj.freightMoney)}</td>
-                                <td rowspan="${@orderGoods.size()}" style="text-align: center;border: 1px solid #dfe6ec;vertical-align: middle;">￥${@money.fenToYuan(obj.payMoney)}</td>
+                                <!--<td rowspan="${@orderGoods.size()}" style="text-align: center;border: 1px solid #dfe6ec;vertical-align: middle;">￥${@money.fenToYuan(obj.freightMoney)}</td>-->
+                                <!--<td rowspan="${@orderGoods.size()}" style="text-align: center;border: 1px solid #dfe6ec;vertical-align: middle;">￥${@money.fenToYuan(obj.payMoney)}</td>-->
                                 <!--# }#-->
                             </tr>
                             <!--#}#-->

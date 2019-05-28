@@ -283,7 +283,12 @@ public class PayH5Controller {
                     for (Order_goods good: goods
                          ) {
                         Goods_product gp = goodsProductService.fetch(good.getProductId());
-                        gp.setSaleNumMonth(good.getBuyNum());
+                        Integer num = gp.getSaleNumMonth();
+                        if(num == null){
+                            num = 0;
+                        }
+                        num = num + good.getBuyNum();
+                        gp.setSaleNumMonth(num);
                         goodsProductService.update(gp);
                     }
 
@@ -380,7 +385,12 @@ public class PayH5Controller {
                     for (Order_goods good: goods
                     ) {
                         Goods_product gp = goodsProductService.fetch(good.getProductId());
-                        gp.setSaleNumMonth(good.getBuyNum());
+                        Integer num = gp.getSaleNumMonth();
+                        if(num == null){
+                            num = 0;
+                        }
+                        num = num + good.getBuyNum();
+                        gp.setSaleNumMonth(num);
                         goodsProductService.update(gp);
                     }
 

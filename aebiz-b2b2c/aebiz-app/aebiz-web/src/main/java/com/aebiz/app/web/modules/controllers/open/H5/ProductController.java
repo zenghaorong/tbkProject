@@ -6,6 +6,8 @@ import com.aebiz.app.goods.modules.models.Goods_product;
 import com.aebiz.app.goods.modules.services.GoodsImageService;
 import com.aebiz.app.goods.modules.services.GoodsProductService;
 import com.aebiz.app.goods.modules.services.GoodsService;
+import com.aebiz.app.order.modules.services.OrderGoodsService;
+import com.aebiz.app.order.modules.services.OrderMainService;
 import com.aebiz.app.store.modules.models.Store_goodsclass;
 import com.aebiz.app.store.modules.services.StoreGoodsclassService;
 import com.aebiz.app.web.commons.utils.CalculateUtils;
@@ -51,6 +53,12 @@ public class ProductController {
 
     @Autowired
     private StoreGoodsclassService storeGoodsclassService;
+
+    @Autowired
+    private OrderGoodsService orderGoodsService;
+
+    @Autowired
+    private OrderMainService orderMainService;
 
     /**
      * 进入商品列表页  或 进入宝妈专区

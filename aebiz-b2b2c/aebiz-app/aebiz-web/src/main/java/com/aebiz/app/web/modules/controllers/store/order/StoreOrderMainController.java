@@ -363,7 +363,11 @@ public class StoreOrderMainController {
             for(Order_main orderMain :orderMainList){
                 Account_info accountInfo = orderMain.getAccountInfo();
                 if(accountInfo != null){
-                    Account_user user = accountUserService.getField("^(loginname|mobile)$", Cnd.where("accountId", "=", accountInfo.getId()));
+                    Account_user user = accountUserService.getField("^(loginname|mobile|accountId)$", Cnd.where("accountId", "=", accountInfo.getId()));
+                    Account_info account_info = accountInfoService.fetch(user.getAccountId());
+                    if(account_info!=null && Strings.isNotBlank(account_info.getNickname())) {
+                        user.setLoginname(account_info.getNickname());
+                    }
                     orderMain.setAccountUser(user);
                 }
                 List<Order_goods> orderGoodsList = orderMain.getGoodsList();
@@ -376,6 +380,20 @@ public class StoreOrderMainController {
                                 Order_goods good = orderGoodsList.get(i);
                                 Cms_video cms_video = cmsVideoService.fetch(good.getProductId());
                                 good.setImgUrl(cms_video.getImageUrl());
+                            }
+
+                        }
+                    }else if(OrderTypeEnum.monthly_order_type.getKey().equals(orderMain.getOrderType())){
+                        if (orderGoodsList != null && orderGoodsList.size() > 0) {
+                            for (int i = 0; i < orderGoodsList.size(); i++) {
+                                Order_goods good = orderGoodsList.get(i);
+                                Double goodsMoney = CalculateUtils.mul(orderMain.getPayMoney(),100);
+                                good.setSalePrice(goodsMoney.intValue());
+                                good.setBuyPrice(goodsMoney.intValue());
+                                good.setPayMoney(goodsMoney.intValue());
+                                good.setImgUrl("http://106.12.95.24/group1/M00/00/04/wKgABFzr2KmAbXYjAAF-Y36zDYU929.png");
+                                good.setGoodsName("会员包月（"+orderMain.getMonthlyNum()+"个月）");
+                                good.setName("会员包月（"+orderMain.getMonthlyNum()+"个月）");
                             }
 
                         }
@@ -418,6 +436,21 @@ public class StoreOrderMainController {
             orderMain.setFreeMoney(orderMain.getGoodsMoney() - (orderMain.getPayMoney()-orderMain.getFreightMoney()));
             req.setAttribute("obj", orderMain);
             List<Order_goods> orderGoodsList = orderGoodsService.query(Cnd.where("delFlag","=",false).and("orderId","=",id));
+            if(OrderTypeEnum.monthly_order_type.getKey().equals(orderMain.getOrderType())){
+                if (orderGoodsList != null && orderGoodsList.size() > 0) {
+                    for (int i = 0; i < orderGoodsList.size(); i++) {
+                        Order_goods good = orderGoodsList.get(i);
+                        Double goodsMoney = CalculateUtils.mul(orderMain.getPayMoney(),100);
+                        good.setSalePrice(goodsMoney.intValue());
+                        good.setBuyPrice(goodsMoney.intValue());
+                        good.setPayMoney(goodsMoney.intValue());
+                        good.setImgUrl("http://106.12.95.24/group1/M00/00/04/wKgABFzr2KmAbXYjAAF-Y36zDYU929.png");
+                        good.setGoodsName("会员包月（"+orderMain.getMonthlyNum()+"个月）");
+                        good.setName("会员包月（"+orderMain.getMonthlyNum()+"个月）");
+                    }
+
+                }
+            }
             //加载订单商品信息
             req.setAttribute("orderGoods",orderGoodsList);
             //物流信息

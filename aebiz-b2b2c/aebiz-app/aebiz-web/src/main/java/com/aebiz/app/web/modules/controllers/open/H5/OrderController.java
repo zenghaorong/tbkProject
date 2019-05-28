@@ -487,7 +487,6 @@ public class OrderController {
         Order_goods order_goods = new Order_goods();
         order_main.setAccountId(accountUser.getAccountId());
         order_main.setStoreId(cms_video.getStoreId());
-        order_main.setGoodsMoney(cms_video.getPrice().intValue());
         order_main.setGoodsFreeMoney(0);
 
 
@@ -508,9 +507,13 @@ public class OrderController {
             }
             order_main.setPayMoney(payMoney); //单位是分
             order_main.setMonthlyNum(monthlyNum);
+            order_main.setGoodsMoney(payMoney);
         }else {
             order_main.setOrderType(OrderTypeEnum.video_order_type.getKey());
             order_main.setPayMoney(totalMoney); //单位是分
+            //视频和会员包月价格转换为分
+            Double goodsMoney = CalculateUtils.mul(cms_video.getPrice(),100);
+            order_main.setGoodsMoney(goodsMoney.intValue());
         }
         order_main.setVideoId(videoId);
         Order_main order = orderMainService.insert(order_main);
@@ -528,6 +531,8 @@ public class OrderController {
         order_goods.setBuyPrice(totalMoney);
         if("3".equals(type)) {
             order_main.setOrderType(OrderTypeEnum.monthly_order_type.getKey());
+            order_goods.setGoodsName("会员包月（"+monthlyNum+"个月）");
+            order_goods.setName("会员包月（"+monthlyNum+"个月）");
         }else {
             order_main.setOrderType(OrderTypeEnum.video_order_type.getKey());
         }

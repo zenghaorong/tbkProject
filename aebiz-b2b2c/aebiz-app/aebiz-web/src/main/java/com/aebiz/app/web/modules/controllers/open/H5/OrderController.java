@@ -40,6 +40,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.util.Strings;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.nutz.dao.Cnd;
@@ -121,7 +122,7 @@ public class OrderController {
             return "pages/front/h5/niantu/login";
         }
         String productList = request.getParameter("productList");
-//        String cartIds = request.getParameter("cartIds");
+        String cartIds = request.getParameter("cartIds");
 //        try{
 //            String[] ids = StringUtils.split(cartIds, ";");
 //
@@ -142,6 +143,7 @@ public class OrderController {
 //        request.setAttribute("productIds",productIds);
 //        request.setAttribute("num",num);
         request.setAttribute("productList",productList);
+        request.setAttribute("cartIds",cartIds);
         String freight = sysDictService.getNameByCode("freight");
         BigDecimal b1 = new BigDecimal(freight);
         Double freightMoney = b1.doubleValue();
@@ -257,7 +259,7 @@ public class OrderController {
      * 进入收银台
      */
     @RequestMapping("/checkoutCounter.html")
-    public String checkoutCounter(HttpServletRequest request,String productList,String addressId,String couponId,String integralMoney) {
+    public String checkoutCounter(HttpServletRequest request,String productList,String addressId,String couponId,String integralMoney,String cartIds) {
 
         List<Map<String,Object>> list = (List<Map<String, Object>>) JSON.parse(productList);
 
@@ -354,6 +356,19 @@ public class OrderController {
         order.setFreightMoney(money.get("freightMoney").intValue());
         orderMainService.update(order);
         request.setAttribute("order", order);
+
+        //清楚购物车
+        if(Strings.isNotEmpty(cartIds)) {
+            try {
+                String[] ids = StringUtils.split(cartIds, ";");
+                for (int i = 0; i < ids.length; i++) {
+                    memberCartService.delete(ids[i]);
+                }
+            } catch (Exception e) {
+                log.error("购物车清除异常", e);
+            }
+        }
+
         return "pages/front/h5/niantu/checkoutCounter";
     }
 

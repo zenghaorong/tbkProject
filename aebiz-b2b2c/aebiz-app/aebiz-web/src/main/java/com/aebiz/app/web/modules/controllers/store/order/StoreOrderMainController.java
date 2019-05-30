@@ -317,7 +317,7 @@ public class StoreOrderMainController {
                 cnd.and("orderStatus","=",OrderStatusEnum.ACTIVE.getKey());
             }
         }
-        cnd.and("delFlag","=",false);
+//        cnd.and("delFlag","=",false);
         switch (status){
             case 0:
                 cnd.desc("opAt");

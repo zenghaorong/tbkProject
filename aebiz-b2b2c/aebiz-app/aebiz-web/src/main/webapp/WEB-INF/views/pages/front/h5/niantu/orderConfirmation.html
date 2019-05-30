@@ -336,7 +336,8 @@
                     },
                     success:function(data){
                         if (data.code == 0) {
-                            window.location.href="${base!}/open/h5/order/checkoutCounter.html?productList="+encodeURIComponent(json)+"&addressId="+addressId+"&couponId="+couponId+"&integralMoney="+integral;
+                            window.location.href="${base!}/open/h5/order/checkoutCounter.html?productList="+encodeURIComponent(json)+"&addressId="+addressId
+                                +"&couponId="+couponId+"&integralMoney="+integral+"&cartIds=${cartIds!}";
                         } else {
                             layer.open({
                                 content: "库存不足!"

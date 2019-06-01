@@ -127,7 +127,7 @@ layout("/layouts/store.html"){
                     d.p_checkStatus = $("[name='p_checkStatus']", $searchForm).val()||"";
                 }
             },
-            "order": [[0, "desc"]],
+            // "order": [[0, "desc"]],
             "columns": [
                     {"data": "name", "bSortable": true},
                     {"data": "codeprefix", "bSortable": true},
@@ -213,7 +213,7 @@ layout("/layouts/store.html"){
         });
 
         $(".js-search-ok").click(function () {
-            $('.datatable').DataTable().ajax.reload();
+            datatable.ajax.reload();
         });
 
         $(".js-search-reset").click(function () {

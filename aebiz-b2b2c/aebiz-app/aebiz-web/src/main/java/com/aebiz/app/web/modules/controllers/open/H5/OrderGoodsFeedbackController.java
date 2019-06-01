@@ -189,11 +189,23 @@ public class OrderGoodsFeedbackController {
             Order_goods_feedback.setFeedNote(content);
             orderGoodsFeedbackService.insert(Order_goods_feedback);
 
-            Order_main order_main = new Order_main();
-            order_main.setId(order_goods.getOrderId());
-            order_main.setFeedStatus(OrderFeedStatusEnum.FEED.getKey());
-            //更新订单评价状态
-            orderMainService.updateIgnoreNull(order_main);
+            //查询有几个商品要评价
+            Cnd cndgood = Cnd.NEW();
+            cndgood.and("orderId","=",order_goods.getOrderId());
+            int goodNum = orderGoodsService.count(cndgood);
+            //查询已评价了几个商品
+            Cnd cndFee = Cnd.NEW();
+            cndFee.and("orderId","=",order_goods.getOrderId());
+            cndFee.and("accountId","=",order_goods.getAccountId());
+            int feeCount = orderGoodsFeedbackService.count(cndFee);
+
+            if(goodNum == feeCount) {
+                Order_main order_main = new Order_main();
+                order_main.setId(order_goods.getOrderId());
+                order_main.setFeedStatus(OrderFeedStatusEnum.FEED.getKey());
+                //更新订单评价状态
+                orderMainService.updateIgnoreNull(order_main);
+            }
             return Result.success("ok");
         }catch (Exception e){
             log.error("保存当前商品评价信息异常",e);

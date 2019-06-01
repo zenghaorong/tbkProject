@@ -135,7 +135,7 @@ Released under the UploadiFive Standard License <http://www.uploadify.com/upload
                         $data.queue.selected = limit;
                         if (($data.queue.count + limit) > settings.queueSizeLimit && settings.queueSizeLimit !== 0) {
                             if ($.inArray('onError', settings.overrideEvents) < 0) {
-                                alert('The maximum number of queue items has been reached (' + settings.queueSizeLimit + ').  Please select fewer files.');
+                                alert('最大只能上传 (' + settings.queueSizeLimit + ')张');
                             }
                             // Trigger the error event
                             if (typeof settings.onError === 'function') {
@@ -189,7 +189,7 @@ Released under the UploadiFive Standard License <http://www.uploadify.com/upload
                     if (($data.queue.count + limit) > settings.queueSizeLimit && settings.queueSizeLimit !== 0) {
                         // Check if the queueSizeLimit was reached
                         if ($.inArray('onError', settings.overrideEvents) < 0) {
-                            alert('The maximum number of queue items has been reached (' + settings.queueSizeLimit + ').  Please select fewer files.');
+                            alert('最大只能上传(' + settings.queueSizeLimit + ')张');
                         }
                         // Trigger the onError event
                         if (typeof settings.onError === 'function') {

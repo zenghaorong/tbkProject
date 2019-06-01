@@ -14,6 +14,7 @@ import com.aebiz.app.member.modules.services.MemberUserService;
 import com.aebiz.app.order.modules.models.Order_main;
 import com.aebiz.app.order.modules.services.OrderMainService;
 import com.aebiz.app.shop.modules.services.ShopAreaService;
+import com.aebiz.app.store.modules.models.Store_user;
 import com.aebiz.app.web.commons.log.annotation.SLog;
 import com.aebiz.baseframework.base.Result;
 import com.aebiz.baseframework.page.OffsetPager;
@@ -24,6 +25,7 @@ import com.aebiz.baseframework.view.annotation.SJson;
 import com.aebiz.commons.utils.DateUtil;
 import com.aebiz.commons.utils.StringUtil;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.crypto.RandomNumberGenerator;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
@@ -44,6 +46,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -125,12 +128,15 @@ public class MemberUserController {
         }
         log.debug(cnd);
 
+        cnd.and("mu.delFlag","=",false);
         Pager pager = new OffsetPager(dataTable.getStart(), dataTable.getLength());  // 设置分页
-        List<Member> list = queryMember(cnd.and("mu.delFlag","=",false), pager);                                  // 获取会员列表的数据
+        List<Member> list = queryMember(cnd, pager);                                  // 获取会员列表的数据
+
+        int count = queryMemberCount(cnd);
 
         /*返回到页面的对象,datatable接受的格式只能是这样,obj的key是固定死的,不能改变*/
         NutMap obj = new NutMap();
-        obj.put("recordsFiltered", list.size());
+        obj.put("recordsFiltered", count);
         obj.put("data", list);
         obj.put("draw", dataTable.getDraw());
         obj.put("recordsTotal", dataTable.getLength());
@@ -326,4 +332,26 @@ public class MemberUserController {
         memberUserService.dao().execute(sql);
         return sql.getList(Member.class);
     }
+
+    // 查询会员列表总条数
+    private int queryMemberCount(Cnd cnd) {
+        Sql sql = Sqls.queryRecord("SELECT\n" +
+                   " mu.accountId "+
+                "FROM\n" +
+                "\tmember_account AS  mu\n" +
+                "LEFT JOIN account_info AS ai ON mu.accountId = ai.id\n" +
+                "LEFT JOIN account_user AS au ON mu.accountId = au.accountId\n" +
+                "$condition");
+        if (cnd != null) {
+            sql.setCondition(cnd);
+        } else {
+            sql.setCondition(Cnd.NEW());
+        }
+
+        log.debug(sql);
+        memberUserService.dao().execute(sql);
+        int count = sql.getList(String.class).size();
+        return count;
+    }
+
 }

@@ -27,7 +27,7 @@ layout("/layouts/store.html"){
                     <div class="row">
                         <div class="input-group">
                             <input class="form-control" id="query" type="text"
-                                   placeholder="${msg['member.user.query.tip']}">
+                                   placeholder="手机号">
                             <span class="input-group-addon btn-primary" id="searchBtn">
                                 <span class="ti-search"></span>
                             </span>
@@ -123,7 +123,7 @@ layout("/layouts/store.html"){
                     d.queryStr = $("#query").val();
                 }
             },
-            "order": [[0, "asc"]],
+            // "order": [[0, "asc"]],
             "columns": [
                 {"data": "accountid","visible": false, "bSortable": true},
                 {"data": "username", "sortable": true},

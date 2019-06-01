@@ -252,16 +252,18 @@
             });
     }
     function updatePrice(e) {
-        var price = 0 ;
-        $("input[type='checkbox']:checked").each(function(index,item){
-            var n = $(this).parent().siblings().children("input[type='number']").val();
-            price =price+  $(this).siblings("span").text()*1*n;
+        window.setTimeout(function () {
+            var price = 0 ;
+            $("input[type='checkbox']:checked").each(function(index,item){
+                var n = $(this).parent().siblings().children("input[type='number']").val();
+                price =price+  $(this).siblings("span").text()*1*n;
 
-        });
-        if(price!=0){
-            var totalMoney = price.toFixed(2);
-            $("#totalMoney").html(totalMoney+"元");
-        }
+            });
+            if(price!=0){
+                var totalMoney = price.toFixed(2);
+                $("#totalMoney").html(totalMoney+"元");
+            }
+        },500);
     }
     function delCart() {
         var cartIds ="";
@@ -318,7 +320,7 @@
                     window.location.href="${base!}/open/h5/order/orderConfirmation.html?productList="+encodeURIComponent(data.data)+"&cartIds="+cartIds;
                 }else {
                     layer.open({
-                        content: "库存不足!"
+                        content: data.msg
                         ,skin: 'msg'
                         ,time: 2 //2秒后自动关闭
                     });

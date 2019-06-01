@@ -194,7 +194,8 @@
                         dataType:"JSON",
                         data:{
                             key:key,
-                            priceArea:priceArea
+                            priceArea:priceArea,
+                            goodsClass:'${goodsClass!}'
                         },
                         success:function(data){
                             if (data.code == 0) {
@@ -263,7 +264,8 @@
                         dataType:"JSON",
                         data:{
                             key:key,
-                            sortType:sortType
+                            sortType:sortType,
+                            goodsClass:'${goodsClass!}'
                         },
                         success:function(data){
                             if (data.code == 0) {

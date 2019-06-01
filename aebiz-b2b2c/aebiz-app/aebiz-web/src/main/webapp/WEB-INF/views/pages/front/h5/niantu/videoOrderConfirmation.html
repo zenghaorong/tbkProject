@@ -142,7 +142,7 @@
             border: 0;background-color:red;" v-on:click="save()">立即支付</button>
             <button type="button" style="width: 70%;top: 0px;line-height:1;border: 0;background-color:white;"
                     class="mui-btn mui-btn-primary" id="review">
-                <span style="color: black;">应付:</span><span style="color: red;padding-left: 10px;">{{zongPrice}}元</span>
+                <span style="color: black;">应付:</span><span id="zongPriceSp" style="color: red;padding-left: 10px;">{{zongPrice}}元</span>
             </button>
         </div>
     </nav>
@@ -169,6 +169,7 @@
             zongPrice2:0,
             zongPrice3:'${payMoney!}',
             zongPrice4:'${payMoney!}',
+            zongPrice5:0,
             yunPrice:0,
             coupons:[],
             couponId:'',
@@ -199,7 +200,7 @@
                         if (data.code == 0) {
                             self.videoInfo = data.data;
                             self.zongPrice = data.data.price;
-                            zongPrice2=self.zongPrice;
+                            self.zongPrice2=self.zongPrice;
                             self.getMyOrderCoupon();
                         } else {
 
@@ -248,8 +249,11 @@
                     });
                     $("#integralNum").val(totalIntegral);
                 }
-                this.zongPrice=self.zongPrice2;
-                if(integral/(this.integralMoney*1)>=self.zongPrice2){
+                // this.zongPrice=this.zongPrice2;
+                if(integral == ""){
+                    integral = 0;
+                }
+                if(integral/(this.integralMoney*1)>=this.zongPrice){
                     layer.open({
                         content: "兑换积分数量不能大于或等于商品总价!"
                         ,skin: 'msg'
@@ -257,7 +261,7 @@
                     });
                     return;
                 }
-                this.zongPrice=this.zongPrice-integral/(this.integralMoney*1);
+                this.zongPrice=this.zongPrice5-integral/(this.integralMoney*1);
                 this.zongPrice=this.zongPrice.toFixed(2);
             },
             useIntegral2:function(){
@@ -311,8 +315,10 @@
                 var j = self.sales_coupon;
                 //满减劵
                 if(j.type == '1'){
-                    self.zongPrice = self.zongPrice - j.conditionAmount;
-                    zongPrice2 =self.zongPrice;
+                    self.zongPrice=self.zongPrice2
+                    self.zongPrice = self.zongPrice - j.deductibleAmount;
+                    self.zongPrice5 = self.zongPrice;
+                    self.useIntegral();
                 }
             },
             save:function () {
@@ -326,9 +332,10 @@
         },
         watch:{     //监听器
             couponId:function () {
-                console.log("监听器开始执行：couponId")
-                for(var i=0;i++;i<this.coupons.length){
+                console.log("监听器开始执行：couponId"+this.couponId)
+                for(var i=0;i<this.coupons.length;i++){
                     var id = this.coupons[i].sales_coupon.id;
+                    console.log("循环id:"+id)
                     if(id == this.couponId){
                         this.sales_coupon = this.coupons[i].sales_coupon;
                     }

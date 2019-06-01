@@ -20,6 +20,7 @@ import com.aebiz.app.member.modules.services.MemberAddressService;
 import com.aebiz.app.member.modules.services.MemberCartService;
 import com.aebiz.app.member.modules.services.MemberCouponService;
 import com.aebiz.app.order.modules.models.Order_goods;
+import com.aebiz.app.order.modules.models.Order_goods_feedback;
 import com.aebiz.app.order.modules.models.Order_main;
 import com.aebiz.app.order.modules.models.Order_pay_refunds;
 import com.aebiz.app.order.modules.models.em.OrderPayStatusEnum;
@@ -100,8 +101,6 @@ public class OrderController {
 
     @Autowired
     private MemberIntegralDetailService memberIntegralDetailService;
-
-
 
     @Autowired
     private SalesCouponService salesCouponService;
@@ -588,6 +587,15 @@ public class OrderController {
                         return Result.error(-1,"库存不足！");
                     }
                 }
+
+                //判断库存
+                Goods_main goods_main = goodsService.fetch(cart.getGoodsId());
+                if(goods_main!=null){
+                    if(!goods_main.isSale()){
+                        return Result.error(-1,goods_main.getName()+"，已下架");
+                    }
+                }
+
                 pList.add(p);
             }
         }catch (Exception e){

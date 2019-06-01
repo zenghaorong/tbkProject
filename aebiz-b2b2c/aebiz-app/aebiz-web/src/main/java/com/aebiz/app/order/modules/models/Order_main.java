@@ -304,6 +304,11 @@ public class Order_main extends BaseModel implements Serializable {
     @ColDefine(type = ColType.VARCHAR, width = 2)
     private String isSend;
 
+    @Column
+    @Comment("下单扣除积分")
+    @ColDefine(type = ColType.INT, width = 6)
+    private Integer minusPoints;
+
 
 
     @Many(field = "orderId")
@@ -349,6 +354,14 @@ public class Order_main extends BaseModel implements Serializable {
             orderTypeName="视频包月订单";
         }
         return orderTypeName;
+    }
+
+    public Integer getMinusPoints() {
+        return minusPoints;
+    }
+
+    public void setMinusPoints(Integer minusPoints) {
+        this.minusPoints = minusPoints;
     }
 
     public String getIsSend() {

@@ -261,7 +261,11 @@
                     });
                     return;
                 }
-                this.zongPrice=this.zongPrice5-integral/(this.integralMoney*1);
+                if(this.zongPrice5!=0 && this.zongPrice5!=null &&this.zongPrice5!='') {
+                    this.zongPrice = this.zongPrice5 - integral / (this.integralMoney * 1);
+                }else {
+                    this.zongPrice = this.zongPrice - integral / (this.integralMoney * 1);
+                }
                 this.zongPrice=this.zongPrice.toFixed(2);
             },
             useIntegral2:function(){

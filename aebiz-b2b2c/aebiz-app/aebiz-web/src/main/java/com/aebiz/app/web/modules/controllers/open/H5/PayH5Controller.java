@@ -6,6 +6,9 @@ import com.aebiz.app.alipay.modules.models.AlipayConfig;
 import com.aebiz.app.alipay.modules.service.AlipayService;
 import com.aebiz.app.goods.modules.models.Goods_product;
 import com.aebiz.app.goods.modules.services.GoodsProductService;
+import com.aebiz.app.integral.modules.models.Member_Integral;
+import com.aebiz.app.integral.modules.models.Member_Integral_Detail;
+import com.aebiz.app.integral.modules.services.MemberIntegralDetailService;
 import com.aebiz.app.integral.modules.services.MemberIntegralService;
 import com.aebiz.app.order.modules.models.Order_goods;
 import com.aebiz.app.order.modules.models.Order_main;
@@ -25,6 +28,7 @@ import com.aebiz.baseframework.view.annotation.SJson;
 import com.alibaba.fastjson.JSON;
 import com.alipay.api.internal.util.AlipaySignature;
 import net.sf.json.JSONObject;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
@@ -85,6 +89,8 @@ public class PayH5Controller {
     @Autowired
     private MemberIntegralService memberIntegralService;
 
+    @Autowired
+    private MemberIntegralDetailService memberIntegralDetailService;
 
 
     /***
@@ -283,17 +289,26 @@ public class PayH5Controller {
                     for (Order_goods good: goods
                          ) {
                         Goods_product gp = goodsProductService.fetch(good.getProductId());
-                        Integer num = gp.getSaleNumMonth();
-                        if(num == null){
-                            num = 0;
+                        if(gp!=null) {
+                            Integer num = gp.getSaleNumMonth();
+                            if (num == null) {
+                                num = 0;
+                            }
+                            num = num + good.getBuyNum();
+                            gp.setSaleNumMonth(num);
+                            goodsProductService.update(gp);
                         }
-                        num = num + good.getBuyNum();
-                        gp.setSaleNumMonth(num);
-                        goodsProductService.update(gp);
                     }
 
                 }catch (Exception e){
                     log.error("更新商品销量异常",e);
+                }
+
+                //扣除积分
+                try{
+                    minusPoints(order_main);
+                }catch (Exception e){
+                    log.error("下单扣除积分时异常",e);
                 }
 
                 return "success";	//请不要修改或删除
@@ -385,17 +400,26 @@ public class PayH5Controller {
                     for (Order_goods good: goods
                     ) {
                         Goods_product gp = goodsProductService.fetch(good.getProductId());
-                        Integer num = gp.getSaleNumMonth();
-                        if(num == null){
-                            num = 0;
+                        if(gp!=null) {
+                            Integer num = gp.getSaleNumMonth();
+                            if (num == null) {
+                                num = 0;
+                            }
+                            num = num + good.getBuyNum();
+                            gp.setSaleNumMonth(num);
+                            goodsProductService.update(gp);
                         }
-                        num = num + good.getBuyNum();
-                        gp.setSaleNumMonth(num);
-                        goodsProductService.update(gp);
                     }
 
                 }catch (Exception e){
                     log.error("更新商品销量异常",e);
+                }
+
+                //扣除积分
+                try{
+                    minusPoints(order_main);
+                }catch (Exception e){
+                    log.error("下单扣除积分时异常",e);
                 }
 
                 return success;
@@ -409,6 +433,31 @@ public class PayH5Controller {
         }
     }
 
+    //        支付完后回调扣除积分
+    private void minusPoints(Order_main order_main){
+        int im=0;
+        if(order_main.getMinusPoints()!=null){
+            im = order_main.getMinusPoints();
+        }
+        if(im>0){
+            Cnd cnd3 = Cnd.NEW();
+            cnd3.and("delFlag", "=", false);
+            cnd3.and("customerUuid","=",order_main.getAccountId());
+            List<Member_Integral> list=memberIntegralService.query(cnd3);
+            if(list!=null&&list.size()>0){
+                Member_Integral memIntegral = list.get(0);
+                memIntegral.setUseAbleIntegral(memIntegral.getUseAbleIntegral()-im);
+                memberIntegralService.update(memIntegral);
+                Member_Integral_Detail mid = new Member_Integral_Detail();
+                mid.setIntegralDesc("购物减积分");
+                mid.setIntegralType(4);
+                mid.setCustomerUuid(order_main.getAccountId());
+                mid.setAddIntegral(im);
+                memberIntegralDetailService.insert(mid);
+            }
+            log.info("回调积分扣除记录添加成功");
+        }
+    }
 
 
 

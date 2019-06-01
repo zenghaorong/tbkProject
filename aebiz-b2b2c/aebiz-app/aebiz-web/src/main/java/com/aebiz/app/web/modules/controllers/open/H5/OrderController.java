@@ -353,6 +353,7 @@ public class OrderController {
         order.setPayMoney(money.get("totalMoney").intValue() +money.get("freightMoney").intValue() );
 //                order_main.setPayMoney(1); //先写死一个测试金额
         order.setFreightMoney(money.get("freightMoney").intValue());
+        order.setMinusPoints(im);//下单扣除积分
         orderMainService.update(order);
         request.setAttribute("order", order);
 
@@ -460,8 +461,10 @@ public class OrderController {
                 }
             }
         }
+        int i1 = 0;
         if(StringUtils.isNotEmpty(integralMoney)){
-            int i1 = Integer.parseInt(integralMoney);
+            i1 = Integer.parseInt(integralMoney);
+//            下单扣除积分
             if(i1>0){
                 Cnd cnd3 = Cnd.NEW();
                 cnd3.and("delFlag", "=", false);
@@ -482,14 +485,14 @@ public class OrderController {
 //                        break;
                         }else {
                             totalMoney=(int)total;
-                            memIntegral.setUseAbleIntegral(memIntegral.getUseAbleIntegral()-i1);
-                            memberIntegralService.update(memIntegral);
-                            Member_Integral_Detail  mid = new Member_Integral_Detail();
-                            mid.setIntegralDesc("购物减积分");
-                            mid.setIntegralType(4);
-                            mid.setCustomerUuid(accountUser.getAccountId());
-                            mid.setAddIntegral(i1);
-                            memberIntegralDetailService.insert(mid);
+//                            memIntegral.setUseAbleIntegral(memIntegral.getUseAbleIntegral()-i1);
+//                            memberIntegralService.update(memIntegral);
+//                            Member_Integral_Detail  mid = new Member_Integral_Detail();
+//                            mid.setIntegralDesc("购物减积分");
+//                            mid.setIntegralType(4);
+//                            mid.setCustomerUuid(accountUser.getAccountId());
+//                            mid.setAddIntegral(i1);
+//                            memberIntegralDetailService.insert(mid);
                         }
 
                     }
@@ -530,6 +533,7 @@ public class OrderController {
             order_main.setGoodsMoney(goodsMoney.intValue());
         }
         order_main.setVideoId(videoId);
+        order_main.setMinusPoints(i1);//下单扣除积分
         Order_main order = orderMainService.insert(order_main);
         order_goods.setOrderId(order.getId());
         order_goods.setAccountId(order.getAccountId());
@@ -976,6 +980,7 @@ public class OrderController {
                 }
             }
         }
+//        下单扣除积分
         if(integralMoney>0){
             Cnd cnd3 = Cnd.NEW();
             cnd3.and("delFlag", "=", false);
@@ -994,14 +999,14 @@ public class OrderController {
                 if(totalMoney<=0){
                     return money;
                 }
-                memIntegral.setUseAbleIntegral(memIntegral.getUseAbleIntegral()-integralMoney);
-                memberIntegralService.update(memIntegral);
-                Member_Integral_Detail  mid = new Member_Integral_Detail();
-                mid.setIntegralDesc("购物减积分");
-                mid.setIntegralType(4);
-                mid.setCustomerUuid(accountUser.getAccountId());
-                mid.setAddIntegral(integralMoney);
-                memberIntegralDetailService.insert(mid);
+//                memIntegral.setUseAbleIntegral(memIntegral.getUseAbleIntegral()-integralMoney);
+//                memberIntegralService.update(memIntegral);
+//                Member_Integral_Detail  mid = new Member_Integral_Detail();
+//                mid.setIntegralDesc("购物减积分");
+//                mid.setIntegralType(4);
+//                mid.setCustomerUuid(accountUser.getAccountId());
+//                mid.setAddIntegral(integralMoney);
+//                memberIntegralDetailService.insert(mid);
             }
             money.put("totalMoney",totalMoney);
         }

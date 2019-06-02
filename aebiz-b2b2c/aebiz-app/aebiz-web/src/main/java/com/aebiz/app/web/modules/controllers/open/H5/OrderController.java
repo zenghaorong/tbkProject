@@ -581,6 +581,17 @@ public class OrderController {
                         }
                     }
                 }
+                //视频订单
+                if(OrderTypeEnum.video_order_type.getKey().equals(o.getOrderType())) {
+                    if (order_goods != null && order_goods.size() > 0) {
+                        for (int i = 0; i < order_goods.size(); i++) {
+                            Order_goods good = order_goods.get(i);
+                            Cms_video cms_video = cmsVideoService.fetch(good.getProductId());
+                            good.setImgUrl(cms_video.getImageUrl());
+                        }
+
+                    }
+                }
                 o.setGoodsList(order_goods);
                 String date = DateUtil.getDate(o.getOrderAt());
                 o.setOrderTime(date);

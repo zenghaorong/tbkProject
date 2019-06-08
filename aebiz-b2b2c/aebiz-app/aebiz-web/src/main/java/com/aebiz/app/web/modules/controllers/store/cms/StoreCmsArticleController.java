@@ -1,5 +1,9 @@
 package com.aebiz.app.web.modules.controllers.store.cms;
 
+import com.aebiz.app.acc.modules.models.Account_info;
+import com.aebiz.app.acc.modules.models.Account_user;
+import com.aebiz.app.acc.modules.services.AccountInfoService;
+import com.aebiz.app.acc.modules.services.AccountUserService;
 import com.aebiz.app.cms.modules.models.Cms_article;
 import com.aebiz.app.cms.modules.models.Cms_channel;
 import com.aebiz.app.cms.modules.services.CmsArticleService;
@@ -18,6 +22,7 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.subject.Subject;
 import org.nutz.dao.Cnd;
 import org.nutz.lang.Strings;
+import org.nutz.lang.util.NutMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,6 +44,12 @@ public class StoreCmsArticleController {
 
 	@Autowired
 	private CmsChannelService cmsChannelService;
+
+	@Autowired
+	private AccountInfoService accountInfoService;
+
+	@Autowired
+	private AccountUserService accountUserService;
 
 	@RequestMapping("")
 	@RequiresPermissions("store.cms.article")
@@ -62,7 +73,20 @@ public class StoreCmsArticleController {
 		}
 //		cnd.and("storeId", "=", user.getStoreId());
 		cnd.desc("publishAt");
-		return cmsArticleService.data(length, start, draw, order, columns, cnd, null);
+		NutMap nutMap = cmsArticleService.data(length, start, draw, order, columns, cnd, null);
+		List<Cms_article> list = (List<Cms_article>)nutMap.get("data");
+		for (Cms_article c: list) {
+			Account_info account_info = accountInfoService.fetch(c.getAuthor());
+			if(account_info!=null){
+                c.setAccount_info(account_info);
+				Cnd cnda = Cnd.NEW();
+				cnda.and("accountId","=",c.getAuthor());
+                Account_user account_user = accountUserService.fetch(cnda);
+                c.setMobile(account_user.getMobile());
+			}
+		}
+		nutMap.put("data",list);
+		return nutMap;
 	}
 
 	@RequestMapping(value = { "/tree", "/tree/{pid}" })
@@ -128,9 +152,17 @@ public class StoreCmsArticleController {
 	@RequestMapping("/edit/{id}")
 	@RequiresPermissions("store.cms.article")
 	public String edit(@PathVariable String id, HttpServletRequest req) {
-		 Cms_article article = cmsArticleService.fetch(id);
-	        req.setAttribute("obj", article != null ? article : null);
-	        req.setAttribute("srcList",article.getImageUrlStrs());
+		Cms_article article = cmsArticleService.fetch(id);
+		Account_info account_info = accountInfoService.fetch(article.getAuthor());
+		if(account_info!=null){
+			article.setAccount_info(account_info);
+			Cnd cnda = Cnd.NEW();
+			cnda.and("accountId","=",article.getAuthor());
+			Account_user account_user = accountUserService.fetch(cnda);
+			article.setMobile(account_user.getMobile());
+		}
+		req.setAttribute("obj", article != null ? article : null);
+		req.setAttribute("srcList",article.getImageUrlStrs());
 		return "pages/store/cms/article/edit";
 	}
 

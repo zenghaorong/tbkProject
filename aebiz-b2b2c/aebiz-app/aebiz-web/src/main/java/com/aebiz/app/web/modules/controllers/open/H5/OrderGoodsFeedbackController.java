@@ -283,7 +283,9 @@ public class OrderGoodsFeedbackController {
                       goodsMain.setName(cms_video.getVideoTitle());
                       o.setGoodsMain(goodsMain);
                   }
-
+                  //查询订单信息
+                Order_main order_main = orderMainService.fetch(o.getOrderId());
+                o.setOrderMain(order_main);
             }
             return Result.success("ok",list);
         }catch (Exception e){

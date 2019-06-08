@@ -28,20 +28,29 @@
 
 
 <div id="vue" style="margin-top: 60px;margin-bottom: 74px;" v-cloak>
-    <div class="mui-card"  v-for="good in feedList" :key="good.id">
+    <div class="mui-card"  v-for="good in feedList" :key="good.id" v-on:click="goOrderInfo(good)">
         <div class="mui-card-header">
             <span>订单号：</span><span>{{good.orderId}}</span>
         </div>
         <div class="mui-card-content">
             <div class="mui-card-content">
                 <ul class="mui-table-view">
-                    <li class="mui-table-view-cell mui-media" >
-                        <a href="">
-                            <img class="mui-media-object mui-pull-left" :src="good.goodsMain.imgList" style="width: 100px;height: 100px;max-width: inherit;">
-                            <div class="mui-media-body" style="white-space:normal;" >
-                                <span>{{good.goodsMain.name}}</span>
-                            </div>
-                        </a>
+                    <!--<li class="mui-table-view-cell mui-media" v-if="good.order_main!=null">-->
+                        <!--<a v-if="good.order_main.orderType=='1'" :href="'${base!}/open/h5/product/productDetail.html?id='+good.goodsId">-->
+                        <!--<a v-if="good.order_main.orderType=='2'" :href="'${base!}/open/h5/cms/videoBuyPage.html?id='+good.goodsId">-->
+                            <!--<img class="mui-media-object mui-pull-left" :src="good.goodsMain.imgList" style="width: 100px;height: 100px;max-width: inherit;">-->
+                            <!--<div class="mui-media-body" style="white-space:normal;" >-->
+                                <!--<span>{{good.goodsMain.name}}</span>-->
+                            <!--</div>-->
+                        <!--</a>-->
+                    <!--</li>-->
+                    <li class="mui-table-view-cell mui-media">
+                            <a href="javascript:void (0)">
+                                <img class="mui-media-object mui-pull-left" :src="good.goodsMain.imgList" style="width: 100px;height: 100px;max-width: inherit;">
+                                <div class="mui-media-body" style="white-space:normal;" >
+                                    <span>{{good.goodsMain.name}}</span>
+                                </div>
+                            </a>
                     </li>
                     <div style="margin-bottom: 10px;padding: 0 15px;margin-top: 10px">
                          <p>{{good.feedNote}}</p>
@@ -105,6 +114,9 @@
                     }
                 });
 
+            },
+            goOrderInfo:function (good) {
+                window.location.href="${base!}/open/h5/order/goOrderInfo.html?orderId="+good.orderId;
             }
         },
         filters: {

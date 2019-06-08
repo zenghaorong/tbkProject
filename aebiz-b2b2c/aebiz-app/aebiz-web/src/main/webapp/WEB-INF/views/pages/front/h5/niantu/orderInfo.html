@@ -141,18 +141,21 @@
     <button type="button" onclick="goFeedback()" class="mui-btn mui-btn-primary mui-btn-block">立即评价</button>
 </div>
 <!--#}#-->
-<!--#if(order.payStatus == 3 &&order.orderType == '1'){#-->
+<!--#if(order.payStatus == 3 && order.orderType == '1'){#-->
 <div style="margin: 10px;">
     <button type="button" onclick="window.location.href='${base!}/open/h5/refunds/orderRefunds.html?orderId=${orderId!}'" class="mui-btn mui-btn-primary mui-btn-block">申请售后</button>
 </div>
 <!--#}#-->
-<div style="margin: 10px;">
+
+<div style="margin: 10px;" id="deleteOrder">
     <button type="button" onclick="delOrder()" style="background: red;border: red;" class="mui-btn mui-btn-primary mui-btn-block">删除订单</button>
 </div>
+
 
 <script type="text/javascript" src="${base!}/assets/front/h5/js/mui.js" ></script>
 <script type="text/javascript" src="${base!}/assets/front/h5/js/vue.js" ></script>
 <script type="text/javascript" src="${base!}/assets/front/h5/js/jquery-2.0.0.min.js" ></script>
+<script type="text/javascript" src="${base!}/assets/decorate/pc/decoratecommon/js/layer/mobile/layer.js" ></script>
 <script type="application/javascript">
     mui.init({
         swipeBack:true //启用右滑关闭功能
@@ -216,19 +219,27 @@
         });
     }
     function delOrder() {
-        $.ajax({
-            type:"POST",
-            url:"${base!}/open/h5/order/delOrder.html",
-            dataType:"JSON",
-            data:{
-                orderId:'${orderId}'
-            },
-            success:function(data){
-                if (data.code == 0) {
-                    window.location.href="${base!}/open/h5/order/goOrderList.html?status=6";
-                } else {
+        //询问框
+        layer.open({
+            content: '您确定删除当前订单'
+            ,btn: ['是', '否']
+            ,yes: function(index){
+                $.ajax({
+                    type:"POST",
+                    url:"${base!}/open/h5/order/delOrder.html",
+                    dataType:"JSON",
+                    data:{
+                        orderId:'${orderId}'
+                    },
+                    success:function(data){
+                        if (data.code == 0) {
+                            window.location.href="${base!}/open/h5/order/goOrderList.html?status=6";
+                        } else {
 
-                }
+                        }
+                    }
+                });
+                layer.close(index);
             }
         });
     }
@@ -237,6 +248,27 @@
     function goFeedback() {
         window.location.href = "${base!}/open/h5/feedback/goFeedback?orderId=${orderId}";
     }
+    
+
+
+    $(function () {
+        var payStatus = "${order.payStatus!}";
+        var deliveryStatus = "${order.deliveryStatus!}";
+        var orderStatus = "${order.orderStatus!}";
+        var getStatus = "${order.getStatus!}";
+
+        //代发货隐藏删除按钮
+        if(payStatus == '3' && deliveryStatus == '0'){
+           $("#deleteOrder").css("display","none");
+        }
+
+        var orderStatusInt = parseInt(orderStatus);
+        //代收货隐藏删除按钮
+        if(payStatus == '3' && deliveryStatus == '3' && getStatus=='0' && orderStatusInt<5){
+            $("#deleteOrder").css("display","none");
+        }
+    })
+    
 </script>
 </body>
 </html>

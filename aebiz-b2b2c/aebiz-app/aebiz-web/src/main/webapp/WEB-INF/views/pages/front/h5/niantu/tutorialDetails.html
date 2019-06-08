@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="${base!}/assets/front/h5/css/mui.min.css" />
     <link rel="stylesheet" type="text/css" href="${base!}/assets/front/h5/css/icons-extra.css" />
     <link rel="stylesheet" href="${base!}/assets/front/h5/css/hryc.css" />
+    <link rel="stylesheet" href="${base!}/assets/front/newH5/css/index.css?v=${@date.getDateTime()}" />
     <!--App自定义的css-->
     <!--<link rel="stylesheet" type="text/css" href="../css/app.css"/>-->
     <style>
@@ -30,6 +31,12 @@
         .aNoActive{
             color: #819fc0;
         }
+        .mui-table-view:before,.mui-table-view:after{
+            display: none;
+        }
+        .mui-table-view-cell{
+            padding: 6px 15px 6px 30px;
+        }
     </style>
 </head>
 <body style="background: white;">
@@ -38,7 +45,7 @@
     <header class="mui-bar mui-bar-nav top-color">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: white;"></a>
         <h1 class="mui-title" style="color: white;">
-           {{cms.title}}
+            {{cms.title}}
         </h1>
     </header>
 
@@ -58,26 +65,18 @@
                 <span class="mui-icon-extra mui-icon-extra-like"></span>
             </a>
         </div>
-        <ul class="mui-table-view">
-            <div id="zanwu" style="display: none;margin: 40px 30px;">暂无评论....</div>
-            <li class="mui-table-view-cell" v-for="item in reviewList" :key="item.id">
-                <span v-if="item.account_info.imageUrl==null ||item.account_info.imageUrl==''">
-                    <img src="${base!}/assets/front/h5/img/man.png" width="20px;">
+        <ul>
+            <div id="zanwu" style="display: none;margin: 40px 30px; text-align: center;color: #999999">暂无评论</div>
+            <li class="mui-table-view-cell replay_li" v-for="item in reviewList" :key="item.id">
+                <span class="replay_span" v-if="item.account_info.imageUrl==null ||item.account_info.imageUrl==''">
+                    <img class="replay_photo" src="${base!}/assets/front/h5/img/man.png" >
                 </span>
-                <span v-else>
-                    <img :src="item.account_info.imageUrl" width="20px;">
+                <span class="replay_span" v-else>
+                    <img class="replay_photo" :src="item.account_info.imageUrl">
                 </span>
-                {{item.reviewOpName}}:
-                <p style="padding:10px;">
-                    {{item.content}}
-                    <span style="margin-left: 10px;color: #2700ef;" v-on:click="clickReply(item.id,item.reviewOpName,item.reviewOpId)">回复</span>
-                </p>
-                <div v-for="item2 in item.replyVOList" :key="item2.id" style="padding-left:10px;">
-                    <p style="color: #0a0a0a;">{{item2.reviewOpName}}-回复-{{item2.reviewFatherName}}:</p>
-                    <p style="padding:10px;">
-                        {{item2.content}}
-                        <span style="margin-left: 10px;color: #2700ef;" v-on:click="clickReply2(item.id,item2.reviewOpName,item2.reviewOpId,item2.id)">回复</span>
-                    </p>
+                <div v-on:click="clickReply(item.id,item.reviewOpName,item.reviewOpId)"><span class="username">{{item.reviewOpName}}:</span><span > {{item.content}}</span></div>
+                <div v-on:click="clickReply2(item.id,item2.reviewOpName,item2.reviewOpId,item2.id)" v-for="item2 in item.replyVOList" :key="item2.id" >
+                    <p ><span class="username">{{item2.reviewOpName}}</span>回复<span class="username">{{item2.reviewFatherName}}:</span>{{item2.content}}</p>
                 </div>
             </li>
         </ul>
@@ -86,8 +85,8 @@
     <nav class="mui-bar mui-bar-tab" style="height: 40px;">
         <div class="mui-input-row mui-password" style="border: 0px;">
             <input type="text" id="place" v-model="content" class="mui-input-clear mui-input" placeholder="请输入评论内容" style="margin-bottom: 0px;width: 80%;">
-            <button type="button" v-on:click="isPlHf" style="width: 20%;top: 0px;line-height:1;"
-                        class="mui-btn mui-btn-primary" id="review">评论</button>
+            <button type="button" v-on:click="isPlHf" style="width: 20%;top: 0px;line-height:1;margin-top: 0"
+                    class="mui-btn mui-btn-primary" id="review">评论</button>
         </div>
     </nav>
 </div>
@@ -190,9 +189,9 @@
                                 $("#love").addClass("aActive")
                             }
                         } else {
-                           if(data.code == 2){
+                            if(data.code == 2){
                                 layerAlert("请先登录")
-                           }
+                            }
                         }
                     }
                 });
@@ -237,6 +236,11 @@
             //发布评论
             review:function () {
                 var self = this;
+
+                if(self.cmsTitle.trim()=='' || self.cmsTitle==null ||self.content.trim()=='' ||self.content==null ) {
+                    layerAlert("评论内容不能为空");
+                     return;
+                }
                 $.ajax({
                     type:"POST",
                     url:"${base!}/open/h5/cms/review.html",
@@ -250,6 +254,7 @@
                         if (data.code == 0) {
                             var d = data.data;
                             self.content='';
+                            layerAlert("评论成功");
                             self.getReview();
                         }  else if(data.code==2){
                             alert("您没有登录，请登录！");
@@ -261,10 +266,10 @@
             },
             //点击回复
             clickReply:function(reviewId,reviewFatherName,reviewFatherId){
-                    this.reviewId = reviewId; //回复父级编号
-                    this.reviewFatherName = reviewFatherName;//回复父级发布人名称
-                    this.reviewFatherId = reviewFatherId; //回复父级发布人编号
-                    this.textBian();
+                this.reviewId = reviewId; //回复父级编号
+                this.reviewFatherName = reviewFatherName;//回复父级发布人名称
+                this.reviewFatherId = reviewFatherId; //回复父级发布人编号
+                this.textBian();
             },
             //点击回复下回复
             clickReply2:function(reviewId,reviewFatherName,reviewFatherId,reviewReplyId){
@@ -299,6 +304,7 @@
                     },
                     success:function(data){
                         if (data.code == 0) {
+                            layerAlert("回复成功");
                             var d = data.data;
                             self.content='';
                             self.getReview();
@@ -320,7 +326,7 @@
             },
             //初始化jquery监听
             jqueryLin:function () {
-                 _this = this;
+                _this = this;
             }
         },
         watch:{     //监听器

@@ -89,5 +89,10 @@ public class CalculateUtils {
     }
 
 
+    public static void main(String[] args) {
+        System.out.println(div(3000,100,2));
+    }
+
+
 
 }

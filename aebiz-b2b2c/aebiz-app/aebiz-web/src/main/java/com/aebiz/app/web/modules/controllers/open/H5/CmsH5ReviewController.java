@@ -66,6 +66,7 @@ public class CmsH5ReviewController {
             cnd.and("delFlag", "=", 0 );
             cnd.and("type", "=", "1" ); // 类型 1评论 2回复
             cnd.and("cmsId", "=", cmsId );
+            cnd.desc("opAt");
             List<Cms_review> list = cmsReviewService.query(cnd);
             List<Cms_review> cms_reviewList = new ArrayList<>();
             for (Cms_review cms_review : list) {

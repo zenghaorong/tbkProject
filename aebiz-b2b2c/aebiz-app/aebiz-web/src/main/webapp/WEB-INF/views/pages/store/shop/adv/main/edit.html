@@ -39,7 +39,7 @@ layout("/layouts/store.html"){
                         </div>
                         <div class="form-group">
                             <label for="imgurl" class="col-sm-2 control-label">${msg['shop.adv.main.column.imgurl']}</label>
-                            <div class="col-sm-8">
+                            <div class="col-sm-6">
                                 <div id="queue"></div>
                                 <div>
                                     <input id="file_upload" name="file_upload" type="file" multiple="false">
@@ -52,6 +52,7 @@ layout("/layouts/store.html"){
                                 </div>
                                 <input type="hidden" id="imgurl" name="imgurl" value="${obj.imgurl!}" >
                             </div>
+                            <div class="col-sm-2" style="color: red;">建议尺寸：375*200</div>
                         </div>
                         <div class="form-group">
                             <label for="url" class="col-sm-2 control-label">${msg['shop.adv.main.column.url']}</label>

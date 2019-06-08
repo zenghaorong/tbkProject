@@ -330,7 +330,7 @@ public class OrderController {
                 }
 
                 order_goods.setPayMoney(goods_product.getSalePrice() * n - freeMoney);
-
+                order_goods.setOrderType(OrderTypeEnum.product_order_type.getKey());
                 orderGoodsService.insert(order_goods);
                 int i = goods_product.getStock() - n;
                 if(i<0){
@@ -455,7 +455,7 @@ public class OrderController {
                         if ("1".equals(sales_coupon.getType())) { //满减
                             if (sales_coupon.getConditionAmount() != null) {
                                 if (payMoney >= sales_coupon.getConditionAmount()) {
-                                    payMoney = CalculateUtils.sub(payMoney,sales_coupon.getConditionAmount());
+                                    payMoney = CalculateUtils.sub(payMoney,sales_coupon.getDeductibleAmount());
                                     totalMoney = (int)CalculateUtils.mul(payMoney,100); //转化为分
 
                                     member_coupon.setStatus(1);
@@ -558,10 +558,13 @@ public class OrderController {
             order_main.setOrderType(OrderTypeEnum.monthly_order_type.getKey());
             order_goods.setGoodsName("会员包月（"+monthlyNum+"个月）");
             order_goods.setName("会员包月（"+monthlyNum+"个月）");
+            order_goods.setOrderType(OrderTypeEnum.monthly_order_type.getKey());
         }else {
             order_main.setOrderType(OrderTypeEnum.video_order_type.getKey());
+            order_goods.setOrderType(OrderTypeEnum.video_order_type.getKey());
         }
         order_goods.setImgUrl(cms_video.getImageUrl());
+
         orderGoodsService.insert(order_goods);
         request.setAttribute("order",order);
         return "pages/front/h5/niantu/checkoutCounter";
@@ -973,6 +976,7 @@ public class OrderController {
                                     payMoney = CalculateUtils.sub(payMoney,sales_coupon.getDeductibleAmount());
                                     totalMoney = (int)CalculateUtils.mul(payMoney,100); //转化回分
                                     money.put("totalMoney",totalMoney);
+                                    order_main.setFreeMoney((int)CalculateUtils.mul(sales_coupon.getDeductibleAmount(),100));
                                     member_coupon.setStatus(1);
                                     memberCouponService.update(member_coupon);
                                 }
@@ -983,6 +987,7 @@ public class OrderController {
                                 if (totalNum >= sales_coupon.getProductQuantityRule()) {
                                     freightMoney = 0;
                                     money.put("freightMoney",freightMoney);
+                                    order_main.setFreeMoney((int)CalculateUtils.mul(freightMoney,100));
                                     member_coupon.setStatus(1);
                                     memberCouponService.update(member_coupon);
                                 }
@@ -991,9 +996,11 @@ public class OrderController {
                         if("3".equals(sales_coupon.getType())){ //折扣劵
                             if(sales_coupon.getProductQuantityRule()!=null) {
                                 if (totalNum >= sales_coupon.getProductQuantityRule()) {
+                                    int yPayMoney = (int)CalculateUtils.mul(payMoney,100);;
                                     payMoney = CalculateUtils.mul(payMoney,sales_coupon.getDiscount());
                                     totalMoney = (int)CalculateUtils.mul(payMoney,100); //转化回分
                                     money.put("totalMoney",totalMoney);
+                                    order_main.setFreeMoney(yPayMoney-(int)CalculateUtils.mul(payMoney,100));
                                     member_coupon.setStatus(1);
                                     memberCouponService.update(member_coupon);
                                 }

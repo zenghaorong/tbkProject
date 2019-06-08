@@ -28,13 +28,13 @@
 <body>
 <div id="vue">
 
-<header class="mui-bar mui-bar-nav top-color">
-    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: white;"></a>
-    <div class="mui-title mui-input-row "style="width: 50%" >
-        <input type="search" id="searchKey" class="mui-input-clear" style="background: white;" placeholder="请输入关键字">
-    </div>
-    <a id="search" v-on:click="getCmsList()" style="color: white ;float: right; margin-right: 45px;margin-top: 12px;" > 搜索</a>
-</header>
+    <header class="mui-bar mui-bar-nav top-color">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: white;"></a>
+        <div class="mui-title mui-input-row "style="width: 50%" >
+            <input type="search" id="searchKey" class="mui-input-clear" style="background: white;" placeholder="请输入关键字">
+        </div>
+        <a id="search" v-on:click="getCmsList()" style="color: white ;float: right; margin-right: 45px;margin-top: 12px;" > 搜索</a>
+    </header>
 
     <!--底部导航栏-->
     <footer class="mui-bar-new mui-bar-tab-new" >
@@ -65,25 +65,25 @@
             </li>
         </ul>
     </footer>
-<div class="mui-content" style="background: white;margin-bottom: 30%"  v-cloak>
-    <ul class="mui-table-view mui-grid-view mui-grid-9" style="background: white;">
-        <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-3" style="width: 50%"  v-for="item in cmsList" :key="item.id">
-            <a v-bind:href="'${base!}/open/h5/niantu/tutorialDetails.html?id='+item.id">
-                <img :src="item.picurl" width="150px;" height="150px;"/>
-                <div class="mui-media-body">{{item.title}}</div>
-                <div class="mui-media-body" style="height: 19px;">
-                    <span class="tutorial">{{item.opAt}}</span>
-                    <span style="float: right;font-size: 0.88em;color: #919191;">{{item.pageViews==null?0:item.pageViews}}</span>
-                    <span class="right1">
+    <div class="mui-content" style="background: white;margin-bottom: 30%"  v-cloak>
+        <ul class="mui-table-view mui-grid-view mui-grid-9" style="background: white;">
+            <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-3" style="width: 50%"  v-for="item in cmsList" :key="item.id">
+                <a v-bind:href="'${base!}/open/h5/niantu/tutorialDetails.html?id='+item.id">
+                    <img :src="item.picurl" width="150px;" height="150px;"/>
+                    <div class="mui-media-body">{{item.title}}</div>
+                    <div class="mui-media-body" style="height: 19px;">
+                        <span class="tutorial">{{item.opAt}}</span>
+                        <span style="float: right;font-size: 0.88em;color: #919191;">{{item.pageViews==null?0:item.pageViews}}</span>
+                        <span class="right1">
                         <img class="pon" src="${base!}/assets/front/h5/img/yan.png" width="20px"/>
                     </span>
 
-                </div>
-            </a>
-        </li>
+                    </div>
+                </a>
+            </li>
 
-    </ul>
-</div>
+        </ul>
+    </div>
 </div>
 
 <script type="text/javascript" src="${base!}/assets/front/h5/js/mui.js" ></script>

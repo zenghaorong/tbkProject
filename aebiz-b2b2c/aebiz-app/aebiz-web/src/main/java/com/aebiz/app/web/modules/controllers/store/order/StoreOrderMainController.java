@@ -291,11 +291,11 @@ public class StoreOrderMainController {
         String storeId = StringUtil.getStoreId();
         cnd.and("storeId","=",storeId);
         if(Strings.isNotBlank(id)){
-            cnd.and("id","=",id.trim());
+            cnd.and("id","like","%"+id.trim()+"%");
         }
         if(Strings.isNotBlank(loginname)){
             String accId="";
-            List<Account_user> accountUserList = accountUserService.query("accountId",Cnd.where("loginname","=",loginname));
+            List<Account_user> accountUserList = accountUserService.query("accountId",Cnd.where("loginname","like","%"+loginname+"%"));
             if(accountUserList != null && accountUserList.size() > 0){
                 for(Account_user accountUser:accountUserList){
                     accId = accountUser.getAccountId();
@@ -401,7 +401,7 @@ public class StoreOrderMainController {
                         }
                     }else {
                         for(Order_goods orderGoods:orderGoodsList){
-                            goodsPayMoney+=orderGoods.getSalePrice();
+                            goodsPayMoney+=(orderGoods.getSalePrice()*orderGoods.getBuyNum());
                             Cnd imgCnd = Cnd.NEW();
                             imgCnd.and("goodsId","=",orderGoods.getGoodsId());
                             List<Goods_image> imgList = goodsImageService.query(imgCnd);
@@ -435,7 +435,6 @@ public class StoreOrderMainController {
             orderMainService.fetchLinks(orderMain,"accountInfo");
             Account_user accountUser = accountUserService.fetch(Cnd.where("accountId","=",orderMain.getAccountId()));
             orderMain.setAccountUser(accountUser);
-            orderMain.setFreeMoney(orderMain.getGoodsMoney() - (orderMain.getPayMoney()-orderMain.getFreightMoney()));
             req.setAttribute("obj", orderMain);
             List<Order_goods> orderGoodsList = orderGoodsService.query(Cnd.where("delFlag","=",false).and("orderId","=",id));
             if(OrderTypeEnum.monthly_order_type.getKey().equals(orderMain.getOrderType())){

@@ -108,6 +108,17 @@ public class Cms_article extends BaseModel implements Serializable {
     @One(field = "author")
     private Account_info account_info;
 
+    //手机号
+    private String mobile;
+
+    public String getMobile() {
+        return mobile;
+    }
+
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
+    }
+
     public Account_info getAccount_info() {
         return account_info;
     }

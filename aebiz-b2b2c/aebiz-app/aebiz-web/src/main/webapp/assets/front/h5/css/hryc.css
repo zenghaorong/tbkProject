@@ -9,12 +9,13 @@
 }
 
 .right1{
+
 	float: right;
-	
+
 }
- .pon{
- 	z-index: 9999;
- }
+.pon{
+	z-index: 9999;
+}
 .text-color-1{
 	color: #919191;
 }
@@ -44,7 +45,7 @@ li{list-style-type: none;}
 a,input{outline: none;-webkit-tap-highlight-color:rgba(0,0,0,0);}
 #choose{display: none;}
 canvas{width: 100%;border: 1px solid #000000;}
-#upload{display: block;margin: 10px;height: 60px;text-align: center;line-height: 60px;border: 1px solid;border-radius: 5px;cursor: pointer;}
+#upload{width: 300px; display: block;margin: 10px auto;height: 44px;text-align: center;line-height: 44px;border: 1px solid;border-radius: 5px;cursor: pointer;}
 .touch{background-color: #ddd;}
 .img-list{margin: 10px 5px;}
 .img-list li{position: relative;display: inline-block;width: 100px;height: 100px;margin: 5px 5px 20px 5px;border: 1px solid rgb(100,149,198);background: #fff no-repeat center;background-size: cover;}

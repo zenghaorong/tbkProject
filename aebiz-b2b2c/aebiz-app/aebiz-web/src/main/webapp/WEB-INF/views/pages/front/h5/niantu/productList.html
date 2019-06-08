@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="zh-cmn-Hans">
 <head>
-    
+
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
 <meta name="renderer" content="webkit">
-<meta name="keywords" content="">  
+<meta name="keywords" content="">
 <meta name="description" content="">
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 <meta http-equiv="Cache-Control" content="no-siteapp"/>
@@ -14,14 +14,40 @@
 <meta name="x5-fullscreen" content="true">
 <meta name="msapplication-tap-highlight" content="no">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-<title>商家</title> 
+<title>商家</title>
 <link rel="icon" href="">
 <link rel="stylesheet" type="text/css" href="/assets/front/newH5/css/common-m.css">
  <link rel="stylesheet" href="${base!}/assets/front/newH5/css/index.css?v=${@date.getDateTime()}" />
+    <style>
+        .area {
+            margin: 20px auto 0px auto;
+        }
+        .mui-input-group:first-child {
+            margin-top: 20px;
+        }
+        .mui-input-group label {
+            width: 35%;
+        }
+        .mui-input-row label~input,
+        .mui-input-row label~select,
+        .mui-input-row label~textarea {
+            width: 65%;
+        }
+        .mui-checkbox input[type=checkbox],
+        .mui-radio input[type=radio] {
+            top: 6px;
+        }
+        .mui-content-padded {
+            margin-top: 25px;
+        }
+        .mui-btn {
+            padding: 10px;
+        }
+    </style>
 </head>
 <!-- 给body加一个空的touchstart事件即可让:active效果在移动端生效 -->
-<body ontouchstart="" class="bgGray" >
-    <section class="center" id="productList">
+<body ontouchstart="" class="bgGray" style="background: white;">
+<section class="center" id="productList">
     <!-- header -->
     <header class="header">
         <section class="search">
@@ -62,14 +88,14 @@
             <div id="item3" class="mui-control-content " style="display: none">
                 <ul class="mui-table-view priceUl selectUl" selectUl>
                     <!--<div class="mui-table-view-cell priceLi">-->
-                        <li class="priceSpan selectLi" priceArea="0_20" v-on:click="priceSelect($event)" >0-20</li>
-                        <li class="priceSpan selectLi" priceArea="20_40" v-on:click="priceSelect($event)">20-40</li>
-                        <li class="priceSpan selectLi" priceArea="40_60" v-on:click="priceSelect($event)">40-60</li>
+                    <li class="priceSpan selectLi" priceArea="0_20" v-on:click="priceSelect($event)" >0-20</li>
+                    <li class="priceSpan selectLi" priceArea="20_40" v-on:click="priceSelect($event)">20-40</li>
+                    <li class="priceSpan selectLi" priceArea="40_60" v-on:click="priceSelect($event)">40-60</li>
                     <!--</div>-->
                     <!--<div class="mui-table-view-cell priceLi">-->
-                        <li class="priceSpan selectLi" priceArea="60_80" v-on:click="priceSelect($event)">60 - 80</li>
-                        <li class="priceSpan selectLi" priceArea="80_100" v-on:click="priceSelect($event)">80-100</li>
-                        <li class="priceSpan selectLi" priceArea="100_1000000" v-on:click="priceSelect($event)">100 以上</li>
+                    <li class="priceSpan selectLi" priceArea="60_80" v-on:click="priceSelect($event)">60 - 80</li>
+                    <li class="priceSpan selectLi" priceArea="80_100" v-on:click="priceSelect($event)">80-100</li>
+                    <li class="priceSpan selectLi" priceArea="100_1000000" v-on:click="priceSelect($event)">100 以上</li>
                     <!--</div>-->
                 </ul>
             </div>
@@ -90,36 +116,36 @@
             </li>
         </ul>
     </section>
-   <!-- mian end -->
-   <footer>
-       <ul>
-           <li>
+    <!-- mian end -->
+    <footer>
+        <ul>
+            <li>
                 <a href="javascript:void(0);" onclick="window.location.href='${base!}/open/h5/niantu/index.html'">
                     <img src="${base!}/assets/front/newH5/images/icon1.png" alt="" />
-                    <span>首页</span>        
+                    <span>首页</span>
                 </a>
             </li>
-             <li>
+            <li>
                 <a href="javascript:void(0);">
                     <img src="${base!}/assets/front/newH5/images/icon2.png" onclick="window.location.href='${base!}/open/h5/cart/shoppingCart.html'" alt="" />
-                    <span>购物车</span>        
+                    <span>购物车</span>
                 </a>
             </li>
-             <li>
+            <li>
                 <a href="javascript:void(0);">
                     <img src="${base!}/assets/front/newH5/images/icon3.png" alt="" onclick="window.location.href='${base!}/open/h5/coupon/receiveCoupon.html'" />
-                    <span>领券中心</span>        
+                    <span>领券中心</span>
                 </a>
             </li>
-             <li>
+            <li>
                 <a href="javascript:void(0);">
                     <img src="${base!}/assets/front/newH5/images/icon4.png" alt="" onclick="window.location.href='${base!}/open/h5/niantu/userCenter.html'" />
-                    <span>个人中心</span>        
+                    <span>个人中心</span>
                 </a>
             </li>
-       </ul>
-   </footer>
-   </section>
+        </ul>
+    </footer>
+</section>
     <script type="text/javascript" src="${base!}/assets/front/h5/js/mui.js" ></script>
     <script type="text/javascript" src="${base!}/assets/front/h5/js/vue.js" ></script>
     <script type="text/javascript" src="${base!}/assets/front/h5/js/jquery-2.0.0.min.js" ></script>

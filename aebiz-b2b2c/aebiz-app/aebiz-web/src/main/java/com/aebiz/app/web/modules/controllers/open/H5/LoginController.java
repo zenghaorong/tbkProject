@@ -104,6 +104,9 @@ public class LoginController {
 
     private static final String session_login_key="session_login_key_yd_sms";
 
+    //获取验证码重复请求限制
+    private final String MOBILE_CAPTCHA_Request_limit = "mobile_sms_captcha_Request_limit";
+
     /**
      * token的有效期,默认是2小时
      */
@@ -437,22 +440,35 @@ public class LoginController {
         return false;
     }
     /**
-     * 获取登录验证码
+     * 获取注册验证码
      */
     @RequestMapping("/getLoginMsgCode")
     @SJson
     public Result getLoginMsgCode(@RequestParam("mobile") String mobile) {
         try {
 
+            log.info("请求获取注册验证码："+mobile);
+
             Cnd cnd = Cnd.where("mobile", "=", mobile).and("delFlag", "=", false);
             if (isExist(accountUserService, cnd)) {
                 return Result.error("手机号已注册");
             }
 
+            String key2 = MOBILE_CAPTCHA_Request_limit + mobile;
+            String expireTime2 = "60";
+
             String key = MOBILE_CAPTCHA + mobile;
             String expireTime = "300";
             String code = StringUtil.getRndNumber(6);
             try (Jedis jedis = redisService.jedis()) {
+                if(Strings.isNotBlank(jedis.get(key2))){
+                    log.info("手机号"+mobile+"60秒内请求了两次");
+                    return Result.error("手机号"+mobile+"60秒内请求了两次");
+                }
+                //重复请求限制
+                jedis.set(key2, code);
+                jedis.expire(key2, Integer.valueOf(expireTime2));
+
                 jedis.set(key, code);
                 jedis.expire(key, Integer.valueOf(expireTime));
 
@@ -487,10 +503,31 @@ public class LoginController {
     @SJson
     public Result getforgetPasswordMsgCode(@RequestParam("mobile") String mobile) {
         try {
+
+            log.info("请求获取忘记密码验证码："+mobile);
+
+
+            Account_user account_user = accountUserService.getAccountByLoginname(mobile);
+            if(account_user == null){
+                return Result.error("当前账号未注册");
+            }
+
+            String key2 = MOBILE_CAPTCHA_Request_limit + mobile;
+            String expireTime2 = "60";
+
             String key = MOBILE_CAPTCHA + mobile;
             String expireTime = "300";
             String code = StringUtil.getRndNumber(6);
             try (Jedis jedis = redisService.jedis()) {
+                if(Strings.isNotBlank(jedis.get(key2))){
+                    log.info("手机号"+mobile+"60秒内请求了两次");
+                    return Result.error("手机号"+mobile+"60秒内请求了两次");
+                }
+                //重复请求限制
+                jedis.set(key2, code);
+                jedis.expire(key2, Integer.valueOf(expireTime2));
+
+
                 jedis.set(key, code);
                 jedis.expire(key, Integer.valueOf(expireTime));
 
@@ -511,7 +548,7 @@ public class LoginController {
                 }
             }
             log.info("短信验证码:  " + code);
-            return Result.success("member.register.join.success");
+            return Result.success("验证码获取成功");
         }catch (Exception e){
             e.printStackTrace();
             return Result.error("member.register.join.fail");
@@ -545,6 +582,9 @@ public class LoginController {
             String hashedPasswordBase64 = new Sha256Hash(password, salt, 1024).toBase64();
 
             Account_user account_user = accountUserService.getAccountByLoginname(mobile);
+            if(account_user == null){
+                return Result.error("当前账号未注册");
+            }
             account_user.setSalt(salt);// 设置密码盐
             account_user.setPassword(hashedPasswordBase64);
             account_user.setPasswordStrength(Integer.parseInt(passwordLength));
@@ -552,7 +592,7 @@ public class LoginController {
             return Result.success("member.register.join.success");
         }catch (Exception e){
             e.printStackTrace();
-            return Result.error("member.register.join.fail");
+            return Result.error("重置密码失败");
         }
     }
 

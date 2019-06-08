@@ -48,11 +48,19 @@ layout("/layouts/store.html"){
                             </div>
                             <div class="form-group">
                                 <label for="author" class="col-sm-2 control-label">${msg['cms.article.column.author']}</label>
-
+                                <!--#if(isEmpty(obj.account_info)){#-->
                                 <div class="col-sm-8">
-                                    <input type="text" id="author" class="form-control" name="author"
+                                    <input type="text" id="author" class="form-control"
                                            data-parsley-required="true" value="${obj.author!}" placeholder="${msg['cms.article.column.author']}">
                                 </div>
+                                <!--#}#-->
+                                <!--#if(!isEmpty(obj.account_info)){#-->
+                                <div class="col-sm-8">
+                                    <input type="text" id="author" class="form-control"
+                                           data-parsley-required="true" value="号码:${obj.mobile!} 昵称:${obj.account_info.nickname!}" placeholder="${msg['cms.article.column.author']}">
+                                </div>
+                                <!--#}#-->
+                                <input name="author" type="hidden" value="${obj.author!}">
                             </div>
                             <div class="form-group">
                                 <label for="info" class="col-sm-2 control-label">${msg['cms.article.column.introduction']}</label>
@@ -83,7 +91,7 @@ layout("/layouts/store.html"){
                             <div class="form-group">
                                 <label for="picurl" class="col-sm-2 control-label">${msg['cms.article.column.headlinefigure']}</label>
 
-                                <div class="col-sm-8">
+                                <div class="col-sm-6">
                                     <div id="queue"></div>
                                     <div>
                                         <input id="file_upload" name="file_upload" type="file" multiple="false">
@@ -96,6 +104,7 @@ layout("/layouts/store.html"){
                                     </div>
                                     <input type="hidden" id="picurl" name="picurl" value="${obj.picurl!}" >
                                 </div>
+                                <div class="col-sm-2" style="color: red;">建议尺寸：150*150</div>
                             </div>
                             <!--#if(!isEmpty(obj.imageUrlStrs)){#-->
                             <div class="form-group">

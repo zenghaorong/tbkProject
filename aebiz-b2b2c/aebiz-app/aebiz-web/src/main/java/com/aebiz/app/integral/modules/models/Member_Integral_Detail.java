@@ -35,7 +35,7 @@ public class Member_Integral_Detail extends BaseModel implements Serializable {
     @Column
     @Comment("积分类型")
     @ColDefine(type = ColType.INT, width = 11)
-    private int integralType;//1.购物积分 2. 注册积分 3. 评论积分
+    private int integralType;//1.购物积分 2. 注册积分 3. 评论积分 5.未支付订单积分退回
 
     @Column
     @Comment("描述")

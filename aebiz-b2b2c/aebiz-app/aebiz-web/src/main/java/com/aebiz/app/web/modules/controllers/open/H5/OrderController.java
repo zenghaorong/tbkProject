@@ -493,14 +493,14 @@ public class OrderController {
 //                        break;
                         }else {
                             totalMoney=(int)total;
-//                            memIntegral.setUseAbleIntegral(memIntegral.getUseAbleIntegral()-i1);
-//                            memberIntegralService.update(memIntegral);
-//                            Member_Integral_Detail  mid = new Member_Integral_Detail();
-//                            mid.setIntegralDesc("购物减积分");
-//                            mid.setIntegralType(4);
-//                            mid.setCustomerUuid(accountUser.getAccountId());
-//                            mid.setAddIntegral(i1);
-//                            memberIntegralDetailService.insert(mid);
+                            memIntegral.setUseAbleIntegral(memIntegral.getUseAbleIntegral()-i1);
+                            memberIntegralService.update(memIntegral);
+                            Member_Integral_Detail  mid = new Member_Integral_Detail();
+                            mid.setIntegralDesc("购物减积分");
+                            mid.setIntegralType(4);
+                            mid.setCustomerUuid(accountUser.getAccountId());
+                            mid.setAddIntegral(i1);
+                            memberIntegralDetailService.insert(mid);
                         }
 
                     }
@@ -888,6 +888,34 @@ public class OrderController {
             log.error("删除订单更新优惠劵状态异常",e);
         }
 
+        //判断如果使用积分了则积分退回
+        try{
+            //待支付状态
+            if(order_main.getPayStatus()==OrderPayStatusEnum.NO.getKey()){
+                //判断是否使用了积分
+                if(order_main.getMinusPoints()!=null){
+                    Cnd iCnd = Cnd.NEW();
+                    iCnd.and("customerUuid" ,"=",order_main.getAccountId());
+                    List<Member_Integral> list2 = memberIntegralService.query(iCnd);
+                    Member_Integral m = list2.get(0);
+                    m.setCustomerUuid(order_main.getAccountId());
+                    m.setTotalIntegral(order_main.getMinusPoints());
+                    int jf = m.getUseAbleIntegral()+order_main.getMinusPoints();
+                    m.setUseAbleIntegral(jf);
+                    memberIntegralService.insert(m);
+                    Member_Integral_Detail md = new Member_Integral_Detail();
+                    md.setAddIntegral(order_main.getMinusPoints());
+                    md.setCustomerUuid(order_main.getAccountId());
+                    md.setIntegralDesc("未支付订单积分退回");
+                    md.setIntegralType(5);
+                    memberIntegralDetailService.insert(md);
+                }
+            }
+        }catch (Exception e){
+            log.error("如果使用积分了则积分退回异常",e);
+        }
+
+
         return Result.success("ok");
     }
 
@@ -1030,14 +1058,14 @@ public class OrderController {
                 if(totalMoney<=0){
                     return money;
                 }
-//                memIntegral.setUseAbleIntegral(memIntegral.getUseAbleIntegral()-integralMoney);
-//                memberIntegralService.update(memIntegral);
-//                Member_Integral_Detail  mid = new Member_Integral_Detail();
-//                mid.setIntegralDesc("购物减积分");
-//                mid.setIntegralType(4);
-//                mid.setCustomerUuid(accountUser.getAccountId());
-//                mid.setAddIntegral(integralMoney);
-//                memberIntegralDetailService.insert(mid);
+                memIntegral.setUseAbleIntegral(memIntegral.getUseAbleIntegral()-integralMoney);
+                memberIntegralService.update(memIntegral);
+                Member_Integral_Detail  mid = new Member_Integral_Detail();
+                mid.setIntegralDesc("购物减积分");
+                mid.setIntegralType(4);
+                mid.setCustomerUuid(accountUser.getAccountId());
+                mid.setAddIntegral(integralMoney);
+                memberIntegralDetailService.insert(mid);
             }
             money.put("totalMoney",totalMoney);
         }

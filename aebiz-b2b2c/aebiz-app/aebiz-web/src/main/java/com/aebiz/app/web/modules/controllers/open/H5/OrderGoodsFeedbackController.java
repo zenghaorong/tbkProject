@@ -19,6 +19,7 @@ import com.aebiz.app.order.modules.services.OrderGoodsService;
 import com.aebiz.app.order.modules.services.OrderMainService;
 import com.aebiz.app.web.commons.utils.WXPayUtil;
 import com.aebiz.baseframework.base.Result;
+import com.vdurmont.emoji.EmojiParser;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.nutz.dao.Cnd;
@@ -186,7 +187,8 @@ public class OrderGoodsFeedbackController {
             Order_goods_feedback.setProductId(order_goods.getProductId());
             Order_goods_feedback.setSku(order_goods.getSku());
             Order_goods_feedback.setFeedAt((int)WXPayUtil.getCurrentTimestamp());
-            Order_goods_feedback.setFeedNote(content);
+            String introduction = EmojiParser.parseToAliases(content);
+            Order_goods_feedback.setFeedNote(introduction);
             orderGoodsFeedbackService.insert(Order_goods_feedback);
 
             //查询有几个商品要评价
@@ -229,6 +231,7 @@ public class OrderGoodsFeedbackController {
             cnd.desc("opAt");
             List<Order_goods_feedback> list = orderGoodsFeedbackService.query(cnd);
             for (Order_goods_feedback o:list) {
+                o.setFeedNote(EmojiParser.parseToUnicode(o.getFeedNote()));
                 Cnd imgCnd = Cnd.NEW();
                 imgCnd.and("accountId","=",o.getAccountId());
                     Account_user account_user=accountUserService.fetch(imgCnd);
@@ -263,6 +266,7 @@ public class OrderGoodsFeedbackController {
             cnd.desc("opAt");
             List<Order_goods_feedback> list = orderGoodsFeedbackService.query(cnd);
             for (Order_goods_feedback o:list) {
+                 o.setFeedNote(EmojiParser.parseToUnicode(o.getFeedNote()));
                   Goods_main goods_main = goodsService.fetch(o.getGoodsId());
                   if(goods_main!=null) {
                       Cnd imgCnd = Cnd.NEW();

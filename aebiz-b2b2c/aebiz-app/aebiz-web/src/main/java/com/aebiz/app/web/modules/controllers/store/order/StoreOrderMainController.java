@@ -380,6 +380,7 @@ public class StoreOrderMainController {
                                 Order_goods good = orderGoodsList.get(i);
                                 Cms_video cms_video = cmsVideoService.fetch(good.getProductId());
                                 good.setImgUrl(cms_video.getImageUrl());
+                                goodsPayMoney = (int)CalculateUtils.mul(cms_video.getPrice(),100);
                             }
 
                         }
@@ -388,12 +389,13 @@ public class StoreOrderMainController {
                             for (int i = 0; i < orderGoodsList.size(); i++) {
                                 Order_goods good = orderGoodsList.get(i);
                                 Double goodsMoney = CalculateUtils.mul(orderMain.getPayMoney(),100);
-                                good.setSalePrice(goodsMoney.intValue());
+                                good.setSalePrice(orderMain.getPayMoney());
                                 good.setBuyPrice(goodsMoney.intValue());
                                 good.setPayMoney(goodsMoney.intValue());
                                 good.setImgUrl("http://106.12.95.24/group1/M00/00/04/wKgABFzr2KmAbXYjAAF-Y36zDYU929.png");
                                 good.setGoodsName("会员包月（"+orderMain.getMonthlyNum()+"个月）");
                                 good.setName("会员包月（"+orderMain.getMonthlyNum()+"个月）");
+                                goodsPayMoney = orderMain.getPayMoney();
                             }
 
                         }
@@ -440,10 +442,10 @@ public class StoreOrderMainController {
                 if (orderGoodsList != null && orderGoodsList.size() > 0) {
                     for (int i = 0; i < orderGoodsList.size(); i++) {
                         Order_goods good = orderGoodsList.get(i);
-                        Double goodsMoney = CalculateUtils.mul(orderMain.getPayMoney(),100);
-                        good.setSalePrice(goodsMoney.intValue());
-                        good.setBuyPrice(goodsMoney.intValue());
-                        good.setPayMoney(goodsMoney.intValue());
+                        int goodsMoney = orderMain.getPayMoney();
+                        good.setSalePrice(goodsMoney);
+                        good.setBuyPrice(goodsMoney);
+                        good.setPayMoney(goodsMoney);
                         good.setImgUrl("http://106.12.95.24/group1/M00/00/04/wKgABFzr2KmAbXYjAAF-Y36zDYU929.png");
                         good.setGoodsName("会员包月（"+orderMain.getMonthlyNum()+"个月）");
                         good.setName("会员包月（"+orderMain.getMonthlyNum()+"个月）");

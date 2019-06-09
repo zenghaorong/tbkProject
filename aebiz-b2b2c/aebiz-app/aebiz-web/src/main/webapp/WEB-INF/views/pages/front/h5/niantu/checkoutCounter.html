@@ -177,10 +177,10 @@
                                         '&redirect_url=http://www.xunchuangyi.cn/open/h5/order/goOrderPayInfo.html?orderId=${order.id!}';
                                    window.location.href = payUrl;
                                 }else {
-                                    alert(d.return_msg);
+                                    layerAlert("此订单正在支付中");
                                 }
                             } else {
-                                alert("商户无微信H5支付权限，请去公众号支付")
+                                layerAlert("商户无微信H5支付权限，请去公众号支付")
                             }
                             fila =true;
                         }
@@ -314,6 +314,16 @@
             //             //res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
             //         }
             //     });
+        }
+
+
+        function layerAlert(msg) {
+            //提示
+            layer.open({
+                content: msg
+                ,skin: 'msg'
+                ,time: 2 //2秒后自动关闭
+            });
         }
 
 

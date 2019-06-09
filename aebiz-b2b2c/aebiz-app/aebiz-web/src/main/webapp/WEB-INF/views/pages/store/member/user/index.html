@@ -43,11 +43,11 @@ layout("/layouts/store.html"){
                 <thead>
                 <tr>
                     <th></th>
-                    <th>${msg['account.user.column.userName']}</th><!--用户名-->
+                    <th>${msg['account.user.column.mobile']}</th><!--用户名-->
                     <th>${msg['account.info.column.nickname']}</th><!--昵称-->
-                    <th>${msg['member.type.memberType']}</th><!--类型-->
-                    <th>${msg['member.level.memberLevel']}</th><!--等级-->
-                    <th>${msg['account.user.column.mobile']}</th><!--手机号-->
+                    <!--<th>${msg['member.type.memberType']}</th>&lt;!&ndash;类型&ndash;&gt;-->
+                    <!--<th>${msg['member.level.memberLevel']}</th>&lt;!&ndash;等级&ndash;&gt;-->
+                    <!--<th>${msg['account.user.column.mobile']}</th>&lt;!&ndash;手机号&ndash;&gt;-->
                     <th>${msg['member.user.state']}</th><!--会员状态-->
                 </tr>
                 </thead>
@@ -126,24 +126,24 @@ layout("/layouts/store.html"){
             // "order": [[0, "asc"]],
             "columns": [
                 {"data": "accountid","visible": false, "bSortable": true},
-                {"data": "username", "sortable": true},
+                {"data": "mobile", "sortable": true},
                 {"data": "nickname", "bSortable": true},
-                {"data": "score", "bSortable": true},
-                {"data": "money", "bSortable": true},
-                {"data": "mobile", "bSortable": true},
+                // {"data": "score", "bSortable": true},
+                // {"data": "money", "bSortable": true},
+                // {"data": "mobile", "bSortable": true},
                 {"data": "state", "bSortable": true}
             ],
             "columnDefs": [
-                {
-                    "render": function (data, type, row) {
-                        if (!row && !row.money) {
-                            return 0;
-                        } else{
-                            return row.money/100;
-                        }
-                    },
-                    "targets": 4
-                },
+                // {
+                //     "render": function (data, type, row) {
+                //         if (!row && !row.money) {
+                //             return 0;
+                //         } else{
+                //             return row.money/100;
+                //         }
+                //     },
+                //     "targets": 1
+                // },
                 {
                     "render": function (data, type, row) {
                         if (!data) {
@@ -152,7 +152,7 @@ layout("/layouts/store.html"){
                             return '<i class="fa fa-circle text-danger ml5"></i>';
                         }
                     },
-                    "targets": 6
+                    "targets": 3
                 }
             ]
         });

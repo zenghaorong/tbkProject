@@ -348,7 +348,7 @@ public class OrderController {
 
 
         }
-        Map<String, Double> money = this.calCouponMoney(accountUser, couponId, totalMoney, freightMoney, totalNum,im);
+        Map<String, Double> money = this.calCouponMoney(accountUser, couponId, totalMoney, freightMoney, totalNum,im,order);
         order.setGoodsMoney(money.get("totalMoney").intValue());
         order.setPayMoney(money.get("totalMoney").intValue() +money.get("freightMoney").intValue() );
 //                order_main.setPayMoney(1); //先写死一个测试金额
@@ -430,6 +430,9 @@ public class OrderController {
         }
         Cms_video cms_video=cmsVideoService.fetch(videoId);
         int totalMoney = (int)CalculateUtils.mul(cms_video.getPrice(),100); //转为分
+
+        Order_main order_main = new Order_main();
+
         /**
          * 计算优惠劵抵扣金额
          */
@@ -442,6 +445,7 @@ public class OrderController {
             if (member_couponList != null && member_couponList.size() > 0) {
                 Member_coupon member_coupon = member_couponList.get(0);
                 Sales_coupon sales_coupon = salesCouponService.fetch(member_coupon.getCouponId());
+                order_main.setMemberCouponId(member_coupon.getId());
                 //判断优惠劵状态
                 if (!sales_coupon.isDisabled()) {
                     int time = (int) WXPayUtil.getCurrentTimestamp();
@@ -453,6 +457,10 @@ public class OrderController {
                                 if (payMoney >= sales_coupon.getConditionAmount()) {
                                     payMoney = CalculateUtils.sub(payMoney,sales_coupon.getConditionAmount());
                                     totalMoney = (int)CalculateUtils.mul(payMoney,100); //转化为分
+
+                                    member_coupon.setStatus(1);
+                                    memberCouponService.update(member_coupon);
+
                                 }
                             }
                         }
@@ -500,7 +508,6 @@ public class OrderController {
                 }
             }
         }
-        Order_main order_main = new Order_main();
         Order_goods order_goods = new Order_goods();
         order_main.setAccountId(accountUser.getAccountId());
         order_main.setStoreId(cms_video.getStoreId());
@@ -863,6 +870,21 @@ public class OrderController {
         Order_main order_main = orderMainService.fetch(orderId);
         order_main.setDelFlag(true);
         orderMainService.update(order_main);
+
+        //更新优惠劵状态
+        try{
+            //待支付状态
+            if(order_main.getPayStatus()==OrderPayStatusEnum.NO.getKey()){
+               if(Strings.isNotEmpty(order_main.getMemberCouponId())){
+                   Member_coupon member_coupon = memberCouponService.fetch(order_main.getMemberCouponId());
+                   member_coupon.setStatus(0);
+                   memberCouponService.update(member_coupon);
+               }
+            }
+        }catch (Exception e){
+            log.error("删除订单更新优惠劵状态异常",e);
+        }
+
         return Result.success("ok");
     }
 
@@ -920,7 +942,8 @@ public class OrderController {
         }
         return Result.success();
     }
-    private Map<String,Double> calCouponMoney(Account_user accountUser,String couponId,double totalMoney,double freightMoney,int totalNum,int integralMoney){
+    private Map<String,Double> calCouponMoney(Account_user accountUser,String couponId,double totalMoney,double freightMoney,int totalNum,int integralMoney
+    ,Order_main order_main){
         /**
          * 计算优惠劵抵扣金额
          */
@@ -937,6 +960,7 @@ public class OrderController {
             if (member_couponList != null && member_couponList.size() > 0) {
                 Member_coupon member_coupon = member_couponList.get(0);
                 Sales_coupon sales_coupon = salesCouponService.fetch(member_coupon.getCouponId());
+                order_main.setMemberCouponId(member_coupon.getId());
                 //判断优惠劵状态
                 if (!sales_coupon.isDisabled()) {
                     int time = (int) WXPayUtil.getCurrentTimestamp();

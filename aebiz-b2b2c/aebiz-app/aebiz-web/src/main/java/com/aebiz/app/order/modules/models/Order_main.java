@@ -295,6 +295,11 @@ public class Order_main extends BaseModel implements Serializable {
     private String videoId;
 
     @Column
+    @Comment("视频编号")
+    @ColDefine(type = ColType.VARCHAR, width = 32)
+    private String memberCouponId;
+
+    @Column
     @Comment("包月月数")
     @ColDefine(type = ColType.INT, width = 6)
     private Integer monthlyNum;
@@ -354,6 +359,14 @@ public class Order_main extends BaseModel implements Serializable {
             orderTypeName="视频包月订单";
         }
         return orderTypeName;
+    }
+
+    public String getMemberCouponId() {
+        return memberCouponId;
+    }
+
+    public void setMemberCouponId(String memberCouponId) {
+        this.memberCouponId = memberCouponId;
     }
 
     public Integer getMinusPoints() {

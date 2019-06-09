@@ -14,14 +14,18 @@ import com.aebiz.app.goods.modules.services.GoodsImageService;
 import com.aebiz.app.goods.modules.services.GoodsProductService;
 import com.aebiz.app.member.modules.models.Member_account;
 import com.aebiz.app.member.modules.models.Member_address;
+import com.aebiz.app.member.modules.models.Member_coupon;
 import com.aebiz.app.member.modules.models.Member_user;
 import com.aebiz.app.member.modules.services.MemberAccountService;
 import com.aebiz.app.member.modules.services.MemberAddressService;
+import com.aebiz.app.member.modules.services.MemberCouponService;
 import com.aebiz.app.member.modules.services.MemberUserService;
 import com.aebiz.app.order.commons.vo.OrderCheckBoxStatus;
 import com.aebiz.app.order.modules.models.*;
 import com.aebiz.app.order.modules.models.em.*;
 import com.aebiz.app.order.modules.services.*;
+import com.aebiz.app.sales.modules.models.Sales_coupon;
+import com.aebiz.app.sales.modules.services.SalesCouponService;
 import com.aebiz.app.shop.modules.models.Shop_account;
 import com.aebiz.app.shop.modules.models.Shop_express;
 import com.aebiz.app.shop.modules.services.ShopAccountService;
@@ -98,6 +102,14 @@ public class StoreOrderMainController {
 
     @Autowired
     private AccountUserService accountUserService;
+
+    @Autowired
+    private MemberCouponService memberCouponService;
+
+    @Autowired
+    private SalesCouponService salesCouponService;
+
+
 
     @Autowired
     private MemberUserService memberUserService;
@@ -472,7 +484,15 @@ public class StoreOrderMainController {
             }else {
                 req.setAttribute("refunds",null);
             }
+            if(orderMain!=null&&orderMain.getMinusPoints()!=null&&orderMain.getMinusPoints()>0){
+                req.setAttribute("points",orderMain.getMinusPoints());
+            }
+            if(orderMain!=null&&orderMain.getMemberCouponId()!=null){
+                Member_coupon member_coupon = memberCouponService.fetch(orderMain.getMemberCouponId());
+                Sales_coupon sales_coupon = salesCouponService.fetch(member_coupon.getCouponId());
+                req.setAttribute("sales_coupon",sales_coupon);
 
+            }
             if(orderDeliveryDetailList != null && orderDeliveryDetailList.size() > 0){
                 for(Order_delivery_detail detail :orderDeliveryDetailList){
                     expressId += (expressId + ",");

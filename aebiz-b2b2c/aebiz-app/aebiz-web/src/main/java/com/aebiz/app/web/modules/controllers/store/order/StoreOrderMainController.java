@@ -103,6 +103,9 @@ public class StoreOrderMainController {
     private MemberUserService memberUserService;
 
     @Autowired
+    private OrderPayRefundsService orderPayRefundsService;
+
+    @Autowired
     private ShopExpressService shopExpressService;
 
     @Autowired
@@ -122,6 +125,8 @@ public class StoreOrderMainController {
 
     @Autowired
     private OrderDeliveryDetailService orderDeliveryDetailService;
+
+
 
     @Autowired
     private SysDictService sysDictService;
@@ -458,6 +463,16 @@ public class StoreOrderMainController {
             List<Order_delivery_detail> orderDeliveryDetailList = orderDeliveryDetailService.query(Cnd.where("delFlag","=",false).and("orderId","=",id));
             String expressId ="";
             String expressName = "";
+            Cnd orderrefCnd = Cnd.NEW();
+            orderrefCnd.and("orderId","=",id);
+            orderrefCnd.and("delFlag","=",false);
+            List<Order_pay_refunds> oprList = orderPayRefundsService.query(orderrefCnd);
+            if(oprList!=null&&oprList.size()>0){
+                req.setAttribute("refunds",oprList.get(0));
+            }else {
+                req.setAttribute("refunds",null);
+            }
+
             if(orderDeliveryDetailList != null && orderDeliveryDetailList.size() > 0){
                 for(Order_delivery_detail detail :orderDeliveryDetailList){
                     expressId += (expressId + ",");

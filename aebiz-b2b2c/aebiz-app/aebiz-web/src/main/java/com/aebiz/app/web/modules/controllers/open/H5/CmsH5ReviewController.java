@@ -12,6 +12,7 @@ import com.aebiz.app.integral.modules.services.MemberIntegralService;
 import com.aebiz.app.web.commons.utils.CalculateUtils;
 import com.aebiz.baseframework.base.Result;
 import com.aebiz.baseframework.view.annotation.SJson;
+import com.vdurmont.emoji.EmojiParser;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.nutz.dao.Cnd;
@@ -72,6 +73,7 @@ public class CmsH5ReviewController {
             for (Cms_review cms_review : list) {
                 Account_info account_info = accountInfoService.fetch(cms_review.getReviewOpId());
                 cms_review.setAccount_info(account_info);
+                cms_review.setContent(EmojiParser.parseToUnicode(cms_review.getContent()));
                 //查看回复
                 Cnd replyCnd = Cnd.NEW();
                 replyCnd.and("delFlag", "=", 0 );
@@ -84,7 +86,7 @@ public class CmsH5ReviewController {
                     ReplyVO replyVO = new ReplyVO();
 //                    Account_info account_info2 = accountInfoService.fetch(r.getReviewOpId());
 //                    replyVO.setAccount_info(account_info2);
-                    replyVO.setContent(r.getContent());
+                    replyVO.setContent(EmojiParser.parseToUnicode(r.getContent()));
                     replyVO.setReviewFatherName(r.getReviewFatherName());
                     replyVO.setReviewOpName(r.getReviewOpName());
                     replyVO.setReviewFatherId(r.getReviewFatherId());
@@ -115,12 +117,13 @@ public class CmsH5ReviewController {
                 return Result.error(2,"请先登录");
             }
             Account_info account_info = accountInfoService.fetch(accountUser.getAccountId());
+            String introduction = EmojiParser.parseToAliases(content);
             Cms_review cms_review = new Cms_review();
             cms_review.setCmsId(cmsId);
             cms_review.setIsStore("2");
             cms_review.setType("1");
             cms_review.setCmsTitle(cmsTitle);
-            cms_review.setContent(content);
+            cms_review.setContent(introduction);
             cms_review.setReviewOpName(account_info.getNickname());
             cms_review.setReviewOpId(accountUser.getAccountId());
             cmsReviewService.insert(cms_review);
@@ -168,7 +171,8 @@ public class CmsH5ReviewController {
             cms_review.setIsStore("2");
             cms_review.setType("2");
             cms_review.setCmsTitle(cmsTitle);
-            cms_review.setContent(content);
+            String introduction = EmojiParser.parseToAliases(content);
+            cms_review.setContent(introduction);
             cms_review.setReviewOpName(account_info.getNickname());
             cms_review.setReviewOpId(accountUser.getAccountId());
             cms_review.setReviewId(reviewId);

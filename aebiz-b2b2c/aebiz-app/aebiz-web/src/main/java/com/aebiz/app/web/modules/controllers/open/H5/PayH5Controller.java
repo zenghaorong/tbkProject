@@ -305,11 +305,11 @@ public class PayH5Controller {
                 }
 
                 //扣除积分
-                try{
-                    minusPoints(order_main);
-                }catch (Exception e){
-                    log.error("下单扣除积分时异常",e);
-                }
+//                try{
+//                    minusPoints(order_main);
+//                }catch (Exception e){
+//                    log.error("下单扣除积分时异常",e);
+//                }
 
                 return "success";	//请不要修改或删除
             }else{//验证失败
@@ -416,11 +416,11 @@ public class PayH5Controller {
                 }
 
                 //扣除积分
-                try{
-                    minusPoints(order_main);
-                }catch (Exception e){
-                    log.error("下单扣除积分时异常",e);
-                }
+//                try{
+//                    minusPoints(order_main);
+//                }catch (Exception e){
+//                    log.error("下单扣除积分时异常",e);
+//                }
 
                 return success;
             }else {

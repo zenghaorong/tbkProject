@@ -112,6 +112,14 @@
                 <!--取消-->
             <!--</button>-->
         <!--</div>-->
+        <div class="mui-card-header" v-if="item.payStatus == 0">
+            <span class="orderOut">
+                <input type="hidden" :value="item.orderAt" class="orderAt">
+                 <input type="hidden" :value="item.id" class="oid">
+                剩余支付时间：
+                <span style="color: red;" class="syTime">1:59:59</span>
+            </span>
+        </div>
     </div>
 </div>
 
@@ -151,12 +159,51 @@
                         if (data.code == 0) {
                             var d = data.data;
                             self.orderList = d;
+                            window.setTimeout(function () {
+                                self.orderOutTime();
+                            },200);
                         } else {
 
                         }
                     }
                 });
 
+            },
+            orderOutTime:function () {
+                var self = this;
+                window.setInterval(function () {
+                    $(".orderOut").each(function () {
+                        var orderAt = $(this).find(".orderAt").val();
+                        var orderId = $(this).find(".oid").val();
+                        console.log("下单时间："+orderAt);
+                        //当前时间戳
+                        var thisTime = timest();
+                        //已过去时间
+                        var syTime = thisTime-orderAt;
+                        if(syTime>7200){ //已超时
+                            $.ajax({
+                                type:"POST",
+                                url:"${base!}/open/h5/order/delOrder.html",
+                                dataType:"JSON",
+                                data:{
+                                    orderId:orderId
+                                },
+                                success:function(data){
+                                    if (data.code == 0) {
+                                        self.getMyOrderList()
+                                    } else {
+
+                                    }
+                                }
+                            });
+                        }else {
+                            //剩余时间
+                            var sysj = 7200-(thisTime-orderAt);
+                            var date = timestamp(sysj);
+                            $(this).find(".syTime").html(date);
+                        }
+                    })
+                },1000)
             }
         },
         filters: {
@@ -183,6 +230,44 @@
         }
 
     })
+
+    function timest() {
+        var tmp = Date.parse( new Date() ).toString();
+        tmp = tmp.substr(0,10);
+        return tmp;
+    }
+
+
+    //处理时间戳
+    function timestamp(value) {
+        var secondTime = parseInt(value);// 秒
+        var minuteTime = 0;// 分
+        var hourTime = 0;// 小时
+        if(secondTime > 60) {//如果秒数大于60，将秒数转换成整数
+            //获取分钟，除以60取整数，得到整数分钟
+            minuteTime = parseInt(secondTime / 60);
+            //获取秒数，秒数取佘，得到整数秒数
+            secondTime = parseInt(secondTime % 60);
+            //如果分钟大于60，将分钟转换成小时
+            if(minuteTime > 60) {
+                //获取小时，获取分钟除以60，得到整数小时
+                hourTime = parseInt(minuteTime / 60);
+                //获取小时后取佘的分，获取分钟除以60取佘的分
+                minuteTime = parseInt(minuteTime % 60);
+            }
+        }
+        var result = "" + parseInt(secondTime) + "秒";
+
+        if(minuteTime > 0) {
+            result = "" + parseInt(minuteTime) + "分" + result;
+        }
+        if(hourTime > 0) {
+            result = "" + parseInt(hourTime) + "小时" + result;
+        }
+        return result;
+    }
+
+
 
 </script>
 </body>

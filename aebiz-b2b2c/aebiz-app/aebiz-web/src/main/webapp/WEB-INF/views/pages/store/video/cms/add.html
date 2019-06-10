@@ -132,8 +132,9 @@ layout("/layouts/store.html"){
             'height': '35',
             'buttonText': '请选择视频',
             'fileType': 'video/mp4,video/3GP,video/AVI',
-            'fileSizeLimit': 1000024,
+            'fileSizeLimit': 1024000,
             'queueSizeLimit': 1,
+            'overrideEvents': ['onDialogClose', 'onError'],
             'formData': {},
             'queueID': 'queue',
             'uploadScript': '${base}/open/ueditor/bd/uploadvideo',
@@ -153,6 +154,22 @@ layout("/layouts/store.html"){
         'onDrop': function (file, fileDropCount) {
             clearVideo();
         },
+            'onError': function (errorType, file) {
+                if (file != 0) {
+                    // var settings = $("#" + fileuploadId).uploadifive().settings;
+                    switch (errorType) {
+                        case 'UPLOAD_LIMIT_EXCEEDED':
+                            Toast.error("上传的文件数量已经超出系统限制的1个文件！");
+                            break;
+                        case 'FILE_SIZE_LIMIT_EXCEEDED':
+                            Toast.error("文件大小超出系统限制的1G大小！");
+                            break;
+                        case 'FORBIDDEN_FILE_TYPE':
+                            Toast.error("文件类型不正确！");
+                            break;
+                    }
+                }
+            },
         'onClearQueue': function (queue) {
             clearVideo();
         },
@@ -169,8 +186,9 @@ layout("/layouts/store.html"){
             'height': '35',
             'buttonText': '选择图片',
             'fileType': 'image/jpg,image/jpeg,image/png',
-            'fileSizeLimit': 10024,
+            'fileSizeLimit': 2048,
             'queueSizeLimit': 1,
+            'overrideEvents': ['onDialogClose', 'onError'],
             'formData': {},
             'queueID': 'imgQueue',
             'uploadScript': '${base}/open/file/upload/image',
@@ -191,6 +209,22 @@ layout("/layouts/store.html"){
         'onClearQueue': function (queue) {
             clearFile();
         },
+            'onError': function (errorType, file) {
+                if (file != 0) {
+                    // var settings = $("#" + fileuploadId).uploadifive().settings;
+                    switch (errorType) {
+                        case 'UPLOAD_LIMIT_EXCEEDED':
+                            Toast.error("上传的文件数量已经超出系统限制的1个文件！");
+                            break;
+                        case 'FILE_SIZE_LIMIT_EXCEEDED':
+                            Toast.error("文件大小超出系统限制的2M大小！");
+                            break;
+                        case 'FORBIDDEN_FILE_TYPE':
+                            Toast.error("文件类型不正确！");
+                            break;
+                    }
+                }
+            },
         'onCancel': function () {
             clearFile();
         }

@@ -267,7 +267,10 @@ public class StoreGoodsPublishController {
     @SJson("{locked:'path|opBy|opAt|delFlag',ignoreNull:false}")
     @RequiresPermissions("store.goods.publish")
     public Object frontClassTree() {
-        return storeGoodsclassService.query(Cnd.where("storeId", "=", StringUtil.getStoreId()));
+        Cnd cnd =Cnd.NEW();
+        cnd.and("storeId", "=", StringUtil.getStoreId());
+        cnd.and("disabled","=",false);
+        return storeGoodsclassService.query(cnd);
     }
 
     /**

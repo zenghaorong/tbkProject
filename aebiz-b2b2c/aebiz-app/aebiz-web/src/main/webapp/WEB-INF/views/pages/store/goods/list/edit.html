@@ -2420,7 +2420,8 @@ layout("/layouts/store.html"){
             'height': '35',
             'buttonText': "${msg['goods.main.tip.selectplease']}相册图片",
             'fileType': 'image/jpg,image/jpeg,image/png',
-            'fileSizeLimit': 1024,
+            'fileSizeLimit': 2048,
+            'overrideEvents': ['onDialogClose', 'onError'],
             'queueSizeLimit': 5,
             'formData': {},
             'removeCompleted':true,
@@ -2445,6 +2446,22 @@ layout("/layouts/store.html"){
                     $("#"+queueId).empty();
                 } else {
                     Toast.error(data.msg);
+                }
+            },
+            'onError': function (errorType, file) {
+                if (file != 0) {
+                    // var settings = $("#" + fileuploadId).uploadifive().settings;
+                    switch (errorType) {
+                        case 'UPLOAD_LIMIT_EXCEEDED':
+                            Toast.error("上传的文件数量已经超出系统限制的5个文件！");
+                            break;
+                        case 'FILE_SIZE_LIMIT_EXCEEDED':
+                            Toast.error("文件大小超出系统限制的2M大小！");
+                            break;
+                        case 'FORBIDDEN_FILE_TYPE':
+                            Toast.error("文件类型不正确！");
+                            break;
+                    }
                 }
             },
             'onSelect' : function(queue) {

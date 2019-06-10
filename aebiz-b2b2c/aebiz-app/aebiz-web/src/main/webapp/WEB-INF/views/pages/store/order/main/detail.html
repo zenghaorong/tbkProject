@@ -71,6 +71,22 @@ layout("/layouts/store.html"){
                          <div class="col-md-4" style="padding: 5px 0px">
                              参与活动:   <span>双11促销</span>
                          </div> -->
+                        <!--#if(!isEmpty(refunds)){#-->
+                        <div class="col-md-4" style="padding: 5px 0px">
+                            退款原因:   <span>${refunds.note}</span>
+                        </div>
+                        <!--# }#-->
+                        <!--#if(!isEmpty(points)){#-->
+                        <div class="col-md-4">
+                            <div>抵扣积分：${points!}</div>
+                        </div>
+                        <!--#}#-->
+                        <!--#if(!isEmpty(sales_coupon)){#-->
+                        <div class="col-md-4">
+                            <div>使用的优惠券：${sales_coupon.name!}</div>
+                        </div>
+                        <!--#}#-->
+
                     </div>
                 </div>
             </div>
@@ -143,6 +159,7 @@ layout("/layouts/store.html"){
         </div>
         <div style="position:fixed;bottom:0px;background-color:#FFFFFF;width:100%;min-height: 50px;z-index: 5">
             <div class="form-group col-md-12 col-md-offset-4" style="display: inline-block;line-height: 50px">
+
                 <!--# if(obj.orderStatus == 0){ #-->
                     <!--<button type="button" class="btn btn-sm btn-info" onclick="auditModal('${obj.id}')">审核</button>-->
                 <!--# } #-->

@@ -224,6 +224,24 @@ public class OrderController {
         request.setAttribute("orderId",orderId);
         Order_main order_main = orderMainService.fetch(orderId);
         request.setAttribute("order",order_main);
+        if(order_main!=null&&order_main.getMinusPoints()!=null&&order_main.getMinusPoints()>0){
+            request.setAttribute("points",order_main.getMinusPoints());
+        }
+        if(order_main!=null&&order_main.getMemberCouponId()!=null){
+            Member_coupon member_coupon = memberCouponService.fetch(order_main.getMemberCouponId());
+            Sales_coupon sales_coupon = salesCouponService.fetch(member_coupon.getCouponId());
+            request.setAttribute("sales_coupon",sales_coupon);
+
+        }
+        Cnd orderrefCnd = Cnd.NEW();
+        orderrefCnd.and("orderId","=",orderId);
+        orderrefCnd.and("delFlag","=",false);
+        List<Order_pay_refunds> oprList = orderPayRefundsService.query(orderrefCnd);
+        if(oprList!=null&&oprList.size()>0){
+            request.setAttribute("refunds",oprList.get(0));
+        }else {
+            request.setAttribute("refunds",null);
+        }
         double money = order_main.getPayMoney();
         double payMoney = CalculateUtils.div(money,100,2);
         request.setAttribute("payMoney",payMoney);

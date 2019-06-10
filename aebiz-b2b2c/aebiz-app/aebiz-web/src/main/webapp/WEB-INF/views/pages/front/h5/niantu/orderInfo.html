@@ -79,6 +79,22 @@
             <div>物流单号：${order.expressNo!}</div>
         </div>
         <!--#}#-->
+        <!--#if(!isEmpty(refunds)){#-->
+        <div class="mui-card-header">
+            <div>退款原因：${refunds.note!}</div>
+        </div>
+        <!--#}#-->
+        <!--#if(!isEmpty(points)){#-->
+        <div class="mui-card-header">
+            <div>抵扣积分：${points!}</div>
+        </div>
+        <!--#}#-->
+        <!--#if(!isEmpty(sales_coupon)){#-->
+        <div class="mui-card-header">
+            <div>使用的优惠券：${sales_coupon.name!}</div>
+        </div>
+        <!--#}#-->
+
 
         <!--#if(order.orderType == "3"){#-->
         <div class="mui-card-content">

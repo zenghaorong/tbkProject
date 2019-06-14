@@ -8,11 +8,13 @@ import com.aebiz.commons.utils.StringUtil;
 import com.aebiz.app.cms.modules.models.Cms_review;
 import com.aebiz.app.cms.modules.services.CmsReviewService;
 import com.aebiz.baseframework.view.annotation.SJson;
+import com.vdurmont.emoji.EmojiParser;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
 import org.nutz.lang.Strings;
+import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 @RequestMapping("/store/cms/review")
@@ -59,7 +62,13 @@ public class CmsReviewController {
         if(!Strings.isBlank(content)){
             cnd.and("content", "like","%"+content+"%");
         }
-    	return cmsReviewService.data(dataTable.getLength(), dataTable.getStart(), dataTable.getDraw(), dataTable.getOrders(), dataTable.getColumns(), cnd, null);
+        NutMap nutMap = cmsReviewService.data(dataTable.getLength(), dataTable.getStart(), dataTable.getDraw(), dataTable.getOrders(), dataTable.getColumns(), cnd, null);
+        List<Cms_review> list = (List<Cms_review>) nutMap.get("data");
+        for (Cms_review c: list) {
+            c.setContent(EmojiParser.parseToUnicode(c.getContent()));
+        }
+        nutMap.put("data",list);
+        return nutMap;
     }
 
     @RequestMapping("/add")

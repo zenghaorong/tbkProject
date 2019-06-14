@@ -26,4 +26,9 @@ public interface WxPayService {
      */
     public boolean wxRefund(WxGetPayInfoQO wxGetPayInfoQO);
 
+    /**
+     * 微信查询订单状态接口
+     */
+    public String wxQueryOrderStatus(String out_trade_no);
+
 }

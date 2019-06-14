@@ -141,7 +141,6 @@
         created:function () {   //实例初始化创建完成执行
 
             this.getMyOrderList()     //调用自身方法
-
         },
         methods:{              //定义封装方法
             //获取列表
@@ -161,6 +160,7 @@
                             self.orderList = d;
                             window.setTimeout(function () {
                                 self.orderOutTime();
+                                self.queryWeiXinOrderStatus(); //查询微信那边订单状态
                             },200);
                         } else {
 
@@ -204,6 +204,32 @@
                         }
                     })
                 },1000)
+            },
+            queryWeiXinOrderStatus:function () {
+                var self = this;
+                window.setTimeout(function () {
+
+                    $(".orderOut").each(function () {
+                        var orderId = $(this).find(".oid").val();
+                        $.ajax({
+                            type: "POST",
+                            url: "${base!}/open/h5/pay/queryWeiXinOrderStatus.html",
+                            dataType: "JSON",
+                            data: {
+                                orderId: orderId
+                            },
+                            success: function (data) {
+                                if (data.code == 0) {
+                                    self.getMyOrderList();
+                                } else {
+
+                                }
+                            }
+                        });
+                    })
+
+                },200);
+
             }
         },
         filters: {

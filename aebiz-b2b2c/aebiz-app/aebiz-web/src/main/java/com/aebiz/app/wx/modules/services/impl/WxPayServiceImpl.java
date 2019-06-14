@@ -195,6 +195,63 @@ public class WxPayServiceImpl implements WxPayService {
         return false;
     }
 
+
+    @Override
+    public String wxQueryOrderStatus(String out_trade_no) {
+            try {
+                String key = config.get("wx.pay.sign.key");
+                String appid = config.get("wx.pay.AppID");
+                String mchid = config.get("wx.pay.mchid");
+                String path = config.get("wx.certificate.p12.path");
+
+                SortedMap<String,String> map =  new TreeMap<String, String>();
+                String nonce_str = WXPayUtil.generateNonceStr();
+                map.put("appid",appid);
+                map.put("mch_id",mchid);
+                map.put("nonce_str", nonce_str);
+                map.put("out_trade_no", out_trade_no);
+                map.put("sign_type","MD5");
+                String signStr = WXPayUtil.createSign(map, key);//签名参数
+                map.put("sign", signStr);
+                log.info("传入map参数:" + JSON.toJSONString(map));
+                JSONObject mapNobject = JSONObject.fromObject(map);
+                String postXml = json2Xml(mapNobject);
+                log.info("请求xml: "+postXml);
+                //3.退款接口
+                String wxXml = HttpClientUtil.payHttps("https://api.mch.weixin.qq.com/pay/orderquery",mchid,
+                        path,postXml);
+                log.info("微信订单查询返回参数" + wxXml);
+                JSONObject xmlJson =  xml2Json(wxXml);
+                log.info("微信订单查询返回参数："+xmlJson.toString());
+                //判断下单是否成功
+                if(!"SUCCESS".equals(xmlJson.get("return_code"))){
+                    log.error("微信退款失败："+xmlJson.get("return_msg"));
+                    return "";
+                }else {
+                    //SUCCESS—支付成功
+                    //
+                    //REFUND—转入退款
+                    //
+                    //NOTPAY—未支付
+                    //
+                    //CLOSED—已关闭
+                    //
+                    //REVOKED—已撤销（付款码支付）
+                    //
+                    //USERPAYING--用户支付中（付款码支付）
+                    //
+                    //PAYERROR--支付失败(其他原因，如银行返回失败)
+                    //
+                    //支付状态机请见下单API页面
+                    String orderStatus = (String) xmlJson.get("trade_state");
+                    return orderStatus;
+                }
+            }catch (Exception e) {
+                log.error("请求微信支付二维码异常", e);
+            }
+            return "";
+    }
+
     /**
      * xml转json
      * @param xml

@@ -460,7 +460,40 @@ public class PayH5Controller {
     }
 
 
-
+    /***
+     * 查询微信支付请求订单状态
+     */
+    @RequestMapping("/queryWeiXinOrderStatus.html")
+    @SJson
+    public Result queryWeiXinOrderStatus(String orderId){
+        try {
+            Order_main order_main = orderMainService.fetch(orderId);
+            if(order_main.getPayStatus()==OrderPayStatusEnum.PAYALL.getKey()){
+                return Result.success("ok");
+            }
+            String status = wxPayService.wxQueryOrderStatus(orderId);
+            if("SUCCESS".equals(status)){
+                order_main.setPayType(OrderPayTypeEnum.WEIXINPAY.getKey());
+                order_main.setPayStatus(OrderPayStatusEnum.PAYALL.getKey());
+                order_main.setOrderStatus(OrderStatusEnum.WAITVERIFY.getKey());
+                order_main.setGetStatus(OrderGetStatusEnum.NONE.getKey());
+                order_main.setPayAt((int)WXPayUtil.getCurrentTimestamp());
+                if(OrderTypeEnum.video_order_type.getKey().equals(order_main.getOrderType()) ||
+                        OrderTypeEnum.monthly_order_type.getKey().equals(order_main.getOrderType()) ){
+                    order_main.setGetStatus(OrderGetStatusEnum.ALL.getKey());
+                    order_main.setFeedStatus(0);
+                    order_main.setOrderStatus(OrderStatusEnum.FINISH.getKey());
+                    order_main.setDeliveryStatus(OrderDeliveryStatusEnum.ALL.getKey());
+                }
+                orderMainService.update(order_main);
+                return Result.success("ok",status);
+            }
+            return Result.error("fail");
+        } catch (Exception e) {
+            log.error("获取支付信息失败",e);
+            return Result.error("fail");
+        }
+    }
 
 
 

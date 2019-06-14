@@ -184,7 +184,9 @@
         },
         created:function () {   //实例初始化创建完成执行
 
-            this.getOrderProductList()     //调用自身方法
+            this.getOrderProductList();    //调用自身方法
+            this.queryWeiXinOrderStatus(); //查询微信那边订单状态
+            
 
         },
         methods:{              //定义封装方法
@@ -204,10 +206,30 @@
                             self.orderProductList = d;
                         } else {
 
+                            }
                         }
-                    }
-                });
+                    });
+            },
+            queryWeiXinOrderStatus:function () {
+                var self = this;
+                var payStatus = "${order.payStatus!}";
+                if(payStatus == "0") {
+                    $.ajax({
+                        type: "POST",
+                        url: "${base!}/open/h5/pay/queryWeiXinOrderStatus.html",
+                        dataType: "JSON",
+                        data: {
+                            orderId: '${orderId}'
+                        },
+                        success: function (data) {
+                            if (data.code == 0) {
+                                window.location.reload();
+                            } else {
 
+                            }
+                        }
+                    });
+                }
             }
         },
         watch:{     //监听器

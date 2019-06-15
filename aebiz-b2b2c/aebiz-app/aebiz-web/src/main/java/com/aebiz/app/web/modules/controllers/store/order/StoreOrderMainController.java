@@ -859,6 +859,7 @@ public class StoreOrderMainController {
                 Order_main orderMain = orderMainService.fetch(id);
             String kdname = req.getParameter("kdname");
             String kdno = req.getParameter("kdno");
+            String kdgsKey = req.getParameter("kdgsKey");
 
             //判断订单是否为空，为空则直接返回错误信息
                 if(Lang.isEmpty(orderMain)){
@@ -867,6 +868,7 @@ public class StoreOrderMainController {
                 orderMain.setDeliveryStatus(3);
                 orderMain.setExpressName(kdname);
                 orderMain.setExpressNo(kdno);
+            orderMain.setExpressId(kdgsKey);
             orderMainService.update(orderMain);
             return Result.success("globals.result.success");
         } catch (Exception e) {

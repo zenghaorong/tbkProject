@@ -145,7 +145,9 @@ layout("/layouts/store.html"){
                 <div class="form-group">
                     <input id="oid" type="hidden">
                     <label class="control-label col-xs-2">物流公司</label>
-                    <input class="form-control" id="company" style="width: 75%;"></input>
+                    <input class="form-control" id="company" style="width: 75%;" readonly="readonly"
+                    onclick="selectWlgs()"></input>
+                    <input type="hidden" id="expressId">
                     <label class="control-label col-xs-2">快递单号</label>
                     <input class="form-control" id="companyNo" style="width: 75%;"></input>
 
@@ -199,6 +201,9 @@ layout("/layouts/store.html"){
     var status=1;//默认查询待发货订单
     var loginname="";
     var id = "";
+
+    var wlmap = new Map();
+
     var checkStatus = [
         {
             id:1,
@@ -313,10 +318,17 @@ layout("/layouts/store.html"){
                     /*{"data": "orderAt","sDefaultContent" : "", "bSortable": true}*/
             ],
             "columnDefs": [
-                {
-                    "targets": 7
-                }
-            ]
+                    {
+                        "targets": 7
+                    },
+                    {
+                        "targets":0,
+                        "render":function (data, type, row) {
+                            wlmap.set(row.id,row);
+                            return data;
+                        }
+                    }
+                ]
         });
         // bindStatus(Number(status));
         /*datatable.on('click', 'tr', function () {
@@ -447,7 +459,8 @@ layout("/layouts/store.html"){
 
         $.post("${base}/store/order/main/sendProduct/" + id, {
             kdname:kdname,
-            kdno:kdno
+            kdno:kdno,
+            kdgsKey:$("#expressId").val()
         }, function (data) {
             if (data.code == 0) {
                 datatable.ajax.reload(null,false);
@@ -505,6 +518,20 @@ layout("/layouts/store.html"){
             $("#oid").val(id);
             dialog.modal("show");
     }
+    
+    //选择物流公司
+    function selectWlgs() {
+        layer.open({
+            type: 2,
+            title: '选择物流公司',
+            shadeClose: true,
+            shade: false,
+            maxmin: true, //开启最大化最小化按钮
+            area: ['893px', '600px'],
+            content: '${base}/store/member/company'
+        });
+    }
+    
 
     //批量删除订单
     function delCheck() {
@@ -755,6 +782,10 @@ layout("/layouts/store.html"){
         if(row.payStatus == 3 &&  row.deliveryStatus == 0 && row.orderType == 1){
             buttonList.push('<div class="order_button"><a class="btn btn-info btn-xs" href="javascript:;" onclick="sendProduct(\'' + row.id + '\')">发货</a></div>');
         }
+        //如果存在物流信息
+        if(row.expressId !='' &&  row.expressNo !='' &&  row.expressNo !=null &&  row.expressNo !=null){
+            buttonList.push('<div class="order_button"><a class="btn btn-info btn-xs" href="javascript:;" onclick="lookWl(\'' + row.id + '\')">查看物流</a></div>');
+        }
         // if(row.orderStatus == 2){
         //     buttonList.push('<div class="order_button"><a class="btn btn-info btn-xs" href="${base!}/store/order/main/currentPrice/' + row.id + '" data-pjax>现价恢复</a></div>');
         //     buttonList.push('<div class="order_button"><a class="btn btn-info btn-xs" href="${base!}/store/order/main/costPrice/' + row.id + '" data-pjax>原价恢复</a></div>');
@@ -782,7 +813,12 @@ layout("/layouts/store.html"){
             $("#operationContent").html(data);
         })
     }
-    
+
+    //查看物流
+    function lookWl(id){
+        var row = wlmap.get(id);
+       window.open("https://www.kuaidi100.com/chaxun?com="+row.expressId+"&nu="+row.expressNo);
+    }
 
 
 

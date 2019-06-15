@@ -72,8 +72,8 @@
             <div>实付款：<span style="color: red;">${payMoney}</span></div>
         </div>
         <!--#if(!isEmpty(order.expressName)){#-->
-        <div class="mui-card-header">
-            <div>物流公司：${order.expressName!}</div>
+        <div class="mui-card-header" onclick="goWl()">
+            <div>物流公司：${order.expressName!}<a style="margin-left: 5px;">查看物流</a></div>
         </div>
         <div class="mui-card-header">
             <div>物流单号：${order.expressNo!}</div>
@@ -306,7 +306,11 @@
             $("#deleteOrder").css("display","none");
         }
     })
-    
+
+    function goWl() {
+        window.location.href="https://m.kuaidi100.com/app/query/?com=${order.expressId!}&nu=${order.expressNo!}&coname=HquaDahY3891";
+    }
+
 </script>
 </body>
 </html>

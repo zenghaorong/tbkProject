@@ -73,20 +73,20 @@
 
 
     <!--启动定时器-->
-    <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
-        <property name="jobDetails">
-            <list>
-                <ref bean="simpleJobDetail"/>
-                <ref bean="orderSimpleJobDetail"/>
-            </list>
-        </property>
-        <property name="triggers">
-            <list>
-                <ref bean="mySimpleTrigger"/>
-                <ref bean="orderMySimpleTrigger"/>
-            </list>
-        </property>
-    </bean>
+    <!--<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">-->
+        <!--<property name="jobDetails">-->
+            <!--<list>-->
+                <!--<ref bean="simpleJobDetail"/>-->
+                <!--<ref bean="orderSimpleJobDetail"/>-->
+            <!--</list>-->
+        <!--</property>-->
+        <!--<property name="triggers">-->
+            <!--<list>-->
+                <!--<ref bean="mySimpleTrigger"/>-->
+                <!--<ref bean="orderMySimpleTrigger"/>-->
+            <!--</list>-->
+        <!--</property>-->
+    <!--</bean>-->
     <!--****************************************************************************-->
 
 </beans>

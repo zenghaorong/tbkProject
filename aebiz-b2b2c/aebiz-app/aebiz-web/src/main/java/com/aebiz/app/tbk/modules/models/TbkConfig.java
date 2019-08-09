@@ -13,6 +13,8 @@ public class TbkConfig {
     public static final String appSecret = "9b48c1d6a222c88c8077f2c34c1d3f14"; // 可替换为您的沙箱环境应用的AppSecret
     public static final String sessionKey = "6101719197ebae75a13eb3db2d91f11f939b4f59a4d3cac74948387"; // 必须替换为沙箱账号授权得到的真实有效SessionKey
 
+    //淘宝客mm_xxx_xxx_12345678三段式的最后一段数字,推广位编号
+    public static final Long adzone_Id = 109108750020L;
 
 
 }

@@ -1,6 +1,5 @@
 package com.aebiz.app.tbk.modules.services.impl;
 
-import com.aebiz.app.tbk.modules.models.TbkApiBaseModel;
 import com.aebiz.app.tbk.modules.models.TbkConfig;
 import com.aebiz.app.tbk.modules.services.TbkApiService;
 import com.aebiz.app.web.commons.utils.TcpipUtil;
@@ -12,9 +11,11 @@ import com.taobao.api.TaobaoClient;
 import com.taobao.api.request.TbkDgMaterialOptionalRequest;
 import com.taobao.api.request.TbkDgOptimusMaterialRequest;
 import com.taobao.api.request.TbkItemGetRequest;
+import com.taobao.api.request.TbkJuTqgGetRequest;
 import com.taobao.api.response.TbkDgMaterialOptionalResponse;
 import com.taobao.api.response.TbkDgOptimusMaterialResponse;
 import com.taobao.api.response.TbkItemGetResponse;
+import com.taobao.api.response.TbkJuTqgGetResponse;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.springframework.stereotype.Service;
@@ -58,6 +59,29 @@ public class TbkApiServiceImpl implements TbkApiService {
         TaobaoClient client = new DefaultTaobaoClient(TbkConfig.serverUrl, TbkConfig.appKey, TbkConfig.appSecret);
 
         TbkDgOptimusMaterialResponse rsp = null;
+        try {
+            rsp = client.execute(req, TbkConfig.sessionKey);
+        } catch (ApiException e) {
+            e.printStackTrace();
+        }
+        String str = rsp.getBody();
+        log.info(str);
+        JSONObject jsonObject = JSON.parseObject(str);
+        if (rsp.isSuccess()) {
+            return jsonObject;
+        }
+        return jsonObject;
+    }
+
+
+    /**
+     *  taobao.tbk.ju.tqg.get( 淘抢购api )
+     */
+    @Override
+    public JSONObject tbkGetTqgProductList(TbkJuTqgGetRequest req) {
+        TaobaoClient client = new DefaultTaobaoClient(TbkConfig.serverUrl, TbkConfig.appKey, TbkConfig.appSecret);
+
+        TbkJuTqgGetResponse rsp = null;
         try {
             rsp = client.execute(req, TbkConfig.sessionKey);
         } catch (ApiException e) {

@@ -1,1 +1,0 @@
-"use strict";jQuery(".txtScroll-top").slide({titCell:".hd ul",mainCell:".bd ul",autoPage:!0,effect:"top",autoPlay:!0,vis:1}),jQuery(".slideBox").slide({mainCell:".bd ul",effect:"fold",autoPlay:!0,delayTime:1e3});

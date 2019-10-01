@@ -57,7 +57,7 @@ public class StoreCmsChannelController {
             cmsChannel.setStoreId(user.getStoreId());
             cmsChannelService.save(cmsChannel, parentId);
             cmsChannelService.clearCache();
-            return Result.success("globals.result.success");
+            return Result.success("globals.result.success",cmsChannel.getId());
         } catch (Exception e) {
             return Result.error("globals.result.error");
         }

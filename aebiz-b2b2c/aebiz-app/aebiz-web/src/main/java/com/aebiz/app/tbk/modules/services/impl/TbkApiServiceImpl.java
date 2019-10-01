@@ -8,14 +8,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.taobao.api.ApiException;
 import com.taobao.api.DefaultTaobaoClient;
 import com.taobao.api.TaobaoClient;
-import com.taobao.api.request.TbkDgMaterialOptionalRequest;
-import com.taobao.api.request.TbkDgOptimusMaterialRequest;
-import com.taobao.api.request.TbkItemGetRequest;
-import com.taobao.api.request.TbkJuTqgGetRequest;
-import com.taobao.api.response.TbkDgMaterialOptionalResponse;
-import com.taobao.api.response.TbkDgOptimusMaterialResponse;
-import com.taobao.api.response.TbkItemGetResponse;
-import com.taobao.api.response.TbkJuTqgGetResponse;
+import com.taobao.api.request.*;
+import com.taobao.api.response.*;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.springframework.stereotype.Service;
@@ -65,7 +59,7 @@ public class TbkApiServiceImpl implements TbkApiService {
             e.printStackTrace();
         }
         String str = rsp.getBody();
-        log.info(str);
+//        log.info(str);
         JSONObject jsonObject = JSON.parseObject(str);
         if (rsp.isSuccess()) {
             return jsonObject;
@@ -88,7 +82,95 @@ public class TbkApiServiceImpl implements TbkApiService {
             e.printStackTrace();
         }
         String str = rsp.getBody();
-        log.info(str);
+//        log.info(str);
+        JSONObject jsonObject = JSON.parseObject(str);
+        if (rsp.isSuccess()) {
+            return jsonObject;
+        }
+        return jsonObject;
+    }
+
+    /**
+     *  taobao.ju.items.search( 聚划算商品搜索接口 )
+     */
+    @Override
+    public JSONObject tbkGetJhsProductList(JuItemsSearchRequest req) {
+        TaobaoClient client = new DefaultTaobaoClient(TbkConfig.serverUrl, TbkConfig.appKey, TbkConfig.appSecret);
+
+        JuItemsSearchResponse rsp = null;
+        try {
+            rsp = client.execute(req, TbkConfig.sessionKey);
+        } catch (ApiException e) {
+            e.printStackTrace();
+        }
+        String str = rsp.getBody();
+//        log.info(str);
+        JSONObject jsonObject = JSON.parseObject(str);
+        if (rsp.isSuccess()) {
+            return jsonObject;
+        }
+        return jsonObject;
+    }
+
+    /**
+     * taobao.tbk.content.get( 淘宝客-推广者-图文内容输出 )
+     */
+    @Override
+    public JSONObject tbkGetContentList(TbkContentGetRequest req) {
+        TaobaoClient client = new DefaultTaobaoClient(TbkConfig.serverUrl, TbkConfig.appKey, TbkConfig.appSecret);
+
+        TbkContentGetResponse rsp = null;
+        try {
+            rsp = client.execute(req, TbkConfig.sessionKey);
+        } catch (ApiException e) {
+            e.printStackTrace();
+        }
+        String str = rsp.getBody();
+//        log.info(str);
+        JSONObject jsonObject = JSON.parseObject(str);
+        if (rsp.isSuccess()) {
+            return jsonObject;
+        }
+        return jsonObject;
+    }
+
+    /**
+     * taobao.tbk.uatm.favorites.get( 淘宝客-推广者-选品库宝贝列表 )
+     */
+    @Override
+    public JSONObject tbkGetFavoritesList(TbkUatmFavoritesGetRequest req) {
+        TaobaoClient client = new DefaultTaobaoClient(TbkConfig.serverUrl, TbkConfig.appKey, TbkConfig.appSecret);
+
+        TbkUatmFavoritesGetResponse rsp = null;
+        try {
+            rsp = client.execute(req, TbkConfig.sessionKey);
+        } catch (ApiException e) {
+            e.printStackTrace();
+        }
+        String str = rsp.getBody();
+//        log.info(str);
+        JSONObject jsonObject = JSON.parseObject(str);
+        if (rsp.isSuccess()) {
+            return jsonObject;
+        }
+        return jsonObject;
+    }
+
+    /**
+     * taobao.tbk.uatm.favorites.item.get( 淘宝客-推广者-选品库宝贝信息 )
+     */
+    @Override
+    public JSONObject tbkGetFavoritesProductList(TbkUatmFavoritesItemGetRequest req) {
+        TaobaoClient client = new DefaultTaobaoClient(TbkConfig.serverUrl, TbkConfig.appKey, TbkConfig.appSecret);
+
+        TbkUatmFavoritesItemGetResponse rsp = null;
+        try {
+            rsp = client.execute(req, TbkConfig.sessionKey);
+        } catch (ApiException e) {
+            e.printStackTrace();
+        }
+        String str = rsp.getBody();
+//        log.info(str);
         JSONObject jsonObject = JSON.parseObject(str);
         if (rsp.isSuccess()) {
             return jsonObject;

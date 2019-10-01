@@ -1,9 +1,16 @@
 package com.aebiz.app.web.commons.interceptor;
 
+import com.aebiz.app.acc.modules.models.Account_user;
 import com.aebiz.app.sys.modules.services.SysApiService;
 import com.aebiz.app.sys.modules.services.impl.SysApiServiceImpl;
 import com.aebiz.baseframework.base.Result;
 import com.aebiz.commons.utils.SpringUtil;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.session.Session;
+import org.apache.shiro.session.mgt.SessionKey;
+import org.apache.shiro.subject.SimplePrincipalCollection;
+import org.apache.shiro.subject.support.DefaultSubjectContext;
+import org.apache.shiro.web.session.mgt.WebSessionKey;
 import org.nutz.lang.Encoding;
 import org.nutz.lang.Strings;
 import org.nutz.log.Log;
@@ -22,10 +29,13 @@ public class TokenInterceptor extends HandlerInterceptorAdapter {
     public boolean preHandle(HttpServletRequest request,
                              HttpServletResponse response, Object handler)
             throws Exception {
-        SysApiService apiService = SpringUtil.getBean(SysApiServiceImpl.class);
-        String appId = Strings.sNull(request.getParameter("appid"));
-        String token = Strings.sNull(request.getParameter("token"));
-        if (!apiService.verifyToken(appId, token)) {
+        String sessionId = Strings.sNull(request.getParameter("sessionId"));
+        SessionKey key = new WebSessionKey(sessionId,request,response);
+        Session se = SecurityUtils.getSecurityManager().getSession(key);
+        Object obj = se.getAttribute(DefaultSubjectContext.PRINCIPALS_SESSION_KEY);
+        SimplePrincipalCollection coll = (SimplePrincipalCollection) obj;
+        Account_user account_user = (Account_user)coll.getPrimaryPrincipal();
+        if (account_user == null) {
             response.reset();
             response.setCharacterEncoding(Encoding.UTF8);
             response.setContentType("application/json");

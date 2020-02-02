@@ -179,6 +179,89 @@ public class TbkApiServiceImpl implements TbkApiService {
     }
 
     /**
+     * taobao.tbk.coupon.get( 淘宝客-公用-阿里妈妈推广券详情查询 )
+     * @param req
+     * @return
+     */
+    @Override
+    public JSONObject tbkGetCouponInfo(TbkCouponGetRequest req) {
+        TaobaoClient client = new DefaultTaobaoClient(TbkConfig.serverUrl, TbkConfig.appKey, TbkConfig.appSecret);
+        TbkCouponGetResponse  rsp = null;
+        try {
+            rsp = client.execute(req, TbkConfig.sessionKey);
+        } catch (ApiException e) {
+            e.printStackTrace();
+        }
+        String str = rsp.getBody();
+//        log.info(str);
+        JSONObject jsonObject = JSON.parseObject(str);
+        if (rsp.isSuccess()) {
+            return jsonObject;
+        }
+        return jsonObject;
+    }
+
+    /**
+     * taobao.tbk.tpwd.create( 淘宝客-公用-淘口令生成 )
+     */
+    @Override
+    public JSONObject tbkGetTpwdCreate(TbkTpwdCreateRequest req) {
+        TaobaoClient client = new DefaultTaobaoClient(TbkConfig.serverUrl, TbkConfig.appKey, TbkConfig.appSecret);
+        TbkTpwdCreateResponse  rsp = null;
+        try {
+            rsp = client.execute(req, TbkConfig.sessionKey);
+        } catch (ApiException e) {
+            e.printStackTrace();
+        }
+        String str = rsp.getBody();
+//        log.info(str);
+        JSONObject jsonObject = JSON.parseObject(str);
+        if (rsp.isSuccess()) {
+            return jsonObject;
+        }
+        return jsonObject;
+    }
+
+    /**
+     * taobao.tbk.sc.invitecode.get( 淘宝客-公用-私域用户邀请码生成 )
+     */
+    @Override
+    public JSONObject tbkGetScInvitecode(TbkScInvitecodeGetRequest req) {
+        TaobaoClient client = new DefaultTaobaoClient(TbkConfig.serverUrl, TbkConfig.appKey, TbkConfig.appSecret);
+        TbkScInvitecodeGetResponse rsp = null;
+        try {
+            rsp = client.execute(req, TbkConfig.sessionKey);
+        } catch (ApiException e) {
+            e.printStackTrace();
+        }
+        String str = rsp.getBody();
+//        log.info(str);
+        JSONObject jsonObject = JSON.parseObject(str);
+        if (rsp.isSuccess()) {
+            return jsonObject;
+        }
+        return jsonObject;
+    }
+
+    @Override
+    public JSONObject tbkCreateTljVegas(TbkDgVegasTljCreateRequest req) {
+        TaobaoClient client = new DefaultTaobaoClient(TbkConfig.serverUrl, TbkConfig.appKey, TbkConfig.appSecret);
+        TbkDgVegasTljCreateResponse rsp = null;
+        try {
+            rsp = client.execute(req, TbkConfig.sessionKey);
+        } catch (ApiException e) {
+            e.printStackTrace();
+        }
+        String str = rsp.getBody();
+//        log.info(str);
+        JSONObject jsonObject = JSON.parseObject(str);
+        if (rsp.isSuccess()) {
+            return jsonObject;
+        }
+        return jsonObject;
+    }
+
+    /**
      * 测试main
      * @param args
      */

@@ -41,11 +41,12 @@ public class TbkController extends TbkBaseController{
      * 超级搜索api
      * @param request
      * @param cat 类目
+     * @param sort 排序 筛选
      * @return
      */
     @RequestMapping("/getProductList")
     @SJson
-    public Object getProductList(HttpServletRequest request,String cat,String q) {
+    public Object getProductList(HttpServletRequest request,String cat,String q,String sort) {
         TbkDgMaterialOptionalRequest req = new TbkDgMaterialOptionalRequest();
         try {
 
@@ -60,6 +61,9 @@ public class TbkController extends TbkBaseController{
 //                cat = "16,18"; //女装 tbk_cat表
                 //类目 应该是商品的一些分类
                 req.setCat(cat);
+            }
+            if(StringUtils.isNotEmpty(sort)){
+                req.setSort(sort);
             }
             req.setAdzoneId(TbkConfig.adzone_Id);
 
@@ -229,6 +233,84 @@ public class TbkController extends TbkBaseController{
             return Result.error("fail");
         }
     }
+
+    /**
+     * taobao.tbk.coupon.get( 淘宝客-公用-阿里妈妈推广券详情查询 )
+     */
+    @RequestMapping("/getCouponIno")
+    @SJson
+    public Object getCouponIno() {
+        TbkCouponGetRequest req = new TbkCouponGetRequest();
+        try {
+            req.setMe("nfr%2BYTo2k1PX18gaNN%2BIPkIG2PadNYbBnwEsv6mRavWieOoOE3L9OdmbDSSyHbGxBAXjHpLKvZbL1320ML%2BCF5FRtW7N7yJ056Lgym4X01A%3D");
+            req.setItemId(123L);
+            req.setActivityId("sdfwe3eefsdf");
+            JSONObject jsonObject = tbkApiService.tbkGetCouponInfo(req);
+            return Result.success("ok",jsonObject);
+        } catch (Exception e) {
+            return Result.error("fail");
+        }
+    }
+
+    /**
+     * taobao.tbk.tpwd.create( 淘宝客-公用-淘口令生成 )
+     */
+    @RequestMapping("/getTpwdCreate")
+    @SJson
+    public Object getTpwdCreate() {
+        TbkTpwdCreateRequest req = new TbkTpwdCreateRequest();
+        try {
+            req.setUserId("123");
+            req.setText("长度大于5个字符");
+            req.setUrl("https://uland.taobao.com/");
+            req.setLogo("https://uland.taobao.com/");
+            req.setExt("{}");
+            JSONObject jsonObject = tbkApiService.tbkGetTpwdCreate(req);
+            return Result.success("ok",jsonObject);
+        } catch (Exception e) {
+            return Result.error("fail");
+        }
+    }
+
+    /**
+     * taobao.tbk.sc.invitecode.get( 淘宝客-公用-私域用户邀请码生成 )
+     */
+    @RequestMapping("/getScInvitecode")
+    @SJson
+    public Object getScInvitecode() {
+        TbkScInvitecodeGetRequest req = new TbkScInvitecodeGetRequest();
+        try {
+            req.setRelationId(11L);
+            req.setRelationApp("common");
+            req.setCodeType(1L);
+            JSONObject jsonObject = tbkApiService.tbkGetScInvitecode(req);
+            return Result.success("ok",jsonObject);
+        } catch (Exception e) {
+            return Result.error("fail");
+        }
+    }
+
+    /**
+     * taobao.tbk.dg.vegas.tlj.create( 淘宝客-推广者-淘礼金创建 )
+     *
+     */
+    @RequestMapping("/createTljVegas")
+    @SJson
+    public Object createTljVegas(String campaign_type,String item_id,
+                                 String total_num,String name,String user_total_win_num_limit,
+                                 String security_switch,String per_face,String send_start_time,
+                                 String send_end_time,String use_end_time,String use_end_time_mode,
+                                 String use_start_time) {
+        TbkDgVegasTljCreateRequest req = new TbkDgVegasTljCreateRequest();
+        try {
+            JSONObject jsonObject = tbkApiService.tbkCreateTljVegas(req);
+
+            return Result.success("ok",jsonObject);
+        } catch (Exception e) {
+            return Result.error("fail");
+        }
+    }
+
 
 
 }

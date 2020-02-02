@@ -20,7 +20,7 @@ public class Store_goodsclass extends BaseModel implements Serializable {
     @Name
     @Comment("ID")
     @ColDefine(type = ColType.VARCHAR, width = 32)
-    @Prev(els = {@EL("ig(view.tableName,'')")})
+    @Prev(els = {@EL("uuid()")})
     private String id;
 
     @Column
@@ -59,6 +59,16 @@ public class Store_goodsclass extends BaseModel implements Serializable {
     @Comment("商城ID")
     @ColDefine(type = ColType.VARCHAR, width = 32)
     private String storeId;
+
+    @Column
+    @Comment("icon")
+    @ColDefine(type = ColType.VARCHAR, width = 32)
+    private String iconUrl;
+
+    @Column
+    @Comment("cId")
+    @ColDefine(type = ColType.VARCHAR, width = 100)
+    private String cId;
 
     @One(target = Store_main.class, field = "storeId")
     private Store_main storeMain;
@@ -143,5 +153,21 @@ public class Store_goodsclass extends BaseModel implements Serializable {
 
     public void setStoreMain(Store_main storeMain) {
         this.storeMain = storeMain;
+    }
+
+    public String getIconUrl() {
+        return iconUrl;
+    }
+
+    public void setIconUrl(String iconUrl) {
+        this.iconUrl = iconUrl;
+    }
+
+    public String getcId() {
+        return cId;
+    }
+
+    public void setcId(String cId) {
+        this.cId = cId;
     }
 }

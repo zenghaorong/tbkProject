@@ -47,5 +47,27 @@ public interface TbkApiService  {
      */
     JSONObject tbkGetFavoritesProductList(TbkUatmFavoritesItemGetRequest req);
 
+    /**
+     *  taobao.tbk.coupon.get( 淘宝客-公用-阿里妈妈推广券详情查询 )
+     */
+    JSONObject tbkGetCouponInfo(TbkCouponGetRequest req);
+
+    /**
+     * taobao.tbk.tpwd.create( 淘宝客-公用-淘口令生成 )
+     */
+    JSONObject tbkGetTpwdCreate(TbkTpwdCreateRequest req);
+
+    /**
+     * taobao.tbk.sc.invitecode.get( 淘宝客-公用-私域用户邀请码生成 )
+     */
+    JSONObject tbkGetScInvitecode(TbkScInvitecodeGetRequest req);
+
+    /**
+     * taobao.tbk.dg.vegas.tlj.create( 淘宝客-推广者-淘礼金创建 )
+     */
+    JSONObject tbkCreateTljVegas(TbkDgVegasTljCreateRequest req);
+
+
+
 
 }

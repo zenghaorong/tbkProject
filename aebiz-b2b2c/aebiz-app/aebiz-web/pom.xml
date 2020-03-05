@@ -87,7 +87,7 @@
             <artifactId>taobao</artifactId>
             <version>1.0</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/taobao-sdk-java-auto_1564564878766-20190808.jar</systemPath>
+            <systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/taobao-sdk-java-auto_1564274268450-20200127.jar</systemPath>
         </dependency>
         <!-- https://mvnrepository.com/artifact/com.alipay.sdk/alipay-sdk-java 支付宝支付-->
         <dependency>

@@ -1,0 +1,208 @@
+<!--#
+layout("/layouts/store.html"){
+#-->
+<script src="${base!}/assets/platform/vendor/ueditor/ueditor.config.js"></script>
+<script src="${base!}/assets/platform/vendor/ueditor/ueditor.all.js"></script>
+<script src="${base!}/assets/decorate/pc/decoratecommon/js/layui/lay/dest/layui.all.js"></script>
+<header class="header navbar bg-white shadow">
+<!--    <div class="btn-group tool-button">-->
+<!--        <a class="btn btn-primary navbar-btn" href="${base}/store/video/cms" id="goBack" data-pjax><i class="ti-angle-left"></i>${msg['globals.button.back']}</a>-->
+<!--    </div>-->
+</header>
+
+<div class="content-wrap">
+    <div class="wrapper" style="min-height:700px;">
+        <section class="panel panel-form">
+            <form id="addForm" role="form" class="form-horizontal parsley-form" data-parsley-validate
+                  action="${base}/store/tlj/cms/addDa" method="post">
+                <div class="row mb10">
+                    <div class="col-lg-12">
+
+<!--                        <div class="form-group">-->
+<!--                            <label for="campaign_type" class="col-sm-2 control-label">CPS佣金计划类型</label>-->
+<!--                            <div class="col-sm-8">-->
+<!--                                <input type="text" id="campaign_type" class="form-control" name="campaign_type" data-parsley-required="true" placeholder="定向：DX；鹊桥：LINK_EVENT；营销：MKT">-->
+<!--                            </div>-->
+<!--                        </div>-->
+
+                        <div class="form-group">
+                            <label for="campaign_type" class="col-sm-2 control-label">CPS佣金计划类型</label>
+                            <div class="col-sm-8">
+                                <select id="campaign_type" name="campaign_type" class="form-control">
+                                    <option value="DX" >定向</option>>
+                                    <option value="LINK_EVENT" >鹊桥</option>
+                                    <option value="MKT" >营销</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="item_id" class="col-sm-2 control-label">宝贝id</label>
+                            <div class="col-sm-8">
+                                <input type="text" id="item_id" class="form-control" name="item_id" data-parsley-required="true" placeholder="宝贝id">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="total_num" class="col-sm-2 control-label">淘礼金总个数</label>
+                            <div class="col-sm-8">
+                                <input type="text" id="total_num" class="form-control" name="total_num" data-parsley-required="true" placeholder="淘礼金总个数">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="name" class="col-sm-2 control-label">淘礼金名称</label>
+                            <div class="col-sm-8">
+                                <input type="text" id="name" class="form-control" name="name" data-parsley-required="true" placeholder="淘礼金名称，最大10个字符">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="user_total_win_num_limit" class="col-sm-2 control-label">单用户累计中奖次数上限</label>
+                            <div class="col-sm-8">
+                                <input type="text" id="user_total_win_num_limit" class="form-control" name="user_total_win_num_limit" data-parsley-required="true" placeholder="单用户累计中奖次数上限">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="per_face" class="col-sm-2 control-label">单个淘礼金面额，支持两位小数，单位元</label>
+                            <div class="col-sm-8">
+                                <input type="text" id="per_face" class="form-control" name="per_face" data-parsley-required="true" placeholder="单个淘礼金面额，支持两位小数，单位元">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">发放开始结束时间</label>
+                            <div class="col-sm-8 form-inline">
+                                <div class="input-group date js-start-time " style="min-width:260px;" data-date="1979-09-16T05:25:07Z" data-date-format="yyyy-mm-dd hh:ii:ss" data-link-field="salesRuleOrder_sartAt">
+                                    <input type="text" size="16" readonly class="form-control" value="${@date.getDateTime()}" data-parsley-required="true" placeholder="${msg['sales.rule.order.column.sartAt']}">
+                                    <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+                                    <span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
+                                </div>
+                                <input type="hidden" id="salesRuleOrder_sartAt" name="send_start_time" value="${@date.getDateTime()}" />
+                                <span>至</span>
+                                <div class="input-group date js-end-time " style="min-width:260px;" data-date="1979-09-16T05:25:07Z" data-date-format="yyyy-mm-dd hh:ii:ss" data-link-field="salesRuleOrder_endAt">
+                                    <input type="text" size="16" readonly class="form-control" value="${@date.getDateTime()}" data-parsley-required="true" placeholder="${msg['sales.rule.order.column.endAt']}">
+                                    <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+                                    <span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
+                                </div>
+                                <input type="hidden" id="salesRuleOrder_endAt" name="send_end_time" value="${@date.getDateTime()}" />
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="security_switch" class="col-sm-2 control-label">安全开关</label>
+                            <div class="col-sm-8 switcha">
+                                <div class="mr15">
+                                    <!--启动安全：true；不启用安全：false-->
+                                    <input type="checkbox" id="security_switch" name="security_switch"
+                                           class="js-switch-blue" value="true" checked>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3"></div>
+                <div class="col-lg-6">
+                    <div class="form-group text-center">
+                        <label></label>
+
+                        <div>
+                            <button class="btn btn-primary btn-block btn-lg btn-parsley" data-loading-text="正在提交...">提 交</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3" style="margin: 20px;"></div>
+            </form>
+        </section>
+    </div>
+</div>
+<script language="JavaScript">
+
+
+
+    $(document).ready(function () {
+
+
+
+        $('#addForm').ajaxForm({
+            dataType: 'json',
+            beforeSubmit: function (arr, form, options) {
+                form.find("button:submit").button("loading");
+            },
+            success: function (data, statusText, xhr, form) {
+                if (data.code == 0) {
+                    Toast.success(data.msg);
+                    // form.resetForm();
+                    //页面层
+                    layer.open({
+                        type: 1,
+                        skin: 'layui-layer-rim', //加上边框
+                        area: ['420px', '240px'], //宽高
+                        content: JSON.stringify(data)
+                    });
+                } else {
+                    //页面层
+                    layer.open({
+                        type: 1,
+                        skin: 'layui-layer-rim', //加上边框
+                        area: ['420px', '240px'], //宽高
+                        content: JSON.stringify(data)
+                    });
+                }
+                form.find("button:submit").button("reset");
+            }
+        });
+
+
+        //百度编辑器
+        var ue= new baidu.editor.ui.Editor();
+        ue.render('videoDetails');
+
+        //form表单基础效果
+        myForm.init();
+
+        $('.js-start-time').datetimepicker({
+            language:  "${lang!'zh-CN'}",
+            format:'yyyy-mm-dd hh:ii',
+            pickerPosition: 'bottom-left',
+            weekStart: 1,
+            todayBtn:  1,
+            autoclose: 1,
+            todayHighlight: 1,
+            startView: 2,
+            forceParse: 0,
+            showMeridian: 1,
+            todayHighlight:"true",
+            endDate: new Date("${@date.getDate()}")
+        }).on("changeDate", function (e) {
+            $('.js-end-time').datetimepicker('setStartDate', e.date);
+        });
+
+        $('.js-end-time').datetimepicker({
+            language:  "${lang!'zh-CN'}",
+            format:'yyyy-mm-dd hh:ii',
+            pickerPosition: 'bottom-left',
+            weekStart: 1,
+            todayBtn:  1,
+            autoclose: 1,
+            todayHighlight: 1,
+            startView: 2,
+            forceParse: 0,
+            showMeridian: 1,
+            todayHighlight:"true",
+            startDate: new Date("${@date.getDate()}")
+        }).on("changeDate", function (e) {
+            $('.js-start-time').datetimepicker('setEndDate', e.date);
+        });
+
+
+    });
+
+
+
+
+</script>
+<!--#}#-->
+
+

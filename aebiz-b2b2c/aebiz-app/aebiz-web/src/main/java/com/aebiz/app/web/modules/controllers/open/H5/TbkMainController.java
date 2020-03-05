@@ -1,5 +1,7 @@
 package com.aebiz.app.web.modules.controllers.open.H5;
 
+import com.aebiz.app.shop.modules.models.Shop_adv_main;
+import com.aebiz.app.shop.modules.services.ShopAdvMainService;
 import com.aebiz.app.store.modules.models.Store_goodsclass;
 import com.aebiz.app.store.modules.services.StoreGoodsclassService;
 import com.aebiz.app.tbk.modules.models.TbkConfig;
@@ -31,6 +33,9 @@ public class TbkMainController {
 
     @Autowired
     private StoreGoodsclassService storeGoodsclassService;
+
+    @Autowired
+    private ShopAdvMainService shopAdvMainService;
 
     /***
      * 查询分类
@@ -68,6 +73,21 @@ public class TbkMainController {
         try {
            List<Store_goodsclass> list = storeGoodsclassService.query(Cnd.where("parentId", "=", pId).asc("location").asc("path"));
             return Result.success("ok",list);
+        } catch (Exception e) {
+            return Result.error("fail");
+        }
+    }
+
+    /***
+     * 查询首页banner
+     */
+    @RequestMapping("/getIndexBanner")
+    @SJson
+    public Object getIndexBanner() {
+        try {
+            Cnd cnd = Cnd.NEW();
+            List<Shop_adv_main> shop_adv_mainList = shopAdvMainService.query(cnd);
+            return Result.success("ok",shop_adv_mainList);
         } catch (Exception e) {
             return Result.error("fail");
         }

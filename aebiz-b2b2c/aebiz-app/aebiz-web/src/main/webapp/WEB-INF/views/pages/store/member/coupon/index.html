@@ -1,0 +1,287 @@
+<!--#
+layout("/layouts/store.html"){
+#-->
+<link rel="stylesheet" href="${base!}/assets/platform/vendor/layui/css/layui.css">
+<section class="content-wrap bg-white">
+    <header class="header navbar bg-white shadow">
+        <header class="header navbar bg-white shadow">
+            <div class="btn-group tool-button" style="padding-top: 8px;">
+                <form class="form-inline js-search-form" >
+                    <div class="form-group">
+                        <label class="control-label"></label>
+                        <input type="text" class="form-control" name="name" placeholder="${msg['sales.coupon.column.name']}" />
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label"></label>
+                        <input type="text" class="form-control" name="code" placeholder="核销码" />
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label"></label>
+                        <input type="text" class="form-control" name="mobile" placeholder="手机号" />
+                    </div>
+                    <!--<div class="form-group">-->
+                        <!--<label class="control-label"></label>-->
+                        <!--<select class="form-control" name="type">-->
+                            <!--<option value="">请选择类型</option>-->
+                            <!--<option value="A">A类</option>-->
+                            <!--<option value="B">B类</option>-->
+                        <!--</select>-->
+                    <!--</div>-->
+<!--                    <div class="form-group">-->
+<!--                        <label class="control-label"></label>-->
+<!--                        <select class="form-control" name="p_enabled">-->
+<!--                            <option value="">是否启用</option>-->
+<!--                            <option value="true">禁用</option>-->
+<!--                            <option value="false">启用</option>-->
+<!--                        </select>-->
+<!--                    </div>-->
+                    <!--<div class="form-group">-->
+                        <!--<label class="control-label"></label>-->
+                        <!--<select class="form-control" name="p_checkStatus">-->
+                            <!--<option value="">请选择审核状态</option>-->
+                            <!---->
+                        <!--</select>-->
+                    <!--</div>-->
+                    <div class="form-group">
+                        <button type="button" class="btn btn-primary js-search-ok" >${msg['globals.button.search']}</button>
+                        <button type="button" class="btn btn-default js-search-reset" >${msg['globals.button.reset']}</button>
+                    </div>
+                </form>
+            </div>
+            <div class="btn-group tool-button pull-right">
+<!--            <a id="add" class="btn btn-primary navbar-btn" onclick="hexiao()" href="javascript:void(0)" data-pjax><i class="ti-plus"></i> 核销</a>-->
+<!--            <button class="btn btn-danger navbar-btn" onclick="delCheck()"><i class="ti-close"></i> ${msg['globals.button.delete.more']}</button>-->
+        </div>
+    </header>
+    <div class=panel-body style="padding-top: 50px;">
+        <div class="table-responsive no-border"  style="min-height: 500px;">
+            <table class="table table-bordered table-striped mg-t datatable">
+                <thead>
+                    <tr>
+                        <th>${msg['sales.coupon.column.name']}</th>
+                        <th>手机号</th>
+                        <th>核销码</th>
+                        <th>获取方式</th>
+                        <th>状态</th>
+                        <th>${msg['globals.table.column.operation']}</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</section>
+<div id="dialogDelete" class="modal fade bs-modal-sm" tabindex="-2" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">${msg['globals.button.delete']}</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        ${msg['globals.button.delete.notice']}
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">${msg['globals.button.cancel']}</button>
+                <button id="okDel" type="button" class="btn btn-primary" data-loading-text="${msg['globals.button.delete.tip']}">${msg['globals.button.confirm']}</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="dialogDetail" class="modal fade bs-modal-sm" tabindex="-3" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>
+<script src="${base!}/assets/platform/vendor/layui/layui.all.js"></script>
+<script language="JavaScript">
+    var datatable;
+    function initDatatable() {
+        datatable = $('.datatable').DataTable({
+            "dom": '<"toolbar">frtip',
+            "searching":false,
+            "processing": false,
+            "serverSide": true,
+            "select": true,
+            "ordering": true,
+            "language": {
+                "url": "${base}/assets/platform/vendor/datatables/locale/${lang}.json"
+            },
+            "preDrawCallback": function () {
+                sublime.showLoadingbar($(".main-content"));
+            },
+            "drawCallback": function () {
+                sublime.closeLoadingbar($(".main-content"));
+            },
+            "ajax": {
+                "url": "${base}/store/member/coupon/data",
+                "type": "post",
+                "data": function (d) {
+                    var $searchForm = $(".js-search-form");
+                    d.name = $("[name='name']", $searchForm).val()||"";
+                    d.code = $("[name='code']", $searchForm).val()||"";
+                    d.mobile = $("[name='mobile']", $searchForm).val()||"";
+                    d.p_enabled = $("[name='p_enabled']", $searchForm).val()||"";
+                    d.p_checkStatus = $("[name='p_checkStatus']", $searchForm).val()||"";
+                }
+            },
+            // "order": [[0, "desc"]],
+            "columns": [
+                    {"data": "mobile", "bSortable": true},
+                    {"data": "mobile", "bSortable": true},
+                    {"data": "code", "bSortable": true},
+                    {"data": "source", "bSortable": true},
+                    {"data": "status", "bSortable": true},
+                    {"data": "checkStatus", "bSortable": true},
+            ],
+            "columnDefs": [
+                {
+                    "render": function (data, type, row) {
+                        return row.sales_coupon.name;
+                    },
+                    "targets": 0
+                },
+                {
+                    "render": function (data, type, row) {
+                        if(row.source == "1"){
+                            return '领劵中心';
+                        }
+                        if(row.source == "2"){
+                            return '分享获得';
+                        }
+                    },
+                    "targets": 3
+                },
+                {
+                    "render": function (data, type, row) {
+                        if (row.status == 0) {
+                            return '待核销';
+                        }
+                        if (row.status == 1) {
+                            return '已核销';
+                        }
+                    },
+                    "targets": 4
+                },
+                {
+                    "render": function (data, type, row) {
+                        var returnHtml = '<div class="btn-group"><button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">' +
+                            ' <i class="ti-settings"></i> <span class="ti-angle-down"></span></button><ul class="dropdown-menu" role="menu">' +
+                            '<li><a href="${base}/store/sales/coupon/detail/' + row.id + '" data-toggle="modal" data-target="#dialogDetail">${msg["globals.button.detail"]}</a></li>';
+
+                        //未提交 未通过 可以编辑、删除
+                        // if(row.checkStatus=="0" || row.checkStatus=="3"){
+                            returnHtml +=  '<li><a href="javascript:void(0)" onclick="hexiao(\'' + row.id + '\')" data-pjax>核销</a></li>' +
+                                '<li class="divider"></li>'
+                        // }
+                        returnHtml += '</ul></div>';
+                        return returnHtml;
+                    },
+                    "targets": 5
+                }
+            ]
+        });
+
+        datatable.on('click', 'tr', function () {
+            $(this).toggleClass('selected');
+        });
+
+        $("#searchBtn").on('click', function () {
+            datatable.ajax.reload();
+        });
+
+        $(".js-search-ok").click(function () {
+            datatable.ajax.reload();
+        });
+
+        $(".js-search-reset").click(function () {
+            $(".js-search-form").resetForm();
+            // $('.datatable').DataTable().ajax.reload();
+        });
+    }
+
+    function del(id) {
+        var dialog = $("#dialogDelete");
+        dialog.modal("show");
+        dialog.find("#okDel").unbind("click");
+        dialog.find("#okDel").bind("click", function (event) {
+            var btn = $(this);
+            btn.button("loading");
+            $.post("${base}/store/sales/coupon/delete/" + id, {}, function (data) {
+                if (data.code == 0) {
+                    datatable.ajax.reload(null,false);
+                } else {
+                    Toast.error(data.msg);
+                }
+                btn.button("reset");
+                dialog.modal("hide");
+            }, "json");
+        });
+    }
+
+    function delCheck() {
+        var chks = datatable.rows('.selected').data();
+        if (chks.length > 0) {
+            var ids = [];
+            $.each(datatable.rows('.selected').data(), function (i, n) {
+                ids.push(n.id);
+            });
+            var dialog = $("#dialogDelete");
+            dialog.modal("show");
+            dialog.find("#okDel").unbind("click");
+            dialog.find("#okDel").bind("click", function (event) {
+                var btn = $(this);
+                btn.button("loading");
+                $.post("${base}/store/sales/coupon/delete", $.param({ids: ids}, true), function (data) {
+                    if (data.code == 0) {
+                        datatable.ajax.reload(null,false);
+                    } else {
+                        Toast.error(data.msg);
+                    }
+                    btn.button("reset");
+                    dialog.modal("hide");
+                }, "json");
+            });
+        } else {
+            Toast.warning("${msg['globals.button.delete.select']}");
+        }
+    }
+
+    function hexiao(id){
+       //询问框
+        layer.confirm('确认核销当前优惠券', {
+            btn: ['是','否'] //按钮
+        }, function(){
+            $.ajax({
+                type: "post",
+                url: "${base}/store/member/coupon/hexiao",
+                data: {mcId : id},
+                dataType: "json",
+                async: false,
+                success: function(data){
+                    if (data.code == 0) {
+                        layer.msg('核销成功', {icon: 1});
+                        datatable.ajax.reload(null,false);
+                    }else{
+                        layer.msg(data.msg, {icon: 2});
+                    }
+                }
+            });
+
+        }, function(){
+
+        });
+    }
+
+    $(function () {
+        initDatatable();
+        $("#dialogDetail").on("hidden.bs.modal", function () {
+            $(this).removeData("bs.modal");
+        });
+    });
+</script>
+<!--#}#-->

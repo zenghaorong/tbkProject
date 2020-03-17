@@ -17,6 +17,12 @@ public interface WxConfigService extends BaseService<Wx_config>{
      */
     String getWxApiAccessToken(boolean fetchNew,String code);
 
+    /**
+     * 获取微信jsapi_ticket
+     * 获取微信票据签名
+     */
+    String getJsapiTicket(boolean fetchNew,String access_token);
+
 
     /**
      * 获到用户基本信息

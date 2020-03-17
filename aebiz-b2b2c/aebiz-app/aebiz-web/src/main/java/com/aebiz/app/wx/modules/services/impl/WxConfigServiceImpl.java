@@ -29,6 +29,7 @@ import redis.clients.jedis.JedisPool;
 import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @CacheConfig(cacheNames = "wxCache")
@@ -49,7 +50,11 @@ public class WxConfigServiceImpl extends BaseServiceImpl<Wx_config> implements W
 
     private static final Log logger = Logs.get();
 
+    //redis缓存WexinAccessToken唯一key
     private static final String WexinAccessToken="WexinAccessToken_key";
+
+    //redis缓存Wexinjsapi_ticket唯一key
+    private static final String WexinJsapiTicket="Wexin_jsapi_ticket_key";
 
     private static int EXPIRED_SECONDS = 7100;//不到7200秒过期就去请求
 
@@ -80,9 +85,9 @@ public class WxConfigServiceImpl extends BaseServiceImpl<Wx_config> implements W
             String accessToken = jedis.get(WexinAccessToken);
             JSONObject json = new JSONObject();
             if (accessToken == null || fetchNew) {
-                String aQs = "?appid="+appId+"&secret="+secret+"&code="+code+"&grant_type=authorization_code";
+                String aQs = "?appid="+appId+"&secret="+secret+"&grant_type=client_credential";
                 //用code取accessToken
-                String result = CommonUtil.httpCallGet("https://api.weixin.qq.com/sns/oauth2/access_token" + aQs);
+                String result = CommonUtil.httpCallGet("https://api.weixin.qq.com/cgi-bin/token" + aQs);
                 if (result == null || result.length() == 0 || !result.startsWith("{")) {
                     logger.error("获取微信接口access_token错误，返回非json数据，result：" + result);
                     return null;
@@ -103,10 +108,51 @@ public class WxConfigServiceImpl extends BaseServiceImpl<Wx_config> implements W
                 }
                 jedis.set(WexinAccessToken, accessToken);
                 jedis.expire(WexinAccessToken, EXPIRED_SECONDS);
-                jedis.set(accessToken, json.getString("openid"));
-                jedis.expire(accessToken, EXPIRED_SECONDS);
             }
-            return json.toJSONString();
+            return accessToken;
+        }catch (Exception e){
+            logger.error("获取微信access_token发生异常",e);
+            return null;
+        }
+    }
+
+    /**
+     * 获取微信jsapi_ticket
+     * @return
+     * @return JSONObject
+     * @author tyg
+     * @date   2019年5月8日下午7:18:59
+     */
+    @Override
+    public String getJsapiTicket(boolean fetchNew,String access_token) {
+        try (Jedis jedis = redisService.jedis()) {
+            String jsapiTicket = jedis.get(WexinJsapiTicket);
+            JSONObject json = new JSONObject();
+            if (jsapiTicket == null || fetchNew) {
+                //用accessToken获取JsapiTicket票据
+                String result = CommonUtil.httpCallGet("https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token="+access_token+"&type=jsapi");
+                if (result == null || result.length() == 0 || !result.startsWith("{")) {
+                    logger.error("获取微信jsapi_ticket错误，返回非json数据，result：" + result);
+                    return null;
+                }
+                json = JSON.parseObject(result);
+                String expires_in = json.getString("expires_in");
+                String errorCode = json.getString("errcode");
+                if (expires_in != null && !"7200".equals(expires_in)) {
+                    if (json.getString("errmsg") != null) {
+                        logger.error("获取微信jsapi_ticket错误：" + errorCode + "::" + json.getString("errmsg"));
+                        return null;
+                    }
+                }
+                jsapiTicket = json.getString("ticket");
+                if (jsapiTicket.length() == 0) {
+                    logger.error("获取微信jsapi_ticke为空：" + errorCode + "::" + json.getString("errmsg"));
+                    return null;
+                }
+                jedis.set(WexinJsapiTicket, jsapiTicket);
+                jedis.expire(WexinJsapiTicket, EXPIRED_SECONDS);
+            }
+            return jsapiTicket;
         }catch (Exception e){
             logger.error("获取微信access_token发生异常",e);
             return null;

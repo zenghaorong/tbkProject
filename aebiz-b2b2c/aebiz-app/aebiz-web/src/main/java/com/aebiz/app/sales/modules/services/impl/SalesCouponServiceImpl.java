@@ -56,11 +56,11 @@ public class SalesCouponServiceImpl extends BaseServiceImpl<Sales_coupon> implem
             this.dao().insertWith(coupon, "salesRuleOrder");
         } else {
             //重新设置启用状态
-            int nowAt = DateUtil.getTime(new Date());
-            if (coupon.getSalesRuleOrder().getSartAt() <= nowAt && nowAt <= coupon.getSalesRuleOrder().getEndAt()) {
-                coupon.setDisabled(false);
-                coupon.getSalesRuleOrder().setDisabled(false);
-            }
+//            int nowAt = DateUtil.getTime(new Date());
+//            if (coupon.getSalesRuleOrder().getSartAt() <= nowAt && nowAt <= coupon.getSalesRuleOrder().getEndAt()) {
+//                coupon.setDisabled(false);
+//                coupon.getSalesRuleOrder().setDisabled(false);
+//            }
             this.dao().updateIgnoreNull(coupon);
             salesRuleOrderService.updateIgnoreNull(coupon.getSalesRuleOrder());
         }

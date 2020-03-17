@@ -2,6 +2,7 @@ package com.aebiz.app.sales.modules.models;
 
 import com.aebiz.baseframework.base.model.BaseModel;
 import com.aebiz.commons.utils.DateUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.nutz.dao.entity.annotation.*;
 
 import java.io.Serializable;
@@ -82,6 +83,11 @@ public class Sales_coupon extends BaseModel implements Serializable {
     @ColDefine(type = ColType.VARCHAR, width = 32)
     private String ruleId;
 
+    @Column
+    @Comment("推荐人获取券的券编号")
+    @ColDefine(type = ColType.VARCHAR, width = 32)
+    private String recommendCouponId;
+
     @One(target = Sales_rule_order.class, field = "ruleId")
     private Sales_rule_order salesRuleOrder;
 
@@ -117,8 +123,18 @@ public class Sales_coupon extends BaseModel implements Serializable {
 
     private String endTimeStr;
 
+    public String getRecommendCouponId() {
+        return recommendCouponId;
+    }
+
+    public void setRecommendCouponId(String recommendCouponId) {
+        this.recommendCouponId = recommendCouponId;
+    }
+
     public String getEndTimeStr() {
-        endTimeStr = DateUtil.getDate(this.endTime);
+        if(this.endTime!=null){
+            endTimeStr = DateUtil.getDate(this.endTime);
+        }
         return endTimeStr;
     }
 

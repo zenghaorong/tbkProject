@@ -46,20 +46,38 @@ public class Member_coupon extends BaseModel implements Serializable {
     private String code;
 
     @Column
+    @Comment("手机号")
+    @ColDefine(type = ColType.VARCHAR, width = 32)
+    private String mobile;
+
+    @Column
     @Comment("订单赠送订单ID")
     @ColDefine(type = ColType.VARCHAR, width = 32)
     private String source_orderId;
 
     @Column
-    @Comment("订单来源")
+    @Comment("推荐人获取的 推荐人id")
     @ColDefine(type = ColType.VARCHAR, width = 32)
-    private String source;//order--订单规则赠送  score--积分兑换   store--店铺领取
+    private String sourceAccountId;
 
     @Column
-    @Comment("优惠券状态")
+    @Comment("来源")
+    @ColDefine(type = ColType.VARCHAR, width = 32)
+    private String source;//来源:1自己领取 2分享获得
+
+    @Column
+    @Comment("核销状态")
     @ColDefine(type = ColType.INT)
     @Default("0")
-    private Integer status;//0 未使用 1 已使用  1 已失效 2 已作废
+    private Integer status;//核销状态 0待核销 1已核销
+
+    public String getSourceAccountId() {
+        return sourceAccountId;
+    }
+
+    public void setSourceAccountId(String sourceAccountId) {
+        this.sourceAccountId = sourceAccountId;
+    }
 
     public String getId() {
         return id;
@@ -131,5 +149,13 @@ public class Member_coupon extends BaseModel implements Serializable {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public String getMobile() {
+        return mobile;
+    }
+
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
     }
 }

@@ -146,31 +146,12 @@ public class StoreSalesCouponController {
     @RequestMapping("/edit/{id}")
     @RequiresPermissions("store.sales.coupon")
     public String edit(@PathVariable String id,HttpServletRequest req) {
-        //TODO 会员等级 待优化
-        List<Member_type> mtl = memberTypeService.query(Cnd.NEW());
-        List<Member_level> mll = memberLevelService.query(Cnd.NEW());
-        Map<String, List<Member_level>> memberTypeMap = new HashMap<>();
-        for (Member_type mt : mtl) {
-            memberTypeMap.put(String.valueOf(mt.getId()), mll.parallelStream().filter(ml->ml.getTypeId()==mt.getId()).collect(Collectors.toList()));
+        if (!Strings.isBlank(id)) {
+            Sales_coupon coupon=salesCouponService.fetch(id);
+            req.setAttribute("obj", coupon);
+        }else{
+            req.setAttribute("obj", null);
         }
-        //获取省市列表
-        List<Shop_area> provinceCityList = new ArrayList<>();
-        Map<String, String> provinceCityMap = new HashMap<>();
-        List<Shop_area> shopAreaList = shopAreaService.query("^(code|name|path|hasChildren|location)$",Cnd.where("disabled", "=", false).asc("location"));
-        if (!Lang.isEmpty(shopAreaList)) {
-            provinceCityList.addAll(shopAreaList.parallelStream().filter(p->p.getPath().length() <= 12).collect(Collectors.toList()));
-            //组装省市Map
-            provinceCityMap.putAll(shopAreaList.parallelStream().collect(Collectors.toMap(Shop_area::getCode, area->area.getName())));
-        }
-        req.setAttribute("memberTypeList", mtl);
-        req.setAttribute("memberTypeMap", memberTypeMap);
-        //片区列表
-        req.setAttribute("areaList", shopAreaManagementService.getShopAreaManagementList());
-        //片区map<code,name>
-        req.setAttribute("areaMap", shopAreaManagementService.getShopAreaManagementMap());
-        req.setAttribute("provinceCityList", provinceCityList);
-        req.setAttribute("provinceCityMap", provinceCityMap);
-		req.setAttribute("obj", salesCouponService.fetchLinks(salesCouponService.fetch(id), "salesRuleOrder"));
 		return "pages/store/sales/coupon/edit";
     }
 
@@ -179,26 +160,22 @@ public class StoreSalesCouponController {
     @SLog(description = "保存优惠券")
     @RequiresPermissions("store.sales.coupon.edit")
     public Object editDo(@RequestParam(value = "tmp_sartAt", required = false) String sartAt, @RequestParam(value = "tmp_endAt", required = false) String endAt, Sales_coupon salesCoupon, HttpServletRequest req) {
-		try {
+        try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             if (Strings.isNotBlank(sartAt)) {
-                salesCoupon.getSalesRuleOrder().setSartAt((int) (sdf.parse(sartAt).getTime() / 1000));
+                salesCoupon.setStartTime((int) (sdf.parse(sartAt).getTime() / 1000));
             }
             if (Strings.isNotBlank(endAt)) {
-                salesCoupon.getSalesRuleOrder().setEndAt((int) (sdf.parse(endAt).getTime() / 1000));
+                salesCoupon.setEndTime((int) (sdf.parse(endAt).getTime() / 1000));
             }
-            int now = (int) (System.currentTimeMillis() / 1000);
             salesCoupon.setStoreId(StringUtil.getStoreId());
-            salesCoupon.setOpBy(StringUtil.getUid());
-			salesCoupon.setOpAt(now);
-            salesCoupon.getSalesRuleOrder().setStoreId(salesCoupon.getStoreId());
-            salesCoupon.getSalesRuleOrder().setOpBy(StringUtil.getUid());
-            salesCoupon.getSalesRuleOrder().setOpAt(now);
-			salesCouponService.save(salesCoupon);
-			return Result.success("globals.result.success", salesCoupon.getId());
-		} catch (Exception e) {
-			return Result.error("globals.result.error");
-		}
+//            salesCoupon.getSalesRuleOrder().setStoreId(salesCoupon.getStoreId());
+            salesCouponService.save(salesCoupon);
+            return Result.success("globals.result.success", salesCoupon.getId());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.error("编码前缀重复");
+        }
     }
 
     @RequestMapping(value = {"/delete/{id}", "/delete"})

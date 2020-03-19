@@ -67,6 +67,11 @@ public class StoreSalesCouponController {
 		return "pages/store/sales/coupon/index";
 	}
 
+    @RequestMapping("/indexSelect")
+    public String indexSelect(HttpServletRequest req) {
+        return "pages/store/sales/coupon/indexSelect";
+    }
+
 	@RequestMapping("/data")
     @SJson("full")
     @RequiresPermissions("store.sales.coupon")

@@ -46,6 +46,8 @@ layout("/layouts/store.html"){
         width: 60px;min-width: 40px;
     }
 </style>
+<script src="${base!}/assets/platform/vendor/ueditor/ueditor.config.js"></script>
+<script src="${base!}/assets/platform/vendor/ueditor/ueditor.all.js"></script>
 <link rel="stylesheet" href="${base!}/assets/platform/vendor/layui/css/layui.css">
 <header class="header navbar bg-white shadow">
     <div class="btn-group tool-button">
@@ -119,51 +121,7 @@ layout("/layouts/store.html"){
                                             </div>
                                         </div>
                                     </div>
-                                    <!--是否排他-->
-                                    <!--<div class="form-group">-->
-                                    <!--<label class="col-sm-2 control-label">${msg['sales.rule.order.column.limit_other']}</label>-->
-                                    <!--<div class="col-sm-8">-->
-                                    <!--<label class="radio-inline"><input type="radio" class="" name="salesRuleOrder.limit_other" value="1" checked>是</label>-->
-                                    <!--<label class="radio-inline"><input type="radio" class="" name="salesRuleOrder.limit_other" value="0" >否</label>-->
-                                    <!--</div>-->
-                                    <!--</div>-->
-                                    <!--<div class="form-group">-->
-                                        <!--<label for="salesRuleOrder_limit_priority" class="col-sm-2 control-label">${msg['sales.rule.order.column.limit_priority']}</label>-->
-                                        <!--<div class="col-sm-2">-->
-                                            <!--<input type="text" id="salesRuleOrder_limit_priority" class="form-control" name="salesRuleOrder.limit_priority" data-parsley-required="true" data-parsley-range="[0, 99]" placeholder="0-99整数,值越大越优先">-->
-                                        <!--</div>-->
-                                    <!--</div>-->
-<!--                                    <div class="form-group">-->
-<!--                                        <label for="send_num" class="col-sm-2 control-label">优惠券总数</label>-->
-<!--                                        <div class="col-sm-2">-->
-<!--                                            <input type="text" id="send_num" class="form-control" name="send_num" data-parsley-required="true" placeholder="优惠券发放数量">-->
-<!--                                        </div>-->
-<!--                                    </div>-->
-                                    <!--规则描述-->
-<!--                                    <div class="form-group">-->
-<!--                                        <label for="salesRuleOrder_note" class="col-sm-2 control-label">描述</label>-->
-<!--                                        <div class="col-sm-8">-->
-<!--                                            <textarea class="form-control" name="salesRuleOrder.note" id="salesRuleOrder_note" data-parsley-required="true" placeholder="描述"></textarea>-->
-<!--                                        </div>-->
-<!--                                    </div>-->
-<!--                                    <div class="form-group">-->
-<!--                                        <label class="col-sm-2 control-label">有效期</label>-->
-<!--                                        <div class="col-sm-8 form-inline">-->
-<!--                                            <div class="input-group date js-start-time " style="min-width:260px;" data-date="1979-09-16T05:25:07Z" data-date-format="yyyy-mm-dd hh:ii:ss" data-link-field="salesRuleOrder_sartAt">-->
-<!--                                                <input type="text" size="16" readonly class="form-control" value="${@date.getDateTime()}" data-parsley-required="true" placeholder="${msg['sales.rule.order.column.sartAt']}">-->
-<!--                                                <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>-->
-<!--                                                <span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>-->
-<!--                                            </div>-->
-<!--                                            <input type="hidden" id="salesRuleOrder_sartAt" name="tmp_sartAt" value="${@date.getDateTime()}" />-->
-<!--                                            <span>至</span>-->
-<!--                                            <div class="input-group date js-end-time " style="min-width:260px;" data-date="1979-09-16T05:25:07Z" data-date-format="yyyy-mm-dd hh:ii:ss" data-link-field="salesRuleOrder_endAt">-->
-<!--                                                <input type="text" size="16" readonly class="form-control" value="${@date.getDateTime()}" data-parsley-required="true" placeholder="${msg['sales.rule.order.column.endAt']}">-->
-<!--                                                <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>-->
-<!--                                                <span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>-->
-<!--                                            </div>-->
-<!--                                            <input type="hidden" id="salesRuleOrder_endAt" name="tmp_endAt" value="${@date.getDateTime()}" />-->
-<!--                                        </div>-->
-<!--                                    </div>-->
+
                                     <div class="form-group">
                                         <label class="col-sm-2 control-label">有效期</label>
                                         <div class="col-sm-8 form-inline">
@@ -187,31 +145,48 @@ layout("/layouts/store.html"){
                                         </div>
                                     </div>
 
-<!--                                    <div class="form-group" id="deductibleAmountFor">-->
-<!--                                        <label for="deductibleAmount" class="col-sm-2 control-label">满减抵扣的金额</label>-->
-<!--                                        <div class="col-sm-2">-->
-<!--                                            <input type="text" id="deductibleAmount" class="form-control" name="deductibleAmount"  placeholder="满减抵扣的金额">-->
-<!--                                        </div>-->
-<!--                                    </div>-->
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">推荐人获得券-是否使用当前券</label>
+                                        <div class="col-sm-1 switcha">
+                                            <div class="mr15">
+                                                <input type="hidden" name="isThisData" value="0"/>
+                                                <input type="checkbox" name="isThis" class="js-switch-blue" checked >
+                                            </div>
+                                        </div>
+                                    </div>
 
-<!--                                    <div class="form-group" id="conditionAmountFor">-->
-<!--                                        <label for="conditionAmount" class="col-sm-2 control-label">条件金额</label>-->
-<!--                                        <div class="col-sm-2">-->
-<!--                                            <input type="text" id="conditionAmount" class="form-control" name="conditionAmount"  placeholder="订单满多少 条件金额">-->
-<!--                                        </div>-->
-<!--                                    </div>-->
-<!--                                    <div class="form-group" style="display: none;" id="productQuantityRuleFor">-->
-<!--                                        <label for="productQuantityRule" class="col-sm-2 control-label">条件商品数</label>-->
-<!--                                        <div class="col-sm-2">-->
-<!--                                            <input type="text" id="productQuantityRule" class="form-control" name="productQuantityRule"  placeholder="优惠条件商品数">-->
-<!--                                        </div>-->
-<!--                                    </div>-->
-<!--                                    <div class="form-group" style="display: none;" id="discountFor">-->
-<!--                                        <label for="productQuantityRule" class="col-sm-2 control-label">优惠劵折扣额</label>-->
-<!--                                        <div class="col-sm-2">-->
-<!--                                            <input type="text" id="discount" class="form-control" name="discount"  placeholder="优惠劵折扣额"><span style="color: red;">*示例值：0.9</span>-->
-<!--                                        </div>-->
-<!--                                    </div>-->
+                                    <div class="form-group has-feedback" id="tjCoupon" style="display: none;">
+                                        <label for="tjCouponId" class="col-sm-2 control-label">推荐人获取的优惠券</label>
+
+                                        <div class="col-sm-4">
+                                            <div class="input-group">
+                                                <input id="tjCouponId" type="text" class="form-control" placeholder="推荐人获取的优惠券" disabled
+                                                       value=""/>
+
+                                       <span class="input-group-btn">
+                                            <button type="button" class="btn btn-primary" onclick="selectCoupon()"
+                                                    data-toggle="modal" data-target="#dialogSelectParentUnit">
+                                                <i class="ti-plus"></i>推荐人获取的优惠券
+                                            </button>
+									    </span>
+                                            </div>
+                                            <input type="hidden" id="tjCouponIdValue" name="tjCouponId" value="">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="imageUrl" class="col-sm-2 control-label">上传列表封面图片</label>
+                                        <div class="col-sm-6">
+                                            <div id="imgQueue"></div>
+                                            <div>
+                                                <input id="file_upload_img" name="file_upload" type="file"
+                                                       multiple="false">
+                                            </div>
+                                            <div id="img" style="padding: 5px;"></div>
+                                            <input type="hidden" id="imageUrl" name="imageUrl" value="">
+                                        </div>
+                                        <div class="col-sm-2" style="color: red;">建议尺寸：145*100</div>
+                                    </div>
 
                                 </div>
                             </div>
@@ -316,29 +291,72 @@ layout("/layouts/store.html"){
             $('.js-start-time').datetimepicker('setEndDate', e.date);
         });
 
+        //上传图片
+        $('#file_upload_img').uploadifive({
+            'auto': true,
+            'multi': false,
+            'width': '100%',
+            'height': '35',
+            'buttonText': '选择图片',
+            'fileType': 'image/jpg,image/jpeg,image/png',
+            'fileSizeLimit': 2048,
+            'queueSizeLimit': 1,
+            'overrideEvents': ['onDialogClose', 'onError'],
+            'formData': {},
+            'queueID': 'imgQueue',
+            'uploadScript': '${base}/open/file/upload/image',
+            'onUploadComplete': function (file, data) {
+                data = JSON.parse(data);
+                if (data.code == 0) {
+                    Toast.success(data.msg);
+                    $("#img").html("<img src='" + data.data + "' style='width:150px;height:95px;'>");
+                    $("#imageUrl").val(data.data);
+                } else {
+                    clearFile();
+                    Toast.error(data.msg);
+                }
+            },
+            'onDrop': function (file, fileDropCount) {
+                clearFile();
+            },
+            'onClearQueue': function (queue) {
+                clearFile();
+            },
+            'onError': function (errorType, file) {
+                if (file != 0) {
+                    // var settings = $("#" + fileuploadId).uploadifive().settings;
+                    switch (errorType) {
+                        case 'UPLOAD_LIMIT_EXCEEDED':
+                            Toast.error("上传的文件数量已经超出系统限制的1个文件！");
+                            break;
+                        case 'FILE_SIZE_LIMIT_EXCEEDED':
+                            Toast.error("文件大小超出系统限制的2M大小！");
+                            break;
+                        case 'FORBIDDEN_FILE_TYPE':
+                            Toast.error("文件类型不正确！");
+                            break;
+                    }
+                }
+            },
+            'onCancel': function () {
+                clearFile();
+            }
+        });
+
+
+
     })
 
-     $(".radioType").change(function () {
-         var val = $(this).val();
-         if(val == 1){ //满减
-             $("#deductibleAmountFor").css("display","block");
-             $("#conditionAmountFor").css("display","block");
-             $("#productQuantityRuleFor").css("display","none");
-             $("#discountFor").css("display","none");
-         }
-         if(val == 2){ //免运
-             $("#deductibleAmountFor").css("display","none");
-             $("#conditionAmountFor").css("display","none");
-             $("#productQuantityRuleFor").css("display","block");
-             $("#discountFor").css("display","none");
-         }
-         if(val == 3){ //折扣
-             $("#deductibleAmountFor").css("display","none");
-             $("#conditionAmountFor").css("display","none");
-             $("#productQuantityRuleFor").css("display","block");
-             $("#discountFor").css("display","block");
-         }
-     })
+
+
+    /**
+     * 上传图片
+     */
+    function clearFile() {
+        $("#img").html("");
+        $("#imgQueue").html("");
+        $("#imageUrl").val("");
+    }
 
     //禁用启用颠倒了
     $("[name='enabled']").change(function () {
@@ -348,6 +366,30 @@ layout("/layouts/store.html"){
             $("[name='disabled']:hidden").val(1);
         }
     });
+
+    //禁用启用颠倒了
+    $("[name='isThis']").change(function () {
+        if (this.checked) {
+            $("[name='isThisData']:hidden").val(0);
+            $("#tjCoupon").css("display","none")
+        } else {
+            $("[name='isThisData']:hidden").val(1);
+            $("#tjCoupon").css("display","block")
+        }
+    });
+
+    var indexId ="";
+    function selectCoupon() {
+        indexId = layer.open({
+            type: 2,
+            title: '很多时候，我们想最大化看，比如像这个页面。',
+            shadeClose: true,
+            shade: false,
+            maxmin: true, //开启最大化最小化按钮
+            area: ['893px', '600px'],
+            content: '${base!}/store/sales/coupon/indexSelect'
+        });
+    }
 
 
 

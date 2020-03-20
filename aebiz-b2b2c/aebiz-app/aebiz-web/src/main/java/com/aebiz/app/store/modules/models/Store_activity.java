@@ -1,9 +1,11 @@
 package com.aebiz.app.store.modules.models;
 
+import com.aebiz.app.sales.modules.models.Activity_coupon;
 import com.aebiz.baseframework.base.model.BaseModel;
 import org.nutz.dao.entity.annotation.*;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @author THINK
@@ -60,6 +62,32 @@ public class Store_activity extends BaseModel implements Serializable {
     @Comment("详情")
     @ColDefine(type = ColType.TEXT)
     private String details;
+
+    @Column
+    @Comment("排序")
+    @ColDefine(type = ColType.INT)
+    private Integer index;
+
+    private String activityCouponList;
+
+
+
+
+    public String getActivityCouponList() {
+        return activityCouponList;
+    }
+
+    public void setActivityCouponList(String activityCouponList) {
+        this.activityCouponList = activityCouponList;
+    }
+
+    public Integer getIndex() {
+        return index;
+    }
+
+    public void setIndex(Integer index) {
+        this.index = index;
+    }
 
     public String getId() {
         return id;

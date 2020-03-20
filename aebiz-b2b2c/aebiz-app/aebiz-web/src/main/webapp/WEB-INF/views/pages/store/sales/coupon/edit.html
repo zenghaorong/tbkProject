@@ -86,7 +86,7 @@ layout("/layouts/store.html"){
                                     <label class="col-sm-2 control-label">${msg['sales.coupon.column.enabled']}</label>
                                     <div class="col-sm-1 switcha">
                                         <div class="mr15">
-                                            <input type="hidden" name="disabled" value="0"/>
+                                            <input type="hidden" name="disabled" value="${obj.disabled ? 1 : 0}"/>
                                             <input type="checkbox" name="enabled" class="js-switch-blue" <!--#if(!obj.disabled){#-->checked<!--#}#--> >
                                         </div>
                                     </div>

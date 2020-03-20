@@ -261,10 +261,37 @@ layout("/layouts/store2.html"){
     }
 
     function selectC(id,name){
-        window.parent.$("#tjCouponId").val(name)
-        window.parent.$("#tjCouponIdValue").val(id)
+        // var nameStr = window.parent.$("#tjCouponId").val();
+        // if(nameStr!=null && nameStr!=""){
+        //     nameStr = nameStr+" | "+name;
+        // }else {
+        //     nameStr = name
+        // }
+        // var idStr = window.parent.$("#tjCouponIdValue").val();
+        // if(idStr!=null && idStr!=""){
+        //     idStr = idStr+"|"+id;
+        // }else {
+        //     idStr = id
+        // }
+        // window.parent.$("#tjCouponId").val(nameStr)
+        // window.parent.$("#tjCouponIdValue").val(idStr)
+        var index = window.parent.$("#tjCouponIdHtml").children(".form-control").length;
+        window.parent.$("#tjCouponIdHtml").append('<input id="tjCouponId'+id+'" type="text" class="form-control" placeholder="活动关联优惠券" disabled value="'+name+'"/>');
+
+        var index2 = window.parent.$("#tjCouponIdValue").children(".myValue").length;
+        window.parent.$("#tjCouponIdValue").append('<input type="hidden" id="tjCouponIdValue'+id+'" class="myValue" value="'+id+'">');
+
+        var index3 = window.parent.$("#paixuHtml").children(".form-control").length;
+        window.parent.$("#paixuHtml").append('<input id="paixu'+id+'" type="text" class="form-control" placeholder="排序" value="'+index3+'"/>');
+
+        var index4 = window.parent.$("#yichuHtml").children(".yichuC").length;
+        window.parent.$("#yichuHtml").append('<div id="yichu'+id+'" class="yichuC" onclick="yichuDom(\'' + id + '\')"><a href="javascript:void(0)"   data="'+id+'" class="btn btn-danger" >移除</a></div>');
+
+        window.parent.getCouponData();
         window.parent.layer.close(window.parent.indexId)
     }
+
+
 
     $(function () {
         initDatatable();

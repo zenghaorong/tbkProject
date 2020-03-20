@@ -84,6 +84,9 @@ public class ApplicationInitRunner implements ApplicationContextAware, ServletCo
     public void setServletContext(ServletContext context) {
         Globals.APP_BASE = context.getContextPath();
         Globals.APP_ROOT = context.getRealPath("/");
+        //增加sql查询方式配置，兼容mysql5.8
+        Daos.CHECK_COLUMN_NAME_KEYWORD = true;
+        Daos.FORCE_WRAP_COLUMN_NAME = true;
     }
 
     @Override

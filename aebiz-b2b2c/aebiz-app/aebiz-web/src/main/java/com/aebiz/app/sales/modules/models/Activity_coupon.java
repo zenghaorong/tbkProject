@@ -30,6 +30,29 @@ public class Activity_coupon extends BaseModel implements Serializable {
     @ColDefine(type = ColType.VARCHAR, width = 32)
     private String activityId;
 
+    @Column
+    @Comment("排序")
+    @ColDefine(type = ColType.INT)
+    private Integer index;
+
+    private String couponName;
+
+    public String getCouponName() {
+        return couponName;
+    }
+
+    public void setCouponName(String couponName) {
+        this.couponName = couponName;
+    }
+
+    public Integer getIndex() {
+        return index;
+    }
+
+    public void setIndex(Integer index) {
+        this.index = index;
+    }
+
 
     public String getId() {
         return id;

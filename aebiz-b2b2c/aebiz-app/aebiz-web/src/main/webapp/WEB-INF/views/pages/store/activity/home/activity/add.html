@@ -1,6 +1,9 @@
 <!--#
-layout("/layouts/platform.html"){
+layout("/layouts/store.html"){
 #-->
+<script src="${base!}/assets/platform/vendor/ueditor/ueditor.config.js"></script>
+<script src="${base!}/assets/platform/vendor/ueditor/ueditor.all.js"></script>
+<link rel="stylesheet" href="${base!}/assets/platform/vendor/layui/css/layui.css">
 <header class="header navbar bg-white shadow">
     <div class="btn-group tool-button">
         <a class="btn btn-primary navbar-btn" href="${base}/store/activity/home/activity" id="goBack" data-pjax><i class="ti-angle-left"></i>${msg['globals.button.back']}</a>
@@ -15,51 +18,104 @@ layout("/layouts/platform.html"){
                 <div class="row mb10 mt10">
                     <div class="col-lg-12">
                         <div class="form-group">
-                            <label for="storeId" class="col-sm-2 control-label">${msg['store.activity.column.storeId']}</label>
-                            <div class="col-sm-8">
-                            <input type="text" id="storeId" class="form-control" name="storeId" data-parsley-required="true" placeholder="${msg['store.activity.column.storeId']}">
-                            </div>
-                        </div>
-                        <div class="form-group">
                             <label for="name" class="col-sm-2 control-label">${msg['store.activity.column.name']}</label>
                             <div class="col-sm-8">
                             <input type="text" id="name" class="form-control" name="name" data-parsley-required="true" placeholder="${msg['store.activity.column.name']}">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="startTime" class="col-sm-2 control-label">${msg['store.activity.column.startTime']}</label>
-                            <div class="col-sm-8">
-                            <input type="text" id="startTime" class="form-control" name="startTime" data-parsley-required="true" placeholder="${msg['store.activity.column.startTime']}">
+                            <label for="index" class="col-sm-2 control-label">排序</label>
+                            <div class="col-sm-2">
+                                <input type="number" id="index" class="form-control" name="index" value="0" data-parsley-required="true" placeholder="排序">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="endTime" class="col-sm-2 control-label">${msg['store.activity.column.endTime']}</label>
-                            <div class="col-sm-8">
-                            <input type="text" id="endTime" class="form-control" name="endTime" data-parsley-required="true" placeholder="${msg['store.activity.column.endTime']}">
+                            <label class="col-sm-2 control-label">有效期</label>
+                            <div class="col-sm-8 form-inline">
+                                <div class="layui-form">
+                                    <div class="layui-form-item">
+                                        <div class="layui-inline">
+                                            <div class="layui-input-inline">
+                                                <input type="text" name="tmp_sartAt" class="layui-input" id="test29" placeholder="选择日期">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <span>至</span>
+                                    <div class="layui-form-item">
+                                        <div class="layui-inline">
+                                            <div class="layui-input-inline">
+                                                <input type="text" name="tmp_endAt" class="layui-input" id="test30" placeholder="选择日期">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="recommendCouponId" class="col-sm-2 control-label">${msg['store.activity.column.recommendCouponId']}</label>
-                            <div class="col-sm-8">
-                            <input type="text" id="recommendCouponId" class="form-control" name="recommendCouponId" data-parsley-required="true" placeholder="${msg['store.activity.column.recommendCouponId']}">
+                            <label class="col-sm-2 control-label">${msg['sales.coupon.column.enabled']}</label>
+                            <div class="col-sm-1 switcha">
+                                <div class="mr15">
+                                    <input type="hidden" name="disabled" value="0"/>
+                                    <input type="checkbox" name="enabled" class="js-switch-blue" checked >
+                                </div>
                             </div>
                         </div>
+
                         <div class="form-group">
-                            <label for="disabled" class="col-sm-2 control-label">${msg['store.activity.column.disabled']}</label>
-                            <div class="col-sm-8">
-                            <input type="text" id="disabled" class="form-control" name="disabled" data-parsley-required="true" placeholder="${msg['store.activity.column.disabled']}">
+                            <label for="" class="col-sm-2 control-label">活动关联优惠券</label>
+                            <div class="col-sm-2">
+                                <div class="input-group">
+                                        <span class="input-group-btn">
+                                            <button type="button" class="btn btn-primary" onclick="selectCoupon()"
+                                                    data-toggle="modal" data-target="#dialogSelectParentUnit">
+                                                <i class="ti-plus"></i>活动关联优惠券
+                                            </button>
+                                        </span>
+                                </div>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label for="listImg" class="col-sm-2 control-label">${msg['store.activity.column.listImg']}</label>
-                            <div class="col-sm-8">
-                            <input type="text" id="listImg" class="form-control" name="listImg" data-parsley-required="true" placeholder="${msg['store.activity.column.listImg']}">
+                        <div class="form-group has-feedback" id="tjCoupon">
+                            <label for="tjCouponIdHtml" class="col-sm-2 control-label">活动关联优惠券</label>
+                            <div class="col-sm-4" id="tjCouponIdHtml">
+<!--                                    <input id="tjCouponId0" type="text" class="form-control" placeholder="推荐人获取的优惠券" disabled-->
+<!--                                           value=""/>-->
+<!--                                <input id="tjCouponId1" type="text" class="form-control" placeholder="推荐人获取的优惠券" disabled-->
+<!--                                       value=""/>-->
+<!--                                <input type="hidden" id="tjCouponIdValue" class="myValue" name="tjCouponId" value="">-->
                             </div>
+                            <div id="tjCouponIdValue"></div>
+                            <div class="col-sm-1" id="paixuHtml" >
+<!--                                <input id="paixu0" type="text" class="form-control" placeholder="排序"-->
+<!--                                       value=""/>-->
+<!--                                <input id="paixu1" type="text" class="form-control" placeholder="排序"-->
+<!--                                       value=""/>-->
+                            </div>
+                            <div class="col-sm-2" id="yichuHtml" >
+<!--                                <button class="btn btn-danger navbar-btn" >移除</button>-->
+                            </div>
+                            <input type="hidden" name="activityCouponList" id="couponIdList">
                         </div>
+
+
                         <div class="form-group">
-                            <label for="details" class="col-sm-2 control-label">${msg['store.activity.column.details']}</label>
+                            <label for="imageUrl" class="col-sm-2 control-label">上传列表封面图片</label>
+                            <div class="col-sm-6">
+                                <div id="imgQueue"></div>
+                                <div>
+                                    <input id="file_upload_img" name="file_upload" type="file"
+                                           multiple="false">
+                                </div>
+                                <div id="img" style="padding: 5px;"></div>
+                                <input type="hidden" id="imageUrl" name="listImg" value="">
+                            </div>
+                            <div class="col-sm-2" style="color: red;">建议尺寸：145*100</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="details" class="col-sm-2 control-label">详情介绍</label>
                             <div class="col-sm-8">
-                            <input type="text" id="details" class="form-control" name="details" data-parsley-required="true" placeholder="${msg['store.activity.column.details']}">
+                            <textarea id="details" name="details"
+                                      style="width: 100%; height: 200px;"></textarea>
                             </div>
                         </div>
                     </div>
@@ -78,6 +134,7 @@ layout("/layouts/platform.html"){
         </section>
     </div>
 </div>
+<script src="${base!}/assets/platform/vendor/layui/layui.all.js"></script>
 <script language="JavaScript">
     $(document).ready(function () {
         $('#addForm').ajaxForm({
@@ -95,7 +152,147 @@ layout("/layouts/platform.html"){
                 form.find("button:submit").button("reset");
             }
         });
+
+        //上传图片
+        $('#file_upload_img').uploadifive({
+            'auto': true,
+            'multi': false,
+            'width': '100%',
+            'height': '35',
+            'buttonText': '选择图片',
+            'fileType': 'image/jpg,image/jpeg,image/png',
+            'fileSizeLimit': 2048,
+            'queueSizeLimit': 1,
+            'overrideEvents': ['onDialogClose', 'onError'],
+            'formData': {},
+            'queueID': 'imgQueue',
+            'uploadScript': '${base}/open/file/upload/image',
+            'onUploadComplete': function (file, data) {
+                data = JSON.parse(data);
+                if (data.code == 0) {
+                    Toast.success(data.msg);
+                    $("#img").html("<img src='" + data.data + "' style='width:150px;height:95px;'>");
+                    $("#imageUrl").val(data.data);
+                } else {
+                    clearFile();
+                    Toast.error(data.msg);
+                }
+            },
+            'onDrop': function (file, fileDropCount) {
+                clearFile();
+            },
+            'onClearQueue': function (queue) {
+                clearFile();
+            },
+            'onError': function (errorType, file) {
+                if (file != 0) {
+                    // var settings = $("#" + fileuploadId).uploadifive().settings;
+                    switch (errorType) {
+                        case 'UPLOAD_LIMIT_EXCEEDED':
+                            Toast.error("上传的文件数量已经超出系统限制的1个文件！");
+                            break;
+                        case 'FILE_SIZE_LIMIT_EXCEEDED':
+                            Toast.error("文件大小超出系统限制的2M大小！");
+                            break;
+                        case 'FORBIDDEN_FILE_TYPE':
+                            Toast.error("文件类型不正确！");
+                            break;
+                    }
+                }
+            },
+            'onCancel': function () {
+                clearFile();
+            }
+        });
+
+
+        //百度编辑器
+        var ue= new baidu.editor.ui.Editor();
+        ue.render('details');
+
+        //form表单基础效果
+        myForm.init();
+
+        var form = layui.form;
+        layui.use(['form', 'layedit', 'laydate'], function(){
+            var laydate = layui.laydate;
+
+            form.render();
+            //直接嵌套显示
+            laydate.render({
+                elem: '#test29'
+                ,theme: 'molv'
+                ,type: 'datetime'
+                ,value: new Date()
+                ,done: function(value, date, endDate){
+                    console.log(value); //得到日期生成的值，如：2017-08-18
+                    console.log(date); //得到日期时间对象：{year: 2017, month: 8, date: 18, hours: 0, minutes: 0, seconds: 0}
+                    console.log(endDate); //得结束的日期时间对象，开启范围选择（range: true）才会返回。对象成员同上。
+                }
+            });
+            laydate.render({
+                elem: '#test30'
+                ,theme: 'molv'
+                ,value: new Date()
+                ,type: 'datetime'
+                ,done: function(value, date, endDate){
+                    console.log(value); //得到日期生成的值，如：2017-08-18
+                    console.log(date); //得到日期时间对象：{year: 2017, month: 8, date: 18, hours: 0, minutes: 0, seconds: 0}
+                    console.log(endDate); //得结束的日期时间对象，开启范围选择（range: true）才会返回。对象成员同上。
+                }
+            });
+        });
+
+        //禁用启用颠倒了
+        $("[name='enabled']").change(function () {
+            if (this.checked) {
+                $("[name='disabled']:hidden").val(0);
+            } else {
+                $("[name='disabled']:hidden").val(1);
+            }
+        });
+
+
+
+
     });
+
+    function yichuDom(i) {
+        $("#tjCouponId"+i).remove();
+        $("#tjCouponIdValue"+i).remove();
+        $("#paixu"+i).remove();
+        $("#yichu"+i).remove();
+    }
+
+    var indexId ="";
+    function selectCoupon() {
+        indexId = layer.open({
+            type: 2,
+            title: '很多时候，我们想最大化看，比如像这个页面。',
+            shadeClose: true,
+            shade: false,
+            maxmin: true, //开启最大化最小化按钮
+            area: ['893px', '600px'],
+            content: '${base!}/store/sales/coupon/indexSelect'
+        });
+    }
+    //获取关联券数据
+    function getCouponData() {
+        var couponIdList = [];
+         var classList = $("#tjCouponIdValue").children(".myValue");
+         classList.each(function(i, btn) {
+             var data = {};
+             var couponId = $(this).val();
+             var index = $("#paixu"+couponId).val();
+             data.couponId = couponId;
+             data.index = index;
+             couponIdList[i] = data;
+         })
+        $("#couponIdList").val(JSON.stringify(couponIdList));
+    }
+
+
+    
 </script>
 <!--#}#-->
 

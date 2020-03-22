@@ -8,7 +8,19 @@ import com.aebiz.app.msg.modules.services.CommMsgService;
 import com.aebiz.app.msg.modules.services.MsgInfoService;
 import com.aebiz.app.msg.modules.services.MsgInfoTplService;
 import com.aebiz.app.msg.modules.services.MsgSendMsgService;
+import com.aebiz.commons.utils.DateUtil;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.aliyuncs.CommonRequest;
+import com.aliyuncs.CommonResponse;
+import com.aliyuncs.DefaultAcsClient;
+import com.aliyuncs.IAcsClient;
+import com.aliyuncs.exceptions.ClientException;
+import com.aliyuncs.exceptions.ServerException;
+import com.aliyuncs.http.MethodType;
+import com.aliyuncs.profile.DefaultProfile;
 import org.nutz.dao.Cnd;
+import org.nutz.ioc.impl.PropertiesProxy;
 import org.nutz.lang.Lang;
 import org.nutz.lang.Strings;
 import org.nutz.lang.util.NutMap;
@@ -45,6 +57,9 @@ public class CommMsgServiceImpl implements CommMsgService {
 
     @Autowired
     private SmsService smsService;
+
+    @Autowired
+    private PropertiesProxy config;
 
     /**
      * 发送代码消息接口
@@ -346,4 +361,40 @@ public class CommMsgServiceImpl implements CommMsgService {
     }
 
 
+    @Override
+    public boolean sendMsgAly(String code, String mobile) {
+        DefaultProfile profile = DefaultProfile.getProfile(config.get("aly.msg.RegionId"),
+                config.get("aly.msg.accessKeyId"),  config.get("aly.msg.accessSecret"));
+        IAcsClient client = new DefaultAcsClient(profile);
+
+        CommonRequest request = new CommonRequest();
+        request.setSysMethod(MethodType.POST);
+        request.setSysDomain("dysmsapi.aliyuncs.com");
+        request.setSysVersion("2017-05-25");
+        request.setSysAction("SendSms");
+        request.putQueryParameter("RegionId", config.get("aly.msg.RegionId"));
+        request.putQueryParameter("PhoneNumbers", mobile);
+        request.putQueryParameter("SignName", config.get("aly.msg.SignName"));//签名名称
+        request.putQueryParameter("TemplateCode", config.get("aly.msg.TemplateCode"));//短信模板
+        request.putQueryParameter("TemplateParam", "{'code':'"+code+"'}");//短信模板
+        try {
+            CommonResponse response = client.getCommonResponse(request);
+            log.info("调用阿里返回短信验证码："+response.getData());
+            JSONObject jsonObject = JSON.parseObject(response.getData());
+            String returnCode = jsonObject.getString("Code");
+            if("OK".equals(returnCode)){
+                return true;
+            }
+        } catch (ServerException e) {
+            e.printStackTrace();
+        } catch (ClientException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public static void main(String[] args) {
+        CommMsgServiceImpl commMsgService = new CommMsgServiceImpl();
+        commMsgService.sendMsgAly("1234","13655554127");
+    }
 }

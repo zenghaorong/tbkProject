@@ -2,6 +2,7 @@ package com.aebiz.app.web.commons.utils;
 
 import net.sf.json.JSONObject;
 import net.sf.json.xml.XMLSerializer;
+import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
@@ -206,7 +207,9 @@ public class WXPayUtil {
             if (data.get(k).trim().length() > 0) // 参数值为空，则不参与签名
                 sb.append(k).append("=").append(data.get(k).trim()).append("&");
         }
-        sb.append("key=").append(key);
+        if(StringUtils.isNotEmpty(key)){
+            sb.append("key=").append(key);
+        }
         if (WXPayConstants.SignType.MD5.equals(signType)) {
             return MD5(sb.toString()).toUpperCase();
         } else if (WXPayConstants.SignType.HMACSHA256.equals(signType)) {

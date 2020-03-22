@@ -37,6 +37,11 @@ public class Member_coupon extends BaseModel implements Serializable {
     @ColDefine(type = ColType.VARCHAR, width = 32)
     private String couponId;
 
+    @Column
+    @Comment("优惠券ID")
+    @ColDefine(type = ColType.VARCHAR, width = 32)
+    private String activityId;
+
     @One(target = Sales_coupon.class, field = "couponId")
     private Sales_coupon sales_coupon;
 
@@ -51,6 +56,11 @@ public class Member_coupon extends BaseModel implements Serializable {
     private String mobile;
 
     @Column
+    @Comment("用户名称")
+    @ColDefine(type = ColType.VARCHAR, width = 225)
+    private String userName;
+
+    @Column
     @Comment("订单赠送订单ID")
     @ColDefine(type = ColType.VARCHAR, width = 32)
     private String source_orderId;
@@ -63,13 +73,29 @@ public class Member_coupon extends BaseModel implements Serializable {
     @Column
     @Comment("来源")
     @ColDefine(type = ColType.VARCHAR, width = 32)
-    private String source;//来源:1自己领取 2分享获得
+    private String source;//来源:1自己领取 2分享获得 3别人推荐的活动获得
 
     @Column
     @Comment("核销状态")
     @ColDefine(type = ColType.INT)
     @Default("0")
     private Integer status;//核销状态 0待核销 1已核销
+
+    public String getActivityId() {
+        return activityId;
+    }
+
+    public void setActivityId(String activityId) {
+        this.activityId = activityId;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
 
     public String getSourceAccountId() {
         return sourceAccountId;

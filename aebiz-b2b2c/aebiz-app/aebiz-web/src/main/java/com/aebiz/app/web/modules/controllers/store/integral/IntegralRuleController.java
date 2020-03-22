@@ -38,6 +38,7 @@ public class IntegralRuleController {
     @RequiresPermissions("store.integral.rule")
     public Object data(DataTable dataTable) {
 		Cnd cnd = Cnd.NEW();
+        cnd.and("storeId","=",StringUtil.getStoreId());
     	return integralRuleService.data(dataTable.getLength(), dataTable.getStart(), dataTable.getDraw(), dataTable.getOrders(), dataTable.getColumns(), cnd, null);
     }
 
@@ -53,6 +54,7 @@ public class IntegralRuleController {
     @RequiresPermissions("store.integral.rule.add")
     public Object addDo(Integral_Rule integralRule, HttpServletRequest req) {
 		try {
+            integralRule.setStoreId(StringUtil.getStoreId());
 			integralRuleService.insert(integralRule);
 			return Result.success("globals.result.success");
 		} catch (Exception e) {
@@ -75,6 +77,7 @@ public class IntegralRuleController {
 		try {
             integralRule.setOpBy(StringUtil.getUid());
 			integralRule.setOpAt((int) (System.currentTimeMillis() / 1000));
+            integralRule.setStoreId(StringUtil.getStoreId());
 			integralRuleService.updateIgnoreNull(integralRule);
 			return Result.success("globals.result.success");
 		} catch (Exception e) {

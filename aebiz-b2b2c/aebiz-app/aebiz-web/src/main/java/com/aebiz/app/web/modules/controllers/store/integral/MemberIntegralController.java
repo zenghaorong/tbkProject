@@ -46,6 +46,7 @@ public class MemberIntegralController {
     @RequiresPermissions("store.integral.Integral")
     public Object data(DataTable dataTable) {
 		Cnd cnd = Cnd.NEW();
+        cnd.and("storeId","=",StringUtil.getStoreId());
         NutMap nutMap = memberIntegralService.data(dataTable.getLength(), dataTable.getStart(), dataTable.getDraw(), dataTable.getOrders(), dataTable.getColumns(), cnd, "account_user");
         if (nutMap.get("data") != null) {
             List<Member_Integral> refundment = (List<Member_Integral>) nutMap.get("data");
@@ -74,6 +75,7 @@ public class MemberIntegralController {
     @RequiresPermissions("store.integral.Integral.add")
     public Object addDo(Member_Integral memberIntegral, HttpServletRequest req) {
 		try {
+            memberIntegral.setStoreId(StringUtil.getStoreId());
 			memberIntegralService.insert(memberIntegral);
 			return Result.success("globals.result.success");
 		} catch (Exception e) {
@@ -96,6 +98,7 @@ public class MemberIntegralController {
 		try {
             memberIntegral.setOpBy(StringUtil.getUid());
 			memberIntegral.setOpAt((int) (System.currentTimeMillis() / 1000));
+            memberIntegral.setStoreId(StringUtil.getStoreId());
 			memberIntegralService.updateIgnoreNull(memberIntegral);
 			return Result.success("globals.result.success");
 		} catch (Exception e) {

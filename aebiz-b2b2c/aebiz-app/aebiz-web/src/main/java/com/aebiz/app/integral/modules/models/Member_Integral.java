@@ -36,7 +36,7 @@ public class Member_Integral extends BaseModel implements Serializable {
     @Column
     @Comment("商户UUID")
     @ColDefine(type = ColType.VARCHAR, width = 32)
-    private String storeUuid;
+    private String storeId;
 
 
     @Column
@@ -107,12 +107,12 @@ public class Member_Integral extends BaseModel implements Serializable {
         this.customerUuid = customerUuid;
     }
 
-    public String getStoreUuid() {
-        return storeUuid;
+    public String getStoreId() {
+        return storeId;
     }
 
-    public void setStoreUuid(String storeUuid) {
-        this.storeUuid = storeUuid;
+    public void setStoreId(String storeId) {
+        this.storeId = storeId;
     }
 
     public int getUseAbleIntegral() {

@@ -19,29 +19,10 @@ layout("/layouts/store.html"){
                         <label class="control-label"></label>
                         <input type="text" class="form-control" name="mobile" placeholder="手机号" />
                     </div>
-                    <!--<div class="form-group">-->
-                        <!--<label class="control-label"></label>-->
-                        <!--<select class="form-control" name="type">-->
-                            <!--<option value="">请选择类型</option>-->
-                            <!--<option value="A">A类</option>-->
-                            <!--<option value="B">B类</option>-->
-                        <!--</select>-->
-                    <!--</div>-->
-<!--                    <div class="form-group">-->
-<!--                        <label class="control-label"></label>-->
-<!--                        <select class="form-control" name="p_enabled">-->
-<!--                            <option value="">是否启用</option>-->
-<!--                            <option value="true">禁用</option>-->
-<!--                            <option value="false">启用</option>-->
-<!--                        </select>-->
-<!--                    </div>-->
-                    <!--<div class="form-group">-->
-                        <!--<label class="control-label"></label>-->
-                        <!--<select class="form-control" name="p_checkStatus">-->
-                            <!--<option value="">请选择审核状态</option>-->
-                            <!---->
-                        <!--</select>-->
-                    <!--</div>-->
+                    <div class="form-group">
+                        <label class="control-label"></label>
+                        <input type="text" class="form-control" name="userName" placeholder="姓名" />
+                    </div>
                     <div class="form-group">
                         <button type="button" class="btn btn-primary js-search-ok" >${msg['globals.button.search']}</button>
                         <button type="button" class="btn btn-default js-search-reset" >${msg['globals.button.reset']}</button>
@@ -60,6 +41,7 @@ layout("/layouts/store.html"){
                     <tr>
                         <th>${msg['sales.coupon.column.name']}</th>
                         <th>手机号</th>
+                        <th>姓名</th>
                         <th>核销码</th>
                         <th>获取方式</th>
                         <th>状态</th>
@@ -133,6 +115,7 @@ layout("/layouts/store.html"){
             "columns": [
                     {"data": "mobile", "bSortable": true},
                     {"data": "mobile", "bSortable": true},
+                    {"data": "userName", "bSortable": true},
                     {"data": "code", "bSortable": true},
                     {"data": "source", "bSortable": true},
                     {"data": "status", "bSortable": true},
@@ -154,7 +137,7 @@ layout("/layouts/store.html"){
                             return '分享获得';
                         }
                     },
-                    "targets": 3
+                    "targets": 4
                 },
                 {
                     "render": function (data, type, row) {
@@ -165,7 +148,7 @@ layout("/layouts/store.html"){
                             return '已核销';
                         }
                     },
-                    "targets": 4
+                    "targets": 5
                 },
                 {
                     "render": function (data, type, row) {
@@ -181,7 +164,7 @@ layout("/layouts/store.html"){
                         returnHtml += '</ul></div>';
                         return returnHtml;
                     },
-                    "targets": 5
+                    "targets": 6
                 }
             ]
         });

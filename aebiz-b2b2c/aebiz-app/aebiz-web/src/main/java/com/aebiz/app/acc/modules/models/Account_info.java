@@ -104,6 +104,19 @@ public class Account_info extends BaseModel implements Serializable {
     @Comment("籍贯")
     private String nativePlace;
 
+    @Column
+    @Comment("商户UUID")
+    @ColDefine(type = ColType.VARCHAR, width = 32)
+    private String storeId;
+
+    public String getStoreId() {
+        return storeId;
+    }
+
+    public void setStoreId(String storeId) {
+        this.storeId = storeId;
+    }
+
     public String getId() {
         return id;
     }

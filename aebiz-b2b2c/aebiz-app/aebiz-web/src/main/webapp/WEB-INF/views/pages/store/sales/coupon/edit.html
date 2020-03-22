@@ -91,28 +91,6 @@ layout("/layouts/store.html"){
                                         </div>
                                     </div>
                                 </div>
-                                <div class="form-group">
-                                    <label class="col-sm-2 control-label">有效期</label>
-                                    <div class="col-sm-8 form-inline">
-                                        <div class="layui-form">
-                                            <div class="layui-form-item">
-                                                <div class="layui-inline">
-                                                    <div class="layui-input-inline">
-                                                        <input type="text" name="tmp_sartAt" class="layui-input" id="test29" placeholder="选择日期">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <span>至</span>
-                                            <div class="layui-form-item">
-                                                <div class="layui-inline">
-                                                    <div class="layui-input-inline">
-                                                        <input type="text" name="tmp_endAt" class="layui-input" id="test30" placeholder="选择日期">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
 
                             </div>
                         </div>
@@ -127,36 +105,6 @@ layout("/layouts/store.html"){
 <script type="application/javascript">
 
     $(document).ready(function () {
-
-        var form = layui.form;
-        layui.use(['form', 'layedit', 'laydate'], function(){
-            var laydate = layui.laydate;
-
-            form.render();
-            //直接嵌套显示
-            laydate.render({
-                elem: '#test29'
-                ,theme: 'molv'
-                ,type: 'datetime'
-                ,value: '${@date.getDate(obj.startTime!)}'
-                ,done: function(value, date, endDate){
-                    console.log(value); //得到日期生成的值，如：2017-08-18
-                    console.log(date); //得到日期时间对象：{year: 2017, month: 8, date: 18, hours: 0, minutes: 0, seconds: 0}
-                    console.log(endDate); //得结束的日期时间对象，开启范围选择（range: true）才会返回。对象成员同上。
-                }
-            });
-            laydate.render({
-                elem: '#test30'
-                ,theme: 'molv'
-                ,value: '${@date.getDate(obj.endTime!)}'
-                ,type: 'datetime'
-                ,done: function(value, date, endDate){
-                    console.log(value); //得到日期生成的值，如：2017-08-18
-                    console.log(date); //得到日期时间对象：{year: 2017, month: 8, date: 18, hours: 0, minutes: 0, seconds: 0}
-                    console.log(endDate); //得结束的日期时间对象，开启范围选择（range: true）才会返回。对象成员同上。
-                }
-            });
-        });
 
         //保存
         $(".js-save").click(function () {
@@ -185,61 +133,8 @@ layout("/layouts/store.html"){
         //form表单基础效果
         myForm.init();
 
-        $('.js-start-time').datetimepicker({
-            language:  "${lang!'zh-CN'}",
-            format:'yyyy-mm-dd hh:ii:ss',
-            pickerPosition: 'bottom-left',
-            weekStart: 1,
-            todayBtn:  1,
-            autoclose: 1,
-            todayHighlight: 1,
-            startView: 2,
-            forceParse: 0,
-            showMeridian: 1,
-            endDate: new Date("${@date.getDate()}")
-        }).on("changeDate", function (e) {
-            $('.js-end-time').datetimepicker('setStartDate', e.date);
-        });
-
-        $('.js-end-time').datetimepicker({
-            language:  "${lang!'zh-CN'}",
-            format:'yyyy-mm-dd hh:ii:ss',
-            pickerPosition: 'bottom-left',
-            weekStart: 1,
-            todayBtn:  1,
-            autoclose: 1,
-            todayHighlight: 1,
-            startView: 2,
-            forceParse: 0,
-            showMeridian: 1,
-            startDate: new Date("${@date.getDate()}")
-        }).on("changeDate", function (e) {
-            $('.js-start-time').datetimepicker('setEndDate', e.date);
-        });
-
     })
 
-    $(".radioType").change(function () {
-        var val = $(this).val();
-        if(val == 1){ //满减
-            $("#deductibleAmountFor").css("display","block");
-            $("#conditionAmountFor").css("display","block");
-            $("#productQuantityRuleFor").css("display","none");
-            $("#discountFor").css("display","none");
-        }
-        if(val == 2){ //免运
-            $("#deductibleAmountFor").css("display","none");
-            $("#conditionAmountFor").css("display","none");
-            $("#productQuantityRuleFor").css("display","block");
-            $("#discountFor").css("display","none");
-        }
-        if(val == 3){ //折扣
-            $("#deductibleAmountFor").css("display","none");
-            $("#conditionAmountFor").css("display","none");
-            $("#productQuantityRuleFor").css("display","block");
-            $("#discountFor").css("display","block");
-        }
-    })
 
     //禁用启用颠倒了
     $("[name='enabled']").change(function () {

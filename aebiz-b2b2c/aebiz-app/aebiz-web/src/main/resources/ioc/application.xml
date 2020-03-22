@@ -191,5 +191,12 @@
             <mvc:exclude-mapping path="/member/fogetPassword/**"/> <!-- 会员忘记密码功能不拦截 -->
             <bean class="com.aebiz.app.web.commons.interceptor.MemberShiroInterceptor"/>
         </mvc:interceptor>
+
+        <!-- h5端Api会话拦截判断 -->
+        <mvc:interceptor>
+            <mvc:mapping path="/open/api/h5/**"/>
+            <bean class="com.aebiz.app.web.commons.interceptor.MemberH5ApiShiroInterceptor"/>
+        </mvc:interceptor>
+
     </mvc:interceptors>
 </beans>

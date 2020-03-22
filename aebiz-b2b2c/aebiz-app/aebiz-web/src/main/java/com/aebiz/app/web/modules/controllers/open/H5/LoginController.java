@@ -207,6 +207,7 @@ public class LoginController {
     @RequestMapping(value = {"/doCodeLogin"}, method = RequestMethod.POST)
     @SJson
     public Object doCodeLogin(@RequestParam("mobile") String username, String captcha,
+                              String storeId,
                               HttpServletRequest request,HttpServletResponse response) {
 
         try (Jedis jedis = redisService.jedis()) {
@@ -223,6 +224,7 @@ public class LoginController {
             }
 
             Cnd cnd = Cnd.where("mobile", "=", username);
+            cnd.and("storeId","=",storeId);
             Account_user accountUser = accountUserService.fetch(cnd);
             if (Lang.isEmpty(accountUser)) {
                 // 如果未找到用户,就自动注册为会员,然后登录
@@ -233,7 +235,6 @@ public class LoginController {
             accountUser = accountUserService.fetch(cnd);
             accountLoginService.login(request, accountUser.getAccountId(), "member");
             NutMap returnData = NutMap.NEW();
-            returnData.put("token", apiService.generateToken(new Date(System.currentTimeMillis() + TOKEN_EXP_TIME), APPID));
             returnData.put("accountId", accountUser.getAccountId());
             returnData.put("accountName", accountUser.getLoginname());
             returnData.put("mobile", accountUser.getMobile());
@@ -243,6 +244,9 @@ public class LoginController {
 
             AuthenticationToken authenticationToken =createToken(username, accountUser.getPassword(), false, "6666", request);
             subject.login(authenticationToken);
+            Session session = subject.getSession();
+            String sessionId = (String) session.getId();
+            returnData.put("sessionId",sessionId);
 
             //设置登录
             CookieUtil.setCookie(response, "cheryfs_member_login", "true");
@@ -283,7 +287,7 @@ public class LoginController {
     @RequestMapping(value = {"/doLogin"}, method = RequestMethod.POST)
     @SJson
     public Object doLogin(@RequestParam("mobile") String username,
-                          @RequestParam("password") String password,
+                          @RequestParam("password") String password,String storeId,
                           @RequestParam(value = "rememberme", defaultValue = "0", required = false) boolean rememberMe,
                           HttpServletRequest request, HttpServletResponse response) {
         int errCount = 0;
@@ -300,6 +304,9 @@ public class LoginController {
             Account_user accountUser = (Account_user) subject.getPrincipal();
             if (accountUser.isDisabled()) {
                 return Result.error("此用户被冻结").addCode(3);
+            }
+            if(!accountUser.getStoreId().equals(storeId)){
+                return Result.error(10002,"此商户不存在");
             }
             if (rememberMe) {
                 SimpleCookie cookie = new SimpleCookie(cookieName);
@@ -331,7 +338,12 @@ public class LoginController {
                 accountLogin.setClientBrowser(browser.getName());
             }
             accountLoginService.insert(accountLogin);
-            return Result.success("sys.login.success",sessionId);
+            NutMap returnData = NutMap.NEW();
+            returnData.put("accountId", accountUser.getAccountId());
+            returnData.put("accountName", accountUser.getLoginname());
+            returnData.put("mobile", accountUser.getMobile());
+            returnData.put("sessionId",sessionId);
+            return Result.success("sys.login.success",returnData);
         } catch (CaptchaIncorrectException e) {
             //自定义的验证码错误异常
             return Result.error(1, "sys.login.error.captcha");

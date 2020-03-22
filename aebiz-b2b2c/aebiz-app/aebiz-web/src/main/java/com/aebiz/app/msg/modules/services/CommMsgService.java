@@ -41,4 +41,9 @@ public interface CommMsgService {
      * @param captcha  验证码
      */
     boolean sendEmailCaptcha(String code, String email, String captcha);
+
+    /**
+     * 阿里云短信验证码发送
+     */
+    boolean sendMsgAly(String code, String mobile);
 }

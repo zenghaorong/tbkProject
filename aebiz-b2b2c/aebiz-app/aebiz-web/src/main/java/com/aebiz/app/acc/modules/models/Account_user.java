@@ -74,6 +74,32 @@ public class Account_user extends BaseModel implements Serializable {
     @One(target = Account_info.class, field = "accountId")
     private Account_info accountInfo;
 
+    @Column
+    @Comment("商户UUID")
+    @ColDefine(type = ColType.VARCHAR, width = 32)
+    private String storeId;
+
+    @Column
+    @Comment("会员类型")
+    @ColDefine(type = ColType.VARCHAR, width = 10)
+    private String userType;
+
+    public String getUserType() {
+        return userType;
+    }
+
+    public void setUserType(String userType) {
+        this.userType = userType;
+    }
+
+    public String getStoreId() {
+        return storeId;
+    }
+
+    public void setStoreId(String storeId) {
+        this.storeId = storeId;
+    }
+
     public String getId() {
         return id;
     }

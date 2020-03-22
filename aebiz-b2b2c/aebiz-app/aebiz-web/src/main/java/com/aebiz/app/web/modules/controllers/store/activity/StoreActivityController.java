@@ -55,6 +55,8 @@ public class StoreActivityController {
         if (Strings.isNotBlank(storeActivity.getName())) {
             cnd.and("name", "like", Sqls.escapeSqlFieldValue("%" + Strings.trim(storeActivity.getName()) + "%"));
         }
+        cnd.and("storeId","=",StringUtil.getStoreId());
+        cnd.and("delFlag", "=", false);
         cnd.desc("opAt");
     	return storeActivityService.data(dataTable.getLength(), dataTable.getStart(), dataTable.getDraw(), dataTable.getOrders(), dataTable.getColumns(), cnd, null);
     }
@@ -117,13 +119,21 @@ public class StoreActivityController {
             }
             storeActivity.setOpBy(StringUtil.getUid());
 			storeActivity.setOpAt((int) (System.currentTimeMillis() / 1000));
+            storeActivity.setStoreId(StringUtil.getStoreId());
 			storeActivityService.updateIgnoreNull(storeActivity);
-            for (Activity_coupon a:activity_couponList) {
-                activityCouponService.delete(a.getId());
+            Cnd cnd2 = Cnd.NEW();
+            cnd2.and("activityId","=",storeActivity.getId());
+            List<Activity_coupon> listC = activityCouponService.query(cnd2);
+            for (Activity_coupon a:listC) {
+                if(a != null){
+                    activityCouponService.delete(a.getId());
+                }
             }
             for (Activity_coupon a:activity_couponList) {
                 a.setActivityId(storeActivity.getId());
                 activityCouponService.insert(a);
+//                System.err.println(activity_couponList.size()+"插入成功："+JSON.toJSONString(a));
+//                System.err.println(activity_couponList.size()+"插入成功list："+JSON.toJSONString(activity_couponList));
             }
 
 			return Result.success("globals.result.success");
@@ -172,6 +182,7 @@ public class StoreActivityController {
         try {
             Cnd cnd = Cnd.NEW();
             cnd.and("activityId","=",activityId);
+            cnd.desc("index");
             List<Activity_coupon> activity_couponList = activityCouponService.query(cnd);
             for (Activity_coupon a:activity_couponList) {
                 Sales_coupon salesCoupon = salesCouponService.fetch(a.getCouponId());

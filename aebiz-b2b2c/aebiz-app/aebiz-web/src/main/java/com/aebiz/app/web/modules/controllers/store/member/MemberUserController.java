@@ -103,7 +103,8 @@ public class MemberUserController {
             cnd.and("mu.levelId", "=", levelId);
         }
         if (!Strings.isEmpty(queryStr)) {
-            List<Account_user> accountUserList = accountUserService.query(Cnd.where("loginname", "like", queryStr+"%").or("email", "like", queryStr+"%").or("mobile", "like", queryStr+"%"));
+            List<Account_user> accountUserList = accountUserService.query(Cnd.where("loginname", "like", queryStr+"%")
+                    .or("email", "like", queryStr+"%").or("mobile", "like", queryStr+"%"));
             String[] accountIdArray = new String[]{};
             if (accountUserList != null) {
                 for(Account_user accountUser:accountUserList){
@@ -129,6 +130,7 @@ public class MemberUserController {
         log.debug(cnd);
 
         cnd.and("mu.delFlag","=",false);
+        cnd.and("mu.storeId","=",StringUtil.getStoreId());
         Pager pager = new OffsetPager(dataTable.getStart(), dataTable.getLength());  // 设置分页
         List<Member> list = queryMember(cnd, pager);                                  // 获取会员列表的数据
 
@@ -157,6 +159,9 @@ public class MemberUserController {
     @RequiresPermissions("store.member.user.add")
     public Object addDo(Member_user memberUser, Account_user accountUser, Account_info accountInfo) {
         try {
+            accountUser.setStoreId(StringUtil.getStoreId());
+            accountInfo.setStoreId(StringUtil.getStoreId());
+            memberUser.setStoreId(StringUtil.getStoreId());
             memberUserService.addMemberUser(memberUser, accountUser, accountInfo);
         } catch (Exception e) {
             return Result.error("globals.result.error");
@@ -184,6 +189,9 @@ public class MemberUserController {
             memberUser.setId(memberUserId);
             accountUser.setId(accountUserId);
             accountInfo.setId(accountId);
+            accountUser.setStoreId(StringUtil.getStoreId());
+            accountInfo.setStoreId(StringUtil.getStoreId());
+            memberUser.setStoreId(StringUtil.getStoreId());
             memberUserService.updateMemberUser(memberUser, accountUser, accountInfo);
             return Result.success("globals.result.success");
         } catch (Exception e) {

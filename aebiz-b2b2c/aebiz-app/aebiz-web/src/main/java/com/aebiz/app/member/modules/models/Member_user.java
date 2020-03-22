@@ -37,6 +37,19 @@ public class Member_user extends BaseModel implements Serializable {
     @ColDefine(type = ColType.INT)
     private int typeId;
 
+    @Column
+    @Comment("商户UUID")
+    @ColDefine(type = ColType.VARCHAR, width = 32)
+    private String storeId;
+
+    public String getStoreId() {
+        return storeId;
+    }
+
+    public void setStoreId(String storeId) {
+        this.storeId = storeId;
+    }
+
     @One(target = Member_level.class, field = "levelId")
     private Member_level memberLevel;
 

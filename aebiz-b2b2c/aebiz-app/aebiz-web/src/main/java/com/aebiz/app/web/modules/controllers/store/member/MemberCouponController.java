@@ -52,7 +52,7 @@ public class MemberCouponController {
      */
     @RequestMapping("/data")
     @SJson("full")
-    public Object data(DataTable dataTable,String name,String mobile,String code){
+    public Object data(DataTable dataTable,String name,String mobile,String code,String userName){
         try {
             Cnd cnd = Cnd.NEW();
             cnd.and("storeId","=", StringUtil.getStoreId());
@@ -76,6 +76,9 @@ public class MemberCouponController {
             }
             if(StringUtils.isNotEmpty(code)){
                 cnd.and("code","like","%"+code+"%");
+            }
+            if(StringUtils.isNotEmpty(userName)){
+                cnd.and("userName","like","%"+userName+"%");
             }
             NutMap nutMap = memberCouponService.data(dataTable.getLength(), dataTable.getStart(), dataTable.getDraw(), dataTable.getOrders(), dataTable.getColumns(), cnd, null);
             List<Member_coupon> member_couponList = (List<Member_coupon>)nutMap.get("data");

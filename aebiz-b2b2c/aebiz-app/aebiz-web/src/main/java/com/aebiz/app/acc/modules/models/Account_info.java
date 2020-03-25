@@ -31,7 +31,7 @@ public class Account_info extends BaseModel implements Serializable {
     private String name;
 
     @Column
-    @Comment("性别")
+    @Comment("性别") //用户的性别，值为1时是男性，值为2时是女性，值为0时是未知
     @ColDefine(type = ColType.VARCHAR, width = 5)
     private String sex;
 
@@ -108,6 +108,45 @@ public class Account_info extends BaseModel implements Serializable {
     @Comment("商户UUID")
     @ColDefine(type = ColType.VARCHAR, width = 32)
     private String storeId;
+
+    @Column
+    @Comment("openId")
+    @ColDefine(type = ColType.VARCHAR, width = 255)
+    private String openId;
+
+    @Column
+    @Comment("推荐购车交易成功数")
+    @ColDefine(type = ColType.VARCHAR, width = 255)
+    private Integer num;
+
+    @Column
+    @Comment("用户类型:store member")
+    @ColDefine(type = ColType.VARCHAR, width = 10)
+    private String userType;
+
+    public String getUserType() {
+        return userType;
+    }
+
+    public void setUserType(String userType) {
+        this.userType = userType;
+    }
+
+    public String getOpenId() {
+        return openId;
+    }
+
+    public void setOpenId(String openId) {
+        this.openId = openId;
+    }
+
+    public Integer getNum() {
+        return num;
+    }
+
+    public void setNum(Integer num) {
+        this.num = num;
+    }
 
     public String getStoreId() {
         return storeId;

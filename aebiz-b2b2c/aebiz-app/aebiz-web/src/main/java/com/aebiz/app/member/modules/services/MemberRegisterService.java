@@ -5,9 +5,12 @@ import com.aebiz.app.acc.modules.models.Account_user;
 import com.aebiz.app.member.modules.models.Member_user;
 import com.aebiz.app.msg.modules.models.Msg_conf_sms;
 import com.aebiz.baseframework.base.service.BaseService;
+import com.alibaba.fastjson.JSONObject;
 
 public interface MemberRegisterService extends BaseService<Member_user>{
 
     public void memberRegister(String mobile, String password,String username,String passwordStrength);
+
+    public String memberRegisterWx(JSONObject jsonWxUser, String password, String passwordStrength,String storeId);
 }
 

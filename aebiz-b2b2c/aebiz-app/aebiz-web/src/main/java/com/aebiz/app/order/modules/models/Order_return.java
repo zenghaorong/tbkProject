@@ -16,7 +16,7 @@ public class Order_return extends BaseModel implements Serializable {
     @Name
     @Comment("发货单号")
     @ColDefine(type = ColType.VARCHAR, width = 32)
-    @Prev(els = {@EL("ig(view.tableName,'')")})
+    @Prev(els = {@EL("uuid()")})
     private String id;
 
     @Column

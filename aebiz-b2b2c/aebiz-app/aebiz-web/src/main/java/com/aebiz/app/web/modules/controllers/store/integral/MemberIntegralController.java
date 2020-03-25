@@ -136,4 +136,23 @@ public class MemberIntegralController {
         return "pages/store/integral/Integral/detail";
     }
 
+    /**
+     * 后台给会员扣除积分
+     * @param im
+     * @param accountId
+     * @param desc 说明
+     * @return
+     */
+    @RequestMapping("/minusPoints")
+    @SJson
+    public Object minusPoints(int im,String accountId,String desc) {
+        try {
+            memberIntegralService.minusPoints(StringUtil.getStoreId(),im,accountId,desc);
+            return Result.success("globals.result.success");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.error("globals.result.error");
+        }
+    }
+
 }

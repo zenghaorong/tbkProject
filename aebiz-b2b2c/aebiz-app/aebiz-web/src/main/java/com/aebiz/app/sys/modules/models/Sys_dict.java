@@ -42,6 +42,11 @@ public class Sys_dict extends BaseModel implements Serializable {
     private String code;
 
     @Column
+    @Comment("数据")
+    @ColDefine(type = ColType.VARCHAR, width = 255)
+    private String value;
+
+    @Column
     @Comment("排序字段")
     @Prev({
             @SQL(db= DB.MYSQL,value = "SELECT IFNULL(MAX(location),0)+1 FROM sys_dict"),
@@ -52,6 +57,40 @@ public class Sys_dict extends BaseModel implements Serializable {
     @Column
     @Comment("有子节点")
     private boolean hasChildren;
+
+    @Column
+    @Comment("商户UUID")
+    @ColDefine(type = ColType.VARCHAR, width = 32)
+    private String storeId;
+
+    @Column
+    @Comment("系统类型")
+    @ColDefine(type = ColType.VARCHAR, width = 10)
+    private String sysType; //系统端sys 商户端store
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    public String getSysType() {
+        return sysType;
+    }
+
+    public void setSysType(String sysType) {
+        this.sysType = sysType;
+    }
+
+    public String getStoreId() {
+        return storeId;
+    }
+
+    public void setStoreId(String storeId) {
+        this.storeId = storeId;
+    }
 
     public String getId() {
         return id;

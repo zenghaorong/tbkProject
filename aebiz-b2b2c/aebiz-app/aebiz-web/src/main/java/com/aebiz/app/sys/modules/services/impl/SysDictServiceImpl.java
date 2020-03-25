@@ -52,6 +52,18 @@ public class SysDictServiceImpl extends BaseServiceImpl<Sys_dict> implements Sys
     }
 
     /**
+     * 通过code获取Sys_dict
+     *
+     * @param code
+     * @return
+     */
+    @Override
+    public Sys_dict getSysDictByCode(String code,String storeId) {
+        Sys_dict dict = this.fetch(Cnd.where("code", "=", code).and("storeId","=",storeId));
+        return dict;
+    }
+
+    /**
      * 通过id获取name
      *
      * @param id

@@ -12,6 +12,7 @@ import java.util.Map;
 public interface SysDictService extends BaseService<Sys_dict> {
     void clearCache();
     String getNameByCode(String code);
+    Sys_dict getSysDictByCode(String code,String storeId);
     String getNameById(String id);
     List<Sys_dict> getSubListByPath(String path);
     List<Sys_dict> getSubListById(String id);

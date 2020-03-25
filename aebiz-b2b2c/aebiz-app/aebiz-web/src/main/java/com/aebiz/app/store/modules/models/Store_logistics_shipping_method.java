@@ -18,7 +18,7 @@ public class Store_logistics_shipping_method extends BaseModel implements Serial
     @Name
     @Comment("ID")
     @ColDefine(type = ColType.VARCHAR, width = 32)
-    @Prev(els = {@EL("ig(view.tableName,'')")})
+    @Prev(els = {@EL("uuid()")})
     private String id;
 
     @Column

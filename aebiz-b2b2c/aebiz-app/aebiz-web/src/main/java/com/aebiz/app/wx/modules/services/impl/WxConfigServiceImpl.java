@@ -56,6 +56,12 @@ public class WxConfigServiceImpl extends BaseServiceImpl<Wx_config> implements W
     //redis缓存Wexinjsapi_ticket唯一key
     private static final String WexinJsapiTicket="Wexin_jsapi_ticket_key";
 
+    //redis缓存WexinAccessToken唯一key-获取OpenId使用
+    private static final String WexinAccessTokenOpenId="WexinAccessToken_openId_key";
+
+    //redis缓存WexinAccessToken唯一key-获取OpenId使用
+    private static final String WexinAccessTokenOpenId2="WexinAccessToken_openId_key2";
+
     private static int EXPIRED_SECONDS = 7100;//不到7200秒过期就去请求
 
 
@@ -153,6 +159,54 @@ public class WxConfigServiceImpl extends BaseServiceImpl<Wx_config> implements W
                 jedis.expire(WexinJsapiTicket, EXPIRED_SECONDS);
             }
             return jsapiTicket;
+        }catch (Exception e){
+            logger.error("获取微信access_token发生异常",e);
+            return null;
+        }
+    }
+
+
+    @Override
+    public String getWxApiAccessTokenAndOpenId(boolean fetchNew,String code) {
+        try (Jedis jedis = redisService.jedis()) {
+            String appId = config.get("wx.pay.AppID");
+            String secret = config.get("wx.pay.AppSecret");
+            logger.info("WexinAccessTokenOpenId+code值KEY是："+WexinAccessTokenOpenId+code);
+            String accessToken = jedis.get(WexinAccessTokenOpenId+code);
+            String openid = jedis.get(WexinAccessTokenOpenId2+code);
+            JSONObject json = new JSONObject();
+            json.put("access_token",accessToken);
+            json.put("openid",openid);
+            logger.info("走redis缓存取出的微信数据"+json.toJSONString());
+            if (accessToken == null || fetchNew) {
+                String aQs = "?appid="+appId+"&secret="+secret+"&code="+code+"&grant_type=authorization_code";
+                //用code取accessToken
+                String result = CommonUtil.httpCallGet("https://api.weixin.qq.com/sns/oauth2/access_token" + aQs);
+                if (result == null || result.length() == 0 || !result.startsWith("{")) {
+                    logger.error("获取微信接口access_token错误，返回非json数据，result：" + result);
+                    return null;
+                }
+                json = JSON.parseObject(result);
+                logger.info("微信接口直接返回数据："+json.toJSONString());
+                String expires_in = json.getString("expires_in");
+                String errorCode = json.getString("errcode");
+                if (expires_in != null && !"7200".equals(expires_in)) {
+                    if (json.getString("errmsg") != null) {
+                        logger.error("获取微信接口access_token错误：" + errorCode + "::" + json.getString("errmsg"));
+                        return null;
+                    }
+                }
+                accessToken = json.getString("access_token");
+                if (accessToken.length() == 0) {
+                    logger.error("获取微信接口access_token为空：" + errorCode + "::" + json.getString("errmsg"));
+                    return null;
+                }
+                jedis.set(WexinAccessTokenOpenId+code, accessToken);
+                jedis.expire(WexinAccessTokenOpenId+code, EXPIRED_SECONDS);
+                jedis.set(WexinAccessTokenOpenId2+code, json.getString("openid"));
+                jedis.expire(WexinAccessTokenOpenId2+code, EXPIRED_SECONDS);
+            }
+            return json.toJSONString();
         }catch (Exception e){
             logger.error("获取微信access_token发生异常",e);
             return null;

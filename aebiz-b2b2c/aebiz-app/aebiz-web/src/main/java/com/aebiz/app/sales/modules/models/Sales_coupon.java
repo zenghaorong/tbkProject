@@ -121,6 +121,19 @@ public class Sales_coupon extends BaseModel implements Serializable {
     @ColDefine(type = ColType.FLOAT)
     private Double discount;
 
+    @Column
+    @Comment("面值")
+    @ColDefine(type = ColType.VARCHAR, width = 11)
+    private String value;
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
     private String endTimeStr;
 
     public String getRecommendCouponId() {

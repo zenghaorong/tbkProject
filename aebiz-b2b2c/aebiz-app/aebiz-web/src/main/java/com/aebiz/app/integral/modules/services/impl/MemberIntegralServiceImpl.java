@@ -6,7 +6,9 @@ import com.aebiz.app.integral.modules.models.Member_Integral_Detail;
 import com.aebiz.app.integral.modules.services.IntegralRuleService;
 import com.aebiz.app.integral.modules.services.MemberIntegralDetailService;
 import com.aebiz.app.integral.modules.services.MemberIntegralService;
+import com.aebiz.baseframework.base.Result;
 import com.aebiz.baseframework.base.service.BaseServiceImpl;
+import com.aebiz.commons.utils.StringUtil;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -124,6 +126,48 @@ public class MemberIntegralServiceImpl extends BaseServiceImpl<Member_Integral> 
                 md.setIntegralType(3);
                 memberIntegralDetailService.insert(md);
             }
+        }
+    }
+
+    @Override
+    public void saveMemberIntegral(String storeId, String ruleCode,int integralType, String accountId) {
+        Cnd cnd = Cnd.NEW();
+        cnd.and("storeId","=", storeId);
+        cnd.and("ruleCode","=",ruleCode);
+        Integral_Rule integral_rule = integralRuleService.fetch(cnd);
+        Member_Integral m = new Member_Integral();
+        m.setCustomerUuid(accountId);
+        m.setTotalIntegral(integral_rule.getIntegralCount());
+        m.setUseAbleIntegral(integral_rule.getIntegralCount());
+        m.setStoreId(storeId);
+        this.insert(m);
+        Member_Integral_Detail md = new Member_Integral_Detail();
+        md.setAddIntegral(integral_rule.getIntegralCount());
+        md.setCustomerUuid(accountId);
+        md.setIntegralDesc(integral_rule.getRuleName());
+        md.setIntegralType(integralType);
+        md.setStoreId(storeId);
+        memberIntegralDetailService.insert(md);
+
+    }
+
+    @Override
+    public void minusPoints(String storeId, int im, String accountId, String desc) {
+        Cnd cnd3 = Cnd.NEW();
+        cnd3.and("delFlag", "=", false);
+        cnd3.and("customerUuid","=",accountId);
+        cnd3.and("storeId","=",storeId);
+        List<Member_Integral> list=this.query(cnd3);
+        if(list!=null&&list.size()>0){
+            Member_Integral memIntegral = list.get(0);
+            memIntegral.setUseAbleIntegral(memIntegral.getUseAbleIntegral()-im);
+            this.update(memIntegral);
+            Member_Integral_Detail mid = new Member_Integral_Detail();
+            mid.setIntegralDesc(desc);
+            mid.setIntegralType(4);
+            mid.setCustomerUuid(accountId);
+            mid.setAddIntegral(im);
+            memberIntegralDetailService.insert(mid);
         }
     }
 }

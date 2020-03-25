@@ -19,7 +19,7 @@ public class Order_after_refundment extends BaseModel implements Serializable {
     @Comment("ID")
     @Name
     @ColDefine(type = ColType.VARCHAR, width = 32)
-    @Prev(els = {@EL("ig(view.tableName,'')")})
+    @Prev(els = {@EL("uuid()")})
     private String id;
 
     @Column

@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 @RequestMapping("/store/integral/rule")
@@ -54,6 +55,13 @@ public class IntegralRuleController {
     @RequiresPermissions("store.integral.rule.add")
     public Object addDo(Integral_Rule integralRule, HttpServletRequest req) {
 		try {
+            Cnd cnd = Cnd.NEW();
+            cnd.and("storeId","=",StringUtil.getStoreId());
+            cnd.and("ruleCode","=",integralRule.getRuleCode());
+            List<Integral_Rule> integralRuleList = integralRuleService.query(cnd);
+            if(integralRuleList.size()>0){
+                return Result.error("积分规则编码重复");
+            }
             integralRule.setStoreId(StringUtil.getStoreId());
 			integralRuleService.insert(integralRule);
 			return Result.success("globals.result.success");
@@ -75,6 +83,13 @@ public class IntegralRuleController {
     @RequiresPermissions("store.integral.rule.edit")
     public Object editDo(Integral_Rule integralRule, HttpServletRequest req) {
 		try {
+            Cnd cnd = Cnd.NEW();
+            cnd.and("storeId","=",StringUtil.getStoreId());
+            cnd.and("ruleCode","=",integralRule.getRuleCode());
+            List<Integral_Rule> integralRuleList = integralRuleService.query(cnd);
+            if(integralRuleList.size()>0){
+                return Result.error("积分规则编码重复");
+            }
             integralRule.setOpBy(StringUtil.getUid());
 			integralRule.setOpAt((int) (System.currentTimeMillis() / 1000));
             integralRule.setStoreId(StringUtil.getStoreId());

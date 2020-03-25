@@ -48,7 +48,7 @@ public class Msg_send extends BaseModel implements Serializable {
     @Column
     @Name
     @ColDefine(type = ColType.VARCHAR, width = 32)
-    @Prev(els = {@EL("ig(view.tableName,'')")})
+    @Prev(els = {@EL("uuid()")})
     private String id;
 
     @Column

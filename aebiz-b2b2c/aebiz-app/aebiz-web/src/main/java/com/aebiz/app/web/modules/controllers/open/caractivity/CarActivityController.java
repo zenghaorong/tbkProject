@@ -1,20 +1,28 @@
 package com.aebiz.app.web.modules.controllers.open.caractivity;
 
+import com.aebiz.app.acc.modules.models.Account_info;
 import com.aebiz.app.acc.modules.models.Account_user;
 import com.aebiz.app.acc.modules.services.AccountInfoService;
 import com.aebiz.app.acc.modules.services.AccountLoginService;
 import com.aebiz.app.acc.modules.services.AccountUserService;
+import com.aebiz.app.integral.modules.services.MemberIntegralService;
 import com.aebiz.app.member.modules.models.Member_coupon;
 import com.aebiz.app.member.modules.services.MemberCouponService;
 import com.aebiz.app.member.modules.services.MemberRegisterService;
 import com.aebiz.app.msg.modules.services.CommMsgService;
+import com.aebiz.app.sales.modules.models.Activity_coupon;
 import com.aebiz.app.sales.modules.models.Sales_coupon;
+import com.aebiz.app.sales.modules.services.ActivityCouponService;
 import com.aebiz.app.sales.modules.services.SalesCouponService;
+import com.aebiz.app.store.modules.models.Store_activity;
 import com.aebiz.app.store.modules.services.StoreActivityService;
+import com.aebiz.app.sys.modules.models.Sys_dict;
+import com.aebiz.app.sys.modules.services.SysDictService;
 import com.aebiz.baseframework.base.Result;
 import com.aebiz.baseframework.page.Pagination;
 import com.aebiz.baseframework.redis.RedisService;
 import com.aebiz.baseframework.view.annotation.SJson;
+import com.aebiz.commons.utils.DateUtil;
 import com.aebiz.commons.utils.StringUtil;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang3.StringUtils;
@@ -30,9 +38,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import redis.clients.jedis.Jedis;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 @Controller
 @RequestMapping("open/H5/caractivity")
@@ -51,7 +57,15 @@ public class CarActivityController {
     @Autowired
     private StoreActivityService storeActivityService;
     @Autowired
+    private ActivityCouponService activityCouponService;
+    @Autowired
     private CommMsgService commMsgService;
+    @Autowired
+    private MemberIntegralService memberIntegralService;
+    @Autowired
+    private SysDictService sysDictService;
+    @Autowired
+    private AccountInfoService accountInfoService;
 
     /**
      * 手机短信验证码前缀
@@ -121,6 +135,14 @@ public class CarActivityController {
                 member_coupon.setSourceAccountId(sourceAccountId);
                 //3别人推荐的活动获得
                 member_coupon.setSource("3");
+                //推荐人编号不为空给推荐人增加积分
+                try{
+                    memberIntegralService.saveMemberIntegral(storeId,"commentIntegral",
+                            7,sourceAccountId);
+                }catch (Exception e){
+                    log.error("给推荐人增加积分异常",e);
+                    e.printStackTrace();
+                }
             }else {
                 //1.自己领取
                 member_coupon.setSource("1");
@@ -225,6 +247,9 @@ public class CarActivityController {
             Cnd cnd = Cnd.NEW();
             cnd.and("storeId","=",storeId);
             cnd.and("delFlag","=",false);
+            cnd.and("disabled","=",false);
+            cnd.and("startTime","<=", DateUtil.getNowTime());
+            cnd.and("endTime",">", DateUtil.getNowTime());
             cnd.desc("index");
             Pagination pagination = storeActivityService.listPage(page,limit,cnd,"^(id|name|listImg)$");
             return Result.success("ok",pagination);
@@ -233,5 +258,124 @@ public class CarActivityController {
             return Result.error("验证码获取失败");
         }
     }
+
+    /**
+     * 获取活动详情
+     * @param activityId
+     * @return
+     */
+    @RequestMapping("getActivityById")
+    @SJson
+    public Result getActivityById(String activityId) {
+        try {
+            Map<String,Object> map = new HashMap<>();
+            Cnd cnd = Cnd.NEW();
+            cnd.and("activityId","=",activityId);
+            Store_activity store_activity = storeActivityService.fetch(activityId);
+            String timeStr = "";
+            String timeStrCha = "";
+            if(store_activity.getStartTime()> DateUtil.getNowTime()){
+                timeStr = "未开始";
+            }
+            if(store_activity.getStartTime()<= DateUtil.getNowTime() && store_activity.getEndTime()>DateUtil.getNowTime()){
+                timeStr = "已开始";
+                //获取相差时间
+                timeStrCha = DateUtil.getDatePoor( DateUtil.getNowTime(),store_activity.getStartTime());
+            }
+            if(store_activity.getEndTime()< DateUtil.getNowTime()){
+                timeStr = "已结束";
+            }
+            map.put("store_activity",store_activity);
+            map.put("timeStr",timeStr);
+            map.put("timeStrCha",timeStrCha);
+            return Result.success("ok",map);
+        }catch (Exception e){
+            e.printStackTrace();
+            return Result.error("获取活动详情获取失败");
+        }
+    }
+
+    /**
+     * 获取活动下优惠券
+     * @param activityId
+     * @return
+     */
+    @RequestMapping("getActivityCoupon")
+    @SJson
+    public Result getActivityCoupon(String activityId) {
+        try {
+            Cnd cnd = Cnd.NEW();
+            cnd.and("activityId","=",activityId);
+            List<Activity_coupon> activity_couponList = activityCouponService.query(cnd);
+            List<Sales_coupon> salesCouponList = new ArrayList<>();
+            for (Activity_coupon m:activity_couponList) {
+                Sales_coupon salesCoupon = salesCouponService.fetch(m.getCouponId());
+                salesCouponList.add(salesCoupon);
+            }
+            return Result.success("ok",salesCouponList);
+        }catch (Exception e){
+            e.printStackTrace();
+            return Result.error("获取活动下优惠券获取失败");
+        }
+    }
+
+    /**
+     * 获取活动详情下统计数量值
+     * @return
+     */
+    @RequestMapping("getActivityNum")
+    @SJson
+    public Result getActivityNum(String storeId) {
+        try {
+            Map<String,Object> map = new HashMap<>();
+            // 已报名用户数
+            Sys_dict sys_dict_ybmyhs = sysDictService.getSysDictByCode("ybmyhs",storeId);
+            map.put("ybmyhs",sys_dict_ybmyhs.getValue());
+
+            // 已分享人数
+            Sys_dict sys_dict_yfxrs = sysDictService.getSysDictByCode("yfxrs",storeId);
+            map.put("yfxrs",sys_dict_yfxrs.getValue());
+
+            //  剩余礼品数
+            Sys_dict sys_dict_sylps = sysDictService.getSysDictByCode("sylps",storeId);
+            map.put("sylps",sys_dict_sylps.getValue());
+
+            // 已浏览人数
+            Sys_dict sys_dict_yllrs = sysDictService.getSysDictByCode("yllrs",storeId);
+            map.put("yllrs",sys_dict_yllrs.getValue());
+
+            //  参与人数
+            Sys_dict sys_dict_cyrs = sysDictService.getSysDictByCode("cyrs",storeId);
+            map.put("cyrs",sys_dict_cyrs.getValue());
+
+            return Result.success("ok",map);
+        }catch (Exception e){
+            e.printStackTrace();
+            return Result.error("获取活动下优惠券获取失败");
+        }
+    }
+
+    /**
+     * 获取经纪人排行榜
+     * @return
+     */
+    @RequestMapping("getBrokerTop")
+    @SJson
+    public Result getBrokerTop(String storeId,int page, int limit) {
+        try {
+            Cnd cnd = Cnd.NEW();
+            cnd.and("storeId","=",storeId);
+            cnd.and("userType","=","member");
+//            cnd.and("num",">",0);
+            cnd.desc("num");
+            Pagination pagination = accountInfoService.listPage(page,limit,cnd);
+
+            return Result.success("ok",pagination.getList());
+        }catch (Exception e){
+            e.printStackTrace();
+            return Result.error("获取活动下优惠券获取失败");
+        }
+    }
+
 
 }

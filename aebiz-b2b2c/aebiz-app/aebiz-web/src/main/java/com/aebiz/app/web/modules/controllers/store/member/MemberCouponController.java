@@ -1,8 +1,11 @@
 package com.aebiz.app.web.modules.controllers.store.member;
 
 
+import com.aebiz.app.acc.modules.models.Account_info;
 import com.aebiz.app.acc.modules.models.Account_user;
+import com.aebiz.app.acc.modules.services.AccountInfoService;
 import com.aebiz.app.cms.modules.models.Cms_article;
+import com.aebiz.app.integral.modules.services.MemberIntegralService;
 import com.aebiz.app.member.modules.models.Member_coupon;
 import com.aebiz.app.member.modules.services.MemberCouponService;
 import com.aebiz.app.sales.modules.models.Sales_coupon;
@@ -39,6 +42,10 @@ public class MemberCouponController {
     private MemberCouponService memberCouponService;
     @Autowired
     private SalesCouponService salesCouponService;
+    @Autowired
+    private MemberIntegralService memberIntegralService;
+    @Autowired
+    private AccountInfoService accountInfoService;
 
     @RequestMapping("")
     public String index(HttpServletRequest req) {
@@ -124,13 +131,30 @@ public class MemberCouponController {
             member_couponUpd.setId(mcId);
             member_couponUpd.setStatus(1);
             memberCouponService.updateIgnoreNull(member_couponUpd);
-            //如果有推荐人 给推荐人送一张券
+            //如果有推荐人 给推荐人赠送积分
             try{
-               if(StringUtils.isNotEmpty(member_couponUpd.getSourceAccountId())){
-                    String recommendCouponId = sales_coupon.getRecommendCouponId();
-               }
+                if(StringUtils.isNotEmpty(member_coupon.getSourceAccountId())){
+                    memberIntegralService.saveMemberIntegral(StringUtil.getStoreId(),"registerIntegral",
+                            8,member_coupon.getSourceAccountId());
+                }
             }catch (Exception e){
-                log.error("给推荐人送券发生异常",e);
+                log.error("给推荐人添加积分发生异常",e);
+                e.printStackTrace();
+            }
+            //如果有推荐人 给推荐人更新推荐成功数量
+            try{
+                if(StringUtils.isNotEmpty(member_coupon.getSourceAccountId())){
+                    Account_info account_info = accountInfoService.fetch(member_coupon.getSourceAccountId());
+                    Integer num = account_info.getNum();
+                    if(num == null){
+                        account_info.setNum(1);
+                    }else {
+                        account_info.setNum(num+1);
+                    }
+                    accountInfoService.update(account_info);
+                }
+            }catch (Exception e){
+                log.error("给推荐人添加积分发生异常",e);
                 e.printStackTrace();
             }
             return Result.success("ok");

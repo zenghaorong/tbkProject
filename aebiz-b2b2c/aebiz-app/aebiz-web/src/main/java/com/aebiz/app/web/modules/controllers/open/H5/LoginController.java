@@ -6,15 +6,18 @@ import com.aebiz.app.acc.modules.models.Account_user;
 import com.aebiz.app.acc.modules.services.AccountInfoService;
 import com.aebiz.app.acc.modules.services.AccountLoginService;
 import com.aebiz.app.acc.modules.services.AccountUserService;
+import com.aebiz.app.dec.commons.utils.CommonUtil;
 import com.aebiz.app.integral.modules.services.MemberIntegralService;
 import com.aebiz.app.member.modules.services.MemberRegisterService;
 import com.aebiz.app.member.modules.services.MemberUserService;
+import com.aebiz.app.sys.modules.models.Sys_dict;
 import com.aebiz.app.sys.modules.models.Sys_log;
 import com.aebiz.app.sys.modules.services.SysApiService;
 import com.aebiz.app.utils.modules.services.SmsService;
 import com.aebiz.app.web.commons.log.annotation.SLog;
 import com.aebiz.app.web.commons.shiro.token.MemberCaptchaToken;
 import com.aebiz.app.web.commons.utils.CheckPasswordUtil;
+import com.aebiz.app.wx.modules.services.WxConfigService;
 import com.aebiz.baseframework.base.Result;
 import com.aebiz.baseframework.base.service.BaseService;
 import com.aebiz.baseframework.redis.RedisService;
@@ -25,6 +28,7 @@ import com.aebiz.commons.utils.CookieUtil;
 import com.aebiz.commons.utils.RSAUtil;
 import com.aebiz.commons.utils.StringUtil;
 import com.aebiz.commons.utils.UserAgentUtils;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import eu.bitwalker.useragentutils.Browser;
 import eu.bitwalker.useragentutils.OperatingSystem;
@@ -60,7 +64,9 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.security.interfaces.RSAPrivateKey;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Auther: zenghaorong
@@ -96,6 +102,8 @@ public class LoginController {
 
     @Autowired
     private MemberUserService userService;
+    @Autowired
+    private WxConfigService wxConfigService;
 
     /**
      * 手机短信验证码前缀
@@ -607,6 +615,51 @@ public class LoginController {
             e.printStackTrace();
             return Result.error("重置密码失败");
         }
+    }
+
+    /**
+     * 微信公众号登录
+     */
+     @RequestMapping("/wxLogin")
+     @SJson
+    public Object wxLogin(String code,String storeId,HttpServletRequest request){
+         try {
+             //根据code获取微信用户信息
+             String json = wxConfigService.getWxApiAccessTokenAndOpenId(false,code);
+             JSONObject jsonObject = JSON.parseObject(json);
+             log.info("根据code获取微信tonke openId："+JSONObject.toJSONString(json));
+             //用code取accessToken
+             String result = CommonUtil.httpCallGet("https://api.weixin.qq.com/sns/userinfo?access_token="+
+                     jsonObject.getString("access_token")
+                     +"&openid="+jsonObject.getString("openid")+"&lang=zh_CN");
+             JSONObject jsonUser = JSON.parseObject(result);
+             log.info("获取微信userinfo返回数据："+JSONObject.toJSONString(jsonUser));
+
+             //判断是否存在自动注册或登录
+             Cnd cnd = Cnd.NEW();
+             cnd.and("openId","=",jsonObject.getString("openid"));
+             Account_info account_info = accountInfoService.fetch(cnd);
+             if(account_info == null){
+                 //注册
+                 String accountId = memberRegisterService.memberRegisterWx(jsonUser, "1",
+                         CheckPasswordUtil.checkPassword("1").toString(),storeId);
+                 jsonUser.put("accountId",accountId);
+             }else {
+                 //登录
+//                 Subject subject = SecurityUtils.getSubject();
+//                 ThreadContext.bind(subject);
+//                 AuthenticationToken authenticationToken =createToken(username, accountUser.getPassword(), false, "6666", request);
+//                 subject.login(authenticationToken);
+//                 Session session = subject.getSession();
+//                 String sessionId = (String) session.getId();
+//                 returnData.put("sessionId",sessionId);
+                 jsonUser.put("accountId",account_info.getId());
+             }
+             return Result.success("ok",jsonUser);
+         }catch (Exception e){
+             e.printStackTrace();
+             return Result.error("获取活动下优惠券获取失败");
+         }
     }
 
 

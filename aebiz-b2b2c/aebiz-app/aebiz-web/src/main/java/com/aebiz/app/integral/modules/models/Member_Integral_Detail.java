@@ -31,16 +31,35 @@ public class Member_Integral_Detail extends BaseModel implements Serializable {
     @ColDefine(type = ColType.INT, width = 11)
     private int addIntegral;
 
-
+    /**
+     * 1.购物积分 2. 注册积分 3. 评论积分
+     * 5.未支付订单积分退回
+     * 6.b浏览了，a获取积分
+     * 7.b领券了，a获取积分
+     * 8.b到店消费，核销了，a获取积分
+     */
     @Column
     @Comment("积分类型")
     @ColDefine(type = ColType.INT, width = 11)
-    private int integralType;//1.购物积分 2. 注册积分 3. 评论积分 5.未支付订单积分退回
+    private int integralType;
 
     @Column
     @Comment("描述")
     @ColDefine(type = ColType.VARCHAR, width = 255)
     private String integralDesc;
+
+    @Column
+    @Comment("商户UUID")
+    @ColDefine(type = ColType.VARCHAR, width = 32)
+    private String storeId;
+
+    public String getStoreId() {
+        return storeId;
+    }
+
+    public void setStoreId(String storeId) {
+        this.storeId = storeId;
+    }
 
     private String integralTime;
 

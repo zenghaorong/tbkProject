@@ -18,7 +18,7 @@ public class Order_after_main extends BaseModel implements Serializable {
     @Name
     @Comment("售后单号")
     @ColDefine(type = ColType.VARCHAR, width = 32)
-    @Prev(els = {@EL("ig(view.tableName,'')")})
+    @Prev(els = {@EL("uuid()")})
     private String id;
 
     @Column

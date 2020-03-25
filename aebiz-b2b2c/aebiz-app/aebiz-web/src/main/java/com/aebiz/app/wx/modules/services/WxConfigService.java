@@ -9,6 +9,7 @@ public interface WxConfigService extends BaseService<Wx_config>{
 
 
     /**
+     * 注意 分享使用
      * 公众号和小程序均可以使用AppID和AppSecret调用本接口来获取access_token
      * https请求方式: GET
      * https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=APPID&secret=APPSECRET
@@ -16,6 +17,14 @@ public interface WxConfigService extends BaseService<Wx_config>{
      * @return  access_token，如果access_token获取失败则返回null，
      */
     String getWxApiAccessToken(boolean fetchNew,String code);
+
+    /**
+     * 注意登录使用可获取openId
+     * @param fetchNew
+     * @param code
+     * @return
+     */
+    String getWxApiAccessTokenAndOpenId(boolean fetchNew,String code);
 
     /**
      * 获取微信jsapi_ticket

@@ -86,10 +86,10 @@ public class IntegralRuleController {
             Cnd cnd = Cnd.NEW();
             cnd.and("storeId","=",StringUtil.getStoreId());
             cnd.and("ruleCode","=",integralRule.getRuleCode());
-            List<Integral_Rule> integralRuleList = integralRuleService.query(cnd);
-            if(integralRuleList.size()>0){
-                return Result.error("积分规则编码重复");
-            }
+//            List<Integral_Rule> integralRuleList = integralRuleService.query(cnd);
+//            if(integralRuleList.size()>0){
+//                return Result.error("积分规则编码重复");
+//            }
             integralRule.setOpBy(StringUtil.getUid());
 			integralRule.setOpAt((int) (System.currentTimeMillis() / 1000));
             integralRule.setStoreId(StringUtil.getStoreId());

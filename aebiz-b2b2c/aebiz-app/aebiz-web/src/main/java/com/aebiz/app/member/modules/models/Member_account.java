@@ -60,8 +60,21 @@ public class Member_account extends BaseModel implements Serializable {
     @ColDefine(type = ColType.VARCHAR, width = 32)
     private String accountId;
 
+    @Column
+    @Comment("商户UUID")
+    @ColDefine(type = ColType.VARCHAR, width = 32)
+    private String storeId;
+
     @One(target = Account_info.class, field = "accountId")
     private Account_info accountInfo;
+
+    public String getStoreId() {
+        return storeId;
+    }
+
+    public void setStoreId(String storeId) {
+        this.storeId = storeId;
+    }
 
     public String getId() {
         return id;

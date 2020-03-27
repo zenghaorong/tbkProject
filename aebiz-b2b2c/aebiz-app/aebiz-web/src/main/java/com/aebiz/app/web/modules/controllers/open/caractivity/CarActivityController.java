@@ -203,9 +203,21 @@ public class CarActivityController {
      */
     @RequestMapping("/getReceiveCode")
     @SJson
-    public Result getReceiveCode(@RequestParam("mobile") String mobile) {
+    public Result getReceiveCode(@RequestParam("mobile") String mobile,String couponId) {
         try {
-            log.info("获取领取券验证码："+mobile);
+
+            //查询本人优惠劵
+            Cnd cndC = Cnd.NEW();
+            cndC.and("couponId", "=", couponId );
+            cndC.and("mobile", "=", mobile);
+            List<Member_coupon> member_couponList = memberCouponService.query(cndC);
+            if(member_couponList!=null) {
+                if (member_couponList.size()>0) {
+                    return Result.error(10001,"您已领取过该优惠券");
+                }
+            }
+
+            log.info("获取领取券验证码手机号："+mobile);
             String key2 = MOBILE_CAPTCHA_Request_limit + mobile;
             String expireTime2 = "60";
 
@@ -371,6 +383,54 @@ public class CarActivityController {
             Pagination pagination = accountInfoService.listPage(page,limit,cnd);
 
             return Result.success("ok",pagination.getList());
+        }catch (Exception e){
+            e.printStackTrace();
+            return Result.error("获取活动下优惠券获取失败");
+        }
+    }
+
+    /**
+     * 获取我的优惠券
+     * @return
+     */
+    @RequestMapping("getMyCoupon")
+    @SJson
+    public Result getMyCoupon(String mobile,String storeId) {
+        try {
+            Cnd cnd = Cnd.NEW();
+            cnd.and("storeId","=",storeId);
+            cnd.and("mobile","=",mobile);
+            List<Member_coupon> memberCouponList = memberCouponService.query(cnd);
+            List<Map<String,Object>> mapList = new ArrayList<>();
+            for (Member_coupon m:memberCouponList) {
+                if(m.getCouponId() == null || m.getActivityId() == null){
+                    continue;
+                }
+                Sales_coupon salesCoupon = salesCouponService.fetch(m.getCouponId());
+                if(salesCoupon.isDisabled()){
+                    //已禁用
+                    continue;
+                }
+                Store_activity activity = storeActivityService.fetch(m.getActivityId());
+                if(activity.isDisabled()){
+                    //已禁用
+                    continue;
+                }
+                if(DateUtil.getNowTime() > activity.getEndTime()){
+                    //活动已过期
+                    continue;
+                }
+                Map<String,Object> map = new HashMap<>();
+                map.put("name",salesCoupon.getName());
+                map.put("value",salesCoupon.getValue());
+                map.put("code",m.getCode());
+                if(salesCoupon.getEndTimeStr()!=null){
+                    map.put("endTime",salesCoupon.getEndTimeStr().substring(0,10));
+                }
+                mapList.add(map);
+            }
+
+            return Result.success("ok",mapList);
         }catch (Exception e){
             e.printStackTrace();
             return Result.error("获取活动下优惠券获取失败");

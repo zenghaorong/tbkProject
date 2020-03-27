@@ -394,7 +394,33 @@ public class CommMsgServiceImpl implements CommMsgService {
     }
 
     public static void main(String[] args) {
-        CommMsgServiceImpl commMsgService = new CommMsgServiceImpl();
-        commMsgService.sendMsgAly("1234","13655554127");
+        DefaultProfile profile = DefaultProfile.getProfile("cn-hangzhou",
+                "LTAIwwQ3RL5fD7sU",  "QESkGvf6vYOrYmZDDmAoY6BEqPuZJz");
+        IAcsClient client = new DefaultAcsClient(profile);
+
+        CommonRequest request = new CommonRequest();
+        request.setSysMethod(MethodType.POST);
+        request.setSysDomain("dysmsapi.aliyuncs.com");
+        request.setSysVersion("2017-05-25");
+        request.setSysAction("SendSms");
+        request.putQueryParameter("RegionId", "cn-hangzhou");
+        request.putQueryParameter("PhoneNumbers", "13655554127");
+        request.putQueryParameter("SignName","程竹明");//签名名称
+        request.putQueryParameter("TemplateCode","SMS_117528246");//短信模板
+        request.putQueryParameter("TemplateParam", "{'code':'"+1234+"'}");//短信模板
+        try {
+            CommonResponse response = client.getCommonResponse(request);
+            System.out.println("调用阿里返回短信验证码："+response.getData());
+            JSONObject jsonObject = JSON.parseObject(response.getData());
+            String returnCode = jsonObject.getString("Code");
+            if("OK".equals(returnCode)){
+
+            }
+        } catch (ServerException e) {
+            e.printStackTrace();
+        } catch (ClientException e) {
+            e.printStackTrace();
+        }
+
     }
 }

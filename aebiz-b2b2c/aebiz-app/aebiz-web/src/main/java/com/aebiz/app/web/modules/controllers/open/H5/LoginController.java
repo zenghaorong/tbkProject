@@ -625,7 +625,7 @@ public class LoginController {
     public Object wxLogin(String code,String storeId,HttpServletRequest request){
          try {
              //根据code获取微信用户信息
-             String json = wxConfigService.getWxApiAccessTokenAndOpenId(false,code);
+             String json = wxConfigService.getWxApiAccessTokenAndOpenId(true,code);
              JSONObject jsonObject = JSON.parseObject(json);
              log.info("根据code获取微信tonke openId："+JSONObject.toJSONString(json));
              //用code取accessToken
@@ -633,13 +633,13 @@ public class LoginController {
                      jsonObject.getString("access_token")
                      +"&openid="+jsonObject.getString("openid")+"&lang=zh_CN");
              JSONObject jsonUser = JSON.parseObject(result);
-             log.info("获取微信userinfo返回数据："+JSONObject.toJSONString(jsonUser));
+             log.info("获取微信userinfo返回数据："+jsonUser.toJSONString());
 
              //判断是否存在自动注册或登录
              Cnd cnd = Cnd.NEW();
              cnd.and("openId","=",jsonObject.getString("openid"));
-             Account_info account_info = accountInfoService.fetch(cnd);
-             if(account_info == null){
+             List<Account_info> account_infoList = accountInfoService.query(cnd);
+             if(account_infoList.size() <= 0){
                  //注册
                  String accountId = memberRegisterService.memberRegisterWx(jsonUser, "1",
                          CheckPasswordUtil.checkPassword("1").toString(),storeId);
@@ -653,7 +653,10 @@ public class LoginController {
 //                 Session session = subject.getSession();
 //                 String sessionId = (String) session.getId();
 //                 returnData.put("sessionId",sessionId);
-                 jsonUser.put("accountId",account_info.getId());
+                 String accountId = account_infoList.get(0).getId();
+                 jsonUser.put("accountId",accountId);
+                 Account_user accountUser = accountUserService.getAccount(accountId);
+                 jsonUser.put("mobile",accountUser.getMobile());
              }
              return Result.success("ok",jsonUser);
          }catch (Exception e){

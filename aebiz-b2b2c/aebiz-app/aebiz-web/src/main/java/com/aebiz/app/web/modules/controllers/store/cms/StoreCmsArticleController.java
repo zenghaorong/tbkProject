@@ -138,9 +138,9 @@ public class StoreCmsArticleController {
 			if(Strings.isEmpty(cmsArticle.getContent())){
 				return Result.error("富文本内容不能为空");
 			}
-			if(Strings.isEmpty(cmsArticle.getPicurl())){
-				return Result.error("图片不能为空");
-			}
+//			if(Strings.isEmpty(cmsArticle.getPicurl())){
+//				return Result.error("图片不能为空");
+//			}
 			cmsArticleService.insert(cmsArticle);
 			cmsArticleService.clearCache();
 			return Result.success("globals.result.success");
@@ -175,9 +175,9 @@ public class StoreCmsArticleController {
 			if(Strings.isEmpty(cmsArticle.getContent())){
 				return Result.error("富文本内容不能为空");
 			}
-			if(Strings.isEmpty(cmsArticle.getPicurl())){
-				return Result.error("图片不能为空");
-			}
+//			if(Strings.isEmpty(cmsArticle.getPicurl())){
+//				return Result.error("图片不能为空");
+//			}
 			cmsArticle.setOpBy(StringUtil.getUid());
 			cmsArticle.setOpAt((int) (System.currentTimeMillis() / 1000));
 			cmsArticleService.updateIgnoreNull(cmsArticle);

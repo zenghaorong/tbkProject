@@ -171,9 +171,9 @@ public class WxConfigServiceImpl extends BaseServiceImpl<Wx_config> implements W
         try (Jedis jedis = redisService.jedis()) {
             String appId = config.get("wx.pay.AppID");
             String secret = config.get("wx.pay.AppSecret");
-            logger.info("WexinAccessTokenOpenId+code值KEY是："+WexinAccessTokenOpenId+code);
-            String accessToken = jedis.get(WexinAccessTokenOpenId+code);
-            String openid = jedis.get(WexinAccessTokenOpenId2+code);
+            logger.info("WexinAccessTokenOpenId+code值KEY是："+WexinAccessTokenOpenId);
+            String accessToken = jedis.get(WexinAccessTokenOpenId);
+            String openid = jedis.get(WexinAccessTokenOpenId2);
             JSONObject json = new JSONObject();
             json.put("access_token",accessToken);
             json.put("openid",openid);
@@ -201,10 +201,10 @@ public class WxConfigServiceImpl extends BaseServiceImpl<Wx_config> implements W
                     logger.error("获取微信接口access_token为空：" + errorCode + "::" + json.getString("errmsg"));
                     return null;
                 }
-                jedis.set(WexinAccessTokenOpenId+code, accessToken);
-                jedis.expire(WexinAccessTokenOpenId+code, EXPIRED_SECONDS);
-                jedis.set(WexinAccessTokenOpenId2+code, json.getString("openid"));
-                jedis.expire(WexinAccessTokenOpenId2+code, EXPIRED_SECONDS);
+                jedis.set(WexinAccessTokenOpenId, accessToken);
+                jedis.expire(WexinAccessTokenOpenId, EXPIRED_SECONDS);
+                jedis.set(WexinAccessTokenOpenId2, json.getString("openid"));
+                jedis.expire(WexinAccessTokenOpenId2, EXPIRED_SECONDS);
             }
             return json.toJSONString();
         }catch (Exception e){

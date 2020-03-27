@@ -38,14 +38,12 @@ public class StoreUserController {
 	private StoreUserService storeUserService;
 
     @RequestMapping("")
-    @RequiresPermissions("store.sys.manager.user")
 	public String index() {
 		return "pages/store/roles/user/index";
 	}
 
 	@RequestMapping("/data")
     @SJson("full")
-    @RequiresPermissions("store.sys.manager.user")
     public Object data(@RequestParam("length") int length, @RequestParam("start") int start, @RequestParam("draw") int draw, ArrayList<DataTableOrder> order, ArrayList<DataTableColumn> columns) {
         Store_user user = (Store_user) SecurityUtils.getSubject().getPrincipal();
         Cnd cnd = Cnd.NEW();
@@ -54,7 +52,6 @@ public class StoreUserController {
     }
 
     @RequestMapping("/add")
-    @RequiresPermissions("store.sys.manager.user")
     public String add() {
     	return "pages/store/roles/user/add";
     }
@@ -72,8 +69,6 @@ public class StoreUserController {
 
     @RequestMapping("/addDo")
     @SJson
-    @SLog(description = "Store_user")
-    @RequiresPermissions("store.sys.manager.user.add")
     public Object addDo(@ModelAttribute("accountInfo")Account_info accountInfo,
                         @ModelAttribute("accountUser")Account_user accountUser, HttpServletRequest req) {
 		try {
@@ -94,7 +89,6 @@ public class StoreUserController {
     @RequestMapping("/editDo")
     @SJson
     @SLog(description = "Store_user")
-    @RequiresPermissions("store.sys.manager.user.edit")
     public Object editDo(Store_user storeUser, HttpServletRequest req) {
 		try {
             storeUser.setOpBy(StringUtil.getUid());
@@ -109,7 +103,6 @@ public class StoreUserController {
     @RequestMapping(value = {"/delete/{id}", "/delete"})
     @SJson
     @SLog(description = "Store_user")
-    @RequiresPermissions("store.sys.manager.user.delete")
     public Object delete(@PathVariable(required = false) String id, @RequestParam(value = "ids",required = false)  String[] ids, HttpServletRequest req) {
 		try {
 			if(ids!=null&&ids.length>0){
@@ -126,7 +119,6 @@ public class StoreUserController {
     }
 
     @RequestMapping("/detail/{id}")
-    @RequiresPermissions("store.sys.manager.user")
 	public String detail(@PathVariable String id, HttpServletRequest req) {
 		if (!Strings.isBlank(id)) {
             req.setAttribute("obj", storeUserService.fetch(id));

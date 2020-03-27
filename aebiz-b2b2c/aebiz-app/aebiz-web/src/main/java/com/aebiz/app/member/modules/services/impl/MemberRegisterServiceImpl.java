@@ -20,6 +20,8 @@ import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
 import org.nutz.lang.Strings;
+import org.nutz.log.Log;
+import org.nutz.log.Logs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,6 +48,7 @@ public class MemberRegisterServiceImpl extends BaseServiceImpl<Member_user> impl
     private MemberTypeService memberTypeService;
     @Autowired
     private MemberLevelService memberLevelService;
+    private static final Log log = Logs.get();
 
 
 
@@ -108,11 +111,13 @@ public class MemberRegisterServiceImpl extends BaseServiceImpl<Member_user> impl
     @Override
     @Transactional
     public String memberRegisterWx(JSONObject jsonWxUser, String password, String passwordStrength,String storeId) {
+        log.info("进入service-jsonWxUser层用户数据："+jsonWxUser.toJSONString());
+        log.info("进入service-jsonWxUser-openid："+jsonWxUser.getString("openid"));
         /*账户信息表添加一条记录*/
         Account_info accountInfo = new Account_info();
         accountInfo.setNickname(jsonWxUser.getString("nickname"));
         accountInfo.setOpenId(jsonWxUser.getString("openid"));
-        accountInfo.setOpenId(jsonWxUser.getString("sex"));
+        accountInfo.setSex(jsonWxUser.getString("sex"));
         accountInfo.setImageUrl(jsonWxUser.getString("headimgurl"));
         accountInfo.setUserType("member");
         accountInfo.setStoreId(storeId);
@@ -140,6 +145,7 @@ public class MemberRegisterServiceImpl extends BaseServiceImpl<Member_user> impl
         /*会员账户表添加一条记录*/
         Member_account memberAccount = new Member_account();
         memberAccount.setAccountId(accountId);
+        memberAccount.setStoreId(storeId);
         memberAccountService.insert(memberAccount);
 
         /*会员用户表添加一条记录*/

@@ -42,7 +42,6 @@ public class AccountUserServiceImpl extends BaseServiceImpl<Account_user> implem
      * @param accountId
      * @return
      */
-    @Cacheable(key = "'ACC'+#accountId")
     public Account_user getAccount(String accountId) {
         return this.fetch(Cnd.where("accountId", "=", accountId));
     }

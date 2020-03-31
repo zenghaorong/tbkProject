@@ -1,51 +1,41 @@
 package com.aebiz.app.web.commons.quartz.job;
 
-import com.aebiz.app.acc.modules.models.Account_user;
-import com.aebiz.app.acc.modules.services.AccountUserService;
-import com.aebiz.app.order.modules.models.Order_main;
-import com.aebiz.app.order.modules.models.em.OrderPayStatusEnum;
-import com.aebiz.app.order.modules.models.em.OrderTypeEnum;
-import com.aebiz.app.order.modules.services.OrderMainService;
+import com.aebiz.app.goods.modules.models.Goods_main;
+import com.aebiz.app.shop.modules.models.Shop_estemp;
 import com.aebiz.app.store.modules.models.Store_activity;
-import com.aebiz.app.store.modules.models.Store_main;
-import com.aebiz.app.store.modules.models.Store_menu;
 import com.aebiz.app.store.modules.services.StoreActivityService;
-import com.aebiz.app.store.modules.services.StoreMainService;
-import com.aebiz.app.sys.modules.models.Sys_dict;
-import com.aebiz.app.sys.modules.services.SysDictService;
+import com.aebiz.app.store.modules.services.impl.StoreActivityServiceImpl;
 import com.aebiz.app.sys.modules.services.SysTaskService;
-import com.aebiz.baseframework.page.Pagination;
+import com.aebiz.app.sys.modules.services.impl.SysTaskServiceImpl;
 import com.aebiz.commons.utils.DateUtil;
+import com.aebiz.commons.utils.SpringUtil;
 import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
-import org.nutz.lang.Strings;
+import org.nutz.dao.pager.Pager;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.quartz.Job;
+import org.quartz.JobDataMap;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-/**
- * 定时器的bean
- * Created by Administrator on 2018/4/4.
- */
-@Component("myBean")
-public class MyBean {
+public class ActivityJob implements Job {
+
+    private SysTaskService sysTaskService = SpringUtil.getBean("sysTaskServiceImpl", SysTaskServiceImpl.class);
+
+    private StoreActivityService storeActivityService = SpringUtil.getBean("storeActivityServiceImpl", StoreActivityServiceImpl.class);
 
     private static final Log log = Logs.get();
 
-    @Autowired
-    private StoreActivityService storeActivityService;
 
-
-    public void printMessage(){
-        try{
-            log.debug("每分钟给数据加量开始执行---------------");
+    @Override
+    public void execute(JobExecutionContext context) throws JobExecutionException {
+        String taskId = context.getJobDetail().getKey().getName();
+        try {
+            log.info("每分钟给数据加量开始执行---------------");
             Cnd cnd = Cnd.NEW();
             cnd.and("delFlag","=",false);
             cnd.and("disabled","=",false);
@@ -68,12 +58,10 @@ public class MyBean {
                 sa.setYbmyhs(ybmyhs);
                 storeActivityService.update(sa);
             }
-
-        }catch (Exception e){
+            sysTaskService.update(Chain.make("exeAt", (int) (System.currentTimeMillis() / 1000)).add("exeResult", "执行成功").add("nextAt", DateUtil.getTime(context.getNextFireTime())), Cnd.where("id", "=", taskId));
+        } catch (Exception e) {
             e.printStackTrace();
-//            sysTaskService.update(Chain.make("exeAt", (int) (System.currentTimeMillis() / 1000)).add("exeResult", "执行失败").add("nextAt", DateUtil.getTime(), Cnd.where("id", "=", taskId));
-        }finally {
-            log.debug("每分钟给数据加量开始执行---------------");
+            sysTaskService.update(Chain.make("exeAt", (int) (System.currentTimeMillis() / 1000)).add("exeResult", "执行失败").add("nextAt", DateUtil.getTime(context.getNextFireTime())), Cnd.where("id", "=", taskId));
         }
     }
 

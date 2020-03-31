@@ -119,6 +119,16 @@ public class Account_info extends BaseModel implements Serializable {
     @ColDefine(type = ColType.VARCHAR, width = 255)
     private Integer num;
 
+    private Integer useAbleIntegral;
+
+    public Integer getUseAbleIntegral() {
+        return useAbleIntegral;
+    }
+
+    public void setUseAbleIntegral(Integer useAbleIntegral) {
+        this.useAbleIntegral = useAbleIntegral;
+    }
+
     @Column
     @Comment("用户类型:store member")
     @ColDefine(type = ColType.VARCHAR, width = 10)

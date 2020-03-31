@@ -47,22 +47,22 @@ layout("/layouts/store.html"){
 <!--                                           data-parsley-required="true" value="${obj.title!}" placeholder="${msg['cms.article.column.articletitle']}">-->
 <!--                                </div>-->
 <!--                            </div>-->
-<!--                            <div class="form-group">-->
-<!--                                <label for="author" class="col-sm-2 control-label">${msg['cms.article.column.author']}</label>-->
-<!--                                &lt;!&ndash;#if(isEmpty(obj.account_info)){#&ndash;&gt;-->
-<!--                                <div class="col-sm-8">-->
-<!--                                    <input type="text" id="author" class="form-control"-->
-<!--                                           data-parsley-required="true" value="${obj.author!}" placeholder="${msg['cms.article.column.author']}">-->
-<!--                                </div>-->
-<!--                                &lt;!&ndash;#}#&ndash;&gt;-->
-<!--                                &lt;!&ndash;#if(!isEmpty(obj.account_info)){#&ndash;&gt;-->
-<!--                                <div class="col-sm-8">-->
-<!--                                    <input type="text" id="author" class="form-control"-->
-<!--                                           data-parsley-required="true" value="号码:${obj.mobile!} 昵称:${obj.account_info.nickname!}" placeholder="${msg['cms.article.column.author']}">-->
-<!--                                </div>-->
-<!--                                &lt;!&ndash;#}#&ndash;&gt;-->
-<!--                                <input name="author" type="hidden" value="${obj.author!}">-->
-<!--                            </div>-->
+                            <div class="form-group">
+                                <label for="author" class="col-sm-2 control-label">客服电话</label>
+                                <!--#if(isEmpty(obj.account_info)){#-->
+                                <div class="col-sm-8">
+                                    <input type="text" id="author" class="form-control"
+                                           data-parsley-required="true" value="${obj.author!}" placeholder="${msg['cms.article.column.author']}">
+                                </div>
+                                <!--#}#-->
+                                <!--#if(!isEmpty(obj.account_info)){#-->
+                                <div class="col-sm-8">
+                                    <input type="text" id="author" class="form-control"
+                                           data-parsley-required="true" value="号码:${obj.mobile!} 昵称:${obj.account_info.nickname!}" placeholder="${msg['cms.article.column.author']}">
+                                </div>
+                                <!--#}#-->
+                                <input name="author" type="hidden" value="${obj.author!}">
+                            </div>
 <!--                            <div class="form-group">-->
 <!--                                <label for="info" class="col-sm-2 control-label">${msg['cms.article.column.introduction']}</label>-->
 
@@ -89,35 +89,35 @@ layout("/layouts/store.html"){
 <!--                                    </div>-->
 <!--                                </div>-->
 <!--                            </div>-->
-<!--                            <div class="form-group">-->
-<!--                                <label for="picurl" class="col-sm-2 control-label">${msg['cms.article.column.headlinefigure']}</label>-->
-
-<!--                                <div class="col-sm-6">-->
-<!--                                    <div id="queue"></div>-->
-<!--                                    <div>-->
-<!--                                        <input id="file_upload" name="file_upload" type="file" multiple="false">-->
-<!--                                    </div>-->
-<!--                                    <div id="img" style="padding: 5px;">-->
-<!--                                        &lt;!&ndash;#if(!isEmpty(obj.picurl)){#&ndash;&gt;-->
-<!--                                        <img src='${obj.picurl!}' style='width:150px;'>-->
-<!--                                        <i class="fa fa-close" onclick="$('#picurl').val('');$('#img').html('');"></i>-->
-<!--                                        &lt;!&ndash;#}#&ndash;&gt;-->
-<!--                                    </div>-->
-<!--                                    <input type="hidden" id="picurl" name="picurl" value="${obj.picurl!}" >-->
-<!--                                </div>-->
-<!--                                <div class="col-sm-2" style="color: red;">建议尺寸：150*150</div>-->
-<!--                            </div>-->
-<!--                            &lt;!&ndash;#if(!isEmpty(obj.imageUrlStrs)){#&ndash;&gt;-->
-<!--                            <div class="form-group">-->
-<!--                                <label for="content" class="col-sm-2 control-label">用户上传创意图片</label>-->
-<!--                                <div class="col-sm-8">-->
-<!--                                    <div id="imageListStr">-->
-
-<!--                                    </div>-->
-<!--                                </div>-->
-<!--                            </div>-->
-<!--                            &lt;!&ndash;#}#&ndash;&gt;-->
                             <div class="form-group">
+                                <label for="picurl" class="col-sm-2 control-label">客服二维码</label>
+
+                                <div class="col-sm-6">
+                                    <div id="queue"></div>
+                                    <div>
+                                        <input id="file_upload" name="file_upload" type="file" multiple="false">
+                                    </div>
+                                    <div id="img" style="padding: 5px;">
+                                        <!--#if(!isEmpty(obj.picurl)){#-->
+                                        <img src='${obj.picurl!}' style='width:150px;'>
+                                        <i class="fa fa-close" onclick="$('#picurl').val('');$('#img').html('');"></i>
+                                        <!--#}#-->
+                                    </div>
+                                    <input type="hidden" id="picurl" name="picurl" value="${obj.picurl!}" >
+                                </div>
+<!--                                <div class="col-sm-2" style="color: red;">建议尺寸：150*150</div>-->
+                            </div>
+                            <!--#if(!isEmpty(obj.imageUrlStrs)){#-->
+                            <div class="form-group">
+                                <label for="content" class="col-sm-2 control-label">用户上传创意图片</label>
+                                <div class="col-sm-8">
+                                    <div id="imageListStr">
+
+                                    </div>
+                                </div>
+                            </div>
+                            <!--#}#-->
+                            <div class="form-group" style="display: none">
                                 <label for="content" class="col-sm-2 control-label">${msg['cms.article.column.articlecontent']}</label>
 
                                 <div class="col-sm-8">

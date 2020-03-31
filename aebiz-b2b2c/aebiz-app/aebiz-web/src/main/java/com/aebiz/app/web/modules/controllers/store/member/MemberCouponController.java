@@ -87,6 +87,7 @@ public class MemberCouponController {
             if(StringUtils.isNotEmpty(userName)){
                 cnd.and("userName","like","%"+userName+"%");
             }
+            cnd.desc("opAt");
             NutMap nutMap = memberCouponService.data(dataTable.getLength(), dataTable.getStart(), dataTable.getDraw(), dataTable.getOrders(), dataTable.getColumns(), cnd, null);
             List<Member_coupon> member_couponList = (List<Member_coupon>)nutMap.get("data");
             List<Member_coupon> member_coupons = new ArrayList<>();

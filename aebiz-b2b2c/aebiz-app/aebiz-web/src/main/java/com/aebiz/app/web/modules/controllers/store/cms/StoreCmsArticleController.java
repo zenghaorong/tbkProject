@@ -95,7 +95,9 @@ public class StoreCmsArticleController {
 	public Object tree(@PathVariable(required = false) String pid, HttpServletRequest req) {
 		Store_user user = (Store_user) SecurityUtils.getSubject().getPrincipal();
 		List<Cms_channel> list = cmsChannelService
-				.query(Cnd.where("storeId", "=", user.getStoreId()).and("parentId", "=", Strings.sBlank(pid)).asc("location").asc("path"));
+				.query(Cnd.where("storeId", "=", user.getStoreId()).and("parentId", "=", Strings.sBlank(pid))
+						.and("delFlag", "=", false)
+						.asc("location").asc("path"));
 		List<Map<String, Object>> tree = new ArrayList<>();
 		if (Strings.isBlank(pid)) {
 			Map<String, Object> obj = new HashMap<>();
@@ -161,8 +163,16 @@ public class StoreCmsArticleController {
 			Account_user account_user = accountUserService.fetch(cnda);
 			article.setMobile(account_user.getMobile());
 		}
+		Cms_channel cms_channel = new Cms_channel();
+		if(article.getChannelId()!=null){
+			 cms_channel = cmsChannelService.fetch(article.getChannelId());
+		}
 		req.setAttribute("obj", article != null ? article : null);
+		req.setAttribute("channel", cms_channel);
 		req.setAttribute("srcList",article.getImageUrlStrs());
+		if("客服信息配置".equals(cms_channel.getName())){
+			return "pages/store/cms/article/kfedit";
+		}
 		return "pages/store/cms/article/edit";
 	}
 

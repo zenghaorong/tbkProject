@@ -6,6 +6,7 @@ import com.aebiz.baseframework.base.Result;
 import com.aebiz.baseframework.view.annotation.SJson;
 import com.aebiz.commons.utils.StringUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Sqls;
 import org.nutz.lang.Strings;
@@ -29,6 +30,7 @@ public class StoreDictController {
     private SysDictService sysDictService;
 
     @RequestMapping("")
+    @RequiresPermissions("store.sys.dict")
     public String index(HttpServletRequest req) {
         req.setAttribute("obj", sysDictService
                 .query(Cnd.where("parentId", "=", "")
@@ -46,6 +48,7 @@ public class StoreDictController {
 
     @RequestMapping(method = RequestMethod.POST, value = "/addDo")
     @SJson
+    @RequiresPermissions("store.sys.dict.add")
     public Object addDo(Sys_dict dict, String parentId) {
         try {
             dict.setSysType("store");
@@ -76,6 +79,7 @@ public class StoreDictController {
 
     @RequestMapping(method = RequestMethod.POST, value = "/editDo")
     @SJson
+    @RequiresPermissions("store.sys.dict.edit")
     public Object editDo(Sys_dict dict, HttpServletRequest req) {
         try {
             dict.setOpBy(StringUtil.getUid());

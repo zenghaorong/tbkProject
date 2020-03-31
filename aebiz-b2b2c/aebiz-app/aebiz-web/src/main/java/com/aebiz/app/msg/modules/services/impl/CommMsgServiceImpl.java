@@ -395,7 +395,7 @@ public class CommMsgServiceImpl implements CommMsgService {
 
     public static void main(String[] args) {
         DefaultProfile profile = DefaultProfile.getProfile("cn-hangzhou",
-                "LTAIwwQ3RL5fD7sU",  "QESkGvf6vYOrYmZDDmAoY6BEqPuZJz");
+                "LTAI4FhDFfTWY5sLLe3R3g2Z",  "1tkwgIo9AyMzOzrA36I9pXEUs5CY6v");
         IAcsClient client = new DefaultAcsClient(profile);
 
         CommonRequest request = new CommonRequest();

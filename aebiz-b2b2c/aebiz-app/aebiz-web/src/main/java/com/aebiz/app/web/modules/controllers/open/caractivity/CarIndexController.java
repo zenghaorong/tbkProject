@@ -6,15 +6,20 @@ import com.aebiz.app.cms.modules.models.Cms_article;
 import com.aebiz.app.cms.modules.models.Cms_channel;
 import com.aebiz.app.cms.modules.services.CmsArticleService;
 import com.aebiz.app.cms.modules.services.CmsChannelService;
+import com.aebiz.app.integral.modules.models.Member_Integral;
 import com.aebiz.app.integral.modules.services.MemberIntegralService;
 import com.aebiz.app.member.modules.models.Member_coupon;
 import com.aebiz.app.msg.modules.services.CommMsgService;
+import com.aebiz.app.sys.modules.models.Sys_dict;
+import com.aebiz.app.sys.modules.services.SysDictService;
+import com.aebiz.app.web.commons.utils.ComposeImageTest;
 import com.aebiz.baseframework.base.Result;
 import com.aebiz.baseframework.page.Pagination;
 import com.aebiz.baseframework.redis.RedisService;
 import com.aebiz.baseframework.view.annotation.SJson;
 import com.aebiz.commons.utils.DateUtil;
 import com.aebiz.commons.utils.StringUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.nutz.dao.Cnd;
 import org.nutz.lang.Strings;
 import org.nutz.log.Log;
@@ -25,7 +30,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import redis.clients.jedis.Jedis;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("open/H5/carindex")
@@ -48,6 +55,8 @@ public class CarIndexController {
     private MemberIntegralService memberIntegralService;
     @Autowired
     private CmsArticleService cmsArticleService;
+    @Autowired
+    private SysDictService sysDictService;
 
     /**
      * 手机短信验证码前缀
@@ -156,6 +165,29 @@ public class CarIndexController {
     }
 
     /**
+     * 获取我的可用积分
+     * @param storeId
+     * @param accountId 会员编号
+     * @return accountId
+     */
+    @RequestMapping("/getMyJf")
+    @SJson
+    public Result getMyJf(String storeId,String accountId) {
+        try {
+            //查询会员积分
+            Cnd cndMi = Cnd.NEW();
+            cndMi.and("storeId","=", storeId);
+            cndMi.and("customerUuid","=",accountId);
+            Member_Integral memberIntegral = memberIntegralService.fetch(cndMi);
+            return Result.success("ok",memberIntegral);
+        }catch (Exception e){
+            e.printStackTrace();
+            return Result.error("验证码获取失败");
+        }
+
+    }
+
+    /**
      * 获取cms描述数据
      * @param storeId
      * @return accountId
@@ -178,6 +210,63 @@ public class CarIndexController {
             return Result.error("验证码获取失败");
         }
 
+    }
+
+    /**
+     * 获取微信分享描述
+     * @return
+     */
+    @RequestMapping("getWxDesc")
+    @SJson
+    public Result getWxDesc(String storeId) {
+        try {
+            Map<String,Object> map = new HashMap<>();
+            // 已报名用户数
+            Sys_dict sys_dict_ybmyhs = sysDictService.getSysDictByCode("wxfengxiang_title",storeId);
+            map.put("title",sys_dict_ybmyhs.getValue());
+
+            // 已分享人数
+            Sys_dict sys_dict_yfxrs = sysDictService.getSysDictByCode("weixingfengxiang_desc",storeId);
+            map.put("desc",sys_dict_yfxrs.getValue());
+
+            return Result.success("ok",map);
+        }catch (Exception e){
+            e.printStackTrace();
+            return Result.error("获取活动下优惠券获取失败");
+        }
+    }
+
+    /**
+     * 图片合成算法-返回生成海报
+     * @return
+     */
+    @RequestMapping("/generatePoster")
+    @SJson
+    public Result generatePoster(String storeId,String accountId,String myUrl) {
+        try {
+            //1.查询改商户配置的公共海报图片
+//            Cnd cnd = Cnd.NEW();
+//            cnd.and("storeId","=",storeId);
+//            cnd.and("name","=","微信海报配置");
+//            Cms_channel cms_channels = cmsChannelService.fetch(cnd);
+//            Cnd cnd2 = Cnd.NEW();
+//            cnd2.and("storeId","=",storeId);
+//            cnd2.and("channelId","=",cms_channels.getId());
+//            List<Cms_article> cms_articleList = cmsArticleService.query(cnd2);
+//            Cms_article cms_article = cms_articleList.get(0);
+//            String mainImgUrl = cms_article.getPicurl();
+//            if(StringUtils.isEmpty(mainImgUrl)){
+//                return Result.error("cms未配置海报图片");
+//            }
+            //配置文件读取该商户海报配置参数
+            Sys_dict sys_dict_ybmyhs = sysDictService.getSysDictByCode("hchbcspz",storeId);
+            String conf = sys_dict_ybmyhs.getValue();
+            String hbName = ComposeImageTest.generatePosterImg(storeId,accountId,myUrl,conf);
+            return Result.success("ok",hbName);
+        }catch (Exception e){
+            e.printStackTrace();
+            return Result.error("图片合成算法异常");
+        }
     }
 
 

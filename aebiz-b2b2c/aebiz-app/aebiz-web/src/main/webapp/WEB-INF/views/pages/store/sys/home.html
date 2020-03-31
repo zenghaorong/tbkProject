@@ -7,9 +7,9 @@ layout("/layouts/store.html"){
 <div class="content-wrap">
 
     <div class="wrapper" style="padding-top: 100px;">
-
-        <div id="container2" style="height:500px;width:50%;float: left;"></div>
-        <div id="container3" style="height:500px;width: 50%;float: left;"></div>
+         <h2>商家管理系统</h2>
+<!--        <div id="container2" style="height:500px;width:100%;float: left;"></div>-->
+<!--        <div id="container3" style="height:500px;width: 50%;float: left;"></div>-->
     </div>
 
 </div>
@@ -23,7 +23,7 @@ layout("/layouts/store.html"){
         option = {
             color: ['#3398DB'],
             title: {
-                text: '商城用户总量：'+userCount.count
+                text: '用户总量：'+userCount.count
             },
             tooltip : {
                 trigger: 'axis',
@@ -130,33 +130,33 @@ layout("/layouts/store.html"){
 </script>
 
 <script>
-    $.ajax({
-        url:"${base!}/store/count/getUserCount.html",
-        type:'POST',
-        dataType:'JSON',
-        success:function(data){
-            if(data.code==0){
-                var userCount = data.data;
-                chart1(userCount);
-            }
-        },
-        error:function(data){
-            console.log(data);
-        }
-    })
-    $.ajax({
-        url:"${base!}/store/count/getOrderCount.html",
-        type:'POST',
-        dataType:'JSON',
-        success:function(data){
-            if(data.code==0){
-                var count = data.data;
-                chart2(count);
-            }
-        },
-        error:function(data){
-            console.log(data);
-        }
-    })
+    // $.ajax({
+    //     url:"${base!}/store/count/getUserCount.html",
+    //     type:'POST',
+    //     dataType:'JSON',
+    //     success:function(data){
+    //         if(data.code==0){
+    //             var userCount = data.data;
+    //             chart1(userCount);
+    //         }
+    //     },
+    //     error:function(data){
+    //         console.log(data);
+    //     }
+    // })
+    // $.ajax({
+    //     url:"${base!}/store/count/getOrderCount.html",
+    //     type:'POST',
+    //     dataType:'JSON',
+    //     success:function(data){
+    //         if(data.code==0){
+    //             var count = data.data;
+    //             chart2(count);
+    //         }
+    //     },
+    //     error:function(data){
+    //         console.log(data);
+    //     }
+    // })
 </script>
 <!--#}#-->

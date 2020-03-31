@@ -4,6 +4,8 @@ import com.aebiz.app.acc.modules.models.Account_info;
 import com.aebiz.app.acc.modules.models.Account_user;
 import com.aebiz.app.acc.modules.services.AccountInfoService;
 import com.aebiz.app.acc.modules.services.AccountUserService;
+import com.aebiz.app.integral.modules.models.Member_Integral;
+import com.aebiz.app.integral.modules.services.MemberIntegralService;
 import com.aebiz.app.member.modules.models.Member_account;
 import com.aebiz.app.member.modules.models.Member_level;
 import com.aebiz.app.member.modules.models.Member_type;
@@ -48,6 +50,9 @@ public class MemberRegisterServiceImpl extends BaseServiceImpl<Member_user> impl
     private MemberTypeService memberTypeService;
     @Autowired
     private MemberLevelService memberLevelService;
+    @Autowired
+    private MemberIntegralService memberIntegralService;
+
     private static final Log log = Logs.get();
 
 
@@ -170,6 +175,14 @@ public class MemberRegisterServiceImpl extends BaseServiceImpl<Member_user> impl
         }
 
         memberUserService.insert(memberUser);
+
+        //积分记录加一条初始数据
+        Member_Integral member_integral = new Member_Integral();
+        member_integral.setStoreId(storeId);
+        member_integral.setUseAbleIntegral(0);
+        member_integral.setTotalIntegral(0);
+        member_integral.setCustomerUuid(accountId);
+        memberIntegralService.insert(member_integral);
        return  accountId;
     }
 

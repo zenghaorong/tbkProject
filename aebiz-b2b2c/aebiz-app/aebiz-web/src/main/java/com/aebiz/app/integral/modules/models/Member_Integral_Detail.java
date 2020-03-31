@@ -53,6 +53,26 @@ public class Member_Integral_Detail extends BaseModel implements Serializable {
     @ColDefine(type = ColType.VARCHAR, width = 32)
     private String storeId;
 
+    private String nickName;//会员昵称
+
+    private String mobile;
+
+    public String getNickName() {
+        return nickName;
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
+    }
+
+    public String getMobile() {
+        return mobile;
+    }
+
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
+    }
+
     public String getStoreId() {
         return storeId;
     }

@@ -6,6 +6,9 @@ import com.aebiz.app.acc.modules.models.Account_user;
 import com.aebiz.app.acc.modules.services.AccountInfoService;
 import com.aebiz.app.acc.modules.services.AccountLoginService;
 import com.aebiz.app.acc.modules.services.AccountUserService;
+import com.aebiz.app.integral.modules.models.Member_Integral;
+import com.aebiz.app.integral.modules.models.Member_Integral_Detail;
+import com.aebiz.app.integral.modules.services.MemberIntegralService;
 import com.aebiz.app.member.modules.commons.vo.Member;
 import com.aebiz.app.member.modules.models.Member_user;
 import com.aebiz.app.member.modules.services.MemberAccountService;
@@ -25,6 +28,7 @@ import com.aebiz.baseframework.view.annotation.SJson;
 import com.aebiz.commons.utils.DateUtil;
 import com.aebiz.commons.utils.StringUtil;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.crypto.RandomNumberGenerator;
@@ -78,6 +82,8 @@ public class MemberUserController {
 
     @Autowired
     private OrderMainService orderMainService;
+    @Autowired
+    private MemberIntegralService memberIntegralService;
 
     @RequestMapping("")
     @RequiresPermissions("store.member.user")
@@ -85,6 +91,61 @@ public class MemberUserController {
         //初始化会员类型
         req.setAttribute("typeList", memberTypeService.query(Cnd.NEW()));
         return "pages/store/member/user/index";
+    }
+
+    @RequestMapping("/datax")
+    @SJson("full")
+    @RequiresPermissions("store.member.user")
+    public Object datax(DataTable dataTable,String mobile,String nickName) {
+        /*查询条件*/
+        Cnd cnd = Cnd.NEW();
+        cnd.and("delFlag","=",false);
+        cnd.and("storeId","=",StringUtil.getStoreId());
+        cnd.and("userType","=","member");
+        if(StringUtils.isNotEmpty(nickName)){
+            cnd.and("nickName","like","%"+nickName+"%");
+        }
+        List<String> accountIdList = new ArrayList<>();
+        if(StringUtils.isNotEmpty(mobile)){
+            Cnd cnd2 = Cnd.NEW();
+            cnd2.and("mobile","like","%"+mobile+"%");
+            List<Account_user> accountUserList = accountUserService.query(cnd2,"^(accountId)$");
+            for (Account_user accountUser : accountUserList){
+                accountIdList.add(accountUser.getAccountId());
+            }
+        }
+        if(accountIdList.size()>0){
+            cnd.and("id","in",accountIdList);
+        }
+        cnd.desc("opAt");
+        if(StringUtils.isNotEmpty(mobile)){
+            if(accountIdList.size()<1){
+                NutMap nutMap2 = new NutMap();
+                nutMap2.put("data", accountIdList);
+                nutMap2.put("recordsFiltered", 0);
+                nutMap2.put("recordsTotal", 0);
+                nutMap2.put("draw", 0);
+                return nutMap2;
+            }
+        }
+        NutMap nutMap = accountInfoService.data(dataTable.getLength(), dataTable.getStart(), dataTable.getDraw(), dataTable.getOrders(), dataTable.getColumns(), cnd, null);
+        if (nutMap.get("data") != null) {
+            List<Account_info> refundment = (List<Account_info>) nutMap.get("data");
+            for (Account_info m :refundment) {
+                Account_user account_user = accountUserService.getAccount(m.getId());
+                m.setName(account_user.getMobile());
+                //查询会员积分
+                Cnd cndMi = Cnd.NEW();
+                cndMi.and("storeId","=", StringUtil.getStoreId());
+                cndMi.and("customerUuid","=", m.getId());
+                Member_Integral  memberIntegral = memberIntegralService.fetch(cndMi);
+                if(memberIntegral!=null){
+                    m.setUseAbleIntegral(memberIntegral.getUseAbleIntegral());
+                }
+            }
+            nutMap.put("data", refundment);
+        }
+        return nutMap;
     }
 
     @RequestMapping("/data")

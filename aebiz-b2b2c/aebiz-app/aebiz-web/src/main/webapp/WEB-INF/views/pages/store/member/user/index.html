@@ -1,54 +1,43 @@
 <!--#
 layout("/layouts/store.html"){
 #-->
+<link rel="stylesheet" href="${base!}/assets/platform/vendor/layui/css/layui.css">
 <section class="content-wrap bg-white">
     <header class="header bg-white navbar shadow">
-        <!--<div class="btn-group tool-button">-->
-            <!--<a id="add" class="btn btn-primary navbar-btn" href="${base}/store/member/user/add" data-pjax><i-->
-                    <!--class="ti-plus"></i> ${msg['member.user.add']}</a>-->
-        <!--</div>-->
-        <!--<div class="btn">-->
-            <!--<select id="type" class="form-control" onchange="reloadLevelSelect(this)">-->
-                <!--<option value="">请选择会员类型</option>-->
-                <!--&lt;!&ndash;#for(memberType in typeList){#&ndash;&gt;-->
-                <!--<option value="${memberType.id!}">${memberType.name!}</option>-->
-                <!--&lt;!&ndash;#}#&ndash;&gt;-->
-            <!--</select>-->
-        <!--</div>-->
-        <div class="btn">
-            <select id="level" class="form-control" onchange="datatable.ajax.reload();" style="display: none">
-                <option value="">请选择会员等级</option>
-            </select>
-        </div>
-        <button class="btn btn-info navbar-btn" type="button" id="emptyBtn" style="display: none;">${msg['globals.button.reset']}</button>
-        <div class="pull-right">
-            <div class="btn">
-                <form class="form-inline">
-                    <div class="row">
-                        <div class="input-group">
-                            <input class="form-control" id="query" type="text"
-                                   placeholder="手机号">
-                            <span class="input-group-addon btn-primary" id="searchBtn">
-                                <span class="ti-search"></span>
-                            </span>
-                        </div>
+        <header class="header navbar bg-white shadow">
+            <div class="btn-group tool-button" style="padding-top: 8px;">
+                <form class="form-inline js-search-form" >
+                    <div class="form-group">
+                        <label class="control-label"></label>
+                        <input type="text" class="form-control" name="mobile" placeholder="手机号" />
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label"></label>
+                        <input type="text" class="form-control" name="nickName" placeholder="微信昵称" />
+                    </div>
+                    <div class="form-group">
+                        <button type="button" class="btn btn-primary js-search-ok" >${msg['globals.button.search']}</button>
+                        <button type="button" class="btn btn-default js-search-reset" >${msg['globals.button.reset']}</button>
                     </div>
                 </form>
             </div>
-        </div>
+            <div class="btn-group tool-button pull-right">
+                <!--            <a id="add" class="btn btn-primary navbar-btn" onclick="hexiao()" href="javascript:void(0)" data-pjax><i class="ti-plus"></i> 核销</a>-->
+                <!--            <button class="btn btn-danger navbar-btn" onclick="delCheck()"><i class="ti-close"></i> ${msg['globals.button.delete.more']}</button>-->
+            </div>
+        </header>
     </header>
     <div class=panel-body style="padding-top: 50px;">
         <div class="table-responsive no-border" style="min-height: 800px;">
             <table class="table table-bordered table-striped mg-t datatable">
                 <thead>
                 <tr>
-                    <th></th>
-                    <th>${msg['account.user.column.mobile']}</th><!--用户名-->
-                    <th>${msg['account.info.column.nickname']}</th><!--昵称-->
-                    <!--<th>${msg['member.type.memberType']}</th>&lt;!&ndash;类型&ndash;&gt;-->
+                    <th>${msg['account.info.column.nickname']}</th><!--用户名-->
+                    <th>${msg['account.user.column.mobile']}</th><!--昵称-->
+                    <th>可用积分</th><!--类型-->
                     <!--<th>${msg['member.level.memberLevel']}</th>&lt;!&ndash;等级&ndash;&gt;-->
                     <!--<th>${msg['account.user.column.mobile']}</th>&lt;!&ndash;手机号&ndash;&gt;-->
-                    <th>${msg['member.user.state']}</th><!--会员状态-->
+                    <th>${msg['globals.table.column.operation']}</th>
                 </tr>
                 </thead>
             </table>
@@ -95,6 +84,7 @@ layout("/layouts/store.html"){
         width: 100px !important;
     }*/
 </style>
+<script src="${base!}/assets/platform/vendor/layui/layui.all.js"></script>
 <script language="JavaScript">
     var datatable;
     function initDatatable() {
@@ -115,42 +105,40 @@ layout("/layouts/store.html"){
                 sublime.closeLoadingbar($(".main-content"));
             },
             "ajax": {
-                "url": "${base}/store/member/user/data",
+                "url": "${base}/store/member/user/datax",
                 "type": "post",
                 "data": function (d) {
-                    d.typeId = $("#type").val();
-                    d.levelId = $("#level").val();
-                    d.queryStr = $("#query").val();
+                    var $searchForm = $(".js-search-form");
+                    d.mobile = $("[name='mobile']", $searchForm).val()||"";
+                    d.nickName = $("[name='nickName']", $searchForm).val()||"";
                 }
             },
             // "order": [[0, "asc"]],
             "columns": [
-                {"data": "accountid","visible": false, "bSortable": true},
-                {"data": "mobile", "sortable": true},
-                {"data": "nickname", "bSortable": true},
-                // {"data": "score", "bSortable": true},
+                {"data": "nickname", "sortable": true},
+                {"data": "name", "bSortable": true, "render":
+                        function (data, type, row) {
+                            if(row.name == null|| row.name == ''){
+                                return '未绑定';
+                            }else {
+                                return row.name;
+                            }
+                        }
+                },
+                {"data": "useAbleIntegral", "bSortable": true},
                 // {"data": "money", "bSortable": true},
                 // {"data": "mobile", "bSortable": true},
-                {"data": "state", "bSortable": true}
+                // {"data": "state", "bSortable": true}
             ],
             "columnDefs": [
-                // {
-                //     "render": function (data, type, row) {
-                //         if (!row && !row.money) {
-                //             return 0;
-                //         } else{
-                //             return row.money/100;
-                //         }
-                //     },
-                //     "targets": 1
-                // },
                 {
                     "render": function (data, type, row) {
-                        if (!data) {
-                            return '<i class="fa fa-circle text-success ml5"></i>';
-                        } else {
-                            return '<i class="fa fa-circle text-danger ml5"></i>';
-                        }
+                        var returnHtml = '<div class="btn-group"><button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">' +
+                            ' <i class="ti-settings"></i> <span class="ti-angle-down"></span></button><ul class="dropdown-menu" role="menu">'
+                        returnHtml +=  '<li><a href="javascript:void(0)" onclick="alertLayer(\'' + row.id + '\')" data-pjax>抵扣积分</a></li>' +
+                            '<li class="divider"></li>'
+                        returnHtml += '</ul></div>';
+                        return returnHtml;
                     },
                     "targets": 3
                 }
@@ -168,6 +156,15 @@ layout("/layouts/store.html"){
             $("#level").val("");
             $("#query").val("");
             datatable.ajax.reload();
+        });
+
+        $(".js-search-ok").click(function () {
+            datatable.ajax.reload();
+        });
+
+        $(".js-search-reset").click(function () {
+            $(".js-search-form").resetForm();
+            // $('.datatable').DataTable().ajax.reload();
         });
     }
 
@@ -226,6 +223,90 @@ layout("/layouts/store.html"){
         $("#level").show();
         $("#emptyBtn").show();
         datatable.ajax.reload();
+    }
+
+    var htmlIndex = "";
+    function alertLayer(accountId) {
+        //页面层
+        htmlIndex= layer.open({
+            type: 1,
+            skin: 'layui-layer-rim', //加上边框
+            area: ['720px', '340px'], //宽高
+            content: '<section class="panel panel-form" id="kouJIfenHtml">\n' +
+                '    <div id="addForm" role="form" class="form-horizontal parsley-form" data-parsley-validate>\n' +
+                '        <div class="row mb10 mt10">\n' +
+                '            <div class="col-lg-10">\n' +
+                '                <div class="form-group">\n' +
+                '                    <label for="jfNum" class="col-sm-2 control-label">抵扣积分数</label>\n' +
+                '                    <div class="col-sm-8">\n' +
+                '                        <input type="number" id="jfNum" class="form-control" name="jfNum" data-parsley-required="true" placeholder="0">\n' +
+                '                    </div>\n' +
+                '                </div>\n' +
+                '                <div class="form-group">\n' +
+                '                    <label for="jfDesc" class="col-sm-2 control-label">备注说明</label>\n' +
+                '                    <div class="col-sm-8">\n' +
+                '                        <input type="text" id="jfDesc" class="form-control" name="jfDesc" data-parsley-required="true" placeholder="兑换1000元代金券或兑换抱枕">\n' +
+                '                    </div>\n' +
+                '                </div>\n' +
+                '                <input type="hidden" id="accountId" class="form-control" value="" name="accountId">\n' +
+                '            </div>\n' +
+                '        </div>\n' +
+                '        <div class="col-lg-3"></div>\n' +
+                '        <div class="col-lg-6">\n' +
+                '            <div class="form-group text-center">\n' +
+                '                <div>\n' +
+                '                    <button type="button" class="btn btn-primary btn-block" onclick="minusPoints()" id="jfBoot" data-dismiss="modal">提交</button>\n' +
+                '                </div>\n' +
+                '            </div>\n' +
+                '        </div>\n' +
+                '    </div>\n' +
+                '</section>'
+        });
+        $("#accountId").val(accountId);
+    }
+
+    //抵扣积分
+    function minusPoints() {
+        if($("#jfNum").val() == ''){
+            layer.msg("积分数不能为空", {icon: 2});
+            return;
+        }
+        if($("#jfNum").val() < 0){
+            layer.msg("积分数不能为负数", {icon: 2});
+            return;
+        }
+        if($("#jfDesc").val() == ''){
+            layer.msg("备注不能为空", {icon: 2});
+            return;
+        }
+        //询问框
+        layer.confirm('确认扣减积分', {
+            btn: ['是','否'] //按钮
+        }, function(){
+        //询问框
+            $.ajax({
+                type: "post",
+                url: "${base}/store/integral/Integral/minusPoints",
+                data: {
+                    im : $("#jfNum").val(),
+                    accountId: $("#accountId").val(),
+                    desc:$("#jfDesc").val()
+                },
+                dataType: "json",
+                async: false,
+                success: function(data){
+                    if (data.code == 0) {
+                        layer.msg('扣减成功', {icon: 1});
+                        datatable.ajax.reload(null,false);
+                        layer.close(htmlIndex)
+                    }else{
+                        layer.msg(data.msg, {icon: 2});
+                    }
+                }
+            });
+        }, function(){
+
+        });
     }
 </script>
 <!--#}#-->

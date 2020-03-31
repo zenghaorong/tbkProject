@@ -36,7 +36,9 @@ public class StoreCmsChannelController {
     public String index(HttpServletRequest req) {
         Store_user user = (Store_user) SecurityUtils.getSubject().getPrincipal();
         req.setAttribute("list", cmsChannelService
-                .query(Cnd.where("storeId", "=", user.getStoreId()).and("parentId", "=", "").or("parentId", "is", null).asc("location").asc("path")));
+                .query(Cnd.where("storeId", "=", user.getStoreId()).and("parentId", "=", "")
+                        .and("delFlag", "=", false)
+                        .or("parentId", "is", null).asc("location").asc("path")));
         return "pages/store/cms/channel/index";
     }
 

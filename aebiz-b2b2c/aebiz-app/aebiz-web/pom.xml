@@ -151,6 +151,12 @@
             <artifactId>aliyun-java-sdk-ecs</artifactId>
             <version>4.17.6</version>
         </dependency>
+        <!-- 生成二维码-->
+        <dependency>
+                <groupId>com.google.zxing</groupId>
+                 <artifactId>core</artifactId>
+                 <version>3.3.3</version>
+        </dependency>
 
     </dependencies>
     <build>

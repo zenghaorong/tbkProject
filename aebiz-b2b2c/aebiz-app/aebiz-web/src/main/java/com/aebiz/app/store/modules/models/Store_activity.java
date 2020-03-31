@@ -59,6 +59,11 @@ public class Store_activity extends BaseModel implements Serializable {
     private String listImg;
 
     @Column
+    @Comment("列表封面图")
+    @ColDefine(type = ColType.VARCHAR, width = 255)
+    private String content;
+
+    @Column
     @Comment("详情")
     @ColDefine(type = ColType.TEXT)
     private String details;
@@ -68,10 +73,80 @@ public class Store_activity extends BaseModel implements Serializable {
     @ColDefine(type = ColType.INT)
     private Integer index;
 
+    @Column
+    @Comment("已报名用户数")
+    @ColDefine(type = ColType.INT)
+    private Integer ybmyhs;
+
+    @Column
+    @Comment("已分享人数")
+    @ColDefine(type = ColType.INT)
+    private Integer yfxrs;
+
+    @Column
+    @Comment("已浏览人数")
+    @ColDefine(type = ColType.INT)
+    private Integer yllrs;
+
+    @Column
+    @Comment("参与人数")
+    @ColDefine(type = ColType.INT)
+    private Integer cyrs;
+
+    @Column
+    @Comment("剩余礼品数")
+    @ColDefine(type = ColType.INT)
+    private Integer sylps;
+
     private String activityCouponList;
 
+    public Integer getYbmyhs() {
+        return ybmyhs;
+    }
 
+    public void setYbmyhs(Integer ybmyhs) {
+        this.ybmyhs = ybmyhs;
+    }
 
+    public Integer getYfxrs() {
+        return yfxrs;
+    }
+
+    public void setYfxrs(Integer yfxrs) {
+        this.yfxrs = yfxrs;
+    }
+
+    public Integer getYllrs() {
+        return yllrs;
+    }
+
+    public void setYllrs(Integer yllrs) {
+        this.yllrs = yllrs;
+    }
+
+    public Integer getCyrs() {
+        return cyrs;
+    }
+
+    public void setCyrs(Integer cyrs) {
+        this.cyrs = cyrs;
+    }
+
+    public Integer getSylps() {
+        return sylps;
+    }
+
+    public void setSylps(Integer sylps) {
+        this.sylps = sylps;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
 
     public String getActivityCouponList() {
         return activityCouponList;

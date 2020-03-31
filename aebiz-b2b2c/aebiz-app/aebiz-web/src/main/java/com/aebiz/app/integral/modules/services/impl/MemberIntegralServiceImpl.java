@@ -135,12 +135,24 @@ public class MemberIntegralServiceImpl extends BaseServiceImpl<Member_Integral> 
         cnd.and("storeId","=", storeId);
         cnd.and("ruleCode","=",ruleCode);
         Integral_Rule integral_rule = integralRuleService.fetch(cnd);
-        Member_Integral m = new Member_Integral();
-        m.setCustomerUuid(accountId);
-        m.setTotalIntegral(integral_rule.getIntegralCount());
-        m.setUseAbleIntegral(integral_rule.getIntegralCount());
-        m.setStoreId(storeId);
-        this.insert(m);
+
+        Cnd cndMi = Cnd.NEW();
+        cndMi.and("storeId","=", storeId);
+        cndMi.and("customerUuid","=", accountId);
+        Member_Integral m = this.fetch(cndMi);
+        if(m == null){
+            m = new Member_Integral();
+            m.setCustomerUuid(accountId);
+            m.setTotalIntegral(m.getUseAbleIntegral()+integral_rule.getIntegralCount());
+            m.setUseAbleIntegral(m.getUseAbleIntegral()+integral_rule.getIntegralCount());
+            m.setStoreId(storeId);
+            this.insert(m);
+        }else {
+            m.setTotalIntegral(m.getUseAbleIntegral()+integral_rule.getIntegralCount());
+            m.setUseAbleIntegral(m.getUseAbleIntegral()+integral_rule.getIntegralCount());
+            this.update(m);
+        }
+
         Member_Integral_Detail md = new Member_Integral_Detail();
         md.setAddIntegral(integral_rule.getIntegralCount());
         md.setCustomerUuid(accountId);
@@ -166,7 +178,8 @@ public class MemberIntegralServiceImpl extends BaseServiceImpl<Member_Integral> 
             mid.setIntegralDesc(desc);
             mid.setIntegralType(4);
             mid.setCustomerUuid(accountId);
-            mid.setAddIntegral(im);
+            mid.setAddIntegral((0-im));
+            mid.setStoreId(storeId);
             memberIntegralDetailService.insert(mid);
         }
     }

@@ -45,26 +45,26 @@
 
     <!--****************************************************************************-->
 
-    <!--##################视频####################-->
+    <!--##################定时器-1####################-->
     <bean id="simpleJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
         <property name="targetObject" ref="myBean"/>
         <property name="targetMethod" value="printMessage"/>
     </bean>
 
-    <!--距离当前时间10秒之后执行，之后每隔10秒执行一次-->
+    <!--单位毫秒-->
     <bean id="mySimpleTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">
         <property name="jobDetail" ref="simpleJobDetail"/>
-        <property name="startDelay" value="1200000"/>
-        <property name="repeatInterval" value="1200000"/>
+        <property name="startDelay" value="5000"/>
+        <property name="repeatInterval" value="5000"/>
     </bean>
 
-    <!--##################订单那####################-->
+    <!--##################定时器-2####################-->
     <bean id="orderSimpleJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
         <property name="targetObject" ref="orderTimeoutJob"/>
         <property name="targetMethod" value="orderTimeout"/>
     </bean>
 
-    <!--距离当前时间5分钟之后执行，之后每隔5分钟执行一次-->
+    <!--单位毫秒-->
     <bean id="orderMySimpleTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">
         <property name="jobDetail" ref="orderSimpleJobDetail"/>
         <property name="startDelay" value="90000"/>
@@ -73,20 +73,20 @@
 
 
     <!--启动定时器-->
-    <!--<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">-->
-        <!--<property name="jobDetails">-->
-            <!--<list>-->
-                <!--<ref bean="simpleJobDetail"/>-->
-                <!--<ref bean="orderSimpleJobDetail"/>-->
-            <!--</list>-->
-        <!--</property>-->
-        <!--<property name="triggers">-->
-            <!--<list>-->
-                <!--<ref bean="mySimpleTrigger"/>-->
-                <!--<ref bean="orderMySimpleTrigger"/>-->
-            <!--</list>-->
-        <!--</property>-->
-    <!--</bean>-->
+<!--    <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">-->
+<!--        <property name="jobDetails">-->
+<!--            <list>-->
+<!--                <ref bean="simpleJobDetail"/>-->
+<!--                <ref bean="orderSimpleJobDetail"/>-->
+<!--            </list>-->
+<!--        </property>-->
+<!--        <property name="triggers">-->
+<!--            <list>-->
+<!--                <ref bean="mySimpleTrigger"/>-->
+<!--                <ref bean="orderMySimpleTrigger"/>-->
+<!--            </list>-->
+<!--        </property>-->
+<!--    </bean>-->
     <!--****************************************************************************-->
 
 </beans>

@@ -5,6 +5,7 @@ import com.aebiz.app.acc.modules.models.Account_user;
 import com.aebiz.app.acc.modules.services.AccountInfoService;
 import com.aebiz.app.acc.modules.services.AccountLoginService;
 import com.aebiz.app.acc.modules.services.AccountUserService;
+import com.aebiz.app.integral.modules.models.Member_Integral;
 import com.aebiz.app.integral.modules.services.MemberIntegralService;
 import com.aebiz.app.member.modules.models.Member_coupon;
 import com.aebiz.app.member.modules.services.MemberCouponService;
@@ -108,8 +109,6 @@ public class CarActivityController {
 
 
         try {
-            //查询优惠劵详情信息
-            Sales_coupon sales_coupon = salesCouponService.fetch(couponId);
             //查询本人优惠劵
             Cnd cndC = Cnd.NEW();
             cndC.and("couponId", "=", couponId );
@@ -121,20 +120,52 @@ public class CarActivityController {
                 }
             }
 
-            //绑定该用户
-            Member_coupon member_coupon = new Member_coupon();
-            member_coupon.setMobile(mobile);
-            member_coupon.setCouponId(couponId);
-            int codeTime=getSecondTimestamp(new Date());
-            String random =  getStringRandom(4);
-            member_coupon.setCode(sales_coupon.getCodeprefix()+codeTime+random);
-            member_coupon.setStoreId(sales_coupon.getStoreId());
-            member_coupon.setMobile(mobile);
-            member_coupon.setUserName(userName);
-            if(StringUtils.isNotEmpty(sourceAccountId)){
+            //查询该活动下的所有优惠券
+            Cnd cnd = Cnd.NEW();
+            cnd.and("activityId","=",activityId);
+            List<Activity_coupon> activity_couponList = activityCouponService.query(cnd);
+            for (Activity_coupon a:activity_couponList) {
+
+                //查询本人优惠劵
+                Cnd cndC2 = Cnd.NEW();
+                cndC2.and("couponId", "=", couponId );
+                cndC2.and("mobile", "=", mobile);
+                List<Member_coupon> member_couponList2 = memberCouponService.query(cndC2);
+                if(member_couponList2!=null) {
+                    if (member_couponList2.size()>0) {
+                        continue;
+                    }
+                }
+
+                //查询优惠劵详情信息
+                Sales_coupon sales_coupon = salesCouponService.fetch(a.getCouponId());
+                //绑定该用户
+                Member_coupon member_coupon = new Member_coupon();
+                member_coupon.setMobile(mobile);
+                member_coupon.setCouponId(a.getCouponId());
+                int codeTime=getSecondTimestamp(new Date());
+                String random =  getStringRandom(4);
+                member_coupon.setCode(sales_coupon.getCodeprefix()+codeTime+random);
+                member_coupon.setStoreId(sales_coupon.getStoreId());
+                member_coupon.setMobile(mobile);
+                member_coupon.setUserName(userName);
+                member_coupon.setSource("1");
                 member_coupon.setSourceAccountId(sourceAccountId);
-                //3别人推荐的活动获得
-                member_coupon.setSource("3");
+                if(StringUtils.isNotEmpty(sourceAccountId)){
+                    //3别人推荐的活动获得
+                    member_coupon.setSource("3");
+                }else {
+                    //1.自己领取
+                    member_coupon.setSource("1");
+                }
+                //0待核销
+                member_coupon.setStatus(0);
+                member_coupon.setActivityId(activityId);
+                member_coupon.setStoreId(storeId);
+                memberCouponService.insert(member_coupon);
+            }
+
+            if(StringUtils.isNotEmpty(sourceAccountId)){
                 //推荐人编号不为空给推荐人增加积分
                 try{
                     memberIntegralService.saveMemberIntegral(storeId,"commentIntegral",
@@ -143,15 +174,9 @@ public class CarActivityController {
                     log.error("给推荐人增加积分异常",e);
                     e.printStackTrace();
                 }
-            }else {
-                //1.自己领取
-                member_coupon.setSource("1");
             }
-            //0待核销
-            member_coupon.setStatus(0);
-            member_coupon.setActivityId(activityId);
-            member_coupon.setStoreId(storeId);
-            memberCouponService.insert(member_coupon);
+
+
             return Result.success("ok");
         } catch (Exception e) {
             log.error("获取领劵中心优惠劵列表异常",e);
@@ -263,7 +288,7 @@ public class CarActivityController {
             cnd.and("startTime","<=", DateUtil.getNowTime());
             cnd.and("endTime",">", DateUtil.getNowTime());
             cnd.desc("index");
-            Pagination pagination = storeActivityService.listPage(page,limit,cnd,"^(id|name|listImg)$");
+            Pagination pagination = storeActivityService.listPage(page,limit,cnd,"^(id|name|listImg|content)$");
             return Result.success("ok",pagination);
         }catch (Exception e){
             e.printStackTrace();
@@ -292,7 +317,7 @@ public class CarActivityController {
             if(store_activity.getStartTime()<= DateUtil.getNowTime() && store_activity.getEndTime()>DateUtil.getNowTime()){
                 timeStr = "已开始";
                 //获取相差时间
-                timeStrCha = DateUtil.getDatePoor( DateUtil.getNowTime(),store_activity.getStartTime());
+                timeStrCha = DateUtil.getDatePoor(store_activity.getEndTime(), DateUtil.getNowTime());
             }
             if(store_activity.getEndTime()< DateUtil.getNowTime()){
                 timeStr = "已结束";
@@ -375,14 +400,19 @@ public class CarActivityController {
     @SJson
     public Result getBrokerTop(String storeId,int page, int limit) {
         try {
-            Cnd cnd = Cnd.NEW();
-            cnd.and("storeId","=",storeId);
-            cnd.and("userType","=","member");
-//            cnd.and("num",">",0);
-            cnd.desc("num");
-            Pagination pagination = accountInfoService.listPage(page,limit,cnd);
-
-            return Result.success("ok",pagination.getList());
+            //查询会员积分
+            Cnd cndMi = Cnd.NEW();
+            cndMi.and("storeId","=", storeId);
+            cndMi.desc("totalIntegral");
+            Pagination pagination = memberIntegralService.listPage(page,limit,cndMi);
+            List<Member_Integral> member_integralList =(List<Member_Integral>) pagination.getList();
+            List<Account_info> accountInfoList = new ArrayList<>();
+            for (Member_Integral m:member_integralList) {
+                Account_info account_info = accountInfoService.fetch(m.getCustomerUuid());
+                account_info.setNum(m.getTotalIntegral());
+                accountInfoList.add(account_info);
+            }
+            return Result.success("ok",accountInfoList);
         }catch (Exception e){
             e.printStackTrace();
             return Result.error("获取活动下优惠券获取失败");

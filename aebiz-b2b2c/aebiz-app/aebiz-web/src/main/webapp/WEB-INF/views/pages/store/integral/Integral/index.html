@@ -3,21 +3,39 @@ layout("/layouts/store.html"){
 #-->
 <section class="content-wrap bg-white">
     <header class="header navbar bg-white shadow">
-        <div class="btn-group tool-button">
-            <!--<a id="add" class="btn btn-primary navbar-btn" href="${base}/store/integral/Integral/add" data-pjax><i class="ti-plus"></i> ${msg['globals.button.add']}</a>-->
-            <button class="btn btn-danger navbar-btn" onclick="delCheck()"><i class="ti-close"></i> ${msg['globals.button.delete.more']}</button>
-        </div>
+        <header class="header navbar bg-white shadow">
+            <div class="btn-group tool-button" style="padding-top: 8px;">
+                <form class="form-inline js-search-form" >
+                    <div class="form-group">
+                        <label class="control-label"></label>
+                        <input type="text" class="form-control" name="mobile" placeholder="手机号" />
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label"></label>
+                        <input type="text" class="form-control" name="nickName" placeholder="微信昵称" />
+                    </div>
+                    <div class="form-group">
+                        <button type="button" class="btn btn-primary js-search-ok" >${msg['globals.button.search']}</button>
+                        <button type="button" class="btn btn-default js-search-reset" >${msg['globals.button.reset']}</button>
+                    </div>
+                </form>
+            </div>
+            <div class="btn-group tool-button pull-right">
+                <!--            <a id="add" class="btn btn-primary navbar-btn" onclick="hexiao()" href="javascript:void(0)" data-pjax><i class="ti-plus"></i> 核销</a>-->
+                <!--            <button class="btn btn-danger navbar-btn" onclick="delCheck()"><i class="ti-close"></i> ${msg['globals.button.delete.more']}</button>-->
+            </div>
+        </header>
     </header>
     <div class=panel-body style="padding-top: 50px;">
         <div class="table-responsive no-border"  style="min-height: 500px;">
             <table class="table table-bordered table-striped mg-t datatable">
                 <thead>
                     <tr>
-                            <th>会员名称</th>
-                            <!--<th>${msg['member.integral.column.storeUuid']}</th>-->
-                            <!--<th>${msg['member.integral.column.useAbleIntegral']}</th>-->
+                            <th>会员微信昵称</th>
+                            <th>会员手机号</th>
                             <th>会员积分</th>
-                            <th>${msg['globals.table.column.operation']}</th>
+                            <th>说明</th>
+<!--                            <th>${msg['globals.table.column.operation']}</th>-->
                     </tr>
                 </thead>
             </table>
@@ -71,46 +89,70 @@ layout("/layouts/store.html"){
                 sublime.closeLoadingbar($(".main-content"));
             },
             "ajax": {
-                "url": "${base}/store/integral/Integral/data",
+                "url": "${base}/store/integral/Integral/datax",
                 "type": "post",
                 "data": function (d) {
-
+                    var $searchForm = $(".js-search-form");
+                    d.mobile = $("[name='mobile']", $searchForm).val()||"";
+                    d.nickName = $("[name='nickName']", $searchForm).val()||"";
                 }
             },
-            "order": [[0, "desc"]],
+            // "order": [[0, "desc"]],
             "columns": [
-                    {"data": "customerUuid",
-                        "render":function (data,name,row) {
-                            var name = "";
-                            name = row.customerName;
-                            return name;
-                        },
-                        "bSortable": true
+                    {"data": "addIntegral", "bSortable": true, "render":
+                        function (data, type, row) {
+                            return row.nickName;
+                        }
                     },
-                    // {"data": "storeUuid", "bSortable": true},
-                    // {"data": "useAbleIntegral", "bSortable": true},
-                    {"data": "totalIntegral", "bSortable": true},
+                    {"data": "mobile", "bSortable": true, "render":
+                            function (data, type, row) {
+                                if(row.mobile == null|| row.mobile == ''){
+                                    return '未绑定';
+                                }else {
+                                    return row.mobile;
+                                }
+                            }
+                    },
+                    {"data": "addIntegral", "bSortable": true, "render":
+                            function (data, type, row) {
+                                if(row.addIntegral >= 0 ){
+                                    return '+'+row.addIntegral;
+                                }else {
+                                    return row.addIntegral;
+                                }
+                            }
+                    },
+                    {"data": "integralDesc", "bSortable": true},
             ],
-            "columnDefs": [
-                {
-                    "render": function (data, type, row) {
-                        return '<div class="btn-group"><button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">' +
-                                ' <i class="ti-settings"></i> <span class="ti-angle-down"></span></button><ul class="dropdown-menu" role="menu">' +
-                                '<li><a href="${base}/store/integral/Integral/detail/' + row.id + '" data-toggle="modal" data-target="#dialogDetail">${msg["globals.button.detail"]}</a></li>' +
-                                '<li><a href="${base}/store/integral/Integral/edit/' + row.id + '" data-pjax>${msg["globals.button.update"]}</a></li>' +
-                                '<li class="divider"></li>' +
-                                '<li><a href="javascript:;" onclick="del(\'' + row.id + '\')">${msg["globals.button.delete"]}</a></li>' +
-                                '</ul></div>';
-                    },
-                    "targets": 2
-                }
-            ]
+            // "columnDefs": [
+            //     {
+            //         "render": function (data, type, row) {
+            //             return '<div class="btn-group"><button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">' +
+            //                     ' <i class="ti-settings"></i> <span class="ti-angle-down"></span></button><ul class="dropdown-menu" role="menu">' +
+            //                     // '<li><a href="${base}/store/integral/Integral/detail/' + row.id + '" data-toggle="modal" data-target="#dialogDetail">${msg["globals.button.detail"]}</a></li>' +
+            //                     // '<li><a href="${base}/store/integral/Integral/edit/' + row.id + '" data-pjax>${msg["globals.button.update"]}</a></li>' +
+            //                     '<li class="divider"></li>' +
+            //                     // '<li><a href="javascript:;" onclick="del(\'' + row.id + '\')">${msg["globals.button.delete"]}</a></li>' +
+            //                     '</ul></div>';
+            //         },
+            //         "targets": 3
+            //     }
+            // ]
         });
         datatable.on('click', 'tr', function () {
             $(this).toggleClass('selected');
         });
         $("#searchBtn").on('click', function () {
             datatable.ajax.reload();
+        });
+
+        $(".js-search-ok").click(function () {
+            datatable.ajax.reload();
+        });
+
+        $(".js-search-reset").click(function () {
+            $(".js-search-form").resetForm();
+            // $('.datatable').DataTable().ajax.reload();
         });
     }
     function del(id) {

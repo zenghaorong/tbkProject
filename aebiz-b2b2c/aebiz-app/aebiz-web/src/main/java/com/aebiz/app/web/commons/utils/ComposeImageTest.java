@@ -21,7 +21,8 @@ public class ComposeImageTest {
      * @return
      * @throws Exception
      */
-    public static String generatePosterImg(String storeId,String accountId,String myUrl,String sysConf) throws Exception {
+    public static String generatePosterImg(String storeId,String accountId,String myUrl,String sysConf,
+                                           String confText,String nickName) throws Exception {
 
         JSONObject jsonObject = JSON.parseObject(sysConf);
 
@@ -51,6 +52,36 @@ public class ComposeImageTest {
         imagein.close();
         imagein2.close();
         outImage.close();
+
+        JSONObject jsonObjectText = JSON.parseObject(confText);
+        //获得生成的二维码图片路径
+        String codeHcImagePath = filePath+hbImgName;
+        // 读取原图片信息
+        File srcImgFile = new File(codeHcImagePath);//得到文件
+        Image srcImg = ImageIO.read(srcImgFile);//文件转化为图片
+        int srcImgWidth = srcImg.getWidth(null);//获取图片的宽
+        int srcImgHeight = srcImg.getHeight(null);//获取图片的高
+        // 加水印
+        BufferedImage bufImg = new BufferedImage(srcImgWidth, srcImgHeight, BufferedImage.TYPE_INT_RGB);
+        Graphics2D gt = bufImg.createGraphics();
+        gt.drawImage(srcImg, 0, 0,
+                srcImgWidth, srcImgHeight, null);
+        Color color=new Color(jsonObjectText.getInteger("r"),jsonObjectText.getInteger("g"),
+                jsonObjectText.getInteger("b"),jsonObjectText.getInteger("a"));
+        gt.setColor(color); //根据图片的背景设置水印颜色
+        Font font = new Font("微软雅黑", Font.PLAIN, jsonObjectText.getInteger("size"));
+        gt.setFont(font);              //设置字体
+        //设置水印的坐标
+        gt.drawString(nickName+jsonObjectText.getString("text"),
+                jsonObjectText.getInteger("x"), jsonObjectText.getInteger("y"));  //画出水印
+        gt.dispose();
+        // 输出图片
+        FileOutputStream outImgStream = new FileOutputStream(codeHcImagePath);
+        ImageIO.write(bufImg, "jpg", outImgStream);
+        System.out.println("添加水印完成");
+        outImgStream.flush();
+        outImgStream.close();
+
         return hbImgName;
     }
 
@@ -89,6 +120,32 @@ public class ComposeImageTest {
         imagein.close();
         imagein2.close();
         outImage.close();
+
+        //获得生成的二维码图片路径
+        String codeHcImagePath = filePath+hbImgName;
+        // 读取原图片信息
+        File srcImgFile = new File(codeHcImagePath);//得到文件
+        Image srcImg = ImageIO.read(srcImgFile);//文件转化为图片
+        int srcImgWidth = srcImg.getWidth(null);//获取图片的宽
+        int srcImgHeight = srcImg.getHeight(null);//获取图片的高
+        // 加水印
+        BufferedImage bufImg = new BufferedImage(srcImgWidth, srcImgHeight, BufferedImage.TYPE_INT_RGB);
+        Graphics2D gt = bufImg.createGraphics();
+        gt.drawImage(srcImg, 0, 0, srcImgWidth, srcImgHeight, null);
+        Color color=new Color(255,255,255,128);
+        gt.setColor(color); //根据图片的背景设置水印颜色
+        Font font = new Font("微软雅黑", Font.PLAIN, 35);
+        gt.setFont(font);              //设置字体
+        //设置水印的坐标
+        gt.drawString("谁谁推荐你参加什么活动", 10, 400);  //画出水印
+        gt.dispose();
+        // 输出图片
+        FileOutputStream outImgStream = new FileOutputStream(codeHcImagePath);
+        ImageIO.write(bufImg, "jpg", outImgStream);
+        System.out.println("添加水印完成");
+        outImgStream.flush();
+        outImgStream.close();
+
         return hbImgName;
     }
 

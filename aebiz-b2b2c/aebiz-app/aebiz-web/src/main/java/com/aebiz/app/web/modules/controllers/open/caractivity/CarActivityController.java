@@ -128,7 +128,7 @@ public class CarActivityController {
 
                 //查询本人优惠劵
                 Cnd cndC2 = Cnd.NEW();
-                cndC2.and("couponId", "=", couponId );
+                cndC2.and("couponId", "=", a.getCouponId());
                 cndC2.and("mobile", "=", mobile);
                 List<Member_coupon> member_couponList2 = memberCouponService.query(cndC2);
                 if(member_couponList2!=null) {
@@ -252,7 +252,7 @@ public class CarActivityController {
             try (Jedis jedis = redisService.jedis()) {
                 if(Strings.isNotBlank(jedis.get(key2))){
                     log.info("手机号"+mobile+"60秒内请求了两次");
-                    return Result.error("手机号"+mobile+"60秒内请求了两次");
+                    return Result.error("60秒内请求了两次");
                 }
                 //重复请求限制
                 jedis.set(key2, code);
@@ -454,8 +454,9 @@ public class CarActivityController {
                 map.put("name",salesCoupon.getName());
                 map.put("value",salesCoupon.getValue());
                 map.put("code",m.getCode());
-                if(salesCoupon.getEndTimeStr()!=null){
-                    map.put("endTime",salesCoupon.getEndTimeStr().substring(0,10));
+                if(activity.getEndTime()!=null){
+                    String  endTimeStr = DateUtil.getDate(activity.getEndTime());
+                    map.put("endTime",endTimeStr.substring(0,10));
                 }
                 mapList.add(map);
             }
@@ -464,6 +465,51 @@ public class CarActivityController {
         }catch (Exception e){
             e.printStackTrace();
             return Result.error("获取活动下优惠券获取失败");
+        }
+    }
+
+
+    /**
+     * 获取唯一一个活动详情 api
+     * @return
+     */
+    @RequestMapping("getActivityByOne")
+    @SJson
+    public Result getActivityByOne(String storeId) {
+        try {
+            Map<String,Object> map = new HashMap<>();
+            Cnd cnd = Cnd.NEW();
+            cnd.and("storeId","=",storeId);
+            cnd.and("delFlag","=",false);
+            cnd.and("disabled","=",false);
+            cnd.and("startTime","<=", DateUtil.getNowTime());
+            cnd.and("endTime",">", DateUtil.getNowTime());
+            cnd.desc("index");
+            List<Store_activity> store_activityList = storeActivityService.query(cnd);
+            Store_activity store_activity = store_activityList.get(0);
+            if(store_activity == null){
+                return Result.error("暂无活动");
+            }
+            String timeStr = "";
+            String timeStrCha = "";
+            if(store_activity.getStartTime()> DateUtil.getNowTime()){
+                timeStr = "未开始";
+            }
+            if(store_activity.getStartTime()<= DateUtil.getNowTime() && store_activity.getEndTime()>DateUtil.getNowTime()){
+                timeStr = "已开始";
+                //获取相差时间
+                timeStrCha = DateUtil.getDatePoor(store_activity.getEndTime(), DateUtil.getNowTime());
+            }
+            if(store_activity.getEndTime()< DateUtil.getNowTime()){
+                timeStr = "已结束";
+            }
+            map.put("store_activity",store_activity);
+            map.put("timeStr",timeStr);
+            map.put("timeStrCha",timeStrCha);
+            return Result.success("ok",map);
+        }catch (Exception e){
+            e.printStackTrace();
+            return Result.error("获取活动详情获取失败");
         }
     }
 

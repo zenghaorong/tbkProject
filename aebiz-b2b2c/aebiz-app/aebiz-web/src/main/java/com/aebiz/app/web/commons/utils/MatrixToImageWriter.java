@@ -60,8 +60,8 @@ public class MatrixToImageWriter {
     public static InputStream getImageStream(String url) {
         try {
             HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
-            connection.setReadTimeout(5000);
-            connection.setConnectTimeout(5000);
+            connection.setReadTimeout(8000);
+            connection.setConnectTimeout(8000);
             connection.setRequestMethod("GET");
             if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
                 InputStream inputStream = connection.getInputStream();

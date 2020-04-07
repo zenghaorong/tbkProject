@@ -363,6 +363,9 @@ public class CommMsgServiceImpl implements CommMsgService {
 
     @Override
     public boolean sendMsgAly(String code, String mobile) {
+        log.info("发送短信读取的配置文件参数RegionId："+config.get("aly.msg.RegionId")
+        +" accessKeyId:"+config.get("aly.msg.accessKeyId")+"accessSecret:"+config.get("aly.msg.accessSecret")
+        +" SignName:"+config.get("aly.msg.SignName")+" TemplateCode:"+config.get("aly.msg.TemplateCode"));
         DefaultProfile profile = DefaultProfile.getProfile(config.get("aly.msg.RegionId"),
                 config.get("aly.msg.accessKeyId"),  config.get("aly.msg.accessSecret"));
         IAcsClient client = new DefaultAcsClient(profile);
@@ -374,7 +377,7 @@ public class CommMsgServiceImpl implements CommMsgService {
         request.setSysAction("SendSms");
         request.putQueryParameter("RegionId", config.get("aly.msg.RegionId"));
         request.putQueryParameter("PhoneNumbers", mobile);
-        request.putQueryParameter("SignName", config.get("aly.msg.SignName"));//签名名称
+        request.putQueryParameter("SignName", "程竹明");//签名名称
         request.putQueryParameter("TemplateCode", config.get("aly.msg.TemplateCode"));//短信模板
         request.putQueryParameter("TemplateParam", "{'code':'"+code+"'}");//短信模板
         try {

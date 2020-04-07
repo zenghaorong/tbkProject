@@ -84,7 +84,7 @@ public class CarIndexController {
             try (Jedis jedis = redisService.jedis()) {
                 if(Strings.isNotBlank(jedis.get(key2))){
                     log.info("手机号"+mobile+"60秒内请求了两次");
-                    return Result.error("手机号"+mobile+"60秒内请求了两次");
+                    return Result.error("60秒内请求了两次");
                 }
                 //重复请求限制
                 jedis.set(key2, code);
@@ -242,7 +242,7 @@ public class CarIndexController {
      */
     @RequestMapping("/generatePoster")
     @SJson
-    public Result generatePoster(String storeId,String accountId,String myUrl) {
+    public Result generatePoster(String storeId,String accountId,String myUrl,String nickName) {
         try {
             //1.查询改商户配置的公共海报图片
 //            Cnd cnd = Cnd.NEW();
@@ -258,10 +258,13 @@ public class CarIndexController {
 //            if(StringUtils.isEmpty(mainImgUrl)){
 //                return Result.error("cms未配置海报图片");
 //            }
-            //配置文件读取该商户海报配置参数
+            //配置文件读取该商户海报二维码配置参数
             Sys_dict sys_dict_ybmyhs = sysDictService.getSysDictByCode("hchbcspz",storeId);
             String conf = sys_dict_ybmyhs.getValue();
-            String hbName = ComposeImageTest.generatePosterImg(storeId,accountId,myUrl,conf);
+            //配置文件读取该商户海报水印文字配置参数
+            Sys_dict sys_dict_ybmyhsText = sysDictService.getSysDictByCode("hchbcspzText",storeId);
+            String confText = sys_dict_ybmyhsText.getValue();
+            String hbName = ComposeImageTest.generatePosterImg(storeId,accountId,myUrl,conf,confText,nickName);
             return Result.success("ok",hbName);
         }catch (Exception e){
             e.printStackTrace();

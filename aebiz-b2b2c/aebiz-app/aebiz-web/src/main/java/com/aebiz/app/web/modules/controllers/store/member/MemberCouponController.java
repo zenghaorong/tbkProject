@@ -10,6 +10,8 @@ import com.aebiz.app.member.modules.models.Member_coupon;
 import com.aebiz.app.member.modules.services.MemberCouponService;
 import com.aebiz.app.sales.modules.models.Sales_coupon;
 import com.aebiz.app.sales.modules.services.SalesCouponService;
+import com.aebiz.app.store.modules.models.Store_activity;
+import com.aebiz.app.store.modules.services.StoreActivityService;
 import com.aebiz.baseframework.base.Result;
 import com.aebiz.baseframework.page.datatable.DataTable;
 import com.aebiz.baseframework.view.annotation.SJson;
@@ -46,6 +48,8 @@ public class MemberCouponController {
     private MemberIntegralService memberIntegralService;
     @Autowired
     private AccountInfoService accountInfoService;
+    @Autowired
+    private StoreActivityService storeActivityService;
 
     @RequestMapping("")
     public String index(HttpServletRequest req) {
@@ -116,12 +120,13 @@ public class MemberCouponController {
     public Object hexiao(String mcId){
         try {
             Member_coupon member_coupon = memberCouponService.fetch(mcId);
-            Sales_coupon sales_coupon = salesCouponService.fetch(member_coupon.getCouponId());
+//            Sales_coupon sales_coupon = salesCouponService.fetch(member_coupon.getCouponId());
             if(member_coupon.getStatus() == 1){
                 log.error("此优惠券已核销mcId:"+mcId);
                 return Result.error(1001,"此优惠券已核销");
             }
-            Integer endAt = sales_coupon.getEndTime();
+            Store_activity store_activity = storeActivityService.fetch(member_coupon.getActivityId());
+            Integer endAt = store_activity.getEndTime();
             Integer nowTime = DateUtil.getTime(new Date());
             if(nowTime > endAt){
                 log.error("此优惠券已过期mcId:"+mcId);

@@ -38,7 +38,7 @@ public class Member_coupon extends BaseModel implements Serializable {
     private String couponId;
 
     @Column
-    @Comment("优惠券ID")
+    @Comment("活动编号")
     @ColDefine(type = ColType.VARCHAR, width = 32)
     private String activityId;
 

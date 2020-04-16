@@ -313,23 +313,23 @@ public class LoginController {
             if (accountUser.isDisabled()) {
                 return Result.error("此用户被冻结").addCode(3);
             }
-            if(!accountUser.getStoreId().equals(storeId)){
-                return Result.error(10002,"此商户不存在");
-            }
-            if (rememberMe) {
-                SimpleCookie cookie = new SimpleCookie(cookieName);
-                cookie.setHttpOnly(true);
-                cookie.setMaxAge(31536000);
-                String base64 = Base64.encodeToString(accountUser.getLoginname().getBytes());
-                cookie.setValue(base64);
-                cookie.saveTo(request, response);
-            } else {
-                SimpleCookie cookie = new SimpleCookie(cookieName);
-                cookie.removeFrom(request, response);
-            }
+//            if(!accountUser.getStoreId().equals(storeId)){
+//                return Result.error(10002,"此商户不存在");
+//            }
+//            if (rememberMe) {
+//                SimpleCookie cookie = new SimpleCookie(cookieName);
+//                cookie.setHttpOnly(true);
+//                cookie.setMaxAge(31536000);
+//                String base64 = Base64.encodeToString(accountUser.getLoginname().getBytes());
+//                cookie.setValue(base64);
+//                cookie.saveTo(request, response);
+//            } else {
+//                SimpleCookie cookie = new SimpleCookie(cookieName);
+//                cookie.removeFrom(request, response);
+//            }
 
             //设置登录
-            CookieUtil.setCookie(response, "cheryfs_member_login", "true");
+//            CookieUtil.setCookie(response, "cheryfs_member_login", "true");
 
             Account_login accountLogin = new Account_login();
             accountLogin.setAccountId(accountUser.getAccountId());
@@ -346,10 +346,12 @@ public class LoginController {
                 accountLogin.setClientBrowser(browser.getName());
             }
             accountLoginService.insert(accountLogin);
+            Account_info account_info = accountInfoService.fetch(accountUser.getAccountId());
             NutMap returnData = NutMap.NEW();
             returnData.put("accountId", accountUser.getAccountId());
             returnData.put("accountName", accountUser.getLoginname());
             returnData.put("mobile", accountUser.getMobile());
+            returnData.put("imageUrl", account_info.getImageUrl());
             returnData.put("sessionId",sessionId);
             return Result.success("sys.login.success",returnData);
         } catch (CaptchaIncorrectException e) {
@@ -409,9 +411,9 @@ public class LoginController {
             if (isExist(accountUserService, cnd)) {
                 return Result.error("手机号已存在");
             }
-            if (!captcha.equals(jedis.get(MOBILE_CAPTCHA + mobile))) {
-                return Result.error("验证码不正确");
-            }
+//            if (!captcha.equals(jedis.get(MOBILE_CAPTCHA + mobile))) {
+//                return Result.error("验证码不正确");
+//            }
 
             //注册
             memberRegisterService.memberRegister(mobile, password, mobile, CheckPasswordUtil.checkPassword(password).toString());

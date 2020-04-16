@@ -141,7 +141,7 @@ public class MemberCouponController {
             try{
                 if(StringUtils.isNotEmpty(member_coupon.getSourceAccountId())){
                     memberIntegralService.saveMemberIntegral(StringUtil.getStoreId(),"registerIntegral",
-                            8,member_coupon.getSourceAccountId());
+                            8,member_coupon.getSourceAccountId(),member_coupon.getAccountId());
                 }
             }catch (Exception e){
                 log.error("给推荐人添加积分发生异常",e);

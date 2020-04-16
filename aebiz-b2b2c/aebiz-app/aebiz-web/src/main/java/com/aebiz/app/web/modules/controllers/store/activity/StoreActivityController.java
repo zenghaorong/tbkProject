@@ -69,6 +69,7 @@ public class StoreActivityController {
     @RequestMapping("/addDo")
     @SJson
     @SLog(description = "Store_activity")
+    @RequiresPermissions("store.activity.home.activity.add")
     public Object addDo(Store_activity storeActivity,@RequestParam(value = "tmp_sartAt", required = false) String sartAt, @RequestParam(value = "tmp_endAt", required = false) String endAt) {
 		try {
             List<Activity_coupon> activity_couponList = new ArrayList<>();
@@ -103,6 +104,7 @@ public class StoreActivityController {
     @RequestMapping("/editDo")
     @SJson
     @SLog(description = "Store_activity")
+    @RequiresPermissions("store.activity.home.activity.edit")
     public Object editDo(@RequestParam(value = "tmp_sartAt", required = false) String sartAt,@RequestParam(value = "tmp_endAt", required = false) String endAt,
                          Store_activity storeActivity, HttpServletRequest req) {
 		try {
@@ -145,6 +147,7 @@ public class StoreActivityController {
     @RequestMapping(value = {"/delete/{id}", "/delete"})
     @SJson
     @SLog(description = "Store_activity")
+    @RequiresPermissions("store.activity.home.activity.delete")
     public Object delete(@PathVariable(required = false) String id, @RequestParam(value = "ids",required = false)  String[] ids, HttpServletRequest req) {
 		try {
 			if(ids!=null&&ids.length>0){

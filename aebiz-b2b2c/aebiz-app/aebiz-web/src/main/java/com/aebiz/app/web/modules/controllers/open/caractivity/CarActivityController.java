@@ -67,6 +67,8 @@ public class CarActivityController {
     private SysDictService sysDictService;
     @Autowired
     private AccountInfoService accountInfoService;
+    @Autowired
+    private AccountUserService accountUserService;
 
     /**
      * 手机短信验证码前缀
@@ -91,7 +93,7 @@ public class CarActivityController {
     @RequestMapping("receive.html")
     @SJson
     public Result receive(String couponId,String mobile,String captcha,String userName,
-                          String activityId,String sourceAccountId,String storeId){
+                          String activityId,String sourceAccountId,String storeId,String accountId){
 
         try (Jedis jedis = redisService.jedis()) {
             if (Strings.isEmpty(mobile) || Strings.isEmpty(captcha)) {
@@ -169,12 +171,17 @@ public class CarActivityController {
                 //推荐人编号不为空给推荐人增加积分
                 try{
                     memberIntegralService.saveMemberIntegral(storeId,"commentIntegral",
-                            7,sourceAccountId);
+                            7,sourceAccountId,"");
                 }catch (Exception e){
                     log.error("给推荐人增加积分异常",e);
                     e.printStackTrace();
                 }
             }
+
+            //当前账号绑定手机号
+            Account_user accountUser = accountUserService.getAccount(accountId);
+            accountUser.setMobile(mobile);
+            accountUserService.update(accountUser);
 
 
             return Result.success("ok");
@@ -462,6 +469,35 @@ public class CarActivityController {
             }
 
             return Result.success("ok",mapList);
+        }catch (Exception e){
+            e.printStackTrace();
+            return Result.error("获取活动下优惠券获取失败");
+        }
+    }
+
+    /**
+     * 判断是否领取过当前活动下优惠券
+     * @return
+     */
+    @RequestMapping("isrReceive")
+    @SJson
+    public Result isrReceive(String mobile,String storeId,String activityId) {
+        try {
+            if(StringUtils.isEmpty(mobile)){
+                return Result.error();
+            }
+            Cnd cnd = Cnd.NEW();
+            cnd.and("storeId","=",storeId);
+            cnd.and("mobile","=",mobile);
+            cnd.and("activityId","=",activityId);
+            List<Member_coupon> memberCouponList = memberCouponService.query(cnd);
+            if(memberCouponList == null){
+                return Result.error();
+            }
+            if(memberCouponList.size() < 1 ){
+                return Result.error();
+            }
+            return Result.success("ok");
         }catch (Exception e){
             e.printStackTrace();
             return Result.error("获取活动下优惠券获取失败");

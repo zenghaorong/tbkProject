@@ -19,7 +19,7 @@ public interface MemberIntegralService extends BaseService<Member_Integral>{
      * @param ruleCode
      * @param accountId
      */
-    public void saveMemberIntegral(String storeId,String ruleCode,int integralType,String accountId);
+    public void saveMemberIntegral(String storeId,String ruleCode,int integralType,String sourceAccountId,String accountId);
 
     /**
      * 扣除会员积分接口

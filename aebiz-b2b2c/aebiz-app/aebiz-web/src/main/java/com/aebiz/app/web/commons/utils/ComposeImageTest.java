@@ -64,8 +64,7 @@ public class ComposeImageTest {
         // 加水印
         BufferedImage bufImg = new BufferedImage(srcImgWidth, srcImgHeight, BufferedImage.TYPE_INT_RGB);
         Graphics2D gt = bufImg.createGraphics();
-        gt.drawImage(srcImg, 0, 0,
-                srcImgWidth, srcImgHeight, null);
+        gt.drawImage(srcImg, 0, 0, srcImgWidth, srcImgHeight, null);
         Color color=new Color(jsonObjectText.getInteger("r"),jsonObjectText.getInteger("g"),
                 jsonObjectText.getInteger("b"),jsonObjectText.getInteger("a"));
         gt.setColor(color); //根据图片的背景设置水印颜色
@@ -137,7 +136,7 @@ public class ComposeImageTest {
         Font font = new Font("微软雅黑", Font.PLAIN, 35);
         gt.setFont(font);              //设置字体
         //设置水印的坐标
-        gt.drawString("谁谁推荐你参加什么活动", 10, 400);  //画出水印
+        gt.drawString("推荐你参加", 10, 400);  //画出水印
         gt.dispose();
         // 输出图片
         FileOutputStream outImgStream = new FileOutputStream(codeHcImagePath);

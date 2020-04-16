@@ -130,7 +130,7 @@ public class MemberIntegralServiceImpl extends BaseServiceImpl<Member_Integral> 
     }
 
     @Override
-    public void saveMemberIntegral(String storeId, String ruleCode,int integralType, String accountId) {
+    public void saveMemberIntegral(String storeId, String ruleCode,int integralType, String sourceAccountId,String accountId) {
         Cnd cnd = Cnd.NEW();
         cnd.and("storeId","=", storeId);
         cnd.and("ruleCode","=",ruleCode);
@@ -138,11 +138,11 @@ public class MemberIntegralServiceImpl extends BaseServiceImpl<Member_Integral> 
 
         Cnd cndMi = Cnd.NEW();
         cndMi.and("storeId","=", storeId);
-        cndMi.and("customerUuid","=", accountId);
+        cndMi.and("customerUuid","=", sourceAccountId);
         Member_Integral m = this.fetch(cndMi);
         if(m == null){
             m = new Member_Integral();
-            m.setCustomerUuid(accountId);
+            m.setCustomerUuid(sourceAccountId);
             m.setTotalIntegral(m.getUseAbleIntegral()+integral_rule.getIntegralCount());
             m.setUseAbleIntegral(m.getUseAbleIntegral()+integral_rule.getIntegralCount());
             m.setStoreId(storeId);
@@ -155,10 +155,11 @@ public class MemberIntegralServiceImpl extends BaseServiceImpl<Member_Integral> 
 
         Member_Integral_Detail md = new Member_Integral_Detail();
         md.setAddIntegral(integral_rule.getIntegralCount());
-        md.setCustomerUuid(accountId);
+        md.setCustomerUuid(sourceAccountId);
         md.setIntegralDesc(integral_rule.getRuleName());
         md.setIntegralType(integralType);
         md.setStoreId(storeId);
+        md.setAccountId(accountId);
         memberIntegralDetailService.insert(md);
 
     }

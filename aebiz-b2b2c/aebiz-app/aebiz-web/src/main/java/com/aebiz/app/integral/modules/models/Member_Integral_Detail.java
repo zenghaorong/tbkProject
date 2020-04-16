@@ -25,6 +25,11 @@ public class Member_Integral_Detail extends BaseModel implements Serializable {
     @ColDefine(type = ColType.VARCHAR, width = 32)
     private String customerUuid;
 
+    @Column
+    @Comment("浏览人accountId")
+    @ColDefine(type = ColType.VARCHAR, width = 32)
+    private String accountId;
+
 
     @Column
     @Comment("增加积分")
@@ -56,6 +61,14 @@ public class Member_Integral_Detail extends BaseModel implements Serializable {
     private String nickName;//会员昵称
 
     private String mobile;
+
+    public String getAccountId() {
+        return accountId;
+    }
+
+    public void setAccountId(String accountId) {
+        this.accountId = accountId;
+    }
 
     public String getNickName() {
         return nickName;

@@ -7,6 +7,8 @@ import com.aebiz.app.cms.modules.models.Cms_channel;
 import com.aebiz.app.cms.modules.services.CmsArticleService;
 import com.aebiz.app.cms.modules.services.CmsChannelService;
 import com.aebiz.app.integral.modules.models.Member_Integral;
+import com.aebiz.app.integral.modules.models.Member_Integral_Detail;
+import com.aebiz.app.integral.modules.services.MemberIntegralDetailService;
 import com.aebiz.app.integral.modules.services.MemberIntegralService;
 import com.aebiz.app.member.modules.models.Member_coupon;
 import com.aebiz.app.msg.modules.services.CommMsgService;
@@ -57,6 +59,8 @@ public class CarIndexController {
     private CmsArticleService cmsArticleService;
     @Autowired
     private SysDictService sysDictService;
+    @Autowired
+    private MemberIntegralDetailService memberIntegralDetailService;
 
     /**
      * 手机短信验证码前缀
@@ -153,13 +157,22 @@ public class CarIndexController {
     @SJson
     public Result browseForPoints(String storeId,String sourceAccountId,String accountId) {
         try {
+            Cnd cnd = Cnd.NEW();
+            cnd.and("customerUuid","=",sourceAccountId);
+            cnd.and("accountId","=",accountId);
+            cnd.and("integralType","=",6);
+            cnd.and("storeId","=",storeId);
+            List<Member_Integral_Detail> member_integral_details = memberIntegralDetailService.query(cnd);
+            if(member_integral_details != null && member_integral_details.size()>0){
+                return Result.error("已加过积分");
+            }
             //分享的页面别人浏览了 给推荐人加积分
             memberIntegralService.saveMemberIntegral(storeId,"buyIntegral",
-                    6,sourceAccountId);
+                    6,sourceAccountId,accountId);
             return Result.success("ok");
         }catch (Exception e){
             e.printStackTrace();
-            return Result.error("验证码获取失败");
+            return Result.error("分享的页面别人浏览了 给推荐人加积分失败");
         }
 
     }
